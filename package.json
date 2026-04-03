@@ -31,7 +31,9 @@
     "gate:harness:isolation": "py -3.11 scripts/run_harness_isolation_gate.py",
     "test:ai:quota": "tsx server/tests/ai_quota.test.ts",
     "test:world:mutation-lock": "tsx server/tests/world_mutation_lock.test.ts",
-    "test:session:manager": "tsx server/tests/session_manager.test.ts"
+    "test:session:manager": "tsx server/tests/session_manager.test.ts",
+    "security:auth:validate": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/security/validate_git_auth_posture.ps1 -RepoPath .",
+    "security:auth:harden": "pwsh -NoProfile -ExecutionPolicy Bypass -File scripts/security/harden_repo_git_auth.ps1 -RepoPath ."
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.27.1",

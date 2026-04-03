@@ -31,3 +31,9 @@ Short-term control policy:
 ## Key Integration Docs
 
 See `docs/unity/` for endpoint contracts, C# DTO/client skeletons, and call-order checklist.
+
+## GitHub Auth Hardening (A/B Machines)
+
+- Run posture check: `npm run security:auth:validate`
+- Apply repo hardening: `npm run security:auth:harden`
+- Full guide: `docs/GITHUB_AUTH_DUAL_MACHINE_2026_04_04.md`

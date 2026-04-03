@@ -1,0 +1,1148 @@
+{
+  "generatedAt": "2026-03-25",
+  "moduleCount": 19,
+  "modules": [
+    {
+      "id": "M01",
+      "name": "Runtime Gateway",
+      "category": "Backend",
+      "owner": "AI-BE-EntryRuntime",
+      "backup": "AI-BE-RuleState",
+      "paths": [
+        "server/src/app.ts",
+        "server/src/bootstrap/",
+        "server/src/routes/http.ts"
+      ],
+      "entrypoints": [
+        "npm run server:dev",
+        "GET /api/health"
+      ],
+      "goal": "Node HTTP bootstrap, base route dispatch, env bootstrap and request I/O safety.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M01.md"
+        ],
+        "specialized": [
+          "server/src/app.ts",
+          "server/src/bootstrap/",
+          "server/src/routes/http.ts",
+          "entrypoint::npm run server:dev",
+          "entrypoint::GET /api/health"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run server:dev",
+            "GET /api/health"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "后端入口运行",
+        "cn_responsibility": "负责后端启动、路由入口与环境加载稳定性，保障系统入口可用。"
+      }
+    },
+    {
+      "id": "M02",
+      "name": "World Rule Kernel",
+      "category": "Backend",
+      "owner": "AI-BE-RuleState",
+      "backup": "AI-Agent-Commander",
+      "paths": [
+        "server/src/application/world/",
+        "server/src/routes/world.ts"
+      ],
+      "entrypoints": [
+        "POST /api/world/action",
+        "GET /api/world"
+      ],
+      "goal": "Authoritative world state, tick execution, plan queue, map diff and mutation guarantees.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M02.md"
+        ],
+        "specialized": [
+          "server/src/application/world/",
+          "server/src/routes/world.ts",
+          "entrypoint::POST /api/world/action",
+          "entrypoint::GET /api/world"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "POST /api/world/action",
+            "GET /api/world"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "规则状态内核",
+        "cn_responsibility": "负责规则引擎裁决与状态持久化一致性，避免 world state 漂移。"
+      }
+    },
+    {
+      "id": "M03",
+      "name": "Planning and Commander",
+      "category": "Backend/Agent",
+      "owner": "AI-Agent-Commander",
+      "backup": "AI-BE-RuleState",
+      "paths": [
+        "server/src/application/planning/",
+        "server/src/agents/commander/",
+        "server/src/agents/tools/CommanderTools.ts",
+        "server/src/fallback/mockPlanner.ts",
+        "server/src/routes/planning.ts",
+        "server/src/infra/llm/",
+        "server/src/config/modelGateway.ts",
+        "server/src/infra/observability/trace.ts"
+      ],
+      "entrypoints": [
+        "POST /api/planning/create",
+        "npm run test:planner:prompt"
+      ],
+      "goal": "Strategic planning lifecycle, commander guardrails, model gateway call chain and fallback behavior.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M03.md"
+        ],
+        "specialized": [
+          "server/src/application/planning/",
+          "server/src/agents/commander/",
+          "server/src/agents/tools/CommanderTools.ts",
+          "server/src/fallback/mockPlanner.ts",
+          "server/src/routes/planning.ts",
+          "server/src/infra/llm/",
+          "server/src/config/modelGateway.ts",
+          "server/src/infra/observability/trace.ts",
+          "entrypoint::POST /api/planning/create",
+          "entrypoint::npm run test:planner:prompt"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "POST /api/planning/create",
+            "npm run test:planner:prompt"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "指挥规划智能体",
+        "cn_responsibility": "负责 Commander 规划链路、Guard 校验与计划质量。"
+      }
+    },
+    {
+      "id": "M04",
+      "name": "General Operations and Chat",
+      "category": "Backend/Agent",
+      "owner": "AI-Agent-General",
+      "backup": "AI-Agent-Commander",
+      "paths": [
+        "server/src/agents/general/GeneralAgent.ts",
+        "server/src/agents/general/GeneralUtilityAI.ts",
+        "server/src/agents/general/GeneralLLMAdapter.ts",
+        "server/src/agents/general/GeneralProfileStore.ts",
+        "server/src/agents/general/GeneralChatService.ts",
+        "server/src/routes/generalChat.ts"
+      ],
+      "entrypoints": [
+        "GET /api/generals",
+        "POST /api/generals/:id/chat"
+      ],
+      "goal": "General-level execution, tier gating, profile persistence, and dual-mode chat/order interaction.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M04.md"
+        ],
+        "specialized": [
+          "server/src/agents/general/GeneralAgent.ts",
+          "server/src/agents/general/GeneralUtilityAI.ts",
+          "server/src/agents/general/GeneralLLMAdapter.ts",
+          "server/src/agents/general/GeneralProfileStore.ts",
+          "server/src/agents/general/GeneralChatService.ts",
+          "server/src/routes/generalChat.ts",
+          "entrypoint::GET /api/generals",
+          "entrypoint::POST /api/generals/:id/chat"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "GET /api/generals",
+            "POST /api/generals/:id/chat"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "将领行为智能体",
+        "cn_responsibility": "负责 General 行为、GeneralChat 与将领档案一致性。"
+      }
+    },
+    {
+      "id": "M05",
+      "name": "Reflect Memory and Tactical Skills",
+      "category": "Backend/Agent",
+      "owner": "AI-Agent-ReflectMemory",
+      "backup": "AI-Agent-General",
+      "paths": [
+        "server/src/agents/reflect/",
+        "server/src/agents/memory/",
+        "server/src/agents/tools/TacticalSkillLibrary.ts"
+      ],
+      "entrypoints": [
+        "advanceTick post-hook",
+        "GET /api/narratives",
+        "GET /api/civil-memory"
+      ],
+      "goal": "POER reflect loop, memory write/search, civil ledger integrity, and tactical skill replay.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M05.md"
+        ],
+        "specialized": [
+          "server/src/agents/reflect/",
+          "server/src/agents/memory/",
+          "server/src/agents/tools/TacticalSkillLibrary.ts",
+          "entrypoint::advanceTick post-hook",
+          "entrypoint::GET /api/narratives",
+          "entrypoint::GET /api/civil-memory"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "advanceTick post-hook",
+            "GET /api/narratives",
+            "GET /api/civil-memory"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "复盘记忆智能体",
+        "cn_responsibility": "负责 Reflect 闭环、记忆写入召回与战术技能联动。"
+      }
+    },
+    {
+      "id": "M06",
+      "name": "Governance (CommBus Court Agenda)",
+      "category": "Backend/Agent",
+      "owner": "AI-Agent-GovDiplo",
+      "backup": "AI-Agent-ReflectMemory",
+      "paths": [
+        "server/src/agents/commBus/",
+        "server/src/agents/court/"
+      ],
+      "entrypoints": [
+        "POST /api/world/action (previewDomainAgenda/previewNationalAgenda/previewCourtSession)",
+        "GET /api/comm-bus/national-agenda",
+        "GET /api/court/session/latest"
+      ],
+      "goal": "Cross-general governance signals, national agenda compression, and court decision snapshots.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M06.md"
+        ],
+        "specialized": [
+          "server/src/agents/commBus/",
+          "server/src/agents/court/",
+          "entrypoint::POST /api/world/action (previewDomainAgenda/previewNationalAgenda/previewCourtSession)",
+          "entrypoint::GET /api/comm-bus/national-agenda",
+          "entrypoint::GET /api/court/session/latest"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "POST /api/world/action (previewDomainAgenda/previewNationalAgenda/previewCourtSession)",
+            "GET /api/comm-bus/national-agenda",
+            "GET /api/court/session/latest"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "治理外交智能体",
+        "cn_responsibility": "负责治理流程、外交协商与 L1/L2 自主模式策略约束。"
+      }
+    },
+    {
+      "id": "M07",
+      "name": "Diplomacy and Negotiation",
+      "category": "Backend/Agent",
+      "owner": "AI-Agent-GovDiplo",
+      "backup": "AI-Agent-General",
+      "paths": [
+        "server/src/routes/diplomacy.ts",
+        "server/src/agents/general/DiplomacyAgent.ts",
+        "server/src/agents/general/GeneralNegotiationChannel.ts"
+      ],
+      "entrypoints": [
+        "POST /api/diplomacy/propose",
+        "POST /api/diplomacy/respond",
+        "GET /api/diplomacy/proposals"
+      ],
+      "goal": "Cross-faction negotiation flow, proposal lifecycle and diplomacy runtime constraints.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M07.md"
+        ],
+        "specialized": [
+          "server/src/routes/diplomacy.ts",
+          "server/src/agents/general/DiplomacyAgent.ts",
+          "server/src/agents/general/GeneralNegotiationChannel.ts",
+          "entrypoint::POST /api/diplomacy/propose",
+          "entrypoint::POST /api/diplomacy/respond",
+          "entrypoint::GET /api/diplomacy/proposals"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "POST /api/diplomacy/propose",
+            "POST /api/diplomacy/respond",
+            "GET /api/diplomacy/proposals"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "治理外交智能体",
+        "cn_responsibility": "负责治理流程、外交协商与 L1/L2 自主模式策略约束。"
+      }
+    },
+    {
+      "id": "M08",
+      "name": "Session Autonomy Doctrine",
+      "category": "Backend",
+      "owner": "AI-Agent-GovDiplo",
+      "backup": "AI-BE-EntryRuntime",
+      "paths": [
+        "server/src/multiplayer/",
+        "server/src/application/clock/",
+        "server/src/application/faction/",
+        "server/src/routes/session.ts",
+        "server/src/routes/factionConfigRoutes.ts"
+      ],
+      "entrypoints": [
+        "npm run start:clock",
+        "POST /api/session/join|heartbeat|leave",
+        "GET /api/session/status"
+      ],
+      "goal": "L1/L2 autonomy switching, player session lifecycle, doctrine/model overrides and auto tick.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M08.md"
+        ],
+        "specialized": [
+          "server/src/multiplayer/",
+          "server/src/application/clock/",
+          "server/src/application/faction/",
+          "server/src/routes/session.ts",
+          "server/src/routes/factionConfigRoutes.ts",
+          "entrypoint::npm run start:clock",
+          "entrypoint::POST /api/session/join|heartbeat|leave",
+          "entrypoint::GET /api/session/status"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run start:clock",
+            "POST /api/session/join|heartbeat|leave",
+            "GET /api/session/status"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "治理外交智能体",
+        "cn_responsibility": "负责治理流程、外交协商与 L1/L2 自主模式策略约束。"
+      }
+    },
+    {
+      "id": "M09",
+      "name": "Nation and Map Meta Services",
+      "category": "Backend",
+      "owner": "AI-BE-WorldMeta",
+      "backup": "AI-BE-RuleState",
+      "paths": [
+        "server/src/application/map/",
+        "server/src/application/nation/",
+        "server/src/routes/map.ts",
+        "server/src/routes/nation.ts"
+      ],
+      "entrypoints": [
+        "GET /api/map/overview",
+        "GET /api/nation/profiles",
+        "POST /api/nation/found"
+      ],
+      "goal": "Nation profiles, founding flow, map overview projections and macro map read models.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M09.md"
+        ],
+        "specialized": [
+          "server/src/application/map/",
+          "server/src/application/nation/",
+          "server/src/routes/map.ts",
+          "server/src/routes/nation.ts",
+          "entrypoint::GET /api/map/overview",
+          "entrypoint::GET /api/nation/profiles",
+          "entrypoint::POST /api/nation/found"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "GET /api/map/overview",
+            "GET /api/nation/profiles",
+            "POST /api/nation/found"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "世界元数据后端",
+        "cn_responsibility": "负责地图/国家元数据与 V2 玩法后端投影能力。"
+      }
+    },
+    {
+      "id": "M10",
+      "name": "AI Runtime Config and Copilot",
+      "category": "Backend/Platform",
+      "owner": "AI-Platform-ModelGateway",
+      "backup": "AI-Agent-Commander",
+      "paths": [
+        "server/src/application/ai/",
+        "server/src/routes/ai.ts",
+        "server/src/routes/copilot.ts",
+        "server/src/ai-server.ts"
+      ],
+      "entrypoints": [
+        "GET|POST /api/ai/config",
+        "GET /api/ai/models",
+        "POST /api/copilotkit"
+      ],
+      "goal": "Model catalog/config, copilot runtime bridge, and AI server proxy integration.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M10.md"
+        ],
+        "specialized": [
+          "server/src/application/ai/",
+          "server/src/routes/ai.ts",
+          "server/src/routes/copilot.ts",
+          "server/src/ai-server.ts",
+          "entrypoint::GET|POST /api/ai/config",
+          "entrypoint::GET /api/ai/models",
+          "entrypoint::POST /api/copilotkit"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "GET|POST /api/ai/config",
+            "GET /api/ai/models",
+            "POST /api/copilotkit"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "模型网关平台",
+        "cn_responsibility": "负责模型中转层、MCP 集成边界与 AI 运行时接入。"
+      }
+    },
+    {
+      "id": "M11",
+      "name": "Observability Replay Streaming",
+      "category": "Backend/Platform",
+      "owner": "AI-Platform-Observability",
+      "backup": "AI-Platform-ModelGateway",
+      "paths": [
+        "server/src/routes/observability.ts",
+        "server/src/routes/replay.ts",
+        "server/src/ws/",
+        "server/src/infra/rag/",
+        "server/src/config/replayRag.ts"
+      ],
+      "entrypoints": [
+        "GET /api/events",
+        "GET /api/events/stream",
+        "GET /api/replay/archive",
+        "WS /ws"
+      ],
+      "goal": "Event/narrative/replay pipelines, RAG retrieval, SSE/WS streaming and save slots.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M11.md"
+        ],
+        "specialized": [
+          "server/src/routes/observability.ts",
+          "server/src/routes/replay.ts",
+          "server/src/ws/",
+          "server/src/infra/rag/",
+          "server/src/config/replayRag.ts",
+          "entrypoint::GET /api/events",
+          "entrypoint::GET /api/events/stream",
+          "entrypoint::GET /api/replay/archive",
+          "entrypoint::WS /ws"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "GET /api/events",
+            "GET /api/events/stream",
+            "GET /api/replay/archive",
+            "WS /ws"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "可观测平台",
+        "cn_responsibility": "负责回放、事件流、流式观测与故障追踪。"
+      }
+    },
+    {
+      "id": "M12",
+      "name": "MCP Integration",
+      "category": "Backend/Platform",
+      "owner": "AI-Platform-ModelGateway",
+      "backup": "AI-Platform-Observability",
+      "paths": [
+        "server/src/mcp/"
+      ],
+      "entrypoints": [
+        "npx tsx server/src/mcp/gameServer.ts"
+      ],
+      "goal": "MCP tool bridge for coding assistants with safe output shaping and backend proxy calls.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M12.md"
+        ],
+        "specialized": [
+          "server/src/mcp/",
+          "entrypoint::npx tsx server/src/mcp/gameServer.ts"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npx tsx server/src/mcp/gameServer.ts"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "模型网关平台",
+        "cn_responsibility": "负责模型中转层、MCP 集成边界与 AI 运行时接入。"
+      }
+    },
+    {
+      "id": "M13",
+      "name": "V2 Growth Gameplay",
+      "category": "Backend/Game",
+      "owner": "AI-BE-WorldMeta",
+      "backup": "AI-BE-WorldMeta",
+      "paths": [
+        "server/src/application/v2/",
+        "server/src/routes/v2game.ts"
+      ],
+      "entrypoints": [
+        "GET /api/v2/state",
+        "POST /api/v2/recruit|star-upgrade|army/*"
+      ],
+      "goal": "Recruit/star/army/alliance growth systems and V2 state orchestration.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M13.md"
+        ],
+        "specialized": [
+          "server/src/application/v2/",
+          "server/src/routes/v2game.ts",
+          "entrypoint::GET /api/v2/state",
+          "entrypoint::POST /api/v2/recruit|star-upgrade|army/*"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "GET /api/v2/state",
+            "POST /api/v2/recruit|star-upgrade|army/*"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "世界元数据后端",
+        "cn_responsibility": "负责地图/国家元数据与 V2 玩法后端投影能力。"
+      }
+    },
+    {
+      "id": "M14",
+      "name": "Shared Contracts Schemas Domain",
+      "category": "Shared",
+      "owner": "AI-Shared-Contracts",
+      "backup": "AI-QA-Gates",
+      "paths": [
+        "shared/contracts/",
+        "shared/schemas/",
+        "shared/domain/"
+      ],
+      "entrypoints": [
+        "npm run lint",
+        "npm run build"
+      ],
+      "goal": "Single source of truth for contracts, schema validation, and domain algorithms.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M14.md"
+        ],
+        "specialized": [
+          "shared/contracts/",
+          "shared/schemas/",
+          "shared/domain/",
+          "entrypoint::npm run lint",
+          "entrypoint::npm run build"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run lint",
+            "npm run build"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "共享契约",
+        "cn_responsibility": "负责 shared contracts/schemas/domain 的兼容性与演进。"
+      }
+    },
+    {
+      "id": "M15",
+      "name": "Frontend Command Workspace",
+      "category": "Frontend",
+      "owner": "AI-FE-CommandSurface",
+      "backup": "AI-FE-MapSurface",
+      "paths": [
+        "src/main.tsx",
+        "src/App.tsx",
+        "src/components/layout/",
+        "src/components/panels/",
+        "src/components/screens/",
+        "src/api/",
+        "src/components/copilot/"
+      ],
+      "entrypoints": [
+        "npm run dev"
+      ],
+      "goal": "Main UI shell, command panels, data sync, and interaction workflow orchestration.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M15.md"
+        ],
+        "specialized": [
+          "src/main.tsx",
+          "src/App.tsx",
+          "src/components/layout/",
+          "src/components/panels/",
+          "src/components/screens/",
+          "src/api/",
+          "src/components/copilot/",
+          "entrypoint::npm run dev"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run dev"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "指挥界面前端",
+        "cn_responsibility": "负责指挥台交互、前端领域镜像与面板联动。"
+      }
+    },
+    {
+      "id": "M16",
+      "name": "Frontend Map Rendering",
+      "category": "Frontend",
+      "owner": "AI-FE-MapSurface",
+      "backup": "AI-FE-CommandSurface",
+      "paths": [
+        "src/components/pixi/",
+        "src/components/MapBoard.tsx",
+        "src/components/mapViewport.ts"
+      ],
+      "entrypoints": [
+        "npm run dev"
+      ],
+      "goal": "Pixi map rendering, viewport logic, LOD textures and map interaction fidelity.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M16.md"
+        ],
+        "specialized": [
+          "src/components/pixi/",
+          "src/components/MapBoard.tsx",
+          "src/components/mapViewport.ts",
+          "entrypoint::npm run dev"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run dev"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "地图渲染前端",
+        "cn_responsibility": "负责 Pixi 地图渲染、视口性能与地图交互。"
+      }
+    },
+    {
+      "id": "M17",
+      "name": "Frontend Domain Mirror",
+      "category": "Frontend/Shared",
+      "owner": "AI-FE-CommandSurface",
+      "backup": "AI-Shared-Contracts",
+      "paths": [
+        "src/game/"
+      ],
+      "entrypoints": [
+        "npm run dev",
+        "npm run build"
+      ],
+      "goal": "Frontend mirror of shared contracts/rules for UI-side derivation and local selectors.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M17.md"
+        ],
+        "specialized": [
+          "src/game/",
+          "entrypoint::npm run dev",
+          "entrypoint::npm run build"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run dev",
+            "npm run build"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "指挥界面前端",
+        "cn_responsibility": "负责指挥台交互、前端领域镜像与面板联动。"
+      }
+    },
+    {
+      "id": "M18",
+      "name": "Evals Tests and Batch Orchestrator",
+      "category": "QA",
+      "owner": "AI-QA-Gates",
+      "backup": "AI-QA-Gates",
+      "paths": [
+        "server/src/evals/",
+        "server/evals/",
+        "server/tests/",
+        "scripts/",
+        "server/src/agents/orchestrator/"
+      ],
+      "entrypoints": [
+        "npm run eval:planning:offline",
+        "npm run eval:orchestrator:stress",
+        "npm run gate:phase5:hardening",
+        "npm run sim:13factions"
+      ],
+      "goal": "Official simulation/eval/test pipelines and batch orchestrator quality gates.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M18.md"
+        ],
+        "specialized": [
+          "server/src/evals/",
+          "server/evals/",
+          "server/tests/",
+          "scripts/",
+          "server/src/agents/orchestrator/",
+          "entrypoint::npm run eval:planning:offline",
+          "entrypoint::npm run eval:orchestrator:stress",
+          "entrypoint::npm run gate:phase5:hardening",
+          "entrypoint::npm run sim:13factions"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening",
+            "npm run sim:13factions"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "质量门禁验收",
+        "cn_responsibility": "负责正式入口验收、评测门禁与跨模块 PASS/FAIL 裁定。"
+      }
+    },
+    {
+      "id": "M19",
+      "name": "Infra Store and Runtime Persistence",
+      "category": "Ops/Backend",
+      "owner": "AI-BE-RuleState",
+      "backup": "AI-BE-RuleState",
+      "paths": [
+        "server/src/infra/store/"
+      ],
+      "entrypoints": [
+        "REDIS_URL + npm run server:dev"
+      ],
+      "goal": "World store backend abstraction (memory/redis) and runtime persistence readiness.",
+      "context_pack": {
+        "common": [
+          "AGENTS.md",
+          "docs/PROJECT_RUNTIME_BASELINE_2026_03_25.md",
+          "docs/AI_ENGINEER_ORG_2026_03_25.md",
+          "docs/AI_ENGINEER_HUB_2026_03_25.md",
+          "docs/AI_SKILL_BINDINGS_2026_03_25.md",
+          "docs/MODULE_INDEX_2026_03_25_V2.md",
+          "docs/modules_v2/M19.md"
+        ],
+        "specialized": [
+          "server/src/infra/store/",
+          "entrypoint::REDIS_URL + npm run server:dev"
+        ],
+        "acceptance": {
+          "module_entrypoints": [
+            "REDIS_URL + npm run server:dev"
+          ],
+          "global_gate_entrypoints": [
+            "npm run lint",
+            "npm run build",
+            "npm run eval:planning:offline",
+            "npm run eval:orchestrator:stress",
+            "npm run gate:phase5:hardening"
+          ]
+        },
+        "update_rules": {
+          "module_card_backfill": "update Validation Snapshot after formal-entry verification",
+          "friday_cadence": "mandatory",
+          "temp_script_policy": "tmp only, temporary validation, cannot be final proof",
+          "result_language_policy": "english identifiers + chinese completion summary (recommended bilingual)"
+        }
+      },
+      "owner_profile": {
+        "cn_alias": "规则状态内核",
+        "cn_responsibility": "负责规则引擎裁决与状态持久化一致性，避免 world state 漂移。"
+      }
+    }
+  ]
+}

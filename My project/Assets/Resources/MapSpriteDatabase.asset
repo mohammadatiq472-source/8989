@@ -1,0 +1,464 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd1d6ce7f09024149b4756e60e4e4a6b, type: 3}
+  m_Name: MapSpriteDatabase
+  m_EditorClassIdentifier: Assembly-CSharp::YouZhou.Map.MapSpriteDatabase
+  entries:
+  - terrainType: 0
+    groundSprites:
+    - {fileID: 21300000, guid: f311a1c7695055e46a45728eac44e795, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: ed72515623d9b8d4fb06b13220d8b9ea, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: d08f48473bceaf84483af708dbdcae97, type: 3}
+    - {fileID: 21300000, guid: b9f6d473cc7f035448dd7a732081b110, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 7e3d1ee832ee239468c6c08ad1fa04bd, type: 3}
+    - {fileID: 21300000, guid: 9ccf63cdcc6d85f4c94addfab4302ad8, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 358c42ae08ac2f247be2cee636c0f91a, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 9c3907267819b0846a32a25b32bd8298, type: 3}
+    - {fileID: 21300000, guid: 595f8099a9c5b4a4181ea3fba88f6a33, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: 8f70e3f0dd13de44a970c2c551a6ec19, type: 3}
+    - {fileID: 0}
+    decorationSprites: []
+    decorationsPerBlock: 0
+  - terrainType: 1
+    groundSprites:
+    - {fileID: 21300000, guid: f311a1c7695055e46a45728eac44e795, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: ed72515623d9b8d4fb06b13220d8b9ea, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: d08f48473bceaf84483af708dbdcae97, type: 3}
+    - {fileID: 21300000, guid: b9f6d473cc7f035448dd7a732081b110, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 7e3d1ee832ee239468c6c08ad1fa04bd, type: 3}
+    - {fileID: 21300000, guid: 9ccf63cdcc6d85f4c94addfab4302ad8, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 358c42ae08ac2f247be2cee636c0f91a, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 9c3907267819b0846a32a25b32bd8298, type: 3}
+    - {fileID: 21300000, guid: 595f8099a9c5b4a4181ea3fba88f6a33, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: 8f70e3f0dd13de44a970c2c551a6ec19, type: 3}
+    - {fileID: 0}
+    decorationSprites:
+    - {fileID: 21300000, guid: 830331863c85e60448fbb484a8e7ba1f, type: 3}
+    - {fileID: 21300000, guid: 17d61196d9e37e248a61577bfd2465ba, type: 3}
+    - {fileID: 21300000, guid: 6cb3641b2e70130448229601de1e2966, type: 3}
+    - {fileID: 21300000, guid: 1d813dc92f15f2a489172eb23495d7c0, type: 3}
+    - {fileID: 21300000, guid: 0cc0808504a3bad40ba5f1e91ef77f01, type: 3}
+    - {fileID: 21300000, guid: 67e501f7b753f3045b418f82eca9ed7f, type: 3}
+    - {fileID: 21300000, guid: 97f1fd4b9ebc7794abf71bba37ba3ab2, type: 3}
+    - {fileID: 21300000, guid: 3013ff79a2d106d44bb78b082ab30c53, type: 3}
+    - {fileID: 21300000, guid: 15b46549abdbcbf4aae493751732b6b7, type: 3}
+    - {fileID: 21300000, guid: 01dbfd6712928c143ac43dc6781ffcf9, type: 3}
+    decorationsPerBlock: 2
+  - terrainType: 2
+    groundSprites:
+    - {fileID: 21300000, guid: abc1ca7f97b617e47a578996fd816d01, type: 3}
+    autoTileEdges: []
+    decorationSprites: []
+    decorationsPerBlock: 0
+  - terrainType: 3
+    groundSprites:
+    - {fileID: 21300000, guid: 2c503672ed5aafd439ff2b444bebc11c, type: 3}
+    - {fileID: 21300000, guid: a23ba9d22e87aac4a8f6ad1f264839d7, type: 3}
+    - {fileID: 21300000, guid: 980030312ddd7564281f3319030a921c, type: 3}
+    - {fileID: 21300000, guid: a78e9890c0c527548b3cf17b727ea472, type: 3}
+    - {fileID: 21300000, guid: 926015583a0e3a646914490973110311, type: 3}
+    - {fileID: 21300000, guid: a1193733e7de82a4a939db54a9c90093, type: 3}
+    - {fileID: 21300000, guid: 312041ab4b9f3dd4b99bfca76ef008e0, type: 3}
+    - {fileID: 21300000, guid: f836908fa86fe2945a3c943ba7382887, type: 3}
+    - {fileID: 21300000, guid: d75cbfb6eba1e2649b319c8a8b61d1ab, type: 3}
+    - {fileID: 21300000, guid: bae1bc0d5798a694180b36e682a0282e, type: 3}
+    - {fileID: 21300000, guid: 059f558acbc35b6439d9c45fc1339e4c, type: 3}
+    - {fileID: 21300000, guid: dd5a96faa71dc8a44ae9a633413af488, type: 3}
+    - {fileID: 21300000, guid: 6aee6be5ca59bbe4da38c599de41caae, type: 3}
+    - {fileID: 21300000, guid: 2f20ed2f5bb4403419fadd45a531cb0d, type: 3}
+    - {fileID: 21300000, guid: 6ea7c08404331d94991314b99677082e, type: 3}
+    - {fileID: 21300000, guid: 914c2389435482a4c9569811ad622b7b, type: 3}
+    - {fileID: 21300000, guid: 6db7f66739cceb04fb5d48bfbe365478, type: 3}
+    - {fileID: 21300000, guid: 0d90c6926cca6d94bb0e3ec7cf350e57, type: 3}
+    - {fileID: 21300000, guid: 4b4d043ba67fc56428ab9aead3a36c2b, type: 3}
+    - {fileID: 21300000, guid: 3e46c973253151649b238dc5af5261e7, type: 3}
+    - {fileID: 21300000, guid: f0433bc38a6b42148a6fcf77de5b513c, type: 3}
+    - {fileID: 21300000, guid: 54f1fee908a6a754fba2ce2a69e70f0f, type: 3}
+    - {fileID: 21300000, guid: 40fb8019da355fa4e8ea1b641286ca21, type: 3}
+    autoTileEdges: []
+    decorationSprites: []
+    decorationsPerBlock: 0
+  - terrainType: 4
+    groundSprites:
+    - {fileID: 21300000, guid: f311a1c7695055e46a45728eac44e795, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: ed72515623d9b8d4fb06b13220d8b9ea, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: d08f48473bceaf84483af708dbdcae97, type: 3}
+    - {fileID: 21300000, guid: b9f6d473cc7f035448dd7a732081b110, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 7e3d1ee832ee239468c6c08ad1fa04bd, type: 3}
+    - {fileID: 21300000, guid: 9ccf63cdcc6d85f4c94addfab4302ad8, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 358c42ae08ac2f247be2cee636c0f91a, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 9c3907267819b0846a32a25b32bd8298, type: 3}
+    - {fileID: 21300000, guid: 595f8099a9c5b4a4181ea3fba88f6a33, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: 8f70e3f0dd13de44a970c2c551a6ec19, type: 3}
+    - {fileID: 0}
+    decorationSprites:
+    - {fileID: 21300000, guid: 09e8d8cea9c5d85478e9c6b619096b72, type: 3}
+    - {fileID: 21300000, guid: 336780d6ebf5701409cfc3287a936e1b, type: 3}
+    - {fileID: 21300000, guid: 2822e69168cde6b4aa4f86c826a8eeda, type: 3}
+    - {fileID: 21300000, guid: 2b928474aacacf7489e635494da97218, type: 3}
+    - {fileID: 21300000, guid: 814fae1f5420f6741a4c531001ab9aef, type: 3}
+    - {fileID: 21300000, guid: c93a5150eb9c4274a916b95f6bf4b577, type: 3}
+    - {fileID: 21300000, guid: a35695f2b75aa1b48bcb255235221911, type: 3}
+    - {fileID: 21300000, guid: 5d06b269aa38a4c4c89312a5248d4a0a, type: 3}
+    - {fileID: 21300000, guid: ecf10173c2847dd41a9e22c447ff7f3f, type: 3}
+    - {fileID: 21300000, guid: 70049c2093b2f834e836885a7cd05b72, type: 3}
+    - {fileID: 21300000, guid: 5612577a521369843a1d2ebb94726f47, type: 3}
+    - {fileID: 21300000, guid: 1f3f8e170dcaae844b88127cb097318f, type: 3}
+    - {fileID: 21300000, guid: 41a9891db06abc64caba6a1b7fcc2e94, type: 3}
+    - {fileID: 21300000, guid: 6bab235fad7225145ab4b46bb67088e6, type: 3}
+    - {fileID: 21300000, guid: 389378d5385704e48a7396b099e00e34, type: 3}
+    - {fileID: 21300000, guid: e342fe3bbc333db4f80fbe496a64a42f, type: 3}
+    - {fileID: 21300000, guid: 1973c5b45e4d17f469bfccdf17005735, type: 3}
+    - {fileID: 21300000, guid: 6afea3b82962bb74bbb2baada2f227bf, type: 3}
+    - {fileID: 21300000, guid: 177f1c2f01507f543af128b5bbcb647e, type: 3}
+    - {fileID: 21300000, guid: c089ed1e5f71eed4695ce86f1c11e968, type: 3}
+    - {fileID: 21300000, guid: 76c80247b7784d84f9857ba9345348cd, type: 3}
+    - {fileID: 21300000, guid: 3e7cc36acb21c974788711d9406b4116, type: 3}
+    - {fileID: 21300000, guid: 5f31c9c2925b164408e2e79460529058, type: 3}
+    - {fileID: 21300000, guid: 3c8eeb0f37645ac48bd148f6d26d84f2, type: 3}
+    - {fileID: 21300000, guid: 9ef4c3cfdedea93419f8469d11f65657, type: 3}
+    - {fileID: 21300000, guid: f38abaf33aad444489ae866e34525132, type: 3}
+    - {fileID: 21300000, guid: 2c4473fe9bb143740bf2cf68642be01e, type: 3}
+    - {fileID: 21300000, guid: 7f73a3e6b7a71034f94161b1ed373299, type: 3}
+    - {fileID: 21300000, guid: e8a92428b58346c4bbba67cfda0ec7d5, type: 3}
+    - {fileID: 21300000, guid: 87ef728ad23e37b4a8a7d37b0d251769, type: 3}
+    - {fileID: 21300000, guid: ea61b515f538f4f4581214940342167c, type: 3}
+    - {fileID: 21300000, guid: bc4ec01bac2b75b4ebe7b92d850fa963, type: 3}
+    - {fileID: 21300000, guid: 9b94be3168093e941897609f0da304c4, type: 3}
+    - {fileID: 21300000, guid: 8bb1017875f663a4f80cddb34c263768, type: 3}
+    - {fileID: 21300000, guid: a26257b4f10e18d44871c7a0cbe9b9d4, type: 3}
+    - {fileID: 21300000, guid: ba7d259050ec8e14485012ff0353299d, type: 3}
+    - {fileID: 21300000, guid: 2235cbb209f723d4d9ad8925bfa3834e, type: 3}
+    - {fileID: 21300000, guid: 6b0e70210631ac249bc1d06b3bdb82fb, type: 3}
+    - {fileID: 21300000, guid: 43befdd90d800b740b5e9aeb3d83b48d, type: 3}
+    - {fileID: 21300000, guid: bf4992c1f97afb34ebd2f4b6b2f02bfc, type: 3}
+    - {fileID: 21300000, guid: 672d6933f908e6d44947c53f5907ed94, type: 3}
+    - {fileID: 21300000, guid: 7f1d7106f74915e48925e1416fefb8e7, type: 3}
+    - {fileID: 21300000, guid: 00f97b45c3b649044a707ef5e98ebf02, type: 3}
+    - {fileID: 21300000, guid: 31e38aeab5961b9428fb7a53ab32c329, type: 3}
+    - {fileID: 21300000, guid: 5167f8d1a9061844a9f6268e9fe3033a, type: 3}
+    - {fileID: 21300000, guid: 2b829d7dcbc9f1249a0651198a4330d8, type: 3}
+    - {fileID: 21300000, guid: 3acd0faccfcceaa4495ca48a7aad4014, type: 3}
+    - {fileID: 21300000, guid: 9ad72a69e1a36734fb6383caf045a61a, type: 3}
+    - {fileID: 21300000, guid: f513ffe8bfca0864facab0274cfad30b, type: 3}
+    - {fileID: 21300000, guid: 095c38ef73697924eb9a10fdaf3a57d0, type: 3}
+    - {fileID: 21300000, guid: 6fd8bd12566f8914ea2ebe131f5a22dc, type: 3}
+    - {fileID: 21300000, guid: ccc70eb1f8ca6524dbdea7159f3d84df, type: 3}
+    - {fileID: 21300000, guid: 53b7ff954c8185848bf36daa7833bc9e, type: 3}
+    decorationsPerBlock: 1
+  - terrainType: 5
+    groundSprites:
+    - {fileID: 21300000, guid: f311a1c7695055e46a45728eac44e795, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: ed72515623d9b8d4fb06b13220d8b9ea, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: d08f48473bceaf84483af708dbdcae97, type: 3}
+    - {fileID: 21300000, guid: b9f6d473cc7f035448dd7a732081b110, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 7e3d1ee832ee239468c6c08ad1fa04bd, type: 3}
+    - {fileID: 21300000, guid: 9ccf63cdcc6d85f4c94addfab4302ad8, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 358c42ae08ac2f247be2cee636c0f91a, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 9c3907267819b0846a32a25b32bd8298, type: 3}
+    - {fileID: 21300000, guid: 595f8099a9c5b4a4181ea3fba88f6a33, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: 8f70e3f0dd13de44a970c2c551a6ec19, type: 3}
+    - {fileID: 0}
+    decorationSprites:
+    - {fileID: 21300000, guid: 076466ae279b46443b306f78de8b042d, type: 3}
+    - {fileID: 21300000, guid: 1e751cc533ac46646988bdc6ca1f9ba2, type: 3}
+    - {fileID: 21300000, guid: 3c0853f5b4328db4991fd746efc1812c, type: 3}
+    - {fileID: 21300000, guid: cbe8527f448b04041841b73b81ec0d72, type: 3}
+    - {fileID: 21300000, guid: 706d4e2829e2b02499d3bc8781840697, type: 3}
+    - {fileID: 21300000, guid: 8adf9c384f5830048a67c1f32bf44e24, type: 3}
+    - {fileID: 21300000, guid: 7e12da2cb9ad427449a8d6d551f3a65d, type: 3}
+    - {fileID: 21300000, guid: 45bb61fab7c82864cac6f953ab575e29, type: 3}
+    - {fileID: 21300000, guid: 1ec750b067df91a4199cf52ef3d0e2fd, type: 3}
+    - {fileID: 21300000, guid: 452a91b89f5d3b3439baef8dfb6df735, type: 3}
+    - {fileID: 21300000, guid: 93a7ebe1ca30e4547ae59c534a16017c, type: 3}
+    - {fileID: 21300000, guid: 5d10bb005831f8941891ed703e030a6f, type: 3}
+    - {fileID: 21300000, guid: 15ab51f0ba5827a41be2ce357bc663ec, type: 3}
+    - {fileID: 21300000, guid: 62a2f5f48fd2bd841a96d5cca7aa3063, type: 3}
+    - {fileID: 21300000, guid: 83c6d483aac66724396ad65732ca1e66, type: 3}
+    - {fileID: 21300000, guid: 760501238113a32408daeae584dc2442, type: 3}
+    decorationsPerBlock: 2
+  - terrainType: 6
+    groundSprites:
+    - {fileID: 21300000, guid: ce04b7a12565f4e41b86fd9be097484f, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: 6c387c94cf176ef45a92fa3384afcca8, type: 3}
+    - {fileID: 21300000, guid: ec3241fca37ad524c9276fc4ebb1eed7, type: 3}
+    - {fileID: 21300000, guid: c1d48e12b1158954f9c571ce5710577f, type: 3}
+    - {fileID: 21300000, guid: e3a6a4826041f3542aaf7e0d24d72fa1, type: 3}
+    - {fileID: 21300000, guid: a453d45be1661274990da8254c71458d, type: 3}
+    - {fileID: 21300000, guid: 9143c7c020b6b5947b660490f5b59dc8, type: 3}
+    - {fileID: 21300000, guid: 49dd691aab1efe44caba31ab9ebd198b, type: 3}
+    - {fileID: 21300000, guid: ff74748a52450c7479e7ed2b1e3b2d8a, type: 3}
+    - {fileID: 21300000, guid: ec3241fca37ad524c9276fc4ebb1eed7, type: 3}
+    - {fileID: 21300000, guid: 4dc83d377bc618f4187b3d9a75ee4bad, type: 3}
+    - {fileID: 21300000, guid: 9143c7c020b6b5947b660490f5b59dc8, type: 3}
+    - {fileID: 21300000, guid: e3d4fab73b6e1634cb4efdab30230b69, type: 3}
+    - {fileID: 21300000, guid: ce31571746db48c45909c2ed83c7f6fe, type: 3}
+    - {fileID: 21300000, guid: c1d48e12b1158954f9c571ce5710577f, type: 3}
+    - {fileID: 21300000, guid: 9de0571f92e13804091fdd9a6abf033f, type: 3}
+    - {fileID: 0}
+    decorationSprites: []
+    decorationsPerBlock: 0
+  - terrainType: 7
+    groundSprites:
+    - {fileID: 21300000, guid: ce04b7a12565f4e41b86fd9be097484f, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: 6c387c94cf176ef45a92fa3384afcca8, type: 3}
+    - {fileID: 21300000, guid: ec3241fca37ad524c9276fc4ebb1eed7, type: 3}
+    - {fileID: 21300000, guid: c1d48e12b1158954f9c571ce5710577f, type: 3}
+    - {fileID: 21300000, guid: e3a6a4826041f3542aaf7e0d24d72fa1, type: 3}
+    - {fileID: 21300000, guid: a453d45be1661274990da8254c71458d, type: 3}
+    - {fileID: 21300000, guid: 9143c7c020b6b5947b660490f5b59dc8, type: 3}
+    - {fileID: 21300000, guid: 49dd691aab1efe44caba31ab9ebd198b, type: 3}
+    - {fileID: 21300000, guid: ff74748a52450c7479e7ed2b1e3b2d8a, type: 3}
+    - {fileID: 21300000, guid: ec3241fca37ad524c9276fc4ebb1eed7, type: 3}
+    - {fileID: 21300000, guid: 4dc83d377bc618f4187b3d9a75ee4bad, type: 3}
+    - {fileID: 21300000, guid: 9143c7c020b6b5947b660490f5b59dc8, type: 3}
+    - {fileID: 21300000, guid: e3d4fab73b6e1634cb4efdab30230b69, type: 3}
+    - {fileID: 21300000, guid: ce31571746db48c45909c2ed83c7f6fe, type: 3}
+    - {fileID: 21300000, guid: c1d48e12b1158954f9c571ce5710577f, type: 3}
+    - {fileID: 21300000, guid: 9de0571f92e13804091fdd9a6abf033f, type: 3}
+    - {fileID: 0}
+    decorationSprites:
+    - {fileID: 21300000, guid: 237639c552bf08d408b8e654db66754c, type: 3}
+    - {fileID: 21300000, guid: f5ed5326b81e79748a072d702ed03cda, type: 3}
+    - {fileID: 21300000, guid: 6f688582e759a0c46bc1574fbd57b707, type: 3}
+    - {fileID: 21300000, guid: b1ee8f2fef589ef4c8d80c1dda73ddc5, type: 3}
+    - {fileID: 21300000, guid: baee7a40b4d8b4544bf76f522b246abd, type: 3}
+    - {fileID: 21300000, guid: 3cf6f2bfc2c3dbd45addfe0c63d7b0c1, type: 3}
+    - {fileID: 21300000, guid: 105b70f8abfa1a44c8c50cbb3f1e65ef, type: 3}
+    - {fileID: 21300000, guid: 17ad70a5f837d334b9507163a3e77042, type: 3}
+    - {fileID: 21300000, guid: 3ea76a6d757254a4fa975d79d79f6ced, type: 3}
+    - {fileID: 21300000, guid: 37debc6e289f6cb469d18d292f070041, type: 3}
+    decorationsPerBlock: 2
+  - terrainType: 8
+    groundSprites:
+    - {fileID: 21300000, guid: 99f1c5903d4a9f443bd29f57961b2286, type: 3}
+    - {fileID: 21300000, guid: 89ae6f4df556f4441b3c64373fed74c4, type: 3}
+    - {fileID: 21300000, guid: 33c2a54d35ec2284482b42e46d74e1f8, type: 3}
+    - {fileID: 21300000, guid: 80cade813141a0f4196c6905fd42bb37, type: 3}
+    - {fileID: 21300000, guid: 877016422a2e8c749b5d95f207974853, type: 3}
+    - {fileID: 21300000, guid: 0a8bbc2702efc464284948ead5e47fd1, type: 3}
+    - {fileID: 21300000, guid: 16e2ecd0258c2f547af82881bbd8cd37, type: 3}
+    - {fileID: 21300000, guid: 0800343bd8336d9418f4394a180b05f1, type: 3}
+    - {fileID: 21300000, guid: 5e6793e7387da0e4e87d6417a964993c, type: 3}
+    - {fileID: 21300000, guid: a22e917020fc5db4d849c155be626418, type: 3}
+    - {fileID: 21300000, guid: 36432d2abb007204490370b19ef86612, type: 3}
+    - {fileID: 21300000, guid: 85277c866b81ee14899f379c64559b7b, type: 3}
+    - {fileID: 21300000, guid: 4fb741f27bdcce5439f9ceca89cc0d6c, type: 3}
+    - {fileID: 21300000, guid: 48ad2f056b18f244ebc13ad429d79ea7, type: 3}
+    - {fileID: 21300000, guid: 492387cf2979ae54ba4f3b0a9086179f, type: 3}
+    - {fileID: 21300000, guid: d395519cf07c8a540a9f8a8a993312ec, type: 3}
+    - {fileID: 21300000, guid: 5f9b869cd6990dc4d8a5ee18e1051ec0, type: 3}
+    - {fileID: 21300000, guid: bb247f2a6d51d1f47a543eeab8a2e918, type: 3}
+    - {fileID: 21300000, guid: 65e639eb587189b43828ef886293b5d4, type: 3}
+    - {fileID: 21300000, guid: 8e3d3429c1b4db04c8a29a4ac0d5cd33, type: 3}
+    - {fileID: 21300000, guid: 0efbd9c9937aeb4499238670fcc0b8f6, type: 3}
+    - {fileID: 21300000, guid: ba06c869100968e4fb6a5fdeb4e694e0, type: 3}
+    - {fileID: 21300000, guid: 662917c7babdfc945acfd9134ded5fd9, type: 3}
+    - {fileID: 21300000, guid: 3e8ce7a789d6aab4ba02c6d1afb206b4, type: 3}
+    - {fileID: 21300000, guid: e7eb531678bfec24e8370e7242d5f15f, type: 3}
+    - {fileID: 21300000, guid: 79192f5816f682f429b02d2bce12823d, type: 3}
+    - {fileID: 21300000, guid: b2a85d5ac8fa6054b9e6bb0c9e7ad73e, type: 3}
+    - {fileID: 21300000, guid: 63cc0e3c2438dc941b907fd6225e4bab, type: 3}
+    - {fileID: 21300000, guid: de51eb7c784b4484bba3107405b58fd2, type: 3}
+    - {fileID: 21300000, guid: 930361b9528efbc4bbe36d7bed84d138, type: 3}
+    - {fileID: 21300000, guid: 87a258dbdf7679840b299091da4b6611, type: 3}
+    - {fileID: 21300000, guid: 78eabf9a041e9be49884f32dd6d6ddad, type: 3}
+    - {fileID: 21300000, guid: aa0baae49b047cb4cb9447b3babcb5ba, type: 3}
+    - {fileID: 21300000, guid: c19907371ff0f81418be5631e9e2c9eb, type: 3}
+    - {fileID: 21300000, guid: 6e11ac325c0e61f43a3c50d467282d5a, type: 3}
+    - {fileID: 21300000, guid: ad61939742aa72f4596bc056dde85030, type: 3}
+    - {fileID: 21300000, guid: 18cbf34927c01b44c8c2092aa0fd6e26, type: 3}
+    - {fileID: 21300000, guid: 8aac3618689268349a17ce6b5dced47a, type: 3}
+    - {fileID: 21300000, guid: e02a523ff54093b4fabf081af1fa8d98, type: 3}
+    - {fileID: 21300000, guid: 86854e1292510b542a2725cce7692611, type: 3}
+    - {fileID: 21300000, guid: 546a89846ebcea146882ca483b8720ed, type: 3}
+    - {fileID: 21300000, guid: 371a3d03ef6e19543820e6feeaa8fe24, type: 3}
+    - {fileID: 21300000, guid: d8c72f9a322d5884fbdafcec9db9e9e9, type: 3}
+    - {fileID: 21300000, guid: dd876cae12df49349b0df1eb1521cc08, type: 3}
+    - {fileID: 21300000, guid: b8e47a50ee3c80c42905f9c7f8dea283, type: 3}
+    autoTileEdges: []
+    decorationSprites: []
+    decorationsPerBlock: 0
+  - terrainType: 9
+    groundSprites:
+    - {fileID: 21300000, guid: 652cb46b84be67a499a2fb1c0c59b6ca, type: 3}
+    - {fileID: 21300000, guid: 4f6707c2dc6e3674b80caa70590ea616, type: 3}
+    - {fileID: 21300000, guid: 83b04583157c5e44ea78a9cca35ea251, type: 3}
+    - {fileID: 21300000, guid: b28f22aefb5fdb147a197a3577de072f, type: 3}
+    - {fileID: 21300000, guid: fd9fabab17163924183e0129d140d3c2, type: 3}
+    - {fileID: 21300000, guid: 8b7c4918ed2aff64bbb38a8264696a15, type: 3}
+    - {fileID: 21300000, guid: dfeea9f37046c4c4b836323c85f3dd10, type: 3}
+    - {fileID: 21300000, guid: 6530312cfaf165349b6eff7921ec87e7, type: 3}
+    - {fileID: 21300000, guid: 10513f45d8877ce429109ed849cb3a3d, type: 3}
+    - {fileID: 21300000, guid: 74073330643143748a244bfbaa6be0b7, type: 3}
+    - {fileID: 21300000, guid: 151ab1cc2180ede418800aff5ecd0794, type: 3}
+    - {fileID: 21300000, guid: bac226547f3aa2d40a8e96904725e88c, type: 3}
+    - {fileID: 21300000, guid: a0f63a76d83baa14f96dcf191d9ee0fe, type: 3}
+    - {fileID: 21300000, guid: a1b9fad12c183c94787dfaa6dcb00ac6, type: 3}
+    - {fileID: 21300000, guid: fd4e11532c5cace4a995755b8f3330f5, type: 3}
+    - {fileID: 21300000, guid: 6a2c6aac58ed2d34095dda331c8003d8, type: 3}
+    - {fileID: 21300000, guid: adc76f2e88427f749902030be658862d, type: 3}
+    - {fileID: 21300000, guid: 23b55f776645da94e96b0efdbdc9b252, type: 3}
+    - {fileID: 21300000, guid: 6c4033e2b4afba8409776692eaf49c37, type: 3}
+    - {fileID: 21300000, guid: 961252de1b49bf340b11fbe2bbe6b50e, type: 3}
+    - {fileID: 21300000, guid: d46eaa2e317059d449afb67a1633508a, type: 3}
+    - {fileID: 21300000, guid: 32a4e6120b4b3814eaf8022482ee0616, type: 3}
+    - {fileID: 21300000, guid: 7285a1dbe4553ab4d851010522a8cea8, type: 3}
+    - {fileID: 21300000, guid: 182d2abae891c344ba375a231cc53069, type: 3}
+    - {fileID: 21300000, guid: eb951d7ccfcd882449c611429dfe8bba, type: 3}
+    - {fileID: 21300000, guid: 58ae3f8088fd489438d8a6bcdde97b92, type: 3}
+    - {fileID: 21300000, guid: 806b3b94789f8eb4d9f103df51eae4e0, type: 3}
+    - {fileID: 21300000, guid: f483050882884ca4582f13152e9b00bd, type: 3}
+    - {fileID: 21300000, guid: cb192a141ea767945ac0bceabde778d8, type: 3}
+    - {fileID: 21300000, guid: 03a0c688e1fb5414a89b8ad8b516f2bb, type: 3}
+    - {fileID: 21300000, guid: e5c92972c0ca4844eb83c568d9e6f5e3, type: 3}
+    - {fileID: 21300000, guid: 7afe81c4329d4f748a8118d8a1e09afc, type: 3}
+    - {fileID: 21300000, guid: 3c0958b44026573439e2c92a5d5b9859, type: 3}
+    - {fileID: 21300000, guid: 7a507a1275ec91746901e326faf1c8f1, type: 3}
+    - {fileID: 21300000, guid: 5fb6b87693607e04a87fb1887d92ee09, type: 3}
+    - {fileID: 21300000, guid: 8de6c06b9f511c240bb25f17ef062de7, type: 3}
+    - {fileID: 21300000, guid: b6adcb31532f46640a11afd628efc63f, type: 3}
+    - {fileID: 21300000, guid: 4b3c87a55a305c8409a959457400a989, type: 3}
+    - {fileID: 21300000, guid: e8be4fe36bbcd6842abafdd06299f090, type: 3}
+    - {fileID: 21300000, guid: b1ba72f5c8d403440ad47c66d24a2e3a, type: 3}
+    - {fileID: 21300000, guid: 662431dbb05e3ee478a8e8d72daa21b0, type: 3}
+    - {fileID: 21300000, guid: df856479923960f4c8aa6e0635dcc25d, type: 3}
+    - {fileID: 21300000, guid: 273b8ef9317234e49af15e57d1573330, type: 3}
+    - {fileID: 21300000, guid: 81ce90988201800448281746831da126, type: 3}
+    - {fileID: 21300000, guid: 85b555f810dafcd4b8e128abb12d2a0e, type: 3}
+    autoTileEdges: []
+    decorationSprites: []
+    decorationsPerBlock: 0
+  - terrainType: 10
+    groundSprites:
+    - {fileID: 21300000, guid: f311a1c7695055e46a45728eac44e795, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: ed72515623d9b8d4fb06b13220d8b9ea, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: d08f48473bceaf84483af708dbdcae97, type: 3}
+    - {fileID: 21300000, guid: b9f6d473cc7f035448dd7a732081b110, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 7e3d1ee832ee239468c6c08ad1fa04bd, type: 3}
+    - {fileID: 21300000, guid: 9ccf63cdcc6d85f4c94addfab4302ad8, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 358c42ae08ac2f247be2cee636c0f91a, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 9c3907267819b0846a32a25b32bd8298, type: 3}
+    - {fileID: 21300000, guid: 595f8099a9c5b4a4181ea3fba88f6a33, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: 8f70e3f0dd13de44a970c2c551a6ec19, type: 3}
+    - {fileID: 0}
+    decorationSprites:
+    - {fileID: 21300000, guid: 6abc55358df148e409d144bc5f579a50, type: 3}
+    - {fileID: 21300000, guid: 8f3b27f92fbd18441a483d41bd82ca9b, type: 3}
+    - {fileID: 21300000, guid: f18ce4be73e0af14a84460b001ff9559, type: 3}
+    - {fileID: 21300000, guid: 18c02a58cf2467d46b6e9059b5786911, type: 3}
+    - {fileID: 21300000, guid: 385510330ab5a05429fad601029db3ce, type: 3}
+    - {fileID: 21300000, guid: 3911ab39c53b4644e9281db56a02b48f, type: 3}
+    - {fileID: 21300000, guid: 65aafcd38624f474a907cbb7c6bb7555, type: 3}
+    - {fileID: 21300000, guid: c1ac806bf99ce194c8b3b7e9ed474f67, type: 3}
+    - {fileID: 21300000, guid: d01633e8c1a922349a066136d899b998, type: 3}
+    - {fileID: 21300000, guid: 255166e0d7aeba44d8cad639c68c3838, type: 3}
+    - {fileID: 21300000, guid: 933e449bc9215bf4f83e98f37429e3ca, type: 3}
+    - {fileID: 21300000, guid: 6a3c911ba743e7540a79871d0404369f, type: 3}
+    - {fileID: 21300000, guid: ac11c1f2bd4d6e94ca81069c95fe6bf2, type: 3}
+    - {fileID: 21300000, guid: cd0e83359b4617045aabb1a6431cf150, type: 3}
+    - {fileID: 21300000, guid: ed5f29b8679e92b4dbaf67150db87da8, type: 3}
+    - {fileID: 21300000, guid: 3c0923b3c2205b047a7da3b82f320d0c, type: 3}
+    - {fileID: 21300000, guid: 0c4ca23433271c4419ca189d07291b6d, type: 3}
+    - {fileID: 21300000, guid: b5347933be8528048bbc6834dd318405, type: 3}
+    - {fileID: 21300000, guid: 4f20ff85d8475d74a95548099a3e6542, type: 3}
+    - {fileID: 21300000, guid: 501d6c2039f240f4597ab4f171c74265, type: 3}
+    - {fileID: 21300000, guid: 2a24247610b2c56478175d64f6046daf, type: 3}
+    - {fileID: 21300000, guid: cc2e7e3d97b4655499c82d890329d98b, type: 3}
+    - {fileID: 21300000, guid: dd62c5f4c7cf45b4cafac7bf50131a34, type: 3}
+    - {fileID: 21300000, guid: 1deb81709fde9284794d6ea352f41a8e, type: 3}
+    - {fileID: 21300000, guid: e1e56e7af252ec14d9e0855eeaa7a21f, type: 3}
+    - {fileID: 21300000, guid: 2824e7fddfc44ec4ab95f802c90ff66f, type: 3}
+    - {fileID: 21300000, guid: e8fc366f344a9454783d542f0cb5660c, type: 3}
+    - {fileID: 21300000, guid: a096cc70a1867a74582218a254b67cd2, type: 3}
+    - {fileID: 21300000, guid: f20055a3d81f9f44aa6250be981844b9, type: 3}
+    - {fileID: 21300000, guid: 844dde3f1371aff4db1bf53fd7675a4a, type: 3}
+    - {fileID: 21300000, guid: adc9dd587e5bf4a42a1e12386e9e029a, type: 3}
+    - {fileID: 21300000, guid: 1b09bb8e4a3270c4282610c5aaf93dfa, type: 3}
+    - {fileID: 21300000, guid: b9f4c4a8899fcd543bbfe4245afa7698, type: 3}
+    - {fileID: 21300000, guid: 9df3cb3e5deb4414e95f5954019327ff, type: 3}
+    - {fileID: 21300000, guid: 3e314d092b576f94a916a29bd5387d0f, type: 3}
+    - {fileID: 21300000, guid: 853048ead1f77014091d4ed9f3b37625, type: 3}
+    - {fileID: 21300000, guid: d9270092687af12408fe50f463163b56, type: 3}
+    - {fileID: 21300000, guid: 690fdc24992f29847b7ee11364e7704c, type: 3}
+    - {fileID: 21300000, guid: 484a76d6b7dff4b49a2f8430cf1a8e71, type: 3}
+    - {fileID: 21300000, guid: e35d0307996d8914c8d8dc261a4a31de, type: 3}
+    - {fileID: 21300000, guid: 1eb79f8bbf19da343adc7e5e186a440f, type: 3}
+    - {fileID: 21300000, guid: 1e3bdf242de078745a246253741c1e5b, type: 3}
+    - {fileID: 21300000, guid: 1bc095591e44f8649bc8bc5a1453d7be, type: 3}
+    - {fileID: 21300000, guid: 439ca0eeefaf2ad4d8e233c9df7fd130, type: 3}
+    - {fileID: 21300000, guid: 9ca71c3572f4a92429c2edff7e9973e2, type: 3}
+    - {fileID: 21300000, guid: d908bba52e88e1a41ba526a7a80ec9e1, type: 3}
+    decorationsPerBlock: 1
+  - terrainType: 11
+    groundSprites:
+    - {fileID: 21300000, guid: f311a1c7695055e46a45728eac44e795, type: 3}
+    autoTileEdges:
+    - {fileID: 21300000, guid: ed72515623d9b8d4fb06b13220d8b9ea, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: d08f48473bceaf84483af708dbdcae97, type: 3}
+    - {fileID: 21300000, guid: b9f6d473cc7f035448dd7a732081b110, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 7e3d1ee832ee239468c6c08ad1fa04bd, type: 3}
+    - {fileID: 21300000, guid: 9ccf63cdcc6d85f4c94addfab4302ad8, type: 3}
+    - {fileID: 21300000, guid: 2f0dd934b7b12b24f86c15b6cf0b5398, type: 3}
+    - {fileID: 21300000, guid: 358c42ae08ac2f247be2cee636c0f91a, type: 3}
+    - {fileID: 21300000, guid: 61525bf1621587e42858da62a4eba691, type: 3}
+    - {fileID: 21300000, guid: 9c3907267819b0846a32a25b32bd8298, type: 3}
+    - {fileID: 21300000, guid: 595f8099a9c5b4a4181ea3fba88f6a33, type: 3}
+    - {fileID: 21300000, guid: 0bd489661c9725048918c88a83d3fec6, type: 3}
+    - {fileID: 21300000, guid: 8f70e3f0dd13de44a970c2c551a6ec19, type: 3}
+    - {fileID: 0}
+    decorationSprites:
+    - {fileID: 21300000, guid: 09e8d8cea9c5d85478e9c6b619096b72, type: 3}
+    - {fileID: 21300000, guid: 336780d6ebf5701409cfc3287a936e1b, type: 3}
+    - {fileID: 21300000, guid: c089ed1e5f71eed4695ce86f1c11e968, type: 3}
+    - {fileID: 21300000, guid: 76c80247b7784d84f9857ba9345348cd, type: 3}
+    decorationsPerBlock: 1

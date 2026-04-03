@@ -1,0 +1,112 @@
+{
+  "version": "v1",
+  "updatedAt": "2026-03-14",
+  "description": "Offline commander planning eval dataset for structure, tactical soundness, and player acceptability.",
+  "cases": [
+    {
+      "id": "case-001-baseline-stability",
+      "title": "Baseline stability with cautious command",
+      "scenario": "baseline",
+      "strategicCommand": "稳住西线并补足侦察，避免高损失。",
+      "plannerConfig": {
+        "mode": "mock",
+        "model": ""
+      },
+      "expectations": {
+        "maxOrders": 6,
+        "requireAnyAction": [
+          "garrison",
+          "support",
+          "recon"
+        ],
+        "requireExplanation": true,
+        "minExplanationLength": 20,
+        "requirePlanningRationale": true,
+        "minRationaleItems": 2
+      }
+    },
+    {
+      "id": "case-002-intel-first",
+      "title": "Intel-first under sparse intel",
+      "scenario": "intel_scarce",
+      "strategicCommand": "北线先侦察后推进，避免高损失。",
+      "plannerConfig": {
+        "mode": "mock",
+        "model": ""
+      },
+      "expectations": {
+        "maxOrders": 6,
+        "requireAllActions": [
+          "recon"
+        ],
+        "preferReconWhenIntelLow": true,
+        "requireExplanation": true,
+        "requirePlanningRationale": true,
+        "minRationaleItems": 2
+      }
+    },
+    {
+      "id": "case-003-supply-guard",
+      "title": "Supply line protection in high frontline pressure",
+      "scenario": "high_frontline_risk",
+      "strategicCommand": "先稳住补给线和粮道，再考虑推进。",
+      "plannerConfig": {
+        "mode": "mock",
+        "model": ""
+      },
+      "expectations": {
+        "maxOrders": 6,
+        "requireAnyAction": [
+          "garrison",
+          "support"
+        ],
+        "requireExplanation": true,
+        "requirePlanningRationale": true,
+        "minRationaleItems": 2
+      }
+    },
+    {
+      "id": "case-004-expansion-window",
+      "title": "Expansion when risk is reduced",
+      "scenario": "expansion_window",
+      "strategicCommand": "在保障补给的前提下扩资源并占点。",
+      "plannerConfig": {
+        "mode": "mock",
+        "model": ""
+      },
+      "expectations": {
+        "maxOrders": 6,
+        "requireAnyAction": [
+          "capture"
+        ],
+        "requireExplanation": true,
+        "requirePlanningRationale": true,
+        "minRationaleItems": 2
+      }
+    },
+    {
+      "id": "case-005-conservative-under-global-risk",
+      "title": "Conservative behavior under global high risk",
+      "scenario": "high_global_risk",
+      "strategicCommand": "情报不足先侦察并稳住防线，不要盲冲。",
+      "plannerConfig": {
+        "mode": "mock",
+        "model": ""
+      },
+      "expectations": {
+        "maxOrders": 6,
+        "requireAnyAction": [
+          "recon",
+          "garrison"
+        ],
+        "forbidActions": [
+          "capture"
+        ],
+        "preferReconWhenIntelLow": true,
+        "requireExplanation": true,
+        "requirePlanningRationale": true,
+        "minRationaleItems": 2
+      }
+    }
+  ]
+}

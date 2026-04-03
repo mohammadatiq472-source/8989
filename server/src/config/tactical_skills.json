@@ -1,0 +1,362 @@
+[
+  {
+    "situationTags": [
+      "phase:mid",
+      "luoyang:neutral",
+      "pressure:high",
+      "scenario:u3_于_tile_10"
+    ],
+    "tacticSummary": "unit_jiao_1 于 luoyang_4_4 失利，战损 A8/D12，协同 0。；unit_liang_5 于 luoyang_5_4 失利，战损 A8/D4，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "siege",
+        "context": "对洛阳或要塞展开围城，持续施压直至倒计时完成"
+      }
+    ],
+    "outcomeScore": 0.3500010214234938,
+    "tickRecorded": 11,
+    "factionId": "u3",
+    "id": "8c9ba54b-8d85-4951-88dd-a510357e8fda",
+    "uses": 579
+  },
+  {
+    "situationTags": [
+      "phase:late",
+      "luoyang:neutral",
+      "pressure:high",
+      "scenario:e4_于_tile_08"
+    ],
+    "tacticSummary": "unit_liang_10 于 luoyang_4_4 失利，战损 A8/D0，协同 0。；unit_yang_r7 于 grid_224_158 失利，战损 A8/D9，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.20000000000000007,
+    "tickRecorded": 30,
+    "factionId": "e4",
+    "id": "b5e2e5e5-b82a-4a7a-9fe9-5ca1aacae1ee",
+    "uses": 358
+  },
+  {
+    "situationTags": [
+      "phase:early",
+      "luoyang:neutral",
+      "pressure:low",
+      "scenario:东境屯垦军_推进_eas"
+    ],
+    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 153-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.5,
+    "tickRecorded": 44,
+    "factionId": "alliance",
+    "id": "643d4c93-abee-44a2-9cdc-8d31edf04681",
+    "uses": 12673
+  },
+  {
+    "situationTags": [
+      "phase:mid",
+      "luoyang:enemy",
+      "pressure:low",
+      "scenario:东境屯垦军_推进_eas"
+    ],
+    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.5000000000000002,
+    "tickRecorded": 66,
+    "factionId": "alliance",
+    "id": "bdcfae15-d6ea-4717-9ac8-42c9d1df1467",
+    "uses": 5235
+  },
+  {
+    "situationTags": [
+      "phase:early",
+      "luoyang:enemy",
+      "pressure:medium",
+      "scenario:东境屯垦军_推进_eas"
+    ],
+    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.8,
+    "tickRecorded": 19,
+    "factionId": "alliance",
+    "id": "e0c6f896-0dad-4807-ad76-33127a2ce867",
+    "uses": 139
+  },
+  {
+    "situationTags": [
+      "phase:early",
+      "luoyang:neutral",
+      "pressure:medium",
+      "scenario:unit_jing_5_"
+    ],
+    "tacticSummary": "unit_jing_5 于 luoyang_4_5 失利，战损 A8/D4，协同 0。；unit_jing_3 于 luoyang_4_5 失利，战损 A8/D12，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.500000000027976,
+    "tickRecorded": 6,
+    "factionId": "unit_jing_5",
+    "id": "476d2f6f-93eb-4ff7-b617-f407d2e08577",
+    "uses": 156
+  },
+  {
+    "situationTags": [
+      "phase:early",
+      "luoyang:neutral",
+      "pressure:high",
+      "scenario:unit_liang_5"
+    ],
+    "tacticSummary": "unit_liang_5 于 grid_160_148 失利，战损 A8/D10，协同 0。；unit_liang_3 于 grid_160_148 失利，战损 A8/D10，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.20000000000000007,
+    "tickRecorded": 42,
+    "factionId": "liang",
+    "id": "ded05ac7-ada6-4443-807b-2503bf5eb1f2",
+    "uses": 196
+  },
+  {
+    "situationTags": [
+      "phase:mid",
+      "luoyang:enemy",
+      "pressure:high",
+      "scenario:unit_liang_6"
+    ],
+    "tacticSummary": "unit_liang_5 于 luoyang_5_4 失利，战损 A8/D6，协同 0。；unit_liang_1 于 luoyang_5_4 失利，战损 A8/D6，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.4249999883588676,
+    "tickRecorded": 13,
+    "factionId": "jing",
+    "id": "a3df3d75-11d5-47cb-afb8-1f6f4480fe9b",
+    "uses": 451
+  },
+  {
+    "situationTags": [
+      "phase:mid",
+      "luoyang:enemy",
+      "pressure:medium",
+      "scenario:unit_jing_5_"
+    ],
+    "tacticSummary": "unit_jiao_8 于 grid_208_186 失利，战损 A8/D11，协同 0。；unit_yang_8 于 grid_217_158 取胜，战损 A8/D12，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.5000020445355733,
+    "tickRecorded": 15,
+    "factionId": "jing",
+    "id": "0f516d0a-1a6b-4374-b43a-d3b329594637",
+    "uses": 382
+  },
+  {
+    "situationTags": [
+      "phase:late",
+      "luoyang:enemy",
+      "pressure:high",
+      "scenario:unit_jing_5_"
+    ],
+    "tacticSummary": "unit_yu_7 于 luoyang_7_5 失利，战损 A8/D8，协同 0。；unit_yu_2 于 luoyang_4_4 失利，战损 A8/D12，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.3999982913355177,
+    "tickRecorded": 21,
+    "factionId": "yan",
+    "id": "ad8cb4fd-1632-4a32-8b77-bd22b76aa807",
+    "uses": 529
+  },
+  {
+    "situationTags": [
+      "phase:mid",
+      "luoyang:neutral",
+      "pressure:medium",
+      "scenario:unit_jiao_5_"
+    ],
+    "tacticSummary": "unit_jiao_1 于 grid_160_179 取胜，战损 A8/D12，协同 0。；unit_liang_1 于 luoyang_5_4 失利，战损 A8/D0，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.6494454229206564,
+    "tickRecorded": 7,
+    "factionId": "unit_jiao_5",
+    "id": "ba77f9dc-f90b-40ad-bc11-b01b70c1fd20",
+    "uses": 710
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:neutral",
+      "pressure:high",
+      "scenario:unit_yang_7_"
+    ],
+    "tacticSummary": "unit_yang_7 于 grid_221_158 失利，战损 A8/D12，协同 0。；unit_yu_5 于 luoyang_7_4 失利，战损 A8/D10，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.275,
+    "tickRecorded": 43,
+    "factionId": "yan",
+    "id": "e32951d6-2e53-48a3-a4bc-156e41e9e667",
+    "uses": 23
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:enemy",
+      "pressure:high",
+      "scenario:unit_yi_8_于_"
+    ],
+    "tacticSummary": "unit_ji_4 于 grid_168_157 失利，战损 A8/D8，协同 0。；unit_han_8 于 grid_154_157 失利，战损 A8/D28，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.3491532327744044,
+    "tickRecorded": 48,
+    "factionId": "yi",
+    "id": "c58c058f-767d-449e-b118-4c55cbcdf5bc",
+    "uses": 323
+  },
+  {
+    "situationTags": [
+      "phase:late",
+      "luoyang:enemy",
+      "pressure:medium",
+      "scenario:unit_liang_6"
+    ],
+    "tacticSummary": "unit_liang_8 于 luoyang_5_4 失利，战损 A8/D11，协同 0。；unit_yi_r2 于 grid_154_157 失利，战损 A8/D18，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.5002757183085833,
+    "tickRecorded": 16,
+    "factionId": "liang",
+    "id": "6c1e8745-ba8b-4ef2-b792-646f4078b7c9",
+    "uses": 236
+  },
+  {
+    "situationTags": [
+      "phase:late",
+      "luoyang:ours",
+      "pressure:high",
+      "scenario:unit_yu_4_于_"
+    ],
+    "tacticSummary": "unit_bing_8 于 luoyang_5_4 失利，战损 A8/D6，协同 0。；unit_bing_5 于 luoyang_5_4 失利，战损 A8/D8，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.31955735671665797,
+    "tickRecorded": 19,
+    "factionId": "yu",
+    "id": "8f73ccb2-1ac8-41ab-bff9-753ed67e5b9d",
+    "uses": 78
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:enemy",
+      "pressure:medium",
+      "scenario:unit_yang_r1"
+    ],
+    "tacticSummary": "unit_liang_r1 于 grid_160_150 取胜，战损 A8/D12，协同 0。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.7999903489657143,
+    "tickRecorded": 45,
+    "factionId": "unit_yang_r1",
+    "id": "4f8b6fbe-f8fa-478c-8ce9-b732439f2f68",
+    "uses": 124
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:ours",
+      "pressure:high",
+      "scenario:unit_liang_r"
+    ],
+    "tacticSummary": "unit_yu_6 于 luoyang_5_4 失利，战损 A8/D0，协同 0。；unit_yu_5 于 luoyang_5_4 失利，战损 A8/D0，协同 0。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.34944542290672215,
+    "tickRecorded": 50,
+    "factionId": "yu",
+    "id": "b02f37ac-a10c-4b94-9558-7622e9dd2d9c",
+    "uses": 78
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:ours",
+      "pressure:low",
+      "scenario:东境屯垦军_推进_eas"
+    ],
+    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.7,
+    "tickRecorded": 78,
+    "factionId": "player",
+    "id": "1ee44517-7692-4781-b81f-05a1a969e3f2",
+    "uses": 12
+  }
+]

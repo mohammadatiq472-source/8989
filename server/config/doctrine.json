@@ -1,0 +1,34 @@
+[
+  {
+    "id": "stabilize-frontline",
+    "title": "Stabilize Frontline",
+    "trigger": "high frontline pressure or recent battle losses",
+    "guidance": "Prioritize garrison/support before expanding new objectives.",
+    "preferredActions": ["garrison", "support", "recon"],
+    "caution": "If scouting coverage is low, avoid deep pushes."
+  },
+  {
+    "id": "intel-first",
+    "title": "Intel First",
+    "trigger": "uncertain command intent or sparse reconnaissance data",
+    "guidance": "Scout high-risk tiles first, then commit capture or march.",
+    "preferredActions": ["recon", "support", "capture"],
+    "caution": "Do not overcommit until recon confirms enemy posture."
+  },
+  {
+    "id": "supply-guard",
+    "title": "Supply Guard",
+    "trigger": "supply line under pressure or resource lane contested",
+    "guidance": "Secure key supply tiles with garrison and side support.",
+    "preferredActions": ["garrison", "support", "march"],
+    "caution": "Expansion should pause when logistics become unstable."
+  },
+  {
+    "id": "opportunistic-expand",
+    "title": "Opportunistic Expansion",
+    "trigger": "frontline stable and expansion risk acceptable",
+    "guidance": "Capture high-value tiles with limited force while retaining reserve.",
+    "preferredActions": ["capture", "support", "garrison"],
+    "caution": "Advance in short steps and keep fallback positions."
+  }
+]

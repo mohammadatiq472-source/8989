@@ -1,0 +1,9244 @@
+{
+  "_meta": {
+    "generator": "generate_all_provinces_map.py",
+    "source": "cfg_map_world.json (STZB reverse)",
+    "coordinateEncoding": "pos=x*10000+y, X轴向南递增 Y轴向东递增",
+    "actualRange": "junxian center x:45~1410, y:76~1472",
+    "yongzhouSplit": "雍州(id=2)拆分: 京兆/冯翊/新平/北地→司隶, 陇西/天水/安定/扶风→凉州",
+    "manualAddition": "交州(id=15) 手动添加，与益州/荆州/扬州接壤",
+    "totalJunxian": 94,
+    "totalXian": 315,
+    "totalNamedCities": 669
+  },
+  "provinces": [
+    {
+      "regionId": 1,
+      "name": "司隶",
+      "shortName": "司",
+      "capital": "洛阳",
+      "color": "#e74c3c",
+      "adjacency": [
+        2,
+        3,
+        4,
+        9
+      ],
+      "junxianCount": 10,
+      "xianCount": 29,
+      "center": {
+        "x": 709.7,
+        "y": 631.2
+      },
+      "bbox": {
+        "minX": 582,
+        "minY": 378,
+        "maxX": 856,
+        "maxY": 947
+      },
+      "junxianIds": [
+        101,
+        102,
+        103,
+        104,
+        105,
+        106,
+        201,
+        205,
+        206,
+        207
+      ]
+    },
+    {
+      "regionId": 3,
+      "name": "兖州",
+      "shortName": "兖",
+      "capital": "濮阳",
+      "color": "#f39c12",
+      "adjacency": [
+        1,
+        4,
+        5,
+        6,
+        7
+      ],
+      "junxianCount": 8,
+      "xianCount": 29,
+      "center": {
+        "x": 770.8,
+        "y": 1024.1
+      },
+      "bbox": {
+        "minX": 664,
+        "minY": 813,
+        "maxX": 939,
+        "maxY": 1162
+      },
+      "junxianIds": [
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308
+      ]
+    },
+    {
+      "regionId": 4,
+      "name": "豫州",
+      "shortName": "豫",
+      "capital": "谯",
+      "color": "#e67e22",
+      "adjacency": [
+        1,
+        13,
+        7,
+        8
+      ],
+      "junxianCount": 8,
+      "xianCount": 25,
+      "center": {
+        "x": 1003.8,
+        "y": 928.0
+      },
+      "bbox": {
+        "minX": 843,
+        "minY": 741,
+        "maxX": 1158,
+        "maxY": 1065
+      },
+      "junxianIds": [
+        401,
+        402,
+        403,
+        404,
+        405,
+        406,
+        407,
+        408
+      ]
+    },
+    {
+      "regionId": 5,
+      "name": "冀州",
+      "shortName": "冀",
+      "capital": "邺",
+      "color": "#3498db",
+      "adjacency": [
+        3,
+        9,
+        6,
+        12
+      ],
+      "junxianCount": 7,
+      "xianCount": 26,
+      "center": {
+        "x": 414.0,
+        "y": 1082.4
+      },
+      "bbox": {
+        "minX": 164,
+        "minY": 808,
+        "maxX": 712,
+        "maxY": 1501
+      },
+      "junxianIds": [
+        501,
+        502,
+        503,
+        504,
+        505,
+        506,
+        507
+      ]
+    },
+    {
+      "regionId": 6,
+      "name": "青州",
+      "shortName": "青",
+      "capital": "临淄",
+      "color": "#1abc9c",
+      "adjacency": [
+        3,
+        5,
+        7
+      ],
+      "junxianCount": 7,
+      "xianCount": 22,
+      "center": {
+        "x": 700.7,
+        "y": 1309.7
+      },
+      "bbox": {
+        "minX": 441,
+        "minY": 1121,
+        "maxX": 992,
+        "maxY": 1501
+      },
+      "junxianIds": [
+        601,
+        602,
+        603,
+        604,
+        605,
+        606,
+        607
+      ]
+    },
+    {
+      "regionId": 7,
+      "name": "徐州",
+      "shortName": "徐",
+      "capital": "彭城",
+      "color": "#9b59b6",
+      "adjacency": [
+        3,
+        4,
+        6,
+        8
+      ],
+      "junxianCount": 6,
+      "xianCount": 21,
+      "center": {
+        "x": 1122.7,
+        "y": 1290.5
+      },
+      "bbox": {
+        "minX": 888,
+        "minY": 927,
+        "maxX": 1403,
+        "maxY": 1501
+      },
+      "junxianIds": [
+        701,
+        702,
+        703,
+        704,
+        705,
+        706
+      ]
+    },
+    {
+      "regionId": 8,
+      "name": "扬州",
+      "shortName": "扬",
+      "capital": "建业",
+      "color": "#f1c40f",
+      "adjacency": [
+        4,
+        7,
+        13
+      ],
+      "junxianCount": 8,
+      "xianCount": 28,
+      "center": {
+        "x": 1327.6,
+        "y": 889.2
+      },
+      "bbox": {
+        "minX": 1033,
+        "minY": 441,
+        "maxX": 1501,
+        "maxY": 1501
+      },
+      "junxianIds": [
+        801,
+        802,
+        803,
+        804,
+        805,
+        806,
+        807,
+        808
+      ]
+    },
+    {
+      "regionId": 9,
+      "name": "并州",
+      "shortName": "并",
+      "capital": "晋阳",
+      "color": "#e74c3c",
+      "adjacency": [
+        2,
+        5,
+        10,
+        12
+      ],
+      "junxianCount": 6,
+      "xianCount": 23,
+      "center": {
+        "x": 323.3,
+        "y": 687.8
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 405,
+        "maxX": 684,
+        "maxY": 922
+      },
+      "junxianIds": [
+        901,
+        902,
+        903,
+        904,
+        905,
+        906
+      ]
+    },
+    {
+      "regionId": 10,
+      "name": "凉州",
+      "shortName": "凉",
+      "capital": "武威",
+      "color": "#d4ac0d",
+      "adjacency": [
+        2,
+        9,
+        11
+      ],
+      "junxianCount": 11,
+      "xianCount": 33,
+      "center": {
+        "x": 355.6,
+        "y": 282.4
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1,
+        "maxX": 719,
+        "maxY": 579
+      },
+      "junxianIds": [
+        202,
+        203,
+        204,
+        208,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        1006,
+        1007
+      ]
+    },
+    {
+      "regionId": 11,
+      "name": "益州",
+      "shortName": "益",
+      "capital": "成都",
+      "color": "#e91e63",
+      "adjacency": [
+        2,
+        10,
+        13,
+        14
+      ],
+      "junxianCount": 8,
+      "xianCount": 27,
+      "center": {
+        "x": 805.2,
+        "y": 172.5
+      },
+      "bbox": {
+        "minX": 483,
+        "minY": 1,
+        "maxX": 1501,
+        "maxY": 519
+      },
+      "junxianIds": [
+        1101,
+        1102,
+        1103,
+        1104,
+        1105,
+        1106,
+        1107,
+        1108
+      ]
+    },
+    {
+      "regionId": 12,
+      "name": "幽州",
+      "shortName": "幽",
+      "capital": "蓟",
+      "color": "#00bcd4",
+      "adjacency": [
+        5,
+        9
+      ],
+      "junxianCount": 7,
+      "xianCount": 25,
+      "center": {
+        "x": 114.3,
+        "y": 1104.3
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 802,
+        "maxX": 298,
+        "maxY": 1501
+      },
+      "junxianIds": [
+        1201,
+        1202,
+        1203,
+        1204,
+        1205,
+        1206,
+        1207
+      ]
+    },
+    {
+      "regionId": 13,
+      "name": "荆州",
+      "shortName": "荆",
+      "capital": "襄阳",
+      "color": "#8bc34a",
+      "adjacency": [
+        4,
+        8,
+        11,
+        14
+      ],
+      "junxianCount": 8,
+      "xianCount": 26,
+      "center": {
+        "x": 1101.4,
+        "y": 493.0
+      },
+      "bbox": {
+        "minX": 766,
+        "minY": 78,
+        "maxX": 1501,
+        "maxY": 818
+      },
+      "junxianIds": [
+        1301,
+        1302,
+        1303,
+        1304,
+        1305,
+        1306,
+        1307,
+        1308
+      ]
+    },
+    {
+      "regionId": 14,
+      "name": "湘西",
+      "shortName": "湘",
+      "capital": "夷陵",
+      "color": "#607d8b",
+      "adjacency": [
+        1,
+        11,
+        13
+      ],
+      "junxianCount": 0,
+      "xianCount": 0,
+      "center": {
+        "x": 0,
+        "y": 0
+      },
+      "bbox": {
+        "minX": 0,
+        "minY": 0,
+        "maxX": 0,
+        "maxY": 0
+      },
+      "junxianIds": []
+    },
+    {
+      "regionId": 15,
+      "name": "交州",
+      "shortName": "交",
+      "capital": "番禺",
+      "color": "#ff5722",
+      "adjacency": [
+        8,
+        11,
+        13
+      ],
+      "junxianCount": 0,
+      "xianCount": 0,
+      "center": {
+        "x": 0,
+        "y": 0
+      },
+      "bbox": {
+        "minX": 0,
+        "minY": 0,
+        "maxX": 0,
+        "maxY": 0
+      },
+      "junxianIds": []
+    }
+  ],
+  "junxian": [
+    {
+      "id": 101,
+      "name": "河南尹",
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 751,
+        "y": 751
+      },
+      "bbox": {
+        "minX": 715,
+        "minY": 643,
+        "maxX": 838,
+        "maxY": 775
+      },
+      "width": 123,
+      "height": 132
+    },
+    {
+      "id": 102,
+      "name": "弘农",
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 708,
+        "y": 678
+      },
+      "bbox": {
+        "minX": 674,
+        "minY": 597,
+        "maxX": 758,
+        "maxY": 738
+      },
+      "width": 84,
+      "height": 141
+    },
+    {
+      "id": 103,
+      "name": "平阳",
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 668,
+        "y": 600
+      },
+      "bbox": {
+        "minX": 582,
+        "minY": 570,
+        "maxX": 681,
+        "maxY": 699
+      },
+      "width": 99,
+      "height": 129
+    },
+    {
+      "id": 104,
+      "name": "河东",
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 652,
+        "y": 713
+      },
+      "bbox": {
+        "minX": 604,
+        "minY": 668,
+        "maxX": 737,
+        "maxY": 808
+      },
+      "width": 133,
+      "height": 140
+    },
+    {
+      "id": 105,
+      "name": "河内",
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 772,
+        "y": 852
+      },
+      "bbox": {
+        "minX": 716,
+        "minY": 757,
+        "maxX": 817,
+        "maxY": 947
+      },
+      "width": 101,
+      "height": 190
+    },
+    {
+      "id": 106,
+      "name": "原武",
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 812,
+        "y": 753
+      },
+      "bbox": {
+        "minX": 770,
+        "minY": 682,
+        "maxX": 856,
+        "maxY": 885
+      },
+      "width": 86,
+      "height": 203
+    },
+    {
+      "id": 201,
+      "name": "京兆",
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 669,
+        "y": 440
+      },
+      "bbox": {
+        "minX": 614,
+        "minY": 410,
+        "maxX": 704,
+        "maxY": 546
+      },
+      "width": 90,
+      "height": 136
+    },
+    {
+      "id": 202,
+      "name": "陇西",
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 585,
+        "y": 350
+      },
+      "bbox": {
+        "minX": 457,
+        "minY": 282,
+        "maxX": 621,
+        "maxY": 417
+      },
+      "width": 164,
+      "height": 135
+    },
+    {
+      "id": 203,
+      "name": "天水",
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 589,
+        "y": 396
+      },
+      "bbox": {
+        "minX": 506,
+        "minY": 358,
+        "maxX": 615,
+        "maxY": 468
+      },
+      "width": 109,
+      "height": 110
+    },
+    {
+      "id": 204,
+      "name": "安定",
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 590,
+        "y": 455
+      },
+      "bbox": {
+        "minX": 558,
+        "minY": 396,
+        "maxX": 650,
+        "maxY": 579
+      },
+      "width": 92,
+      "height": 183
+    },
+    {
+      "id": 205,
+      "name": "新平",
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 639,
+        "y": 561
+      },
+      "bbox": {
+        "minX": 625,
+        "minY": 517,
+        "maxX": 706,
+        "maxY": 620
+      },
+      "width": 81,
+      "height": 103
+    },
+    {
+      "id": 206,
+      "name": "冯翊",
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 724,
+        "y": 522
+      },
+      "bbox": {
+        "minX": 704,
+        "minY": 504,
+        "maxX": 801,
+        "maxY": 657
+      },
+      "width": 97,
+      "height": 153
+    },
+    {
+      "id": 207,
+      "name": "北地",
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 702,
+        "y": 442
+      },
+      "bbox": {
+        "minX": 680,
+        "minY": 378,
+        "maxX": 793,
+        "maxY": 518
+      },
+      "width": 113,
+      "height": 140
+    },
+    {
+      "id": 208,
+      "name": "扶风",
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 654,
+        "y": 393
+      },
+      "bbox": {
+        "minX": 600,
+        "minY": 330,
+        "maxX": 719,
+        "maxY": 419
+      },
+      "width": 119,
+      "height": 89
+    },
+    {
+      "id": 301,
+      "name": "东",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 746,
+        "y": 979
+      },
+      "bbox": {
+        "minX": 701,
+        "minY": 947,
+        "maxX": 805,
+        "maxY": 1049
+      },
+      "width": 104,
+      "height": 102
+    },
+    {
+      "id": 302,
+      "name": "任城",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 753,
+        "y": 931
+      },
+      "bbox": {
+        "minX": 703,
+        "minY": 813,
+        "maxX": 762,
+        "maxY": 949
+      },
+      "width": 59,
+      "height": 136
+    },
+    {
+      "id": 303,
+      "name": "东平",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 732,
+        "y": 1074
+      },
+      "bbox": {
+        "minX": 664,
+        "minY": 1023,
+        "maxX": 751,
+        "maxY": 1128
+      },
+      "width": 87,
+      "height": 105
+    },
+    {
+      "id": 304,
+      "name": "济北",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 713,
+        "y": 1129
+      },
+      "bbox": {
+        "minX": 697,
+        "minY": 1057,
+        "maxX": 777,
+        "maxY": 1160
+      },
+      "width": 80,
+      "height": 103
+    },
+    {
+      "id": 305,
+      "name": "山阳",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 792,
+        "y": 1033
+      },
+      "bbox": {
+        "minX": 750,
+        "minY": 978,
+        "maxX": 899,
+        "maxY": 1067
+      },
+      "width": 149,
+      "height": 89
+    },
+    {
+      "id": 306,
+      "name": "泰山",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 767,
+        "y": 1104
+      },
+      "bbox": {
+        "minX": 761,
+        "minY": 1050,
+        "maxX": 898,
+        "maxY": 1162
+      },
+      "width": 137,
+      "height": 112
+    },
+    {
+      "id": 307,
+      "name": "济阴",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 851,
+        "y": 972
+      },
+      "bbox": {
+        "minX": 835,
+        "minY": 885,
+        "maxX": 939,
+        "maxY": 1049
+      },
+      "width": 104,
+      "height": 164
+    },
+    {
+      "id": 308,
+      "name": "陈留",
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 812,
+        "y": 971
+      },
+      "bbox": {
+        "minX": 787,
+        "minY": 816,
+        "maxX": 910,
+        "maxY": 998
+      },
+      "width": 123,
+      "height": 182
+    },
+    {
+      "id": 401,
+      "name": "谯",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1013,
+        "y": 930
+      },
+      "bbox": {
+        "minX": 990,
+        "minY": 855,
+        "maxX": 1113,
+        "maxY": 974
+      },
+      "width": 123,
+      "height": 119
+    },
+    {
+      "id": 402,
+      "name": "颍川",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 892,
+        "y": 793
+      },
+      "bbox": {
+        "minX": 843,
+        "minY": 741,
+        "maxX": 937,
+        "maxY": 838
+      },
+      "width": 94,
+      "height": 97
+    },
+    {
+      "id": 403,
+      "name": "汝南",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 972,
+        "y": 852
+      },
+      "bbox": {
+        "minX": 892,
+        "minY": 791,
+        "maxX": 1012,
+        "maxY": 889
+      },
+      "width": 120,
+      "height": 98
+    },
+    {
+      "id": 404,
+      "name": "弋阳",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 973,
+        "y": 895
+      },
+      "bbox": {
+        "minX": 920,
+        "minY": 871,
+        "maxX": 989,
+        "maxY": 955
+      },
+      "width": 69,
+      "height": 84
+    },
+    {
+      "id": 405,
+      "name": "梁",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 991,
+        "y": 991
+      },
+      "bbox": {
+        "minX": 916,
+        "minY": 924,
+        "maxX": 1054,
+        "maxY": 1032
+      },
+      "width": 138,
+      "height": 108
+    },
+    {
+      "id": 406,
+      "name": "安丰",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1075,
+        "y": 1037
+      },
+      "bbox": {
+        "minX": 959,
+        "minY": 975,
+        "maxX": 1097,
+        "maxY": 1065
+      },
+      "width": 138,
+      "height": 90
+    },
+    {
+      "id": 407,
+      "name": "襄城",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1101,
+        "y": 1035
+      },
+      "bbox": {
+        "minX": 1058,
+        "minY": 858,
+        "maxX": 1158,
+        "maxY": 1044
+      },
+      "width": 100,
+      "height": 186
+    },
+    {
+      "id": 408,
+      "name": "陈",
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1013,
+        "y": 891
+      },
+      "bbox": {
+        "minX": 971,
+        "minY": 813,
+        "maxX": 1111,
+        "maxY": 920
+      },
+      "width": 140,
+      "height": 107
+    },
+    {
+      "id": 501,
+      "name": "魏",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 383,
+        "y": 1006
+      },
+      "bbox": {
+        "minX": 291,
+        "minY": 905,
+        "maxX": 590,
+        "maxY": 1193
+      },
+      "width": 299,
+      "height": 288
+    },
+    {
+      "id": 502,
+      "name": "常山",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 337,
+        "y": 1006
+      },
+      "bbox": {
+        "minX": 223,
+        "minY": 868,
+        "maxX": 440,
+        "maxY": 1086
+      },
+      "width": 217,
+      "height": 218
+    },
+    {
+      "id": 503,
+      "name": "中山",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 312,
+        "y": 1072
+      },
+      "bbox": {
+        "minX": 185,
+        "minY": 1017,
+        "maxX": 361,
+        "maxY": 1220
+      },
+      "width": 176,
+      "height": 203
+    },
+    {
+      "id": 504,
+      "name": "河间",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 352,
+        "y": 1232
+      },
+      "bbox": {
+        "minX": 164,
+        "minY": 1157,
+        "maxX": 437,
+        "maxY": 1344
+      },
+      "width": 273,
+      "height": 187
+    },
+    {
+      "id": 505,
+      "name": "渤海",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 331,
+        "y": 1313
+      },
+      "bbox": {
+        "minX": 217,
+        "minY": 1267,
+        "maxX": 492,
+        "maxY": 1501
+      },
+      "width": 275,
+      "height": 234
+    },
+    {
+      "id": 506,
+      "name": "清河",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 585,
+        "y": 1036
+      },
+      "bbox": {
+        "minX": 422,
+        "minY": 967,
+        "maxX": 703,
+        "maxY": 1275
+      },
+      "width": 281,
+      "height": 308
+    },
+    {
+      "id": 507,
+      "name": "巨鹿",
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 598,
+        "y": 912
+      },
+      "bbox": {
+        "minX": 436,
+        "minY": 808,
+        "maxX": 712,
+        "maxY": 999
+      },
+      "width": 276,
+      "height": 191
+    },
+    {
+      "id": 601,
+      "name": "齐",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 633,
+        "y": 1369
+      },
+      "bbox": {
+        "minX": 564,
+        "minY": 1266,
+        "maxX": 725,
+        "maxY": 1422
+      },
+      "width": 161,
+      "height": 156
+    },
+    {
+      "id": 602,
+      "name": "济南",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 713,
+        "y": 1212
+      },
+      "bbox": {
+        "minX": 576,
+        "minY": 1121,
+        "maxX": 759,
+        "maxY": 1285
+      },
+      "width": 183,
+      "height": 164
+    },
+    {
+      "id": 603,
+      "name": "平原",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 513,
+        "y": 1292
+      },
+      "bbox": {
+        "minX": 441,
+        "minY": 1125,
+        "maxX": 583,
+        "maxY": 1501
+      },
+      "width": 142,
+      "height": 376
+    },
+    {
+      "id": 604,
+      "name": "乐安",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 653,
+        "y": 1472
+      },
+      "bbox": {
+        "minX": 513,
+        "minY": 1373,
+        "maxX": 744,
+        "maxY": 1501
+      },
+      "width": 231,
+      "height": 128
+    },
+    {
+      "id": 605,
+      "name": "北海",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 690,
+        "y": 1281
+      },
+      "bbox": {
+        "minX": 659,
+        "minY": 1224,
+        "maxX": 836,
+        "maxY": 1455
+      },
+      "width": 177,
+      "height": 231
+    },
+    {
+      "id": 606,
+      "name": "东莱",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 911,
+        "y": 1330
+      },
+      "bbox": {
+        "minX": 704,
+        "minY": 1237,
+        "maxX": 992,
+        "maxY": 1501
+      },
+      "width": 288,
+      "height": 264
+    },
+    {
+      "id": 607,
+      "name": "城阳",
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 792,
+        "y": 1212
+      },
+      "bbox": {
+        "minX": 735,
+        "minY": 1121,
+        "maxX": 927,
+        "maxY": 1418
+      },
+      "width": 192,
+      "height": 297
+    },
+    {
+      "id": 701,
+      "name": "彭城",
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1053,
+        "y": 1173
+      },
+      "bbox": {
+        "minX": 888,
+        "minY": 1013,
+        "maxX": 1130,
+        "maxY": 1283
+      },
+      "width": 242,
+      "height": 270
+    },
+    {
+      "id": 702,
+      "name": "下邳",
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1157,
+        "y": 1172
+      },
+      "bbox": {
+        "minX": 1059,
+        "minY": 927,
+        "maxX": 1252,
+        "maxY": 1343
+      },
+      "width": 193,
+      "height": 416
+    },
+    {
+      "id": 703,
+      "name": "临沂",
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1028,
+        "y": 1264
+      },
+      "bbox": {
+        "minX": 949,
+        "minY": 1208,
+        "maxX": 1111,
+        "maxY": 1365
+      },
+      "width": 162,
+      "height": 157
+    },
+    {
+      "id": 704,
+      "name": "琅琊",
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1032,
+        "y": 1411
+      },
+      "bbox": {
+        "minX": 959,
+        "minY": 1292,
+        "maxX": 1150,
+        "maxY": 1501
+      },
+      "width": 191,
+      "height": 209
+    },
+    {
+      "id": 705,
+      "name": "东海",
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1213,
+        "y": 1412
+      },
+      "bbox": {
+        "minX": 1103,
+        "minY": 1301,
+        "maxX": 1268,
+        "maxY": 1501
+      },
+      "width": 165,
+      "height": 200
+    },
+    {
+      "id": 706,
+      "name": "广陵",
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1253,
+        "y": 1311
+      },
+      "bbox": {
+        "minX": 1217,
+        "minY": 1176,
+        "maxX": 1403,
+        "maxY": 1501
+      },
+      "width": 186,
+      "height": 325
+    },
+    {
+      "id": 801,
+      "name": "丹阳",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1274,
+        "y": 1133
+      },
+      "bbox": {
+        "minX": 1223,
+        "minY": 1013,
+        "maxX": 1365,
+        "maxY": 1342
+      },
+      "width": 142,
+      "height": 329
+    },
+    {
+      "id": 802,
+      "name": "庐江",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1194,
+        "y": 892
+      },
+      "bbox": {
+        "minX": 1033,
+        "minY": 752,
+        "maxX": 1284,
+        "maxY": 1069
+      },
+      "width": 251,
+      "height": 317
+    },
+    {
+      "id": 803,
+      "name": "吴",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1410,
+        "y": 1114
+      },
+      "bbox": {
+        "minX": 1302,
+        "minY": 1068,
+        "maxX": 1501,
+        "maxY": 1501
+      },
+      "width": 199,
+      "height": 433
+    },
+    {
+      "id": 804,
+      "name": "会稽",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1398,
+        "y": 1007
+      },
+      "bbox": {
+        "minX": 1285,
+        "minY": 859,
+        "maxX": 1501,
+        "maxY": 1088
+      },
+      "width": 216,
+      "height": 229
+    },
+    {
+      "id": 805,
+      "name": "建安",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1394,
+        "y": 753
+      },
+      "bbox": {
+        "minX": 1364,
+        "minY": 534,
+        "maxX": 1501,
+        "maxY": 867
+      },
+      "width": 137,
+      "height": 333
+    },
+    {
+      "id": 806,
+      "name": "庐陵",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1354,
+        "y": 652
+      },
+      "bbox": {
+        "minX": 1304,
+        "minY": 441,
+        "maxX": 1501,
+        "maxY": 688
+      },
+      "width": 197,
+      "height": 247
+    },
+    {
+      "id": 807,
+      "name": "豫章",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1253,
+        "y": 713
+      },
+      "bbox": {
+        "minX": 1094,
+        "minY": 614,
+        "maxX": 1348,
+        "maxY": 833
+      },
+      "width": 254,
+      "height": 219
+    },
+    {
+      "id": 808,
+      "name": "鄱阳",
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1344,
+        "y": 850
+      },
+      "bbox": {
+        "minX": 1181,
+        "minY": 686,
+        "maxX": 1443,
+        "maxY": 1013
+      },
+      "width": 262,
+      "height": 327
+    },
+    {
+      "id": 901,
+      "name": "太原",
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 375,
+        "y": 696
+      },
+      "bbox": {
+        "minX": 169,
+        "minY": 557,
+        "maxX": 519,
+        "maxY": 788
+      },
+      "width": 350,
+      "height": 231
+    },
+    {
+      "id": 902,
+      "name": "雁门",
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 130,
+        "y": 654
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 492,
+        "maxX": 208,
+        "maxY": 861
+      },
+      "width": 207,
+      "height": 369
+    },
+    {
+      "id": 903,
+      "name": "新兴",
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 251,
+        "y": 821
+      },
+      "bbox": {
+        "minX": 175,
+        "minY": 734,
+        "maxX": 418,
+        "maxY": 922
+      },
+      "width": 243,
+      "height": 188
+    },
+    {
+      "id": 904,
+      "name": "乐平",
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 422,
+        "y": 829
+      },
+      "bbox": {
+        "minX": 398,
+        "minY": 588,
+        "maxX": 684,
+        "maxY": 882
+      },
+      "width": 286,
+      "height": 294
+    },
+    {
+      "id": 905,
+      "name": "上党",
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 471,
+        "y": 554
+      },
+      "bbox": {
+        "minX": 384,
+        "minY": 405,
+        "maxX": 595,
+        "maxY": 601
+      },
+      "width": 211,
+      "height": 196
+    },
+    {
+      "id": 906,
+      "name": "西河",
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 291,
+        "y": 573
+      },
+      "bbox": {
+        "minX": 115,
+        "minY": 449,
+        "maxX": 390,
+        "maxY": 637
+      },
+      "width": 275,
+      "height": 188
+    },
+    {
+      "id": 1001,
+      "name": "武威",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 211,
+        "y": 195
+      },
+      "bbox": {
+        "minX": 154,
+        "minY": 1,
+        "maxX": 434,
+        "maxY": 311
+      },
+      "width": 280,
+      "height": 310
+    },
+    {
+      "id": 1002,
+      "name": "敦煌",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 71,
+        "y": 76
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1,
+        "maxX": 217,
+        "maxY": 225
+      },
+      "width": 216,
+      "height": 224
+    },
+    {
+      "id": 1003,
+      "name": "酒泉",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 171,
+        "y": 116
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1,
+        "maxX": 318,
+        "maxY": 370
+      },
+      "width": 317,
+      "height": 369
+    },
+    {
+      "id": 1004,
+      "name": "西海",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 45,
+        "y": 362
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 325,
+        "maxX": 124,
+        "maxY": 563
+      },
+      "width": 123,
+      "height": 238
+    },
+    {
+      "id": 1005,
+      "name": "张掖",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 185,
+        "y": 307
+      },
+      "bbox": {
+        "minX": 85,
+        "minY": 200,
+        "maxX": 278,
+        "maxY": 518
+      },
+      "width": 193,
+      "height": 318
+    },
+    {
+      "id": 1006,
+      "name": "金城",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 352,
+        "y": 356
+      },
+      "bbox": {
+        "minX": 262,
+        "minY": 199,
+        "maxX": 553,
+        "maxY": 484
+      },
+      "width": 291,
+      "height": 285
+    },
+    {
+      "id": 1007,
+      "name": "西平",
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 459,
+        "y": 100
+      },
+      "bbox": {
+        "minX": 392,
+        "minY": 1,
+        "maxX": 536,
+        "maxY": 202
+      },
+      "width": 144,
+      "height": 201
+    },
+    {
+      "id": 1101,
+      "name": "蜀",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 751,
+        "y": 141
+      },
+      "bbox": {
+        "minX": 621,
+        "minY": 1,
+        "maxX": 840,
+        "maxY": 208
+      },
+      "width": 219,
+      "height": 207
+    },
+    {
+      "id": 1102,
+      "name": "梓潼",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 612,
+        "y": 116
+      },
+      "bbox": {
+        "minX": 504,
+        "minY": 1,
+        "maxX": 716,
+        "maxY": 162
+      },
+      "width": 212,
+      "height": 161
+    },
+    {
+      "id": 1103,
+      "name": "武都",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 586,
+        "y": 169
+      },
+      "bbox": {
+        "minX": 483,
+        "minY": 119,
+        "maxX": 647,
+        "maxY": 285
+      },
+      "width": 164,
+      "height": 166
+    },
+    {
+      "id": 1104,
+      "name": "汉中",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 653,
+        "y": 234
+      },
+      "bbox": {
+        "minX": 581,
+        "minY": 174,
+        "maxX": 737,
+        "maxY": 366
+      },
+      "width": 156,
+      "height": 192
+    },
+    {
+      "id": 1105,
+      "name": "巴",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 792,
+        "y": 313
+      },
+      "bbox": {
+        "minX": 686,
+        "minY": 199,
+        "maxX": 1067,
+        "maxY": 519
+      },
+      "width": 381,
+      "height": 320
+    },
+    {
+      "id": 1106,
+      "name": "永昌",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1152,
+        "y": 155
+      },
+      "bbox": {
+        "minX": 1049,
+        "minY": 1,
+        "maxX": 1501,
+        "maxY": 280
+      },
+      "width": 452,
+      "height": 279
+    },
+    {
+      "id": 1107,
+      "name": "云南",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1029,
+        "y": 83
+      },
+      "bbox": {
+        "minX": 933,
+        "minY": 1,
+        "maxX": 1140,
+        "maxY": 268
+      },
+      "width": 207,
+      "height": 267
+    },
+    {
+      "id": 1108,
+      "name": "汉嘉",
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 867,
+        "y": 169
+      },
+      "bbox": {
+        "minX": 764,
+        "minY": 1,
+        "maxX": 968,
+        "maxY": 229
+      },
+      "width": 204,
+      "height": 228
+    },
+    {
+      "id": 1201,
+      "name": "广阳",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 70,
+        "y": 1092
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1016,
+        "maxX": 228,
+        "maxY": 1212
+      },
+      "width": 227,
+      "height": 196
+    },
+    {
+      "id": 1202,
+      "name": "代",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 91,
+        "y": 873
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 802,
+        "maxX": 133,
+        "maxY": 975
+      },
+      "width": 132,
+      "height": 173
+    },
+    {
+      "id": 1203,
+      "name": "上谷",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 151,
+        "y": 915
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 849,
+        "maxX": 228,
+        "maxY": 1062
+      },
+      "width": 227,
+      "height": 213
+    },
+    {
+      "id": 1204,
+      "name": "涿",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 190,
+        "y": 972
+      },
+      "bbox": {
+        "minX": 136,
+        "minY": 888,
+        "maxX": 286,
+        "maxY": 1033
+      },
+      "width": 150,
+      "height": 145
+    },
+    {
+      "id": 1205,
+      "name": "右北平",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 113,
+        "y": 1296
+      },
+      "bbox": {
+        "minX": 80,
+        "minY": 1142,
+        "maxX": 201,
+        "maxY": 1348
+      },
+      "width": 121,
+      "height": 206
+    },
+    {
+      "id": 1206,
+      "name": "辽西",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 111,
+        "y": 1352
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1320,
+        "maxX": 298,
+        "maxY": 1501
+      },
+      "width": 297,
+      "height": 181
+    },
+    {
+      "id": 1207,
+      "name": "渔阳",
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 74,
+        "y": 1230
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1175,
+        "maxX": 115,
+        "maxY": 1426
+      },
+      "width": 114,
+      "height": 251
+    },
+    {
+      "id": 1301,
+      "name": "襄阳",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1004,
+        "y": 552
+      },
+      "bbox": {
+        "minX": 898,
+        "minY": 456,
+        "maxX": 1125,
+        "maxY": 683
+      },
+      "width": 227,
+      "height": 227
+    },
+    {
+      "id": 1302,
+      "name": "南阳",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 872,
+        "y": 572
+      },
+      "bbox": {
+        "minX": 766,
+        "minY": 407,
+        "maxX": 960,
+        "maxY": 697
+      },
+      "width": 194,
+      "height": 290
+    },
+    {
+      "id": 1303,
+      "name": "南",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1012,
+        "y": 438
+      },
+      "bbox": {
+        "minX": 909,
+        "minY": 255,
+        "maxX": 1141,
+        "maxY": 544
+      },
+      "width": 232,
+      "height": 289
+    },
+    {
+      "id": 1304,
+      "name": "武陵",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1193,
+        "y": 313
+      },
+      "bbox": {
+        "minX": 1118,
+        "minY": 78,
+        "maxX": 1501,
+        "maxY": 381
+      },
+      "width": 383,
+      "height": 303
+    },
+    {
+      "id": 1305,
+      "name": "长沙",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1112,
+        "y": 454
+      },
+      "bbox": {
+        "minX": 1079,
+        "minY": 344,
+        "maxX": 1267,
+        "maxY": 631
+      },
+      "width": 188,
+      "height": 287
+    },
+    {
+      "id": 1306,
+      "name": "天门",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1314,
+        "y": 376
+      },
+      "bbox": {
+        "minX": 1230,
+        "minY": 214,
+        "maxX": 1501,
+        "maxY": 457
+      },
+      "width": 271,
+      "height": 243
+    },
+    {
+      "id": 1307,
+      "name": "桂阳",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1225,
+        "y": 556
+      },
+      "bbox": {
+        "minX": 1179,
+        "minY": 408,
+        "maxX": 1448,
+        "maxY": 649
+      },
+      "width": 269,
+      "height": 241
+    },
+    {
+      "id": 1308,
+      "name": "江夏",
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1079,
+        "y": 683
+      },
+      "bbox": {
+        "minX": 849,
+        "minY": 609,
+        "maxX": 1217,
+        "maxY": 818
+      },
+      "width": 368,
+      "height": 209
+    }
+  ],
+  "xian": [
+    {
+      "id": 10102,
+      "name": "荥阳",
+      "junxianId": 101,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 771,
+        "y": 733
+      },
+      "bbox": {
+        "minX": 752,
+        "minY": 675,
+        "maxX": 804,
+        "maxY": 752
+      }
+    },
+    {
+      "id": 10103,
+      "name": "京",
+      "junxianId": 101,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 803,
+        "y": 673
+      },
+      "bbox": {
+        "minX": 748,
+        "minY": 643,
+        "maxX": 838,
+        "maxY": 710
+      }
+    },
+    {
+      "id": 10201,
+      "name": "华阴",
+      "junxianId": 102,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 683,
+        "y": 622
+      },
+      "bbox": {
+        "minX": 676,
+        "minY": 597,
+        "maxX": 705,
+        "maxY": 658
+      }
+    },
+    {
+      "id": 10202,
+      "name": "新安",
+      "junxianId": 102,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 715,
+        "y": 651
+      },
+      "bbox": {
+        "minX": 691,
+        "minY": 622,
+        "maxX": 758,
+        "maxY": 673
+      }
+    },
+    {
+      "id": 10203,
+      "name": "弘农",
+      "junxianId": 102,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 708,
+        "y": 678
+      },
+      "bbox": {
+        "minX": 674,
+        "minY": 657,
+        "maxX": 744,
+        "maxY": 738
+      }
+    },
+    {
+      "id": 10301,
+      "name": "平阳",
+      "junxianId": 103,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 668,
+        "y": 600
+      },
+      "bbox": {
+        "minX": 603,
+        "minY": 570,
+        "maxX": 681,
+        "maxY": 672
+      }
+    },
+    {
+      "id": 10302,
+      "name": "襄陵",
+      "junxianId": 103,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 632,
+        "y": 634
+      },
+      "bbox": {
+        "minX": 582,
+        "minY": 615,
+        "maxX": 653,
+        "maxY": 699
+      }
+    },
+    {
+      "id": 10401,
+      "name": "安",
+      "junxianId": 104,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 652,
+        "y": 713
+      },
+      "bbox": {
+        "minX": 604,
+        "minY": 668,
+        "maxX": 688,
+        "maxY": 756
+      }
+    },
+    {
+      "id": 10402,
+      "name": "永安",
+      "junxianId": 104,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 692,
+        "y": 752
+      },
+      "bbox": {
+        "minX": 650,
+        "minY": 718,
+        "maxX": 720,
+        "maxY": 779
+      }
+    },
+    {
+      "id": 10403,
+      "name": "汾阴",
+      "junxianId": 104,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 724,
+        "y": 773
+      },
+      "bbox": {
+        "minX": 705,
+        "minY": 745,
+        "maxX": 737,
+        "maxY": 799
+      }
+    },
+    {
+      "id": 10404,
+      "name": "临汾",
+      "junxianId": 104,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 696,
+        "y": 786
+      },
+      "bbox": {
+        "minX": 674,
+        "minY": 768,
+        "maxX": 721,
+        "maxY": 808
+      }
+    },
+    {
+      "id": 10501,
+      "name": "波",
+      "junxianId": 105,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 772,
+        "y": 812
+      },
+      "bbox": {
+        "minX": 727,
+        "minY": 757,
+        "maxX": 792,
+        "maxY": 832
+      }
+    },
+    {
+      "id": 10502,
+      "name": "河阳",
+      "junxianId": 105,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 792,
+        "y": 873
+      },
+      "bbox": {
+        "minX": 748,
+        "minY": 846,
+        "maxX": 815,
+        "maxY": 896
+      }
+    },
+    {
+      "id": 10503,
+      "name": "怀",
+      "junxianId": 105,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 772,
+        "y": 852
+      },
+      "bbox": {
+        "minX": 716,
+        "minY": 792,
+        "maxX": 797,
+        "maxY": 884
+      }
+    },
+    {
+      "id": 10504,
+      "name": "武德",
+      "junxianId": 105,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 791,
+        "y": 913
+      },
+      "bbox": {
+        "minX": 755,
+        "minY": 893,
+        "maxX": 817,
+        "maxY": 947
+      }
+    },
+    {
+      "id": 10601,
+      "name": "新郑",
+      "junxianId": 106,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 812,
+        "y": 753
+      },
+      "bbox": {
+        "minX": 783,
+        "minY": 721,
+        "maxX": 846,
+        "maxY": 792
+      }
+    },
+    {
+      "id": 10602,
+      "name": "偃师",
+      "junxianId": 106,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 834,
+        "y": 714
+      },
+      "bbox": {
+        "minX": 800,
+        "minY": 682,
+        "maxX": 856,
+        "maxY": 746
+      }
+    },
+    {
+      "id": 10603,
+      "name": "开封",
+      "junxianId": 106,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 811,
+        "y": 831
+      },
+      "bbox": {
+        "minX": 792,
+        "minY": 790,
+        "maxX": 851,
+        "maxY": 885
+      }
+    },
+    {
+      "id": 10604,
+      "name": "陆浑",
+      "junxianId": 106,
+      "originalRegionId": 1,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 791,
+        "y": 774
+      },
+      "bbox": {
+        "minX": 770,
+        "minY": 746,
+        "maxX": 823,
+        "maxY": 807
+      }
+    },
+    {
+      "id": 20101,
+      "name": "长安",
+      "junxianId": 201,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 669,
+        "y": 440
+      },
+      "bbox": {
+        "minX": 628,
+        "minY": 410,
+        "maxX": 702,
+        "maxY": 502
+      }
+    },
+    {
+      "id": 20102,
+      "name": "蓝田",
+      "junxianId": 201,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 632,
+        "y": 515
+      },
+      "bbox": {
+        "minX": 614,
+        "minY": 466,
+        "maxX": 704,
+        "maxY": 546
+      }
+    },
+    {
+      "id": 20201,
+      "name": "襄武",
+      "junxianId": 202,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 585,
+        "y": 350
+      },
+      "bbox": {
+        "minX": 520,
+        "minY": 306,
+        "maxX": 621,
+        "maxY": 404
+      }
+    },
+    {
+      "id": 20202,
+      "name": "狄道",
+      "junxianId": 202,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 512,
+        "y": 375
+      },
+      "bbox": {
+        "minX": 457,
+        "minY": 343,
+        "maxX": 536,
+        "maxY": 417
+      }
+    },
+    {
+      "id": 20203,
+      "name": "五丈原",
+      "junxianId": 202,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 557,
+        "y": 330
+      },
+      "bbox": {
+        "minX": 520,
+        "minY": 282,
+        "maxX": 595,
+        "maxY": 361
+      }
+    },
+    {
+      "id": 20301,
+      "name": "上邽",
+      "junxianId": 203,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 551,
+        "y": 413
+      },
+      "bbox": {
+        "minX": 506,
+        "minY": 378,
+        "maxX": 568,
+        "maxY": 468
+      }
+    },
+    {
+      "id": 20302,
+      "name": "冀",
+      "junxianId": 203,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 589,
+        "y": 396
+      },
+      "bbox": {
+        "minX": 553,
+        "minY": 358,
+        "maxX": 616,
+        "maxY": 450
+      }
+    },
+    {
+      "id": 20401,
+      "name": "临泾",
+      "junxianId": 204,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 590,
+        "y": 455
+      },
+      "bbox": {
+        "minX": 558,
+        "minY": 426,
+        "maxX": 630,
+        "maxY": 487
+      }
+    },
+    {
+      "id": 20402,
+      "name": "朝那",
+      "junxianId": 204,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 629,
+        "y": 417
+      },
+      "bbox": {
+        "minX": 600,
+        "minY": 396,
+        "maxX": 650,
+        "maxY": 460
+      }
+    },
+    {
+      "id": 20403,
+      "name": "乌枝",
+      "junxianId": 204,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 596,
+        "y": 520
+      },
+      "bbox": {
+        "minX": 577,
+        "minY": 486,
+        "maxX": 633,
+        "maxY": 579
+      }
+    },
+    {
+      "id": 20501,
+      "name": "漆",
+      "junxianId": 205,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 639,
+        "y": 561
+      },
+      "bbox": {
+        "minX": 625,
+        "minY": 529,
+        "maxX": 705,
+        "maxY": 620
+      }
+    },
+    {
+      "id": 20502,
+      "name": "鹑觚",
+      "junxianId": 205,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 680,
+        "y": 548
+      },
+      "bbox": {
+        "minX": 664,
+        "minY": 517,
+        "maxX": 706,
+        "maxY": 585
+      }
+    },
+    {
+      "id": 20601,
+      "name": "高陵",
+      "junxianId": 206,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 724,
+        "y": 522
+      },
+      "bbox": {
+        "minX": 704,
+        "minY": 504,
+        "maxX": 782,
+        "maxY": 580
+      }
+    },
+    {
+      "id": 20602,
+      "name": "夏阳",
+      "junxianId": 206,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 752,
+        "y": 636
+      },
+      "bbox": {
+        "minX": 704,
+        "minY": 573,
+        "maxX": 790,
+        "maxY": 657
+      }
+    },
+    {
+      "id": 20603,
+      "name": "池阳",
+      "junxianId": 206,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 773,
+        "y": 614
+      },
+      "bbox": {
+        "minX": 726,
+        "minY": 558,
+        "maxX": 801,
+        "maxY": 652
+      }
+    },
+    {
+      "id": 20701,
+      "name": "泥阳",
+      "junxianId": 207,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 702,
+        "y": 442
+      },
+      "bbox": {
+        "minX": 680,
+        "minY": 386,
+        "maxX": 730,
+        "maxY": 509
+      }
+    },
+    {
+      "id": 20702,
+      "name": "富平",
+      "junxianId": 207,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 733,
+        "y": 435
+      },
+      "bbox": {
+        "minX": 711,
+        "minY": 378,
+        "maxX": 788,
+        "maxY": 468
+      }
+    },
+    {
+      "id": 20703,
+      "name": "霸城",
+      "junxianId": 207,
+      "originalRegionId": 2,
+      "effectiveRegionId": 1,
+      "center": {
+        "x": 751,
+        "y": 495
+      },
+      "bbox": {
+        "minX": 726,
+        "minY": 449,
+        "maxX": 793,
+        "maxY": 518
+      }
+    },
+    {
+      "id": 20801,
+      "name": "槐里",
+      "junxianId": 208,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 654,
+        "y": 393
+      },
+      "bbox": {
+        "minX": 616,
+        "minY": 355,
+        "maxX": 683,
+        "maxY": 419
+      }
+    },
+    {
+      "id": 20802,
+      "name": "美阳",
+      "junxianId": 208,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 619,
+        "y": 347
+      },
+      "bbox": {
+        "minX": 600,
+        "minY": 330,
+        "maxX": 660,
+        "maxY": 385
+      }
+    },
+    {
+      "id": 20803,
+      "name": "陈仓",
+      "junxianId": 208,
+      "originalRegionId": 2,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 691,
+        "y": 374
+      },
+      "bbox": {
+        "minX": 658,
+        "minY": 345,
+        "maxX": 719,
+        "maxY": 404
+      }
+    },
+    {
+      "id": 30101,
+      "name": "濮阳",
+      "junxianId": 301,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 746,
+        "y": 979
+      },
+      "bbox": {
+        "minX": 730,
+        "minY": 948,
+        "maxX": 791,
+        "maxY": 1001
+      }
+    },
+    {
+      "id": 30102,
+      "name": "燕",
+      "junxianId": 301,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 730,
+        "y": 972
+      },
+      "bbox": {
+        "minX": 703,
+        "minY": 948,
+        "maxX": 749,
+        "maxY": 999
+      }
+    },
+    {
+      "id": 30103,
+      "name": "白马",
+      "junxianId": 301,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 735,
+        "y": 1020
+      },
+      "bbox": {
+        "minX": 701,
+        "minY": 997,
+        "maxX": 757,
+        "maxY": 1049
+      }
+    },
+    {
+      "id": 30104,
+      "name": "东阿",
+      "junxianId": 301,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 771,
+        "y": 1010
+      },
+      "bbox": {
+        "minX": 750,
+        "minY": 966,
+        "maxX": 805,
+        "maxY": 1030
+      }
+    },
+    {
+      "id": 30201,
+      "name": "任城",
+      "junxianId": 302,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 753,
+        "y": 931
+      },
+      "bbox": {
+        "minX": 703,
+        "minY": 893,
+        "maxX": 762,
+        "maxY": 949
+      }
+    },
+    {
+      "id": 30202,
+      "name": "亢父",
+      "junxianId": 302,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 733,
+        "y": 913
+      },
+      "bbox": {
+        "minX": 705,
+        "minY": 883,
+        "maxX": 751,
+        "maxY": 928
+      }
+    },
+    {
+      "id": 30203,
+      "name": "樊",
+      "junxianId": 302,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 732,
+        "y": 872
+      },
+      "bbox": {
+        "minX": 708,
+        "minY": 813,
+        "maxX": 745,
+        "maxY": 890
+      }
+    },
+    {
+      "id": 30301,
+      "name": "东平",
+      "junxianId": 303,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 732,
+        "y": 1074
+      },
+      "bbox": {
+        "minX": 699,
+        "minY": 1042,
+        "maxX": 751,
+        "maxY": 1112
+      }
+    },
+    {
+      "id": 30302,
+      "name": "寿张",
+      "junxianId": 303,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 712,
+        "y": 1051
+      },
+      "bbox": {
+        "minX": 680,
+        "minY": 1023,
+        "maxX": 739,
+        "maxY": 1072
+      }
+    },
+    {
+      "id": 30303,
+      "name": "无盐",
+      "junxianId": 303,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 702,
+        "y": 1098
+      },
+      "bbox": {
+        "minX": 664,
+        "minY": 1071,
+        "maxX": 712,
+        "maxY": 1128
+      }
+    },
+    {
+      "id": 30401,
+      "name": "卢",
+      "junxianId": 304,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 713,
+        "y": 1129
+      },
+      "bbox": {
+        "minX": 697,
+        "minY": 1057,
+        "maxX": 756,
+        "maxY": 1149
+      }
+    },
+    {
+      "id": 30402,
+      "name": "蛇丘",
+      "junxianId": 304,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 751,
+        "y": 1151
+      },
+      "bbox": {
+        "minX": 727,
+        "minY": 1063,
+        "maxX": 777,
+        "maxY": 1160
+      }
+    },
+    {
+      "id": 30501,
+      "name": "昌邑",
+      "junxianId": 305,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 792,
+        "y": 1033
+      },
+      "bbox": {
+        "minX": 765,
+        "minY": 989,
+        "maxX": 829,
+        "maxY": 1058
+      }
+    },
+    {
+      "id": 30502,
+      "name": "巨野",
+      "junxianId": 305,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 851,
+        "y": 1012
+      },
+      "bbox": {
+        "minX": 822,
+        "minY": 978,
+        "maxX": 900,
+        "maxY": 1053
+      }
+    },
+    {
+      "id": 30503,
+      "name": "高平",
+      "junxianId": 305,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 811,
+        "y": 1052
+      },
+      "bbox": {
+        "minX": 789,
+        "minY": 1025,
+        "maxX": 852,
+        "maxY": 1067
+      }
+    },
+    {
+      "id": 30504,
+      "name": "湖陆",
+      "junxianId": 305,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 765,
+        "y": 1055
+      },
+      "bbox": {
+        "minX": 750,
+        "minY": 1027,
+        "maxX": 788,
+        "maxY": 1067
+      }
+    },
+    {
+      "id": 30601,
+      "name": "奉高",
+      "junxianId": 306,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 796,
+        "y": 1104
+      },
+      "bbox": {
+        "minX": 761,
+        "minY": 1065,
+        "maxX": 809,
+        "maxY": 1132
+      }
+    },
+    {
+      "id": 30602,
+      "name": "博",
+      "junxianId": 306,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 852,
+        "y": 1072
+      },
+      "bbox": {
+        "minX": 801,
+        "minY": 1050,
+        "maxX": 882,
+        "maxY": 1100
+      }
+    },
+    {
+      "id": 30603,
+      "name": "嬴",
+      "junxianId": 306,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 831,
+        "y": 1111
+      },
+      "bbox": {
+        "minX": 801,
+        "minY": 1071,
+        "maxX": 868,
+        "maxY": 1159
+      }
+    },
+    {
+      "id": 30604,
+      "name": "梁甫",
+      "junxianId": 306,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 884,
+        "y": 1088
+      },
+      "bbox": {
+        "minX": 859,
+        "minY": 1051,
+        "maxX": 900,
+        "maxY": 1125
+      }
+    },
+    {
+      "id": 30605,
+      "name": "巨平",
+      "junxianId": 306,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 791,
+        "y": 1132
+      },
+      "bbox": {
+        "minX": 764,
+        "minY": 1118,
+        "maxX": 829,
+        "maxY": 1162
+      }
+    },
+    {
+      "id": 30701,
+      "name": "定陶",
+      "junxianId": 307,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 851,
+        "y": 972
+      },
+      "bbox": {
+        "minX": 835,
+        "minY": 916,
+        "maxX": 898,
+        "maxY": 1012
+      }
+    },
+    {
+      "id": 30702,
+      "name": "冤句",
+      "junxianId": 307,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 892,
+        "y": 971
+      },
+      "bbox": {
+        "minX": 872,
+        "minY": 950,
+        "maxX": 927,
+        "maxY": 1001
+      }
+    },
+    {
+      "id": 30703,
+      "name": "句阳",
+      "junxianId": 307,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 891,
+        "y": 1031
+      },
+      "bbox": {
+        "minX": 871,
+        "minY": 1000,
+        "maxX": 918,
+        "maxY": 1050
+      }
+    },
+    {
+      "id": 30704,
+      "name": "成阳",
+      "junxianId": 307,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 911,
+        "y": 932
+      },
+      "bbox": {
+        "minX": 894,
+        "minY": 885,
+        "maxX": 939,
+        "maxY": 964
+      }
+    },
+    {
+      "id": 30801,
+      "name": "陈留",
+      "junxianId": 308,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 812,
+        "y": 971
+      },
+      "bbox": {
+        "minX": 787,
+        "minY": 915,
+        "maxX": 847,
+        "maxY": 998
+      }
+    },
+    {
+      "id": 30802,
+      "name": "酸枣",
+      "junxianId": 308,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 872,
+        "y": 893
+      },
+      "bbox": {
+        "minX": 822,
+        "minY": 867,
+        "maxX": 910,
+        "maxY": 922
+      }
+    },
+    {
+      "id": 30803,
+      "name": "尉氏",
+      "junxianId": 308,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 851,
+        "y": 934
+      },
+      "bbox": {
+        "minX": 819,
+        "minY": 883,
+        "maxX": 880,
+        "maxY": 959
+      }
+    },
+    {
+      "id": 30804,
+      "name": "雍丘",
+      "junxianId": 308,
+      "originalRegionId": 3,
+      "effectiveRegionId": 3,
+      "center": {
+        "x": 872,
+        "y": 854
+      },
+      "bbox": {
+        "minX": 825,
+        "minY": 816,
+        "maxX": 901,
+        "maxY": 873
+      }
+    },
+    {
+      "id": 40101,
+      "name": "谯",
+      "junxianId": 401,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1013,
+        "y": 930
+      },
+      "bbox": {
+        "minX": 990,
+        "minY": 898,
+        "maxX": 1072,
+        "maxY": 963
+      }
+    },
+    {
+      "id": 40102,
+      "name": "城父",
+      "junxianId": 401,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1054,
+        "y": 951
+      },
+      "bbox": {
+        "minX": 1036,
+        "minY": 923,
+        "maxX": 1087,
+        "maxY": 974
+      }
+    },
+    {
+      "id": 40103,
+      "name": "宋",
+      "junxianId": 401,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1062,
+        "y": 890
+      },
+      "bbox": {
+        "minX": 1033,
+        "minY": 855,
+        "maxX": 1113,
+        "maxY": 924
+      }
+    },
+    {
+      "id": 40201,
+      "name": "许昌",
+      "junxianId": 402,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 892,
+        "y": 793
+      },
+      "bbox": {
+        "minX": 856,
+        "minY": 759,
+        "maxX": 937,
+        "maxY": 838
+      }
+    },
+    {
+      "id": 40202,
+      "name": "阳翟",
+      "junxianId": 402,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 873,
+        "y": 773
+      },
+      "bbox": {
+        "minX": 843,
+        "minY": 741,
+        "maxX": 907,
+        "maxY": 806
+      }
+    },
+    {
+      "id": 40301,
+      "name": "平舆",
+      "junxianId": 403,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 972,
+        "y": 852
+      },
+      "bbox": {
+        "minX": 948,
+        "minY": 826,
+        "maxX": 995,
+        "maxY": 876
+      }
+    },
+    {
+      "id": 40302,
+      "name": "新阳",
+      "junxianId": 403,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 908,
+        "y": 834
+      },
+      "bbox": {
+        "minX": 892,
+        "minY": 813,
+        "maxX": 931,
+        "maxY": 857
+      }
+    },
+    {
+      "id": 40303,
+      "name": "西华",
+      "junxianId": 403,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 941,
+        "y": 812
+      },
+      "bbox": {
+        "minX": 918,
+        "minY": 791,
+        "maxX": 970,
+        "maxY": 839
+      }
+    },
+    {
+      "id": 40304,
+      "name": "上蔡",
+      "junxianId": 403,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 926,
+        "y": 858
+      },
+      "bbox": {
+        "minX": 900,
+        "minY": 835,
+        "maxX": 951,
+        "maxY": 889
+      }
+    },
+    {
+      "id": 40305,
+      "name": "南顿",
+      "junxianId": 403,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 992,
+        "y": 832
+      },
+      "bbox": {
+        "minX": 966,
+        "minY": 804,
+        "maxX": 1012,
+        "maxY": 853
+      }
+    },
+    {
+      "id": 40401,
+      "name": "弋阳",
+      "junxianId": 404,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 973,
+        "y": 895
+      },
+      "bbox": {
+        "minX": 951,
+        "minY": 871,
+        "maxX": 989,
+        "maxY": 925
+      }
+    },
+    {
+      "id": 40402,
+      "name": "期思",
+      "junxianId": 404,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 951,
+        "y": 932
+      },
+      "bbox": {
+        "minX": 930,
+        "minY": 908,
+        "maxX": 981,
+        "maxY": 955
+      }
+    },
+    {
+      "id": 40403,
+      "name": "西阳",
+      "junxianId": 404,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 932,
+        "y": 894
+      },
+      "bbox": {
+        "minX": 920,
+        "minY": 877,
+        "maxX": 955,
+        "maxY": 919
+      }
+    },
+    {
+      "id": 40501,
+      "name": "睢阳",
+      "junxianId": 405,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1011,
+        "y": 971
+      },
+      "bbox": {
+        "minX": 974,
+        "minY": 924,
+        "maxX": 1054,
+        "maxY": 996
+      }
+    },
+    {
+      "id": 40502,
+      "name": "虞",
+      "junxianId": 405,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 949,
+        "y": 972
+      },
+      "bbox": {
+        "minX": 916,
+        "minY": 932,
+        "maxX": 975,
+        "maxY": 1020
+      }
+    },
+    {
+      "id": 40503,
+      "name": "下邑",
+      "junxianId": 405,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 991,
+        "y": 991
+      },
+      "bbox": {
+        "minX": 945,
+        "minY": 944,
+        "maxX": 1015,
+        "maxY": 1032
+      }
+    },
+    {
+      "id": 40601,
+      "name": "安丰",
+      "junxianId": 406,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1031,
+        "y": 1029
+      },
+      "bbox": {
+        "minX": 1012,
+        "minY": 975,
+        "maxX": 1062,
+        "maxY": 1065
+      }
+    },
+    {
+      "id": 40602,
+      "name": "雩娄",
+      "junxianId": 406,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1075,
+        "y": 1037
+      },
+      "bbox": {
+        "minX": 1049,
+        "minY": 979,
+        "maxX": 1097,
+        "maxY": 1060
+      }
+    },
+    {
+      "id": 40603,
+      "name": "蓼",
+      "junxianId": 406,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1012,
+        "y": 1031
+      },
+      "bbox": {
+        "minX": 959,
+        "minY": 996,
+        "maxX": 1024,
+        "maxY": 1062
+      }
+    },
+    {
+      "id": 40701,
+      "name": "襄城",
+      "junxianId": 407,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1101,
+        "y": 1035
+      },
+      "bbox": {
+        "minX": 1058,
+        "minY": 954,
+        "maxX": 1125,
+        "maxY": 1044
+      }
+    },
+    {
+      "id": 40702,
+      "name": "定陵",
+      "junxianId": 407,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1133,
+        "y": 1033
+      },
+      "bbox": {
+        "minX": 1116,
+        "minY": 984,
+        "maxX": 1158,
+        "maxY": 1041
+      }
+    },
+    {
+      "id": 40703,
+      "name": "昆阳",
+      "junxianId": 407,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1105,
+        "y": 906
+      },
+      "bbox": {
+        "minX": 1087,
+        "minY": 858,
+        "maxX": 1140,
+        "maxY": 931
+      }
+    },
+    {
+      "id": 40704,
+      "name": "舞阳",
+      "junxianId": 407,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1111,
+        "y": 971
+      },
+      "bbox": {
+        "minX": 1076,
+        "minY": 925,
+        "maxX": 1139,
+        "maxY": 999
+      }
+    },
+    {
+      "id": 40801,
+      "name": "陈",
+      "junxianId": 408,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1013,
+        "y": 891
+      },
+      "bbox": {
+        "minX": 971,
+        "minY": 819,
+        "maxX": 1058,
+        "maxY": 920
+      }
+    },
+    {
+      "id": 40802,
+      "name": "阳夏",
+      "junxianId": 408,
+      "originalRegionId": 4,
+      "effectiveRegionId": 4,
+      "center": {
+        "x": 1091,
+        "y": 852
+      },
+      "bbox": {
+        "minX": 1024,
+        "minY": 813,
+        "maxX": 1111,
+        "maxY": 874
+      }
+    },
+    {
+      "id": 50101,
+      "name": "邺",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 383,
+        "y": 1006
+      },
+      "bbox": {
+        "minX": 330,
+        "minY": 971,
+        "maxX": 437,
+        "maxY": 1107
+      }
+    },
+    {
+      "id": 50102,
+      "name": "繁阳",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 409,
+        "y": 1063
+      },
+      "bbox": {
+        "minX": 390,
+        "minY": 1018,
+        "maxX": 482,
+        "maxY": 1113
+      }
+    },
+    {
+      "id": 50103,
+      "name": "内黄",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 451,
+        "y": 992
+      },
+      "bbox": {
+        "minX": 419,
+        "minY": 962,
+        "maxX": 510,
+        "maxY": 1040
+      }
+    },
+    {
+      "id": 50104,
+      "name": "元城",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 531,
+        "y": 953
+      },
+      "bbox": {
+        "minX": 498,
+        "minY": 928,
+        "maxX": 590,
+        "maxY": 1031
+      }
+    },
+    {
+      "id": 50105,
+      "name": "梁期",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 352,
+        "y": 1112
+      },
+      "bbox": {
+        "minX": 291,
+        "minY": 1076,
+        "maxX": 414,
+        "maxY": 1173
+      }
+    },
+    {
+      "id": 50106,
+      "name": "曲梁",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 412,
+        "y": 1152
+      },
+      "bbox": {
+        "minX": 355,
+        "minY": 1083,
+        "maxX": 469,
+        "maxY": 1193
+      }
+    },
+    {
+      "id": 50107,
+      "name": "清渊",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 431,
+        "y": 933
+      },
+      "bbox": {
+        "minX": 409,
+        "minY": 905,
+        "maxX": 516,
+        "maxY": 986
+      }
+    },
+    {
+      "id": 50108,
+      "name": "平恩",
+      "junxianId": 501,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 491,
+        "y": 1072
+      },
+      "bbox": {
+        "minX": 454,
+        "minY": 1013,
+        "maxX": 569,
+        "maxY": 1130
+      }
+    },
+    {
+      "id": 50201,
+      "name": "常山",
+      "junxianId": 502,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 337,
+        "y": 1006
+      },
+      "bbox": {
+        "minX": 223,
+        "minY": 868,
+        "maxX": 440,
+        "maxY": 1086
+      }
+    },
+    {
+      "id": 50301,
+      "name": "北平",
+      "junxianId": 503,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 312,
+        "y": 1072
+      },
+      "bbox": {
+        "minX": 242,
+        "minY": 1017,
+        "maxX": 361,
+        "maxY": 1119
+      }
+    },
+    {
+      "id": 50302,
+      "name": "卢奴",
+      "junxianId": 503,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 251,
+        "y": 1153
+      },
+      "bbox": {
+        "minX": 185,
+        "minY": 1110,
+        "maxX": 269,
+        "maxY": 1220
+      }
+    },
+    {
+      "id": 50303,
+      "name": "望都",
+      "junxianId": 503,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 291,
+        "y": 1132
+      },
+      "bbox": {
+        "minX": 207,
+        "minY": 1082,
+        "maxX": 314,
+        "maxY": 1198
+      }
+    },
+    {
+      "id": 50401,
+      "name": "武垣",
+      "junxianId": 504,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 268,
+        "y": 1231
+      },
+      "bbox": {
+        "minX": 171,
+        "minY": 1157,
+        "maxX": 335,
+        "maxY": 1266
+      }
+    },
+    {
+      "id": 50402,
+      "name": "易京",
+      "junxianId": 504,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 269,
+        "y": 1292
+      },
+      "bbox": {
+        "minX": 164,
+        "minY": 1242,
+        "maxX": 318,
+        "maxY": 1344
+      }
+    },
+    {
+      "id": 50403,
+      "name": "乐成",
+      "junxianId": 504,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 352,
+        "y": 1232
+      },
+      "bbox": {
+        "minX": 311,
+        "minY": 1165,
+        "maxX": 437,
+        "maxY": 1287
+      }
+    },
+    {
+      "id": 50501,
+      "name": "南皮",
+      "junxianId": 505,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 331,
+        "y": 1313
+      },
+      "bbox": {
+        "minX": 287,
+        "minY": 1267,
+        "maxX": 460,
+        "maxY": 1392
+      }
+    },
+    {
+      "id": 50502,
+      "name": "高成",
+      "junxianId": 505,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 387,
+        "y": 1434
+      },
+      "bbox": {
+        "minX": 299,
+        "minY": 1350,
+        "maxX": 492,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 50503,
+      "name": "章武",
+      "junxianId": 505,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 271,
+        "y": 1371
+      },
+      "bbox": {
+        "minX": 217,
+        "minY": 1322,
+        "maxX": 358,
+        "maxY": 1482
+      }
+    },
+    {
+      "id": 50601,
+      "name": "东武城",
+      "junxianId": 506,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 614,
+        "y": 1069
+      },
+      "bbox": {
+        "minX": 567,
+        "minY": 1032,
+        "maxX": 675,
+        "maxY": 1207
+      }
+    },
+    {
+      "id": 50602,
+      "name": "甘陵",
+      "junxianId": 506,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 585,
+        "y": 1036
+      },
+      "bbox": {
+        "minX": 494,
+        "minY": 971,
+        "maxX": 622,
+        "maxY": 1179
+      }
+    },
+    {
+      "id": 50603,
+      "name": "贝丘",
+      "junxianId": 506,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 469,
+        "y": 1153
+      },
+      "bbox": {
+        "minX": 422,
+        "minY": 1120,
+        "maxX": 502,
+        "maxY": 1275
+      }
+    },
+    {
+      "id": 50604,
+      "name": "灵",
+      "junxianId": 506,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 656,
+        "y": 1013
+      },
+      "bbox": {
+        "minX": 605,
+        "minY": 967,
+        "maxX": 703,
+        "maxY": 1083
+      }
+    },
+    {
+      "id": 50701,
+      "name": "巨鹿",
+      "junxianId": 507,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 598,
+        "y": 912
+      },
+      "bbox": {
+        "minX": 436,
+        "minY": 866,
+        "maxX": 642,
+        "maxY": 942
+      }
+    },
+    {
+      "id": 50702,
+      "name": "瘿陶",
+      "junxianId": 507,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 616,
+        "y": 970
+      },
+      "bbox": {
+        "minX": 505,
+        "minY": 907,
+        "maxX": 653,
+        "maxY": 999
+      }
+    },
+    {
+      "id": 50703,
+      "name": "下曲阳",
+      "junxianId": 507,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 652,
+        "y": 873
+      },
+      "bbox": {
+        "minX": 604,
+        "minY": 808,
+        "maxX": 709,
+        "maxY": 916
+      }
+    },
+    {
+      "id": 50704,
+      "name": "广平",
+      "junxianId": 507,
+      "originalRegionId": 5,
+      "effectiveRegionId": 5,
+      "center": {
+        "x": 671,
+        "y": 952
+      },
+      "bbox": {
+        "minX": 635,
+        "minY": 894,
+        "maxX": 712,
+        "maxY": 992
+      }
+    },
+    {
+      "id": 60101,
+      "name": "临淄",
+      "junxianId": 601,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 633,
+        "y": 1369
+      },
+      "bbox": {
+        "minX": 564,
+        "minY": 1275,
+        "maxX": 667,
+        "maxY": 1394
+      }
+    },
+    {
+      "id": 60102,
+      "name": "昌国",
+      "junxianId": 601,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 692,
+        "y": 1391
+      },
+      "bbox": {
+        "minX": 578,
+        "minY": 1323,
+        "maxX": 725,
+        "maxY": 1422
+      }
+    },
+    {
+      "id": 60103,
+      "name": "般阳",
+      "junxianId": 601,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 672,
+        "y": 1332
+      },
+      "bbox": {
+        "minX": 605,
+        "minY": 1266,
+        "maxX": 705,
+        "maxY": 1366
+      }
+    },
+    {
+      "id": 60201,
+      "name": "济南",
+      "junxianId": 602,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 713,
+        "y": 1212
+      },
+      "bbox": {
+        "minX": 650,
+        "minY": 1157,
+        "maxX": 759,
+        "maxY": 1259
+      }
+    },
+    {
+      "id": 60202,
+      "name": "历城",
+      "junxianId": 602,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 673,
+        "y": 1172
+      },
+      "bbox": {
+        "minX": 587,
+        "minY": 1121,
+        "maxX": 728,
+        "maxY": 1229
+      }
+    },
+    {
+      "id": 60203,
+      "name": "于陵",
+      "junxianId": 602,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 595,
+        "y": 1260
+      },
+      "bbox": {
+        "minX": 576,
+        "minY": 1204,
+        "maxX": 660,
+        "maxY": 1285
+      }
+    },
+    {
+      "id": 60301,
+      "name": "厌次",
+      "junxianId": 603,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 532,
+        "y": 1231
+      },
+      "bbox": {
+        "minX": 466,
+        "minY": 1194,
+        "maxX": 577,
+        "maxY": 1301
+      }
+    },
+    {
+      "id": 60302,
+      "name": "般",
+      "junxianId": 603,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 533,
+        "y": 1372
+      },
+      "bbox": {
+        "minX": 442,
+        "minY": 1329,
+        "maxX": 572,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 60303,
+      "name": "平原",
+      "junxianId": 603,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 513,
+        "y": 1292
+      },
+      "bbox": {
+        "minX": 441,
+        "minY": 1245,
+        "maxX": 577,
+        "maxY": 1355
+      }
+    },
+    {
+      "id": 60304,
+      "name": "漯阴",
+      "junxianId": 603,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 552,
+        "y": 1193
+      },
+      "bbox": {
+        "minX": 495,
+        "minY": 1125,
+        "maxX": 583,
+        "maxY": 1260
+      }
+    },
+    {
+      "id": 60401,
+      "name": "乐安",
+      "junxianId": 604,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 653,
+        "y": 1472
+      },
+      "bbox": {
+        "minX": 580,
+        "minY": 1406,
+        "maxX": 744,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 60402,
+      "name": "临济",
+      "junxianId": 604,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 568,
+        "y": 1415
+      },
+      "bbox": {
+        "minX": 513,
+        "minY": 1373,
+        "maxX": 635,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 60501,
+      "name": "剧",
+      "junxianId": 605,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 690,
+        "y": 1281
+      },
+      "bbox": {
+        "minX": 659,
+        "minY": 1240,
+        "maxX": 748,
+        "maxY": 1431
+      }
+    },
+    {
+      "id": 60502,
+      "name": "营陵",
+      "junxianId": 605,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 773,
+        "y": 1310
+      },
+      "bbox": {
+        "minX": 742,
+        "minY": 1273,
+        "maxX": 834,
+        "maxY": 1384
+      }
+    },
+    {
+      "id": 60503,
+      "name": "平寿",
+      "junxianId": 605,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 732,
+        "y": 1250
+      },
+      "bbox": {
+        "minX": 693,
+        "minY": 1224,
+        "maxX": 808,
+        "maxY": 1380
+      }
+    },
+    {
+      "id": 60504,
+      "name": "观阳",
+      "junxianId": 605,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 800,
+        "y": 1433
+      },
+      "bbox": {
+        "minX": 738,
+        "minY": 1376,
+        "maxX": 836,
+        "maxY": 1455
+      }
+    },
+    {
+      "id": 60601,
+      "name": "牟平",
+      "junxianId": 606,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 932,
+        "y": 1412
+      },
+      "bbox": {
+        "minX": 842,
+        "minY": 1390,
+        "maxX": 974,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 60602,
+      "name": "黄",
+      "junxianId": 606,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 911,
+        "y": 1330
+      },
+      "bbox": {
+        "minX": 881,
+        "minY": 1237,
+        "maxX": 992,
+        "maxY": 1407
+      }
+    },
+    {
+      "id": 60603,
+      "name": "东牟",
+      "junxianId": 606,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 772,
+        "y": 1472
+      },
+      "bbox": {
+        "minX": 704,
+        "minY": 1412,
+        "maxX": 874,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 60701,
+      "name": "东武",
+      "junxianId": 607,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 792,
+        "y": 1212
+      },
+      "bbox": {
+        "minX": 735,
+        "minY": 1132,
+        "maxX": 870,
+        "maxY": 1281
+      }
+    },
+    {
+      "id": 60702,
+      "name": "昌安",
+      "junxianId": 607,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 851,
+        "y": 1351
+      },
+      "bbox": {
+        "minX": 816,
+        "minY": 1268,
+        "maxX": 898,
+        "maxY": 1418
+      }
+    },
+    {
+      "id": 60703,
+      "name": "夷安",
+      "junxianId": 607,
+      "originalRegionId": 6,
+      "effectiveRegionId": 6,
+      "center": {
+        "x": 851,
+        "y": 1232
+      },
+      "bbox": {
+        "minX": 804,
+        "minY": 1121,
+        "maxX": 927,
+        "maxY": 1298
+      }
+    },
+    {
+      "id": 70101,
+      "name": "傅阳",
+      "junxianId": 701,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 971,
+        "y": 1190
+      },
+      "bbox": {
+        "minX": 896,
+        "minY": 1131,
+        "maxX": 1006,
+        "maxY": 1283
+      }
+    },
+    {
+      "id": 70102,
+      "name": "小沛",
+      "junxianId": 701,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1057,
+        "y": 1101
+      },
+      "bbox": {
+        "minX": 996,
+        "minY": 1051,
+        "maxX": 1130,
+        "maxY": 1142
+      }
+    },
+    {
+      "id": 70103,
+      "name": "武原",
+      "junxianId": 701,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 932,
+        "y": 1133
+      },
+      "bbox": {
+        "minX": 888,
+        "minY": 1088,
+        "maxX": 997,
+        "maxY": 1200
+      }
+    },
+    {
+      "id": 70104,
+      "name": "梧",
+      "junxianId": 701,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 951,
+        "y": 1073
+      },
+      "bbox": {
+        "minX": 894,
+        "minY": 1013,
+        "maxX": 1009,
+        "maxY": 1119
+      }
+    },
+    {
+      "id": 70105,
+      "name": "彭城",
+      "junxianId": 701,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1053,
+        "y": 1173
+      },
+      "bbox": {
+        "minX": 994,
+        "minY": 1101,
+        "maxX": 1128,
+        "maxY": 1251
+      }
+    },
+    {
+      "id": 70201,
+      "name": "徐",
+      "junxianId": 702,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1150,
+        "y": 1311
+      },
+      "bbox": {
+        "minX": 1081,
+        "minY": 1238,
+        "maxX": 1210,
+        "maxY": 1343
+      }
+    },
+    {
+      "id": 70202,
+      "name": "僮",
+      "junxianId": 702,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1192,
+        "y": 1252
+      },
+      "bbox": {
+        "minX": 1120,
+        "minY": 1199,
+        "maxX": 1237,
+        "maxY": 1309
+      }
+    },
+    {
+      "id": 70203,
+      "name": "下邳",
+      "junxianId": 702,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1157,
+        "y": 1172
+      },
+      "bbox": {
+        "minX": 1059,
+        "minY": 1129,
+        "maxX": 1183,
+        "maxY": 1239
+      }
+    },
+    {
+      "id": 70204,
+      "name": "睢陵",
+      "junxianId": 702,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1212,
+        "y": 1144
+      },
+      "bbox": {
+        "minX": 1113,
+        "minY": 1121,
+        "maxX": 1252,
+        "maxY": 1239
+      }
+    },
+    {
+      "id": 70205,
+      "name": "曲阳",
+      "junxianId": 702,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1193,
+        "y": 1072
+      },
+      "bbox": {
+        "minX": 1155,
+        "minY": 1036,
+        "maxX": 1231,
+        "maxY": 1157
+      }
+    },
+    {
+      "id": 70207,
+      "name": "淮阴",
+      "junxianId": 702,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1181,
+        "y": 1017
+      },
+      "bbox": {
+        "minX": 1128,
+        "minY": 927,
+        "maxX": 1228,
+        "maxY": 1053
+      }
+    },
+    {
+      "id": 70301,
+      "name": "临沂",
+      "junxianId": 703,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1028,
+        "y": 1264
+      },
+      "bbox": {
+        "minX": 949,
+        "minY": 1208,
+        "maxX": 1088,
+        "maxY": 1314
+      }
+    },
+    {
+      "id": 70302,
+      "name": "东郓",
+      "junxianId": 703,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1056,
+        "y": 1309
+      },
+      "bbox": {
+        "minX": 964,
+        "minY": 1258,
+        "maxX": 1111,
+        "maxY": 1365
+      }
+    },
+    {
+      "id": 70401,
+      "name": "阳都",
+      "junxianId": 704,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1086,
+        "y": 1328
+      },
+      "bbox": {
+        "minX": 1008,
+        "minY": 1292,
+        "maxX": 1145,
+        "maxY": 1370
+      }
+    },
+    {
+      "id": 70402,
+      "name": "开阳",
+      "junxianId": 704,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1092,
+        "y": 1373
+      },
+      "bbox": {
+        "minX": 1044,
+        "minY": 1339,
+        "maxX": 1150,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 70403,
+      "name": "琅琊",
+      "junxianId": 704,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1032,
+        "y": 1411
+      },
+      "bbox": {
+        "minX": 960,
+        "minY": 1356,
+        "maxX": 1074,
+        "maxY": 1442
+      }
+    },
+    {
+      "id": 70404,
+      "name": "东安",
+      "junxianId": 704,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1060,
+        "y": 1453
+      },
+      "bbox": {
+        "minX": 1035,
+        "minY": 1413,
+        "maxX": 1133,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 70405,
+      "name": "即丘",
+      "junxianId": 704,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1014,
+        "y": 1462
+      },
+      "bbox": {
+        "minX": 959,
+        "minY": 1415,
+        "maxX": 1045,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 70501,
+      "name": "郯",
+      "junxianId": 705,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1213,
+        "y": 1412
+      },
+      "bbox": {
+        "minX": 1140,
+        "minY": 1301,
+        "maxX": 1268,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 70502,
+      "name": "兰陵",
+      "junxianId": 705,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1132,
+        "y": 1371
+      },
+      "bbox": {
+        "minX": 1103,
+        "minY": 1302,
+        "maxX": 1217,
+        "maxY": 1455
+      }
+    },
+    {
+      "id": 70601,
+      "name": "广陵",
+      "junxianId": 706,
+      "originalRegionId": 7,
+      "effectiveRegionId": 7,
+      "center": {
+        "x": 1253,
+        "y": 1311
+      },
+      "bbox": {
+        "minX": 1217,
+        "minY": 1176,
+        "maxX": 1403,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 80101,
+      "name": "建业",
+      "junxianId": 801,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1274,
+        "y": 1133
+      },
+      "bbox": {
+        "minX": 1228,
+        "minY": 1106,
+        "maxX": 1313,
+        "maxY": 1322
+      }
+    },
+    {
+      "id": 80102,
+      "name": "宛陵",
+      "junxianId": 801,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1312,
+        "y": 1172
+      },
+      "bbox": {
+        "minX": 1289,
+        "minY": 1137,
+        "maxX": 1342,
+        "maxY": 1342
+      }
+    },
+    {
+      "id": 80103,
+      "name": "溧阳",
+      "junxianId": 801,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1333,
+        "y": 1111
+      },
+      "bbox": {
+        "minX": 1305,
+        "minY": 1073,
+        "maxX": 1365,
+        "maxY": 1227
+      }
+    },
+    {
+      "id": 80104,
+      "name": "芜湖",
+      "junxianId": 801,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1292,
+        "y": 1092
+      },
+      "bbox": {
+        "minX": 1223,
+        "minY": 1013,
+        "maxX": 1341,
+        "maxY": 1126
+      }
+    },
+    {
+      "id": 80201,
+      "name": "舒",
+      "junxianId": 802,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1194,
+        "y": 892
+      },
+      "bbox": {
+        "minX": 1122,
+        "minY": 833,
+        "maxX": 1224,
+        "maxY": 945
+      }
+    },
+    {
+      "id": 80202,
+      "name": "六安",
+      "junxianId": 802,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1232,
+        "y": 932
+      },
+      "bbox": {
+        "minX": 1179,
+        "minY": 902,
+        "maxX": 1284,
+        "maxY": 1069
+      }
+    },
+    {
+      "id": 80203,
+      "name": "蕲春",
+      "junxianId": 802,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1131,
+        "y": 812
+      },
+      "bbox": {
+        "minX": 1033,
+        "minY": 752,
+        "maxX": 1177,
+        "maxY": 855
+      }
+    },
+    {
+      "id": 80301,
+      "name": "吴",
+      "junxianId": 803,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1410,
+        "y": 1114
+      },
+      "bbox": {
+        "minX": 1348,
+        "minY": 1068,
+        "maxX": 1501,
+        "maxY": 1362
+      }
+    },
+    {
+      "id": 80302,
+      "name": "嘉兴",
+      "junxianId": 803,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1353,
+        "y": 1231
+      },
+      "bbox": {
+        "minX": 1302,
+        "minY": 1207,
+        "maxX": 1501,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 80401,
+      "name": "山阴",
+      "junxianId": 804,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1398,
+        "y": 1007
+      },
+      "bbox": {
+        "minX": 1360,
+        "minY": 859,
+        "maxX": 1501,
+        "maxY": 1036
+      }
+    },
+    {
+      "id": 80402,
+      "name": "乌伤",
+      "junxianId": 804,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1333,
+        "y": 1031
+      },
+      "bbox": {
+        "minX": 1285,
+        "minY": 985,
+        "maxX": 1501,
+        "maxY": 1066
+      }
+    },
+    {
+      "id": 80403,
+      "name": "诸暨",
+      "junxianId": 804,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1372,
+        "y": 1071
+      },
+      "bbox": {
+        "minX": 1338,
+        "minY": 1017,
+        "maxX": 1501,
+        "maxY": 1088
+      }
+    },
+    {
+      "id": 80501,
+      "name": "建安",
+      "junxianId": 805,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1394,
+        "y": 753
+      },
+      "bbox": {
+        "minX": 1364,
+        "minY": 632,
+        "maxX": 1501,
+        "maxY": 813
+      }
+    },
+    {
+      "id": 80502,
+      "name": "吴兴",
+      "junxianId": 805,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1432,
+        "y": 652
+      },
+      "bbox": {
+        "minX": 1371,
+        "minY": 534,
+        "maxX": 1501,
+        "maxY": 693
+      }
+    },
+    {
+      "id": 80503,
+      "name": "将乐",
+      "junxianId": 805,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1432,
+        "y": 833
+      },
+      "bbox": {
+        "minX": 1365,
+        "minY": 752,
+        "maxX": 1501,
+        "maxY": 867
+      }
+    },
+    {
+      "id": 80601,
+      "name": "西昌",
+      "junxianId": 806,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1354,
+        "y": 652
+      },
+      "bbox": {
+        "minX": 1304,
+        "minY": 529,
+        "maxX": 1428,
+        "maxY": 688
+      }
+    },
+    {
+      "id": 80602,
+      "name": "石阳",
+      "junxianId": 806,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1433,
+        "y": 533
+      },
+      "bbox": {
+        "minX": 1385,
+        "minY": 441,
+        "maxX": 1501,
+        "maxY": 577
+      }
+    },
+    {
+      "id": 80701,
+      "name": "南昌",
+      "junxianId": 807,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1253,
+        "y": 713
+      },
+      "bbox": {
+        "minX": 1157,
+        "minY": 652,
+        "maxX": 1301,
+        "maxY": 762
+      }
+    },
+    {
+      "id": 80702,
+      "name": "柴桑",
+      "junxianId": 807,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1171,
+        "y": 773
+      },
+      "bbox": {
+        "minX": 1094,
+        "minY": 710,
+        "maxX": 1217,
+        "maxY": 833
+      }
+    },
+    {
+      "id": 80703,
+      "name": "建城",
+      "junxianId": 807,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1292,
+        "y": 673
+      },
+      "bbox": {
+        "minX": 1235,
+        "minY": 614,
+        "maxX": 1348,
+        "maxY": 721
+      }
+    },
+    {
+      "id": 80704,
+      "name": "宜春",
+      "junxianId": 807,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1224,
+        "y": 777
+      },
+      "bbox": {
+        "minX": 1151,
+        "minY": 708,
+        "maxX": 1276,
+        "maxY": 806
+      }
+    },
+    {
+      "id": 80801,
+      "name": "上饶",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1311,
+        "y": 909
+      },
+      "bbox": {
+        "minX": 1233,
+        "minY": 858,
+        "maxX": 1357,
+        "maxY": 953
+      }
+    },
+    {
+      "id": 80802,
+      "name": "鄱阳",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1344,
+        "y": 850
+      },
+      "bbox": {
+        "minX": 1294,
+        "minY": 801,
+        "maxX": 1443,
+        "maxY": 900
+      }
+    },
+    {
+      "id": 80803,
+      "name": "余汗",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1224,
+        "y": 829
+      },
+      "bbox": {
+        "minX": 1181,
+        "minY": 793,
+        "maxX": 1275,
+        "maxY": 907
+      }
+    },
+    {
+      "id": 80804,
+      "name": "历陵",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1333,
+        "y": 757
+      },
+      "bbox": {
+        "minX": 1283,
+        "minY": 686,
+        "maxX": 1374,
+        "maxY": 802
+      }
+    },
+    {
+      "id": 80805,
+      "name": "葛阳",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1298,
+        "y": 802
+      },
+      "bbox": {
+        "minX": 1254,
+        "minY": 755,
+        "maxX": 1344,
+        "maxY": 859
+      }
+    },
+    {
+      "id": 80806,
+      "name": "广昌",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1293,
+        "y": 991
+      },
+      "bbox": {
+        "minX": 1275,
+        "minY": 945,
+        "maxX": 1391,
+        "maxY": 1013
+      }
+    },
+    {
+      "id": 80807,
+      "name": "鄡阳",
+      "junxianId": 808,
+      "originalRegionId": 8,
+      "effectiveRegionId": 8,
+      "center": {
+        "x": 1361,
+        "y": 944
+      },
+      "bbox": {
+        "minX": 1320,
+        "minY": 883,
+        "maxX": 1433,
+        "maxY": 964
+      }
+    },
+    {
+      "id": 90101,
+      "name": "晋阳",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 375,
+        "y": 696
+      },
+      "bbox": {
+        "minX": 206,
+        "minY": 662,
+        "maxX": 400,
+        "maxY": 772
+      }
+    },
+    {
+      "id": 90102,
+      "name": "榆次",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 412,
+        "y": 694
+      },
+      "bbox": {
+        "minX": 392,
+        "minY": 618,
+        "maxX": 458,
+        "maxY": 754
+      }
+    },
+    {
+      "id": 90103,
+      "name": "界休",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 417,
+        "y": 606
+      },
+      "bbox": {
+        "minX": 350,
+        "minY": 557,
+        "maxX": 497,
+        "maxY": 663
+      }
+    },
+    {
+      "id": 90104,
+      "name": "中都",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 331,
+        "y": 651
+      },
+      "bbox": {
+        "minX": 270,
+        "minY": 583,
+        "maxX": 392,
+        "maxY": 702
+      }
+    },
+    {
+      "id": 90105,
+      "name": "于离",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 272,
+        "y": 692
+      },
+      "bbox": {
+        "minX": 169,
+        "minY": 626,
+        "maxX": 321,
+        "maxY": 722
+      }
+    },
+    {
+      "id": 90106,
+      "name": "兹氏",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 491,
+        "y": 689
+      },
+      "bbox": {
+        "minX": 448,
+        "minY": 610,
+        "maxX": 519,
+        "maxY": 738
+      }
+    },
+    {
+      "id": 90107,
+      "name": "大陵",
+      "junxianId": 901,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 369,
+        "y": 757
+      },
+      "bbox": {
+        "minX": 288,
+        "minY": 727,
+        "maxX": 433,
+        "maxY": 788
+      }
+    },
+    {
+      "id": 90201,
+      "name": "阴馆",
+      "junxianId": 902,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 130,
+        "y": 654
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 601,
+        "maxX": 181,
+        "maxY": 754
+      }
+    },
+    {
+      "id": 90202,
+      "name": "广武",
+      "junxianId": 902,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 172,
+        "y": 714
+      },
+      "bbox": {
+        "minX": 126,
+        "minY": 664,
+        "maxX": 208,
+        "maxY": 861
+      }
+    },
+    {
+      "id": 90203,
+      "name": "楼烦",
+      "junxianId": 902,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 70,
+        "y": 735
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 706,
+        "maxX": 147,
+        "maxY": 853
+      }
+    },
+    {
+      "id": 90204,
+      "name": "剧阳",
+      "junxianId": 902,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 98,
+        "y": 592
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 492,
+        "maxX": 160,
+        "maxY": 634
+      }
+    },
+    {
+      "id": 90301,
+      "name": "九原",
+      "junxianId": 903,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 251,
+        "y": 821
+      },
+      "bbox": {
+        "minX": 0,
+        "minY": 0,
+        "maxX": 751,
+        "maxY": 751
+      }
+    },
+    {
+      "id": 90302,
+      "name": "定襄",
+      "junxianId": 903,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 335,
+        "y": 800
+      },
+      "bbox": {
+        "minX": 289,
+        "minY": 766,
+        "maxX": 421,
+        "maxY": 921
+      }
+    },
+    {
+      "id": 90303,
+      "name": "广牧",
+      "junxianId": 903,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 211,
+        "y": 834
+      },
+      "bbox": {
+        "minX": 175,
+        "minY": 742,
+        "maxX": 266,
+        "maxY": 904
+      }
+    },
+    {
+      "id": 90401,
+      "name": "乐平",
+      "junxianId": 904,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 422,
+        "y": 829
+      },
+      "bbox": {
+        "minX": 402,
+        "minY": 785,
+        "maxX": 626,
+        "maxY": 881
+      }
+    },
+    {
+      "id": 90402,
+      "name": "阳阿",
+      "junxianId": 904,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 461,
+        "y": 768
+      },
+      "bbox": {
+        "minX": 407,
+        "minY": 715,
+        "maxX": 583,
+        "maxY": 835
+      }
+    },
+    {
+      "id": 90403,
+      "name": "上艾",
+      "junxianId": 904,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 553,
+        "y": 734
+      },
+      "bbox": {
+        "minX": 494,
+        "minY": 681,
+        "maxX": 684,
+        "maxY": 842
+      }
+    },
+    {
+      "id": 90404,
+      "name": "京陵",
+      "junxianId": 904,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 528,
+        "y": 648
+      },
+      "bbox": {
+        "minX": 495,
+        "minY": 588,
+        "maxX": 602,
+        "maxY": 713
+      }
+    },
+    {
+      "id": 90501,
+      "name": "长子",
+      "junxianId": 905,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 471,
+        "y": 554
+      },
+      "bbox": {
+        "minX": 384,
+        "minY": 465,
+        "maxX": 513,
+        "maxY": 599
+      }
+    },
+    {
+      "id": 90502,
+      "name": "高都",
+      "junxianId": 905,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 494,
+        "y": 485
+      },
+      "bbox": {
+        "minX": 396,
+        "minY": 405,
+        "maxX": 590,
+        "maxY": 529
+      }
+    },
+    {
+      "id": 90503,
+      "name": "屯留",
+      "junxianId": 905,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 533,
+        "y": 575
+      },
+      "bbox": {
+        "minX": 488,
+        "minY": 495,
+        "maxX": 595,
+        "maxY": 601
+      }
+    },
+    {
+      "id": 90601,
+      "name": "皋狼",
+      "junxianId": 906,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 291,
+        "y": 573
+      },
+      "bbox": {
+        "minX": 242,
+        "minY": 449,
+        "maxX": 390,
+        "maxY": 630
+      }
+    },
+    {
+      "id": 90602,
+      "name": "平定",
+      "junxianId": 906,
+      "originalRegionId": 9,
+      "effectiveRegionId": 9,
+      "center": {
+        "x": 211,
+        "y": 573
+      },
+      "bbox": {
+        "minX": 115,
+        "minY": 450,
+        "maxX": 266,
+        "maxY": 637
+      }
+    },
+    {
+      "id": 100101,
+      "name": "武威",
+      "junxianId": 1001,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 211,
+        "y": 195
+      },
+      "bbox": {
+        "minX": 154,
+        "minY": 168,
+        "maxX": 305,
+        "maxY": 311
+      }
+    },
+    {
+      "id": 100102,
+      "name": "姑臧",
+      "junxianId": 1001,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 272,
+        "y": 136
+      },
+      "bbox": {
+        "minX": 209,
+        "minY": 73,
+        "maxX": 349,
+        "maxY": 218
+      }
+    },
+    {
+      "id": 100103,
+      "name": "休屠",
+      "junxianId": 1001,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 352,
+        "y": 157
+      },
+      "bbox": {
+        "minX": 292,
+        "minY": 90,
+        "maxX": 394,
+        "maxY": 260
+      }
+    },
+    {
+      "id": 100104,
+      "name": "袓厉",
+      "junxianId": 1001,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 392,
+        "y": 81
+      },
+      "bbox": {
+        "minX": 274,
+        "minY": 1,
+        "maxX": 420,
+        "maxY": 130
+      }
+    },
+    {
+      "id": 100105,
+      "name": "允街",
+      "junxianId": 1001,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 412,
+        "y": 181
+      },
+      "bbox": {
+        "minX": 336,
+        "minY": 119,
+        "maxX": 434,
+        "maxY": 239
+      }
+    },
+    {
+      "id": 100201,
+      "name": "敦煌",
+      "junxianId": 1002,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 71,
+        "y": 76
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1,
+        "maxX": 128,
+        "maxY": 123
+      }
+    },
+    {
+      "id": 100202,
+      "name": "龙勒",
+      "junxianId": 1002,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 71,
+        "y": 136
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 88,
+        "maxX": 106,
+        "maxY": 225
+      }
+    },
+    {
+      "id": 100203,
+      "name": "冥安",
+      "junxianId": 1002,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 150,
+        "y": 74
+      },
+      "bbox": {
+        "minX": 81,
+        "minY": 1,
+        "maxX": 217,
+        "maxY": 116
+      }
+    },
+    {
+      "id": 100301,
+      "name": "禄福",
+      "junxianId": 1003,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 171,
+        "y": 116
+      },
+      "bbox": {
+        "minX": 94,
+        "minY": 1,
+        "maxX": 318,
+        "maxY": 180
+      }
+    },
+    {
+      "id": 100302,
+      "name": "玉门",
+      "junxianId": 1003,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 72,
+        "y": 304
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 210,
+        "maxX": 117,
+        "maxY": 370
+      }
+    },
+    {
+      "id": 100303,
+      "name": "乐涫",
+      "junxianId": 1003,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 130,
+        "y": 195
+      },
+      "bbox": {
+        "minX": 18,
+        "minY": 148,
+        "maxX": 195,
+        "maxY": 263
+      }
+    },
+    {
+      "id": 100401,
+      "name": "居延",
+      "junxianId": 1004,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 45,
+        "y": 362
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 325,
+        "maxX": 81,
+        "maxY": 563
+      }
+    },
+    {
+      "id": 100402,
+      "name": "左骑",
+      "junxianId": 1004,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 111,
+        "y": 395
+      },
+      "bbox": {
+        "minX": 28,
+        "minY": 363,
+        "maxX": 124,
+        "maxY": 520
+      }
+    },
+    {
+      "id": 100501,
+      "name": "屋兰",
+      "junxianId": 1005,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 131,
+        "y": 275
+      },
+      "bbox": {
+        "minX": 88,
+        "minY": 200,
+        "maxX": 175,
+        "maxY": 388
+      }
+    },
+    {
+      "id": 100502,
+      "name": "张掖",
+      "junxianId": 1005,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 185,
+        "y": 307
+      },
+      "bbox": {
+        "minX": 85,
+        "minY": 266,
+        "maxX": 277,
+        "maxY": 518
+      }
+    },
+    {
+      "id": 100503,
+      "name": "山丹",
+      "junxianId": 1005,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 231,
+        "y": 374
+      },
+      "bbox": {
+        "minX": 125,
+        "minY": 338,
+        "maxX": 278,
+        "maxY": 502
+      }
+    },
+    {
+      "id": 100601,
+      "name": "令居",
+      "junxianId": 1006,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 331,
+        "y": 275
+      },
+      "bbox": {
+        "minX": 272,
+        "minY": 199,
+        "maxX": 498,
+        "maxY": 309
+      }
+    },
+    {
+      "id": 100602,
+      "name": "枝阳",
+      "junxianId": 1006,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 372,
+        "y": 414
+      },
+      "bbox": {
+        "minX": 330,
+        "minY": 315,
+        "maxX": 519,
+        "maxY": 484
+      }
+    },
+    {
+      "id": 100603,
+      "name": "榆中",
+      "junxianId": 1006,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 292,
+        "y": 395
+      },
+      "bbox": {
+        "minX": 262,
+        "minY": 303,
+        "maxX": 341,
+        "maxY": 459
+      }
+    },
+    {
+      "id": 100604,
+      "name": "金城",
+      "junxianId": 1006,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 352,
+        "y": 356
+      },
+      "bbox": {
+        "minX": 324,
+        "minY": 260,
+        "maxX": 553,
+        "maxY": 375
+      }
+    },
+    {
+      "id": 100701,
+      "name": "西平",
+      "junxianId": 1007,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 459,
+        "y": 100
+      },
+      "bbox": {
+        "minX": 392,
+        "minY": 1,
+        "maxX": 531,
+        "maxY": 202
+      }
+    },
+    {
+      "id": 100702,
+      "name": "临羌",
+      "junxianId": 1007,
+      "originalRegionId": 10,
+      "effectiveRegionId": 10,
+      "center": {
+        "x": 480,
+        "y": 79
+      },
+      "bbox": {
+        "minX": 417,
+        "minY": 1,
+        "maxX": 536,
+        "maxY": 114
+      }
+    },
+    {
+      "id": 110101,
+      "name": "成都",
+      "junxianId": 1101,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 751,
+        "y": 141
+      },
+      "bbox": {
+        "minX": 680,
+        "minY": 1,
+        "maxX": 840,
+        "maxY": 208
+      }
+    },
+    {
+      "id": 110102,
+      "name": "郫",
+      "junxianId": 1101,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 652,
+        "y": 155
+      },
+      "bbox": {
+        "minX": 621,
+        "minY": 77,
+        "maxX": 732,
+        "maxY": 181
+      }
+    },
+    {
+      "id": 110103,
+      "name": "临邛",
+      "junxianId": 1101,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 745,
+        "y": 83
+      },
+      "bbox": {
+        "minX": 690,
+        "minY": 1,
+        "maxX": 818,
+        "maxY": 113
+      }
+    },
+    {
+      "id": 110201,
+      "name": "梓潼",
+      "junxianId": 1102,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 612,
+        "y": 116
+      },
+      "bbox": {
+        "minX": 504,
+        "minY": 5,
+        "maxX": 679,
+        "maxY": 162
+      }
+    },
+    {
+      "id": 110202,
+      "name": "汉寿",
+      "junxianId": 1102,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 673,
+        "y": 74
+      },
+      "bbox": {
+        "minX": 542,
+        "minY": 1,
+        "maxX": 716,
+        "maxY": 97
+      }
+    },
+    {
+      "id": 110301,
+      "name": "武都",
+      "junxianId": 1103,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 586,
+        "y": 169
+      },
+      "bbox": {
+        "minX": 498,
+        "minY": 119,
+        "maxX": 647,
+        "maxY": 199
+      }
+    },
+    {
+      "id": 110302,
+      "name": "河池",
+      "junxianId": 1103,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 601,
+        "y": 220
+      },
+      "bbox": {
+        "minX": 531,
+        "minY": 164,
+        "maxX": 624,
+        "maxY": 259
+      }
+    },
+    {
+      "id": 110303,
+      "name": "沮",
+      "junxianId": 1103,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 584,
+        "y": 252
+      },
+      "bbox": {
+        "minX": 483,
+        "minY": 160,
+        "maxX": 592,
+        "maxY": 285
+      }
+    },
+    {
+      "id": 110401,
+      "name": "汉中",
+      "junxianId": 1104,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 653,
+        "y": 234
+      },
+      "bbox": {
+        "minX": 581,
+        "minY": 174,
+        "maxX": 737,
+        "maxY": 366
+      }
+    },
+    {
+      "id": 110501,
+      "name": "涪陵",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 883,
+        "y": 311
+      },
+      "bbox": {
+        "minX": 837,
+        "minY": 268,
+        "maxX": 945,
+        "maxY": 403
+      }
+    },
+    {
+      "id": 110502,
+      "name": "南充",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 773,
+        "y": 375
+      },
+      "bbox": {
+        "minX": 686,
+        "minY": 281,
+        "maxX": 824,
+        "maxY": 415
+      }
+    },
+    {
+      "id": 110503,
+      "name": "江州",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 951,
+        "y": 255
+      },
+      "bbox": {
+        "minX": 905,
+        "minY": 202,
+        "maxX": 1067,
+        "maxY": 361
+      }
+    },
+    {
+      "id": 110504,
+      "name": "巴东",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 813,
+        "y": 414
+      },
+      "bbox": {
+        "minX": 757,
+        "minY": 349,
+        "maxX": 907,
+        "maxY": 519
+      }
+    },
+    {
+      "id": 110505,
+      "name": "巴",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 792,
+        "y": 313
+      },
+      "bbox": {
+        "minX": 714,
+        "minY": 232,
+        "maxX": 838,
+        "maxY": 357
+      }
+    },
+    {
+      "id": 110506,
+      "name": "宕渠",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 891,
+        "y": 235
+      },
+      "bbox": {
+        "minX": 811,
+        "minY": 209,
+        "maxX": 938,
+        "maxY": 284
+      }
+    },
+    {
+      "id": 110507,
+      "name": "阆中",
+      "junxianId": 1105,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 731,
+        "y": 235
+      },
+      "bbox": {
+        "minX": 690,
+        "minY": 199,
+        "maxX": 810,
+        "maxY": 299
+      }
+    },
+    {
+      "id": 110601,
+      "name": "不韦",
+      "junxianId": 1106,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1152,
+        "y": 155
+      },
+      "bbox": {
+        "minX": 1105,
+        "minY": 54,
+        "maxX": 1442,
+        "maxY": 221
+      }
+    },
+    {
+      "id": 110602,
+      "name": "永寿",
+      "junxianId": 1106,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1091,
+        "y": 193
+      },
+      "bbox": {
+        "minX": 715,
+        "minY": 118,
+        "maxX": 1049,
+        "maxY": 668
+      }
+    },
+    {
+      "id": 110603,
+      "name": "哀牢",
+      "junxianId": 1106,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1173,
+        "y": 96
+      },
+      "bbox": {
+        "minX": 1098,
+        "minY": 1,
+        "maxX": 1501,
+        "maxY": 115
+      }
+    },
+    {
+      "id": 110701,
+      "name": "楪榆",
+      "junxianId": 1107,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 994,
+        "y": 194
+      },
+      "bbox": {
+        "minX": 963,
+        "minY": 43,
+        "maxX": 1059,
+        "maxY": 238
+      }
+    },
+    {
+      "id": 110702,
+      "name": "邪龙",
+      "junxianId": 1107,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 953,
+        "y": 172
+      },
+      "bbox": {
+        "minX": 933,
+        "minY": 22,
+        "maxX": 1008,
+        "maxY": 203
+      }
+    },
+    {
+      "id": 110703,
+      "name": "云南",
+      "junxianId": 1107,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1029,
+        "y": 83
+      },
+      "bbox": {
+        "minX": 955,
+        "minY": 1,
+        "maxX": 1140,
+        "maxY": 113
+      }
+    },
+    {
+      "id": 110704,
+      "name": "姑复",
+      "junxianId": 1107,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 1031,
+        "y": 233
+      },
+      "bbox": {
+        "minX": 984,
+        "minY": 82,
+        "maxX": 1108,
+        "maxY": 268
+      }
+    },
+    {
+      "id": 110801,
+      "name": "汉嘉",
+      "junxianId": 1108,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 867,
+        "y": 169
+      },
+      "bbox": {
+        "minX": 842,
+        "minY": 120,
+        "maxX": 946,
+        "maxY": 218
+      }
+    },
+    {
+      "id": 110802,
+      "name": "严道",
+      "junxianId": 1108,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 931,
+        "y": 85
+      },
+      "bbox": {
+        "minX": 885,
+        "minY": 1,
+        "maxX": 968,
+        "maxY": 129
+      }
+    },
+    {
+      "id": 110803,
+      "name": "徙",
+      "junxianId": 1108,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 820,
+        "y": 204
+      },
+      "bbox": {
+        "minX": 764,
+        "minY": 93,
+        "maxX": 855,
+        "maxY": 229
+      }
+    },
+    {
+      "id": 110804,
+      "name": "旄牛",
+      "junxianId": 1108,
+      "originalRegionId": 11,
+      "effectiveRegionId": 11,
+      "center": {
+        "x": 857,
+        "y": 66
+      },
+      "bbox": {
+        "minX": 826,
+        "minY": 1,
+        "maxX": 902,
+        "maxY": 125
+      }
+    },
+    {
+      "id": 120101,
+      "name": "蓟",
+      "junxianId": 1201,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 70,
+        "y": 1092
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1047,
+        "maxX": 137,
+        "maxY": 1135
+      }
+    },
+    {
+      "id": 120102,
+      "name": "广阳",
+      "junxianId": 1201,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 49,
+        "y": 1155
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1116,
+        "maxX": 90,
+        "maxY": 1194
+      }
+    },
+    {
+      "id": 120103,
+      "name": "昌平",
+      "junxianId": 1201,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 112,
+        "y": 1173
+      },
+      "bbox": {
+        "minX": 80,
+        "minY": 1073,
+        "maxX": 144,
+        "maxY": 1212
+      }
+    },
+    {
+      "id": 120104,
+      "name": "军都",
+      "junxianId": 1201,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 192,
+        "y": 1033
+      },
+      "bbox": {
+        "minX": 124,
+        "minY": 1016,
+        "maxX": 228,
+        "maxY": 1085
+      }
+    },
+    {
+      "id": 120105,
+      "name": "安次",
+      "junxianId": 1201,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 151,
+        "y": 1132
+      },
+      "bbox": {
+        "minX": 133,
+        "minY": 1069,
+        "maxX": 217,
+        "maxY": 1164
+      }
+    },
+    {
+      "id": 120201,
+      "name": "代",
+      "junxianId": 1202,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 91,
+        "y": 873
+      },
+      "bbox": {
+        "minX": 41,
+        "minY": 826,
+        "maxX": 133,
+        "maxY": 926
+      }
+    },
+    {
+      "id": 120202,
+      "name": "高柳",
+      "junxianId": 1202,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 72,
+        "y": 935
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 897,
+        "maxX": 106,
+        "maxY": 975
+      }
+    },
+    {
+      "id": 120203,
+      "name": "平邑",
+      "junxianId": 1202,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 31,
+        "y": 854
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 802,
+        "maxX": 71,
+        "maxY": 911
+      }
+    },
+    {
+      "id": 120301,
+      "name": "沮阳",
+      "junxianId": 1203,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 49,
+        "y": 1031
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 960,
+        "maxX": 72,
+        "maxY": 1062
+      }
+    },
+    {
+      "id": 120302,
+      "name": "潘",
+      "junxianId": 1203,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 151,
+        "y": 915
+      },
+      "bbox": {
+        "minX": 111,
+        "minY": 849,
+        "maxX": 228,
+        "maxY": 981
+      }
+    },
+    {
+      "id": 120303,
+      "name": "居庸",
+      "junxianId": 1203,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 112,
+        "y": 1033
+      },
+      "bbox": {
+        "minX": 66,
+        "minY": 925,
+        "maxX": 148,
+        "maxY": 1048
+      }
+    },
+    {
+      "id": 120401,
+      "name": "涿",
+      "junxianId": 1204,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 190,
+        "y": 972
+      },
+      "bbox": {
+        "minX": 136,
+        "minY": 909,
+        "maxX": 230,
+        "maxY": 1033
+      }
+    },
+    {
+      "id": 120402,
+      "name": "范阳",
+      "junxianId": 1204,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 251,
+        "y": 951
+      },
+      "bbox": {
+        "minX": 216,
+        "minY": 888,
+        "maxX": 286,
+        "maxY": 1019
+      }
+    },
+    {
+      "id": 120501,
+      "name": "土垠",
+      "junxianId": 1205,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 113,
+        "y": 1296
+      },
+      "bbox": {
+        "minX": 80,
+        "minY": 1206,
+        "maxX": 133,
+        "maxY": 1348
+      }
+    },
+    {
+      "id": 120502,
+      "name": "俊靡",
+      "junxianId": 1205,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 133,
+        "y": 1294
+      },
+      "bbox": {
+        "minX": 124,
+        "minY": 1261,
+        "maxX": 178,
+        "maxY": 1330
+      }
+    },
+    {
+      "id": 120503,
+      "name": "高句骊",
+      "junxianId": 1205,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 159,
+        "y": 1239
+      },
+      "bbox": {
+        "minX": 118,
+        "minY": 1194,
+        "maxX": 180,
+        "maxY": 1264
+      }
+    },
+    {
+      "id": 120504,
+      "name": "无终",
+      "junxianId": 1205,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 172,
+        "y": 1172
+      },
+      "bbox": {
+        "minX": 123,
+        "minY": 1142,
+        "maxX": 201,
+        "maxY": 1211
+      }
+    },
+    {
+      "id": 120601,
+      "name": "阳乐",
+      "junxianId": 1206,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 111,
+        "y": 1352
+      },
+      "bbox": {
+        "minX": 70,
+        "minY": 1320,
+        "maxX": 176,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 120602,
+      "name": "海阳",
+      "junxianId": 1206,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 54,
+        "y": 1416
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1362,
+        "maxX": 86,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 120603,
+      "name": "令支",
+      "junxianId": 1206,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 153,
+        "y": 1432
+      },
+      "bbox": {
+        "minX": 122,
+        "minY": 1403,
+        "maxX": 298,
+        "maxY": 1501
+      }
+    },
+    {
+      "id": 120604,
+      "name": "临渝",
+      "junxianId": 1206,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 190,
+        "y": 1392
+      },
+      "bbox": {
+        "minX": 160,
+        "minY": 1318,
+        "maxX": 283,
+        "maxY": 1461
+      }
+    },
+    {
+      "id": 120701,
+      "name": "渔阳",
+      "junxianId": 1207,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 74,
+        "y": 1230
+      },
+      "bbox": {
+        "minX": 14,
+        "minY": 1196,
+        "maxX": 115,
+        "maxY": 1316
+      }
+    },
+    {
+      "id": 120702,
+      "name": "狐奴",
+      "junxianId": 1207,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 53,
+        "y": 1292
+      },
+      "bbox": {
+        "minX": 2,
+        "minY": 1252,
+        "maxX": 93,
+        "maxY": 1356
+      }
+    },
+    {
+      "id": 120703,
+      "name": "平谷",
+      "junxianId": 1207,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 31,
+        "y": 1212
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1175,
+        "maxX": 79,
+        "maxY": 1281
+      }
+    },
+    {
+      "id": 120704,
+      "name": "潞",
+      "junxianId": 1207,
+      "originalRegionId": 12,
+      "effectiveRegionId": 12,
+      "center": {
+        "x": 59,
+        "y": 1335
+      },
+      "bbox": {
+        "minX": 1,
+        "minY": 1282,
+        "maxX": 73,
+        "maxY": 1426
+      }
+    },
+    {
+      "id": 130101,
+      "name": "襄阳",
+      "junxianId": 1301,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1004,
+        "y": 552
+      },
+      "bbox": {
+        "minX": 957,
+        "minY": 501,
+        "maxX": 1061,
+        "maxY": 632
+      }
+    },
+    {
+      "id": 130102,
+      "name": "山都",
+      "junxianId": 1301,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1033,
+        "y": 533
+      },
+      "bbox": {
+        "minX": 992,
+        "minY": 456,
+        "maxX": 1095,
+        "maxY": 579
+      }
+    },
+    {
+      "id": 130103,
+      "name": "攸",
+      "junxianId": 1301,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1102,
+        "y": 586
+      },
+      "bbox": {
+        "minX": 1035,
+        "minY": 456,
+        "maxX": 1125,
+        "maxY": 658
+      }
+    },
+    {
+      "id": 130104,
+      "name": "竟陵",
+      "junxianId": 1301,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 953,
+        "y": 632
+      },
+      "bbox": {
+        "minX": 898,
+        "minY": 581,
+        "maxX": 1042,
+        "maxY": 683
+      }
+    },
+    {
+      "id": 130201,
+      "name": "南阳",
+      "junxianId": 1302,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 872,
+        "y": 572
+      },
+      "bbox": {
+        "minX": 807,
+        "minY": 462,
+        "maxX": 897,
+        "maxY": 611
+      }
+    },
+    {
+      "id": 130202,
+      "name": "穰",
+      "junxianId": 1302,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 831,
+        "y": 534
+      },
+      "bbox": {
+        "minX": 766,
+        "minY": 475,
+        "maxX": 860,
+        "maxY": 596
+      }
+    },
+    {
+      "id": 130203,
+      "name": "宛",
+      "junxianId": 1302,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 869,
+        "y": 651
+      },
+      "bbox": {
+        "minX": 792,
+        "minY": 585,
+        "maxX": 897,
+        "maxY": 697
+      }
+    },
+    {
+      "id": 130204,
+      "name": "新野",
+      "junxianId": 1302,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 932,
+        "y": 593
+      },
+      "bbox": {
+        "minX": 864,
+        "minY": 538,
+        "maxX": 960,
+        "maxY": 659
+      }
+    },
+    {
+      "id": 130205,
+      "name": "筑阳",
+      "junxianId": 1302,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 909,
+        "y": 553
+      },
+      "bbox": {
+        "minX": 835,
+        "minY": 407,
+        "maxX": 951,
+        "maxY": 569
+      }
+    },
+    {
+      "id": 130301,
+      "name": "江陵",
+      "junxianId": 1303,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1012,
+        "y": 438
+      },
+      "bbox": {
+        "minX": 961,
+        "minY": 385,
+        "maxX": 1091,
+        "maxY": 511
+      }
+    },
+    {
+      "id": 130302,
+      "name": "夷陵",
+      "junxianId": 1303,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 947,
+        "y": 471
+      },
+      "bbox": {
+        "minX": 909,
+        "minY": 369,
+        "maxX": 973,
+        "maxY": 544
+      }
+    },
+    {
+      "id": 130303,
+      "name": "秭归",
+      "junxianId": 1303,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 976,
+        "y": 400
+      },
+      "bbox": {
+        "minX": 943,
+        "minY": 323,
+        "maxX": 1067,
+        "maxY": 441
+      }
+    },
+    {
+      "id": 130304,
+      "name": "巫",
+      "junxianId": 1303,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1092,
+        "y": 355
+      },
+      "bbox": {
+        "minX": 1021,
+        "minY": 255,
+        "maxX": 1141,
+        "maxY": 427
+      }
+    },
+    {
+      "id": 130401,
+      "name": "武陵",
+      "junxianId": 1304,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1193,
+        "y": 313
+      },
+      "bbox": {
+        "minX": 1118,
+        "minY": 200,
+        "maxX": 1273,
+        "maxY": 381
+      }
+    },
+    {
+      "id": 130402,
+      "name": "零阳",
+      "junxianId": 1304,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1293,
+        "y": 252
+      },
+      "bbox": {
+        "minX": 1216,
+        "minY": 132,
+        "maxX": 1381,
+        "maxY": 320
+      }
+    },
+    {
+      "id": 130403,
+      "name": "沅陵",
+      "junxianId": 1304,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1414,
+        "y": 194
+      },
+      "bbox": {
+        "minX": 1329,
+        "minY": 78,
+        "maxX": 1501,
+        "maxY": 251
+      }
+    },
+    {
+      "id": 130501,
+      "name": "临湘",
+      "junxianId": 1305,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1112,
+        "y": 454
+      },
+      "bbox": {
+        "minX": 1079,
+        "minY": 344,
+        "maxX": 1227,
+        "maxY": 557
+      }
+    },
+    {
+      "id": 130502,
+      "name": "昭陵",
+      "junxianId": 1305,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1198,
+        "y": 501
+      },
+      "bbox": {
+        "minX": 1109,
+        "minY": 381,
+        "maxX": 1267,
+        "maxY": 631
+      }
+    },
+    {
+      "id": 130601,
+      "name": "零陵",
+      "junxianId": 1306,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1314,
+        "y": 376
+      },
+      "bbox": {
+        "minX": 1230,
+        "minY": 278,
+        "maxX": 1501,
+        "maxY": 457
+      }
+    },
+    {
+      "id": 130602,
+      "name": "泉陵",
+      "junxianId": 1306,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1392,
+        "y": 314
+      },
+      "bbox": {
+        "minX": 1349,
+        "minY": 214,
+        "maxX": 1501,
+        "maxY": 415
+      }
+    },
+    {
+      "id": 130701,
+      "name": "郴",
+      "junxianId": 1307,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1225,
+        "y": 556
+      },
+      "bbox": {
+        "minX": 1179,
+        "minY": 498,
+        "maxX": 1316,
+        "maxY": 649
+      }
+    },
+    {
+      "id": 130702,
+      "name": "便",
+      "junxianId": 1307,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1293,
+        "y": 454
+      },
+      "bbox": {
+        "minX": 1239,
+        "minY": 420,
+        "maxX": 1372,
+        "maxY": 572
+      }
+    },
+    {
+      "id": 130703,
+      "name": "耒阳",
+      "junxianId": 1307,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1409,
+        "y": 426
+      },
+      "bbox": {
+        "minX": 1313,
+        "minY": 408,
+        "maxX": 1448,
+        "maxY": 533
+      }
+    },
+    {
+      "id": 130801,
+      "name": "江夏",
+      "junxianId": 1308,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1079,
+        "y": 683
+      },
+      "bbox": {
+        "minX": 1045,
+        "minY": 609,
+        "maxX": 1217,
+        "maxY": 786
+      }
+    },
+    {
+      "id": 130802,
+      "name": "西陵",
+      "junxianId": 1308,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 953,
+        "y": 733
+      },
+      "bbox": {
+        "minX": 849,
+        "minY": 662,
+        "maxX": 1026,
+        "maxY": 818
+      }
+    },
+    {
+      "id": 130803,
+      "name": "鄂",
+      "junxianId": 1308,
+      "originalRegionId": 13,
+      "effectiveRegionId": 13,
+      "center": {
+        "x": 1012,
+        "y": 693
+      },
+      "bbox": {
+        "minX": 941,
+        "minY": 658,
+        "maxX": 1076,
+        "maxY": 804
+      }
+    },
+    {
+      "id": 4541013,
+      "name": "",
+      "junxianId": 45410,
+      "originalRegionId": 454,
+      "effectiveRegionId": 454,
+      "center": {
+        "x": 751,
+        "y": 751
+      },
+      "bbox": {
+        "minX": 715,
+        "minY": 668,
+        "maxX": 777,
+        "maxY": 775
+      }
+    }
+  ],
+  "namedCities": [
+    {
+      "pos": 112577,
+      "name": "码头",
+      "x": 11,
+      "y": 2577,
+      "typeCode": 6
+    },
+    {
+      "pos": 362487,
+      "name": "码头",
+      "x": 36,
+      "y": 2487,
+      "typeCode": 6
+    },
+    {
+      "pos": 392487,
+      "name": "码头",
+      "x": 39,
+      "y": 2487,
+      "typeCode": 6
+    },
+    {
+      "pos": 421722,
+      "name": "码头",
+      "x": 42,
+      "y": 1722,
+      "typeCode": 6
+    },
+    {
+      "pos": 421725,
+      "name": "码头",
+      "x": 42,
+      "y": 1725,
+      "typeCode": 6
+    },
+    {
+      "pos": 900930,
+      "name": "码头",
+      "x": 90,
+      "y": 930,
+      "typeCode": 6
+    },
+    {
+      "pos": 900933,
+      "name": "码头",
+      "x": 90,
+      "y": 933,
+      "typeCode": 6
+    },
+    {
+      "pos": 1201734,
+      "name": "码头",
+      "x": 120,
+      "y": 1734,
+      "typeCode": 6
+    },
+    {
+      "pos": 1201737,
+      "name": "码头",
+      "x": 120,
+      "y": 1737,
+      "typeCode": 6
+    },
+    {
+      "pos": 1420170,
+      "name": "码头",
+      "x": 142,
+      "y": 170,
+      "typeCode": 6
+    },
+    {
+      "pos": 1420173,
+      "name": "码头",
+      "x": 142,
+      "y": 173,
+      "typeCode": 6
+    },
+    {
+      "pos": 1622814,
+      "name": "码头",
+      "x": 162,
+      "y": 2814,
+      "typeCode": 6
+    },
+    {
+      "pos": 1652814,
+      "name": "码头",
+      "x": 165,
+      "y": 2814,
+      "typeCode": 6
+    },
+    {
+      "pos": 1690888,
+      "name": "码头",
+      "x": 169,
+      "y": 888,
+      "typeCode": 6
+    },
+    {
+      "pos": 1720888,
+      "name": "码头",
+      "x": 172,
+      "y": 888,
+      "typeCode": 6
+    },
+    {
+      "pos": 1901766,
+      "name": "码头",
+      "x": 190,
+      "y": 1766,
+      "typeCode": 6
+    },
+    {
+      "pos": 1901769,
+      "name": "码头",
+      "x": 190,
+      "y": 1769,
+      "typeCode": 6
+    },
+    {
+      "pos": 1981005,
+      "name": "码头",
+      "x": 198,
+      "y": 1005,
+      "typeCode": 6
+    },
+    {
+      "pos": 2011005,
+      "name": "码头",
+      "x": 201,
+      "y": 1005,
+      "typeCode": 6
+    },
+    {
+      "pos": 2152895,
+      "name": "码头",
+      "x": 215,
+      "y": 2895,
+      "typeCode": 6
+    },
+    {
+      "pos": 2162376,
+      "name": "码头",
+      "x": 216,
+      "y": 2376,
+      "typeCode": 6
+    },
+    {
+      "pos": 2162379,
+      "name": "码头",
+      "x": 216,
+      "y": 2379,
+      "typeCode": 6
+    },
+    {
+      "pos": 2182895,
+      "name": "码头",
+      "x": 218,
+      "y": 2895,
+      "typeCode": 6
+    },
+    {
+      "pos": 2251767,
+      "name": "当城",
+      "x": 225,
+      "y": 1767,
+      "typeCode": 8
+    },
+    {
+      "pos": 2260051,
+      "name": "效谷",
+      "x": 226,
+      "y": 51,
+      "typeCode": 8
+    },
+    {
+      "pos": 2471692,
+      "name": "马邑",
+      "x": 247,
+      "y": 1692,
+      "typeCode": 8
+    },
+    {
+      "pos": 2530289,
+      "name": "乾齐",
+      "x": 253,
+      "y": 289,
+      "typeCode": 8
+    },
+    {
+      "pos": 2582472,
+      "name": "无终",
+      "x": 258,
+      "y": 2472,
+      "typeCode": 8
+    },
+    {
+      "pos": 2590379,
+      "name": "氐池",
+      "x": 259,
+      "y": 379,
+      "typeCode": 8
+    },
+    {
+      "pos": 2592784,
+      "name": "辽西",
+      "x": 259,
+      "y": 2784,
+      "typeCode": 8
+    },
+    {
+      "pos": 2730552,
+      "name": "屋兰",
+      "x": 273,
+      "y": 552,
+      "typeCode": 8
+    },
+    {
+      "pos": 2732538,
+      "name": "右北平",
+      "x": 273,
+      "y": 2538,
+      "typeCode": 8
+    },
+    {
+      "pos": 2761914,
+      "name": "上谷",
+      "x": 276,
+      "y": 1914,
+      "typeCode": 8
+    },
+    {
+      "pos": 2762370,
+      "name": "遵化",
+      "x": 276,
+      "y": 2370,
+      "typeCode": 8
+    },
+    {
+      "pos": 2832178,
+      "name": "安次",
+      "x": 283,
+      "y": 2178,
+      "typeCode": 8
+    },
+    {
+      "pos": 2891611,
+      "name": "沃阳",
+      "x": 289,
+      "y": 1611,
+      "typeCode": 8
+    },
+    {
+      "pos": 3010156,
+      "name": "玉门",
+      "x": 301,
+      "y": 156,
+      "typeCode": 8
+    },
+    {
+      "pos": 3070900,
+      "name": "绛",
+      "x": 307,
+      "y": 900,
+      "typeCode": 8
+    },
+    {
+      "pos": 3100715,
+      "name": "番和",
+      "x": 310,
+      "y": 715,
+      "typeCode": 8
+    },
+    {
+      "pos": 3121027,
+      "name": "兹氏",
+      "x": 312,
+      "y": 1027,
+      "typeCode": 8
+    },
+    {
+      "pos": 3122608,
+      "name": "潞县",
+      "x": 312,
+      "y": 2608,
+      "typeCode": 8
+    },
+    {
+      "pos": 3162476,
+      "name": "犷平",
+      "x": 316,
+      "y": 2476,
+      "typeCode": 8
+    },
+    {
+      "pos": 3220058,
+      "name": "广至",
+      "x": 322,
+      "y": 58,
+      "typeCode": 8
+    },
+    {
+      "pos": 3302263,
+      "name": "泉州",
+      "x": 330,
+      "y": 2263,
+      "typeCode": 8
+    },
+    {
+      "pos": 3392706,
+      "name": "令支",
+      "x": 339,
+      "y": 2706,
+      "typeCode": 8
+    },
+    {
+      "pos": 3422343,
+      "name": "海阳",
+      "x": 342,
+      "y": 2343,
+      "typeCode": 8
+    },
+    {
+      "pos": 3462019,
+      "name": "良乡",
+      "x": 346,
+      "y": 2019,
+      "typeCode": 8
+    },
+    {
+      "pos": 3491420,
+      "name": "广武",
+      "x": 349,
+      "y": 1420,
+      "typeCode": 8
+    },
+    {
+      "pos": 3510240,
+      "name": "酒泉",
+      "x": 351,
+      "y": 240,
+      "typeCode": 8
+    },
+    {
+      "pos": 3552935,
+      "name": "带方",
+      "x": 355,
+      "y": 2935,
+      "typeCode": 8
+    },
+    {
+      "pos": 3690612,
+      "name": "张掖",
+      "x": 369,
+      "y": 612,
+      "typeCode": 8
+    },
+    {
+      "pos": 3762133,
+      "name": "涿县",
+      "x": 376,
+      "y": 2133,
+      "typeCode": 8
+    },
+    {
+      "pos": 3822386,
+      "name": "徐无",
+      "x": 382,
+      "y": 2386,
+      "typeCode": 8
+    },
+    {
+      "pos": 3842656,
+      "name": "肥如",
+      "x": 384,
+      "y": 2656,
+      "typeCode": 8
+    },
+    {
+      "pos": 3961791,
+      "name": "怀来",
+      "x": 396,
+      "y": 1791,
+      "typeCode": 8
+    },
+    {
+      "pos": 4000846,
+      "name": "日勒",
+      "x": 400,
+      "y": 846,
+      "typeCode": 8
+    },
+    {
+      "pos": 4001945,
+      "name": "范阳",
+      "x": 400,
+      "y": 1945,
+      "typeCode": 8
+    },
+    {
+      "pos": 4022230,
+      "name": "东平舒",
+      "x": 402,
+      "y": 2230,
+      "typeCode": 8
+    },
+    {
+      "pos": 4091666,
+      "name": "上艾",
+      "x": 409,
+      "y": 1666,
+      "typeCode": 8
+    },
+    {
+      "pos": 4111873,
+      "name": "桃庄",
+      "x": 411,
+      "y": 1873,
+      "typeCode": 10
+    },
+    {
+      "pos": 4111874,
+      "name": "桃庄",
+      "x": 411,
+      "y": 1874,
+      "typeCode": 10
+    },
+    {
+      "pos": 4121873,
+      "name": "桃庄",
+      "x": 412,
+      "y": 1873,
+      "typeCode": 28
+    },
+    {
+      "pos": 4121874,
+      "name": "桃庄",
+      "x": 412,
+      "y": 1874,
+      "typeCode": 10
+    },
+    {
+      "pos": 4201770,
+      "name": "壶关",
+      "x": 420,
+      "y": 1770,
+      "typeCode": 8
+    },
+    {
+      "pos": 4261188,
+      "name": "邬县",
+      "x": 426,
+      "y": 1188,
+      "typeCode": 8
+    },
+    {
+      "pos": 4281940,
+      "name": "楼桑村",
+      "x": 428,
+      "y": 1940,
+      "typeCode": 10
+    },
+    {
+      "pos": 4281941,
+      "name": "楼桑村",
+      "x": 428,
+      "y": 1941,
+      "typeCode": 10
+    },
+    {
+      "pos": 4291940,
+      "name": "楼桑村",
+      "x": 429,
+      "y": 1940,
+      "typeCode": 28
+    },
+    {
+      "pos": 4291941,
+      "name": "楼桑村",
+      "x": 429,
+      "y": 1941,
+      "typeCode": 10
+    },
+    {
+      "pos": 4421851,
+      "name": "北新城",
+      "x": 442,
+      "y": 1851,
+      "typeCode": 8
+    },
+    {
+      "pos": 4440495,
+      "name": "显美",
+      "x": 444,
+      "y": 495,
+      "typeCode": 8
+    },
+    {
+      "pos": 4472592,
+      "name": "易京",
+      "x": 447,
+      "y": 2592,
+      "typeCode": 8
+    },
+    {
+      "pos": 4502095,
+      "name": "界桥",
+      "x": 450,
+      "y": 2095,
+      "typeCode": 8
+    },
+    {
+      "pos": 4530193,
+      "name": "延寿",
+      "x": 453,
+      "y": 193,
+      "typeCode": 8
+    },
+    {
+      "pos": 4541567,
+      "name": "阳邑",
+      "x": 454,
+      "y": 1567,
+      "typeCode": 8
+    },
+    {
+      "pos": 4542850,
+      "name": "辽东",
+      "x": 454,
+      "y": 2850,
+      "typeCode": 8
+    },
+    {
+      "pos": 4561369,
+      "name": "定襄",
+      "x": 456,
+      "y": 1369,
+      "typeCode": 8
+    },
+    {
+      "pos": 4600747,
+      "name": "山丹",
+      "x": 460,
+      "y": 747,
+      "typeCode": 8
+    },
+    {
+      "pos": 4691015,
+      "name": "孝义",
+      "x": 469,
+      "y": 1015,
+      "typeCode": 8
+    },
+    {
+      "pos": 4832314,
+      "name": "信都",
+      "x": 483,
+      "y": 2314,
+      "typeCode": 8
+    },
+    {
+      "pos": 4991815,
+      "name": "固安",
+      "x": 499,
+      "y": 1815,
+      "typeCode": 8
+    },
+    {
+      "pos": 5011900,
+      "name": "容城",
+      "x": 501,
+      "y": 1900,
+      "typeCode": 8
+    },
+    {
+      "pos": 5102511,
+      "name": "安平",
+      "x": 510,
+      "y": 2511,
+      "typeCode": 8
+    },
+    {
+      "pos": 5111990,
+      "name": "方城",
+      "x": 511,
+      "y": 1990,
+      "typeCode": 8
+    },
+    {
+      "pos": 5162251,
+      "name": "灵寿",
+      "x": 516,
+      "y": 2251,
+      "typeCode": 8
+    },
+    {
+      "pos": 5310511,
+      "name": "蒲环",
+      "x": 531,
+      "y": 511,
+      "typeCode": 8
+    },
+    {
+      "pos": 5382184,
+      "name": "新市",
+      "x": 538,
+      "y": 2184,
+      "typeCode": 8
+    },
+    {
+      "pos": 5402740,
+      "name": "聊城",
+      "x": 540,
+      "y": 2740,
+      "typeCode": 8
+    },
+    {
+      "pos": 5410298,
+      "name": "且次",
+      "x": 541,
+      "y": 298,
+      "typeCode": 8
+    },
+    {
+      "pos": 5470397,
+      "name": "租厉",
+      "x": 547,
+      "y": 397,
+      "typeCode": 8
+    },
+    {
+      "pos": 5491972,
+      "name": "灵丘",
+      "x": 549,
+      "y": 1972,
+      "typeCode": 8
+    },
+    {
+      "pos": 5532343,
+      "name": "安国",
+      "x": 553,
+      "y": 2343,
+      "typeCode": 8
+    },
+    {
+      "pos": 5671780,
+      "name": "云中",
+      "x": 567,
+      "y": 1780,
+      "typeCode": 8
+    },
+    {
+      "pos": 5711279,
+      "name": "中都",
+      "x": 571,
+      "y": 1279,
+      "typeCode": 8
+    },
+    {
+      "pos": 5740835,
+      "name": "苍松",
+      "x": 574,
+      "y": 835,
+      "typeCode": 8
+    },
+    {
+      "pos": 5760972,
+      "name": "方山",
+      "x": 576,
+      "y": 972,
+      "typeCode": 8
+    },
+    {
+      "pos": 5772241,
+      "name": "中山",
+      "x": 577,
+      "y": 2241,
+      "typeCode": 8
+    },
+    {
+      "pos": 5801144,
+      "name": "西河",
+      "x": 580,
+      "y": 1144,
+      "typeCode": 8
+    },
+    {
+      "pos": 5801488,
+      "name": "大陵",
+      "x": 580,
+      "y": 1488,
+      "typeCode": 8
+    },
+    {
+      "pos": 5892506,
+      "name": "河间",
+      "x": 589,
+      "y": 2506,
+      "typeCode": 8
+    }
+  ],
+  "roads": [
+    {
+      "from": 4931426,
+      "to": 720935,
+      "distance": 128
+    },
+    {
+      "from": 12980800,
+      "to": 910873,
+      "distance": 86
+    },
+    {
+      "from": 3,
+      "to": 311212,
+      "distance": 491155
+    },
+    {
+      "from": 4,
+      "to": 311212,
+      "distance": 741230
+    },
+    {
+      "from": 5,
+      "to": 450362,
+      "distance": 720304
+    },
+    {
+      "from": 6,
+      "to": 450362,
+      "distance": 1110395
+    },
+    {
+      "from": 7,
+      "to": 491031,
+      "distance": 491155
+    },
+    {
+      "from": 8,
+      "to": 491031,
+      "distance": 701092
+    },
+    {
+      "from": 9,
+      "to": 491031,
+      "distance": 439
+    },
+    {
+      "from": 10,
+      "to": 491031,
+      "distance": 1121033
+    },
+    {
+      "from": 11,
+      "to": 491155,
+      "distance": 701092
+    },
+    {
+      "from": 12,
+      "to": 531292,
+      "distance": 591335
+    },
+    {
+      "from": 13,
+      "to": 531292,
+      "distance": 741230
+    },
+    {
+      "from": 14,
+      "to": 531292,
+      "distance": 1131296
+    },
+    {
+      "from": 15,
+      "to": 541416,
+      "distance": 591335
+    },
+    {
+      "from": 16,
+      "to": 541416,
+      "distance": 1531432
+    },
+    {
+      "from": 17,
+      "to": 700735,
+      "distance": 1240846
+    },
+    {
+      "from": 18,
+      "to": 700735,
+      "distance": 1300654
+    },
+    {
+      "from": 19,
+      "to": 700735,
+      "distance": 1720714
+    },
+    {
+      "from": 20,
+      "to": 701092,
+      "distance": 1121033
+    },
+    {
+      "from": 21,
+      "to": 701092,
+      "distance": 1121173
+    },
+    {
+      "from": 22,
+      "to": 701092,
+      "distance": 1511132
+    },
+    {
+      "from": 23,
+      "to": 710076,
+      "distance": 710136
+    },
+    {
+      "from": 24,
+      "to": 710076,
+      "distance": 1300195
+    },
+    {
+      "from": 25,
+      "to": 710076,
+      "distance": 1500074
+    },
+    {
+      "from": 26,
+      "to": 710076,
+      "distance": 1710116
+    },
+    {
+      "from": 27,
+      "to": 710136,
+      "distance": 1300195
+    },
+    {
+      "from": 28,
+      "to": 710136,
+      "distance": 1500074
+    },
+    {
+      "from": 29,
+      "to": 710136,
+      "distance": 1710116
+    },
+    {
+      "from": 30,
+      "to": 720304,
+      "distance": 1110395
+    },
+    {
+      "from": 31,
+      "to": 720304,
+      "distance": 1300195
+    },
+    {
+      "from": 32,
+      "to": 720304,
+      "distance": 1310275
+    },
+    {
+      "from": 33,
+      "to": 720304,
+      "distance": 1850307
+    },
+    {
+      "from": 34,
+      "to": 416,
+      "distance": 80
+    },
+    {
+      "from": 35,
+      "to": 6930374,
+      "distance": 177
+    },
+    {
+      "from": 36,
+      "to": 458,
+      "distance": 179
+    },
+    {
+      "from": 37,
+      "to": 7331020,
+      "distance": 114
+    },
+    {
+      "from": 38,
+      "to": 741230,
+      "distance": 1121173
+    },
+    {
+      "from": 39,
+      "to": 741230,
+      "distance": 1131296
+    },
+    {
+      "from": 40,
+      "to": 910873,
+      "distance": 1240846
+    },
+    {
+      "from": 41,
+      "to": 910873,
+      "distance": 1510915
+    },
+    {
+      "from": 42,
+      "to": 910873,
+      "distance": 2100885
+    },
+    {
+      "from": 43,
+      "to": 980592,
+      "distance": 1300654
+    },
+    {
+      "from": 44,
+      "to": 980592,
+      "distance": 2110573
+    },
+    {
+      "from": 45,
+      "to": 1110395,
+      "distance": 1310275
+    },
+    {
+      "from": 46,
+      "to": 1110395,
+      "distance": 1850307
+    },
+    {
+      "from": 47,
+      "to": 1110395,
+      "distance": 2310374
+    },
+    {
+      "from": 48,
+      "to": 1111352,
+      "distance": 1131296
+    },
+    {
+      "from": 49,
+      "to": 1111352,
+      "distance": 1531432
+    },
+    {
+      "from": 50,
+      "to": 1121033,
+      "distance": 1121173
+    },
+    {
+      "from": 51,
+      "to": 1121033,
+      "distance": 1510915
+    },
+    {
+      "from": 52,
+      "to": 1121033,
+      "distance": 1511132
+    },
+    {
+      "from": 53,
+      "to": 1121033,
+      "distance": 1921033
+    },
+    {
+      "from": 54,
+      "to": 1121173,
+      "distance": 1131296
+    },
+    {
+      "from": 55,
+      "to": 1121173,
+      "distance": 1511132
+    },
+    {
+      "from": 56,
+      "to": 1121173,
+      "distance": 1591239
+    },
+    {
+      "from": 57,
+      "to": 1121173,
+      "distance": 1721172
+    },
+    {
+      "from": 58,
+      "to": 1121173,
+      "distance": 1911193
+    },
+    {
+      "from": 59,
+      "to": 1131296,
+      "distance": 1331294
+    },
+    {
+      "from": 60,
+      "to": 1240846,
+      "distance": 1510915
+    },
+    {
+      "from": 61,
+      "to": 1240846,
+      "distance": 1720714
+    },
+    {
+      "from": 62,
+      "to": 1240846,
+      "distance": 2100885
+    },
+    {
+      "from": 63,
+      "to": 1300195,
+      "distance": 1310275
+    },
+    {
+      "from": 64,
+      "to": 1300195,
+      "distance": 1710116
+    },
+    {
+      "from": 65,
+      "to": 1300195,
+      "distance": 1850307
+    },
+    {
+      "from": 66,
+      "to": 1300195,
+      "distance": 2110195
+    },
+    {
+      "from": 67,
+      "to": 1300654,
+      "distance": 1720714
+    },
+    {
+      "from": 68,
+      "to": 1310275,
+      "distance": 1850307
+    },
+    {
+      "from": 69,
+      "to": 1310275,
+      "distance": 2110195
+    },
+    {
+      "from": 70,
+      "to": 1331294,
+      "distance": 1591239
+    },
+    {
+      "from": 71,
+      "to": 1331294,
+      "distance": 1901392
+    },
+    {
+      "from": 72,
+      "to": 1331294,
+      "distance": 1921328
+    },
+    {
+      "from": 73,
+      "to": 1500074,
+      "distance": 1710116
+    },
+    {
+      "from": 74,
+      "to": 1510915,
+      "distance": 1900972
+    },
+    {
+      "from": 75,
+      "to": 1510915,
+      "distance": 2100885
+    },
+    {
+      "from": 76,
+      "to": 1511132,
+      "distance": 1721172
+    },
+    {
+      "from": 77,
+      "to": 1511132,
+      "distance": 1921033
+    },
+    {
+      "from": 78,
+      "to": 1511132,
+      "distance": 2011115
+    },
+    {
+      "from": 79,
+      "to": 1531432,
+      "distance": 1901392
+    },
+    {
+      "from": 80,
+      "to": 1591239,
+      "distance": 1721172
+    },
+    {
+      "from": 81,
+      "to": 1591239,
+      "distance": 1911193
+    },
+    {
+      "from": 82,
+      "to": 1710116,
+      "distance": 2110195
+    },
+    {
+      "from": 83,
+      "to": 1710116,
+      "distance": 2720136
+    },
+    {
+      "from": 84,
+      "to": 1720714,
+      "distance": 2110834
+    },
+    {
+      "from": 85,
+      "to": 1720714,
+      "distance": 2720692
+    },
+    {
+      "from": 86,
+      "to": 1721172,
+      "distance": 1911193
+    },
+    {
+      "from": 87,
+      "to": 1850307,
+      "distance": 2110195
+    },
+    {
+      "from": 88,
+      "to": 1850307,
+      "distance": 2310374
+    },
+    {
+      "from": 89,
+      "to": 1900972,
+      "distance": 1921033
+    },
+    {
+      "from": 90,
+      "to": 1900972,
+      "distance": 2100885
+    },
+    {
+      "from": 91,
+      "to": 1900972,
+      "distance": 2510951
+    },
+    {
+      "from": 92,
+      "to": 1901392,
+      "distance": 1921328
+    },
+    {
+      "from": 93,
+      "to": 1901392,
+      "distance": 2481393
+    },
+    {
+      "from": 94,
+      "to": 1911193,
+      "distance": 1921328
+    },
+    {
+      "from": 95,
+      "to": 1911193,
+      "distance": 2511153
+    },
+    {
+      "from": 96,
+      "to": 1911193,
+      "distance": 2681231
+    },
+    {
+      "from": 97,
+      "to": 1921033,
+      "distance": 2251048
+    },
+    {
+      "from": 98,
+      "to": 1921328,
+      "distance": 2681231
+    },
+    {
+      "from": 99,
+      "to": 1921328,
+      "distance": 2691292
+    },
+    {
+      "from": 100,
+      "to": 1921328,
+      "distance": 2711371
+    },
+    {
+      "from": 101,
+      "to": 2011115,
+      "distance": 2511153
+    },
+    {
+      "from": 102,
+      "to": 2100885,
+      "distance": 2110834
+    },
+    {
+      "from": 103,
+      "to": 2100885,
+      "distance": 2510821
+    },
+    {
+      "from": 104,
+      "to": 2100885,
+      "distance": 2510951
+    },
+    {
+      "from": 105,
+      "to": 2100885,
+      "distance": 2750986
+    },
+    {
+      "from": 106,
+      "to": 2110195,
+      "distance": 2720136
+    },
+    {
+      "from": 107,
+      "to": 2110195,
+      "distance": 3310275
+    },
+    {
+      "from": 108,
+      "to": 2110573,
+      "distance": 2410469
+    },
+    {
+      "from": 109,
+      "to": 2110573,
+      "distance": 2910573
+    },
+    {
+      "from": 110,
+      "to": 2110834,
+      "distance": 2510821
+    },
+    {
+      "from": 111,
+      "to": 2251048,
+      "distance": 2911132
+    },
+    {
+      "from": 112,
+      "to": 2251048,
+      "distance": 3121072
+    },
+    {
+      "from": 113,
+      "to": 2310374,
+      "distance": 2410469
+    },
+    {
+      "from": 114,
+      "to": 2310374,
+      "distance": 2920395
+    },
+    {
+      "from": 115,
+      "to": 2310374,
+      "distance": 3310275
+    },
+    {
+      "from": 116,
+      "to": 2310374,
+      "distance": 3520356
+    },
+    {
+      "from": 117,
+      "to": 2410469,
+      "distance": 2910573
+    },
+    {
+      "from": 118,
+      "to": 2410469,
+      "distance": 2920395
+    },
+    {
+      "from": 119,
+      "to": 2410469,
+      "distance": 3200449
+    },
+    {
+      "from": 120,
+      "to": 2410469,
+      "distance": 3720414
+    },
+    {
+      "from": 121,
+      "to": 2481393,
+      "distance": 2711371
+    },
+    {
+      "from": 122,
+      "to": 2510821,
+      "distance": 2720692
+    },
+    {
+      "from": 123,
+      "to": 2510821,
+      "distance": 3350800
+    },
+    {
+      "from": 124,
+      "to": 2510951,
+      "distance": 2750986
+    },
+    {
+      "from": 125,
+      "to": 2511153,
+      "distance": 2681231
+    },
+    {
+      "from": 126,
+      "to": 2511153,
+      "distance": 2911132
+    },
+    {
+      "from": 127,
+      "to": 2681231,
+      "distance": 2691292
+    },
+    {
+      "from": 128,
+      "to": 2681231,
+      "distance": 2911132
+    },
+    {
+      "from": 129,
+      "to": 2681231,
+      "distance": 3521232
+    },
+    {
+      "from": 130,
+      "to": 2691292,
+      "distance": 2711371
+    },
+    {
+      "from": 131,
+      "to": 2691292,
+      "distance": 3311313
+    },
+    {
+      "from": 132,
+      "to": 2711371,
+      "distance": 3311313
+    },
+    {
+      "from": 133,
+      "to": 2711371,
+      "distance": 3871434
+    },
+    {
+      "from": 134,
+      "to": 2720136,
+      "distance": 3520157
+    },
+    {
+      "from": 135,
+      "to": 2720136,
+      "distance": 3920081
+    },
+    {
+      "from": 136,
+      "to": 2720136,
+      "distance": 4120181
+    },
+    {
+      "from": 137,
+      "to": 2720692,
+      "distance": 2910573
+    },
+    {
+      "from": 138,
+      "to": 2720692,
+      "distance": 3310651
+    },
+    {
+      "from": 139,
+      "to": 2750986,
+      "distance": 3121072
+    },
+    {
+      "from": 140,
+      "to": 2750986,
+      "distance": 3371006
+    },
+    {
+      "from": 141,
+      "to": 2910573,
+      "distance": 3200449
+    },
+    {
+      "from": 142,
+      "to": 2910573,
+      "distance": 3310651
+    },
+    {
+      "from": 143,
+      "to": 2911132,
+      "distance": 3121072
+    },
+    {
+      "from": 144,
+      "to": 2911132,
+      "distance": 3521112
+    },
+    {
+      "from": 145,
+      "to": 2911132,
+      "distance": 3521232
+    },
+    {
+      "from": 146,
+      "to": 2920395,
+      "distance": 3200449
+    },
+    {
+      "from": 147,
+      "to": 2920395,
+      "distance": 3310275
+    },
+    {
+      "from": 148,
+      "to": 2920395,
+      "distance": 3520356
+    },
+    {
+      "from": 149,
+      "to": 2920395,
+      "distance": 3720414
+    },
+    {
+      "from": 150,
+      "to": 3121072,
+      "distance": 3371006
+    },
+    {
+      "from": 151,
+      "to": 3121072,
+      "distance": 3521112
+    },
+    {
+      "from": 152,
+      "to": 3121072,
+      "distance": 3831006
+    },
+    {
+      "from": 153,
+      "to": 3200449,
+      "distance": 3720414
+    },
+    {
+      "from": 154,
+      "to": 3200449,
+      "distance": 4280410
+    },
+    {
+      "from": 155,
+      "to": 3310275,
+      "distance": 3520157
+    },
+    {
+      "from": 156,
+      "to": 3310275,
+      "distance": 3520356
+    },
+    {
+      "from": 157,
+      "to": 3310651,
+      "distance": 3750696
+    },
+    {
+      "from": 158,
+      "to": 3310651,
+      "distance": 4170606
+    },
+    {
+      "from": 159,
+      "to": 3311313,
+      "distance": 3521232
+    },
+    {
+      "from": 160,
+      "to": 3311313,
+      "distance": 4591323
+    },
+    {
+      "from": 161,
+      "to": 3311313,
+      "distance": 4681239
+    },
+    {
+      "from": 162,
+      "to": 3350800,
+      "distance": 3690757
+    },
+    {
+      "from": 163,
+      "to": 3350800,
+      "distance": 3750696
+    },
+    {
+      "from": 164,
+      "to": 3350800,
+      "distance": 4010880
+    },
+    {
+      "from": 165,
+      "to": 3350800,
+      "distance": 4220829
+    },
+    {
+      "from": 166,
+      "to": 3371006,
+      "distance": 3521112
+    },
+    {
+      "from": 167,
+      "to": 3371006,
+      "distance": 3831006
+    },
+    {
+      "from": 168,
+      "to": 3371006,
+      "distance": 4310933
+    },
+    {
+      "from": 169,
+      "to": 3520157,
+      "distance": 3920081
+    },
+    {
+      "from": 170,
+      "to": 3520157,
+      "distance": 4120181
+    },
+    {
+      "from": 171,
+      "to": 3520157,
+      "distance": 4590100
+    },
+    {
+      "from": 172,
+      "to": 3520356,
+      "distance": 3720414
+    },
+    {
+      "from": 173,
+      "to": 3520356,
+      "distance": 4280410
+    },
+    {
+      "from": 174,
+      "to": 3520356,
+      "distance": 4700371
+    },
+    {
+      "from": 175,
+      "to": 3521112,
+      "distance": 3521232
+    },
+    {
+      "from": 176,
+      "to": 3521112,
+      "distance": 3831006
+    },
+    {
+      "from": 177,
+      "to": 3521112,
+      "distance": 4091063
+    },
+    {
+      "from": 178,
+      "to": 3521112,
+      "distance": 4121152
+    },
+    {
+      "from": 179,
+      "to": 3521232,
+      "distance": 4091063
+    },
+    {
+      "from": 180,
+      "to": 3521232,
+      "distance": 4121152
+    },
+    {
+      "from": 181,
+      "to": 3690757,
+      "distance": 3750696
+    },
+    {
+      "from": 182,
+      "to": 3690757,
+      "distance": 4220829
+    },
+    {
+      "from": 183,
+      "to": 3690757,
+      "distance": 4610768
+    },
+    {
+      "from": 184,
+      "to": 3720414,
+      "distance": 4280410
+    },
+    {
+      "from": 185,
+      "to": 3720414,
+      "distance": 4700371
+    },
+    {
+      "from": 186,
+      "to": 3750696,
+      "distance": 4120694
+    },
+    {
+      "from": 187,
+      "to": 3750696,
+      "distance": 4220829
+    },
+    {
+      "from": 188,
+      "to": 3750696,
+      "distance": 4610768
+    },
+    {
+      "from": 189,
+      "to": 3831006,
+      "distance": 4010880
+    },
+    {
+      "from": 190,
+      "to": 3831006,
+      "distance": 4091063
+    },
+    {
+      "from": 191,
+      "to": 3831006,
+      "distance": 4310933
+    },
+    {
+      "from": 192,
+      "to": 3831006,
+      "distance": 4510992
+    },
+    {
+      "from": 193,
+      "to": 3871434,
+      "distance": 4591323
+    },
+    {
+      "from": 194,
+      "to": [
+        "Tb_cfg_world_road_detail"
+      ],
+      "distance": 173
+    },
+    {
+      "from": 195,
+      "to": [
+        "Tb_cfg_world_road_detail"
+      ],
+      "distance": 1510915
+    },
+    {
+      "from": 196,
+      "to": 3920081,
+      "distance": 4590100
+    },
+    {
+      "from": [
+        "Tb_cfg_world_road_detail"
+      ],
+      "to": 741227,
+      "distance": [
+        "Tb_cfg_world_road_detail"
+      ]
+    },
+    {
+      "from": 198,
+      "to": 4010880,
+      "distance": 4220829
+    },
+    {
+      "from": 199,
+      "to": 4010880,
+      "distance": 4310933
+    },
+    {
+      "from": 200,
+      "to": [
+        "Tb_cfg_world_road_detail"
+      ],
+      "distance": 1141173
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "records": [
+    {
+      "requestId": "replay_1001",
+      "createdTick": 96,
+      "outcome": "failed",
+      "intent": "hold_west_pass",
+      "priority": "high",
+      "orderCount": 5,
+      "shortSummary": "West frontline failed due supply disruption.",
+      "excerpt": "Supply line at tile_11 collapsed and garrison withdrew under pressure."
+    },
+    {
+      "requestId": "replay_1002",
+      "createdTick": 102,
+      "outcome": "completed",
+      "intent": "north_recon_probe",
+      "priority": "medium",
+      "orderCount": 4,
+      "shortSummary": "North recon stabilized fog zone before expansion.",
+      "excerpt": "Recon-first approach reduced losses and improved capture confidence."
+    }
+  ]
+}

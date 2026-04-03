@@ -1,0 +1,26 @@
+{
+    "dotnetAcquisitionExtension.existingDotnetPath": [
+        {
+            "extensionId": "ms-dotnettools.csharp",
+            "path": "C:\\Users\\Buffoon Queer\\AppData\\Local\\Microsoft\\dotnet\\dotnet.exe"
+        },
+        {
+            "extensionId": "ms-dotnettools.csdevkit",
+            "path": "C:\\Users\\Buffoon Queer\\AppData\\Local\\Microsoft\\dotnet\\dotnet.exe"
+        }
+    ],
+    "omnisharp.dotNetCliPaths": [
+        "C:\\Users\\Buffoon Queer\\AppData\\Local\\Microsoft\\dotnet"
+    ],
+    "omnisharp.useModernNet": true,
+    "github.copilot.chat.mcp.servers": {
+        "mcp-unity": {
+            "type": "stdio",
+            "command": "npx",
+            "args": ["-y", "mcp-unity@latest"],
+            "env": {
+                "UNITY_PORT": "8090"
+            }
+        }
+    }
+}

@@ -1,0 +1,6 @@
+# Default owner (single-account baseline)
+* @mohammadatiq472-source
+
+# Security and workflow changes require explicit owner review
+.github/workflows/* @mohammadatiq472-source
+scripts/security/* @mohammadatiq472-source

@@ -5,6 +5,12 @@ on:
     types: [opened, edited, synchronize, reopened, ready_for_review]
   pull_request_review:
     types: [submitted, dismissed]
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: "Manual PR number to validate when pull_request trigger is missing."
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -19,10 +25,23 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const dualMaintainers = [
+              "mohammadatiq472-source",
+              "rltsgxol4437"
+            ];
+
+            const manualPrNumberInput = core.getInput("prNumber");
+            const manualPrNumber = manualPrNumberInput ? Number(manualPrNumberInput) : undefined;
+            if (manualPrNumberInput && !Number.isInteger(manualPrNumber)) {
+              core.setFailed(`Invalid prNumber input: ${manualPrNumberInput}`);
+              return;
+            }
+
+            const resolvedPrNumber = manualPrNumber || context.issue.number;
             const pr = context.payload.pull_request || (await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.issue.number
+              pull_number: resolvedPrNumber
             })).data;
 
             if (pr.draft) {
@@ -49,6 +68,12 @@ jobs:
               return;
             }
 
+            const author = pr.user?.login || "";
+            if (!dualMaintainers.includes(author)) {
+              core.setFailed(`PR 作者必须是双机主账号之一，当前作者: ${author || "unknown"}`);
+              return;
+            }
+
             const reviews = await github.paginate(github.rest.pulls.listReviews, {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -66,9 +91,16 @@ jobs:
               .filter(([, state]) => state === "APPROVED")
               .map(([login]) => login);
 
-            if (approvals.length < 2) {
-              core.setFailed(`需要至少 2 个有效 APPROVED 审查，当前仅 ${approvals.length} 个。`);
+            const dualApprovals = approvals.filter((login) => dualMaintainers.includes(login));
+            const counterpartApprovals = dualApprovals.filter((login) => login !== author);
+
+            if (counterpartApprovals.length < 1) {
+              core.setFailed(
+                `需要来自另一台机器主账号的 APPROVED。当前作者: ${author}; 已有审批: ${dualApprovals.join(", ") || "none"}`
+              );
               return;
             }
 
-            core.info(`Dual-machine gate passed with approvals: ${approvals.join(", ")}`);
+            core.info(
+              `Dual-machine gate passed. author=${author}; counterpartApproval=${counterpartApprovals.join(", ")}`
+            );

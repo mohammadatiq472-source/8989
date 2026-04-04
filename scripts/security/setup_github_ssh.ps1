@@ -47,8 +47,10 @@ $configBlock = @"
 Host $hostAlias
   HostName github.com
   User git
-  IdentityFile $privateKeyPath
+  IdentityFile "$privateKeyPath"
   IdentitiesOnly yes
+  StrictHostKeyChecking accept-new
+  KexAlgorithms curve25519-sha256
 "@
 
 if (Test-Path $configPath) {

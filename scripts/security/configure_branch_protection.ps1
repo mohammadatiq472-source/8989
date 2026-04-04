@@ -4,6 +4,8 @@ param(
     [string]$Owner = "",
     [string]$Repository = "",
     [string]$Branch = "main",
+    [ValidateRange(1, 6)]
+    [int]$RequiredApprovingReviewCount = 1,
     [string]$Token = "",
     [string]$TokenFile = ""
 )
@@ -158,7 +160,7 @@ $payload = @{
     required_pull_request_reviews = @{
         dismiss_stale_reviews = $true
         require_code_owner_reviews = $true
-        required_approving_review_count = 2
+        required_approving_review_count = $RequiredApprovingReviewCount
     }
     restrictions = $null
     required_linear_history = $true

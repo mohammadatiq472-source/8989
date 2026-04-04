@@ -37,4 +37,5 @@ See `docs/unity/` for endpoint contracts, C# DTO/client skeletons, and call-orde
 - Run posture check: `npm run security:auth:validate`
 - Apply repo hardening: `npm run security:auth:harden`
 - Configure branch protection: `npm run security:branch:protect`
+- Dual-maintainer gate accounts: `mohammadatiq472-source` (A), `rltsgxol4437` (B)
 - Full guide: `docs/GITHUB_AUTH_DUAL_MACHINE_2026_04_04.md`

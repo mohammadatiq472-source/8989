@@ -44,10 +44,14 @@ namespace SLGCommander
         [Tooltip("Seconds between background world polls (0 = disabled).")]
         public float pollInterval = 8f;
 
+        [Header("Backend Endpoint")]
+        [Tooltip("Node backend HTTP base URL, for example http://127.0.0.1:8787 or http://192.168.1.10:8787.")]
+        [SerializeField] private string backendHttpBase = "http://127.0.0.1:8787";
+
         [Header("Realtime AI Quota (WebSocket)")]
         [Tooltip("When enabled, aiQuotaChanges are pushed from /ws and sent to HUD immediately.")]
         [SerializeField] private bool enableRealtimeQuotaPush = true;
-        [SerializeField] private string wsEndpoint = "ws://127.0.0.1:8787/ws";
+        [SerializeField] private string wsEndpoint = string.Empty;
         [SerializeField] private bool useSessionHeartbeatToken = true;
         [SerializeField] private string wsTokenOverride = string.Empty;
         [SerializeField] private bool wsDebugLogs = true;
@@ -91,8 +95,26 @@ namespace SLGCommander
             if (Instance != null && Instance != this) { Destroy(gameObject); return; }
             Instance = this;
             DontDestroyOnLoad(gameObject);
-            _api = new BackendApi(this);
+            _api = new BackendApi(this, backendHttpBase);
+            if (string.IsNullOrWhiteSpace(wsEndpoint))
+            {
+                wsEndpoint = BuildDefaultWsEndpoint(backendHttpBase);
+            }
             _heartbeatController = FindObjectOfType<UnitySessionHeartbeatController>();
+        }
+
+        private static string BuildDefaultWsEndpoint(string httpBase)
+        {
+            var raw = string.IsNullOrWhiteSpace(httpBase) ? "http://127.0.0.1:8787" : httpBase.Trim();
+            if (raw.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"wss://{raw.Substring("https://".Length).TrimEnd('/')}/ws";
+            }
+            if (raw.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            {
+                return $"ws://{raw.Substring("http://".Length).TrimEnd('/')}/ws";
+            }
+            return $"ws://{raw.TrimEnd('/')}/ws";
         }
 
         void Start()

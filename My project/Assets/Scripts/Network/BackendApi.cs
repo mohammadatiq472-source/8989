@@ -18,22 +18,32 @@ namespace SLGCommander
     /// </summary>
     public class BackendApi
     {
-        private const string BASE = "http://localhost:8787";
         private const int GET_TIMEOUT = 15;
         private const int POST_TIMEOUT = 20;
 
         private readonly MonoBehaviour _runner;
+        private readonly string _baseUrl;
         private static readonly HttpClient _httpClient = new();
         private CancellationTokenSource _sseCts;
 
-        public BackendApi(MonoBehaviour runner) => _runner = runner;
+        public BackendApi(MonoBehaviour runner, string baseUrl = "http://127.0.0.1:8787")
+        {
+            _runner = runner;
+            _baseUrl = NormalizeBaseUrl(baseUrl);
+        }
+
+        private static string NormalizeBaseUrl(string raw)
+        {
+            var value = string.IsNullOrWhiteSpace(raw) ? "http://127.0.0.1:8787" : raw.Trim();
+            return value.TrimEnd('/');
+        }
 
         // ════════════════════════════════════════════════════════════════════
         //  P0 — Health
         // ════════════════════════════════════════════════════════════════════
 
         public void GetHealth(Action<HealthResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<HealthResponse>($"{BASE}/api/health", ok, fail));
+            => _runner.StartCoroutine(Get<HealthResponse>($"{_baseUrl}/api/health", ok, fail));
 
         // ════════════════════════════════════════════════════════════════════
         //  P0 — World
@@ -43,7 +53,7 @@ namespace SLGCommander
             int? sinceWorldVersion = null, string intelMode = null,
             int? planningHistoryLimit = null, int? replayLimit = null)
         {
-            var sb = new StringBuilder($"{BASE}/api/world");
+            var sb = new StringBuilder($"{_baseUrl}/api/world");
             var sep = '?';
             if (sinceWorldVersion.HasValue) { sb.Append(sep).Append("sinceWorldVersion=").Append(sinceWorldVersion.Value); sep = '&'; }
             if (!string.IsNullOrEmpty(intelMode)) { sb.Append(sep).Append("intelMode=").Append(intelMode); sep = '&'; }
@@ -67,7 +77,7 @@ namespace SLGCommander
             int? centerX = null, int? centerY = null,
             string provinceId = null, string regionId = null)
         {
-            var sb = new StringBuilder($"{BASE}/api/world/map-layout");
+            var sb = new StringBuilder($"{_baseUrl}/api/world/map-layout");
             var sep = '?';
             if (!string.IsNullOrEmpty(scope))      { sb.Append(sep).Append("scope=").Append(scope); sep = '&'; }
             if (!string.IsNullOrEmpty(layer))      { sb.Append(sep).Append("layer=").Append(layer); sep = '&'; }
@@ -91,7 +101,7 @@ namespace SLGCommander
         {
             var body = new { action, payload };
             _runner.StartCoroutine(Post<WorldActionResponse>(
-                $"{BASE}/api/world/action?includeWorld=1",
+                $"{_baseUrl}/api/world/action?includeWorld=1",
                 body, ok, fail));
         }
 
@@ -231,19 +241,19 @@ namespace SLGCommander
         public void CreatePlanning(PlanningCreateRequest request,
                                    Action<PlanningCreateResponse> ok, Action<string> fail)
             => _runner.StartCoroutine(Post<PlanningCreateResponse>(
-                $"{BASE}/api/planning/create", request, ok, fail));
+                $"{_baseUrl}/api/planning/create", request, ok, fail));
 
         // ════════════════════════════════════════════════════════════════════
         //  P0 — Nation
         // ════════════════════════════════════════════════════════════════════
 
         public void GetNationProfiles(Action<NationProfilesResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<NationProfilesResponse>($"{BASE}/api/nation/profiles", ok, fail));
+            => _runner.StartCoroutine(Get<NationProfilesResponse>($"{_baseUrl}/api/nation/profiles", ok, fail));
 
         public void FoundNation(string name, string color, string capitalTileId,
                                 Action<NationFoundResponse> ok, Action<string> fail)
             => _runner.StartCoroutine(Post<NationFoundResponse>(
-                $"{BASE}/api/nation/found",
+                $"{_baseUrl}/api/nation/found",
                 new { nationName = name, color, capitalTileId },
                 ok, fail));
 
@@ -252,14 +262,14 @@ namespace SLGCommander
         // ════════════════════════════════════════════════════════════════════
 
         public void GetAiConfig(Action<AiConfigResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<AiConfigResponse>($"{BASE}/api/ai/config", ok, fail));
+            => _runner.StartCoroutine(Get<AiConfigResponse>($"{_baseUrl}/api/ai/config", ok, fail));
 
         // ════════════════════════════════════════════════════════════════════
         //  P1 — Map Overview
         // ════════════════════════════════════════════════════════════════════
 
         public void GetMapOverview(Action<MapOverviewResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<MapOverviewResponse>($"{BASE}/api/map/overview", ok, fail));
+            => _runner.StartCoroutine(Get<MapOverviewResponse>($"{_baseUrl}/api/map/overview", ok, fail));
 
         // ════════════════════════════════════════════════════════════════════
         //  P1 — Events
@@ -267,7 +277,7 @@ namespace SLGCommander
 
         public void GetEvents(Action<WorldEventsResponse> ok, Action<string> fail, int? limit = null)
         {
-            var url = $"{BASE}/api/events";
+            var url = $"{_baseUrl}/api/events";
             if (limit.HasValue) url += $"?limit={limit.Value}";
             _runner.StartCoroutine(Get<WorldEventsResponse>(url, ok, fail));
         }
@@ -289,7 +299,7 @@ namespace SLGCommander
             _sseCts = new CancellationTokenSource();
             var ct = _sseCts.Token;
 
-            var sb = new StringBuilder($"{BASE}/api/events/stream");
+            var sb = new StringBuilder($"{_baseUrl}/api/events/stream");
             var sep = '?';
             if (limit.HasValue)                   { sb.Append(sep).Append("limit=").Append(limit.Value); sep = '&'; }
             if (intervalMs.HasValue)              { sb.Append(sep).Append("intervalMs=").Append(intervalMs.Value); sep = '&'; }
@@ -374,7 +384,7 @@ namespace SLGCommander
 
         public void GetNarratives(Action<NarrativeEventsResponse> ok, Action<string> fail, int? limit = null)
         {
-            var url = $"{BASE}/api/narratives";
+            var url = $"{_baseUrl}/api/narratives";
             if (limit.HasValue) url += $"?limit={limit.Value}";
             _runner.StartCoroutine(Get<NarrativeEventsResponse>(url, ok, fail));
         }
@@ -384,19 +394,19 @@ namespace SLGCommander
         // ════════════════════════════════════════════════════════════════════
 
         public void GetReplayArchive(Action<ReplayArchiveResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<ReplayArchiveResponse>($"{BASE}/api/replay/archive", ok, fail));
+            => _runner.StartCoroutine(Get<ReplayArchiveResponse>($"{_baseUrl}/api/replay/archive", ok, fail));
 
         // ════════════════════════════════════════════════════════════════════
         //  P1 — Generals
         // ════════════════════════════════════════════════════════════════════
 
         public void GetGenerals(Action<GeneralsListResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<GeneralsListResponse>($"{BASE}/api/generals", ok, fail));
+            => _runner.StartCoroutine(Get<GeneralsListResponse>($"{_baseUrl}/api/generals", ok, fail));
 
         public void ChatWithGeneral(string generalId, string message,
                                     Action<GeneralChatResponse> ok, Action<string> fail)
             => _runner.StartCoroutine(Post<GeneralChatResponse>(
-                $"{BASE}/api/generals/{generalId}/chat",
+                $"{_baseUrl}/api/generals/{generalId}/chat",
                 new { message },
                 ok, fail));
 
@@ -405,7 +415,7 @@ namespace SLGCommander
         // ════════════════════════════════════════════════════════════════════
 
         public void GetAiModels(Action<AiModelsResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<AiModelsResponse>($"{BASE}/api/ai/models", ok, fail));
+            => _runner.StartCoroutine(Get<AiModelsResponse>($"{_baseUrl}/api/ai/models", ok, fail));
 
         // ════════════════════════════════════════════════════════════════════
         //  P2 — AI Logs
@@ -413,7 +423,7 @@ namespace SLGCommander
 
         public void GetAiLogs(Action<AiLogsResponse> ok, Action<string> fail, int? limit = null)
         {
-            var url = $"{BASE}/api/ai/logs";
+            var url = $"{_baseUrl}/api/ai/logs";
             if (limit.HasValue) url += $"?limit={limit.Value}";
             _runner.StartCoroutine(Get<AiLogsResponse>(url, ok, fail));
         }
@@ -425,7 +435,7 @@ namespace SLGCommander
         public void UpdateAiConfig(AiHubConfig config,
                                    Action<AiConfigResponse> ok, Action<string> fail)
             => _runner.StartCoroutine(Post<AiConfigResponse>(
-                $"{BASE}/api/ai/config",
+                $"{_baseUrl}/api/ai/config",
                 new { config },
                 ok, fail));
 
@@ -434,19 +444,19 @@ namespace SLGCommander
         // ════════════════════════════════════════════════════════════════════
 
         public void GetSaveSlots(Action<SaveSlotsResponse> ok, Action<string> fail)
-            => _runner.StartCoroutine(Get<SaveSlotsResponse>($"{BASE}/api/save-slots", ok, fail));
+            => _runner.StartCoroutine(Get<SaveSlotsResponse>($"{_baseUrl}/api/save-slots", ok, fail));
 
         public void SaveSlot(string slotId, string label,
                              Action<SaveSlotSaveResponse> ok, Action<string> fail)
             => _runner.StartCoroutine(Post<SaveSlotSaveResponse>(
-                $"{BASE}/api/save-slots/save",
+                $"{_baseUrl}/api/save-slots/save",
                 new { slotId, label },
                 ok, fail));
 
         public void LoadSlot(string slotId,
                              Action<WorldState> ok, Action<string> fail)
             => _runner.StartCoroutine(Post<WorldState>(
-                $"{BASE}/api/save-slots/load",
+                $"{_baseUrl}/api/save-slots/load",
                 new { slotId },
                 ok, fail));
 

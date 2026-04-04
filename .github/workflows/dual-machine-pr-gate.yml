@@ -1,0 +1,74 @@
+name: dual-machine-pr-gate
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened, ready_for_review]
+  pull_request_review:
+    types: [submitted, dismissed]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  dual-machine-review-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Validate dual-machine checklist and approvals
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request || (await github.rest.pulls.get({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number
+            })).data;
+
+            if (pr.draft) {
+              core.setFailed("PR is still draft. Mark ready for review first.");
+              return;
+            }
+
+            const body = pr.body || "";
+            const requiredCheckedBoxes = [
+              /- \[x\]\s*`?A-main`?.*/i,
+              /- \[x\]\s*`?B-main`?.*/i,
+              /- \[x\].*企业微信.*/i,
+              /- \[x\].*回滚方案.*/i,
+              /- \[x\].*本地验证命令.*/i,
+              /- \[x\].*CI.*/i
+            ];
+
+            const missing = requiredCheckedBoxes
+              .map((expr, index) => ({ expr, index }))
+              .filter(({ expr }) => !expr.test(body))
+              .map(({ index }) => index + 1);
+            if (missing.length > 0) {
+              core.setFailed(`PR 模板勾选项不完整，缺少第 ${missing.join(", ")} 个必填勾选项。`);
+              return;
+            }
+
+            const reviews = await github.paginate(github.rest.pulls.listReviews, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100
+            });
+
+            const latestByUser = new Map();
+            for (const review of reviews) {
+              if (!review.user || !review.user.login) continue;
+              latestByUser.set(review.user.login, review.state);
+            }
+
+            const approvals = [...latestByUser.entries()]
+              .filter(([, state]) => state === "APPROVED")
+              .map(([login]) => login);
+
+            if (approvals.length < 2) {
+              core.setFailed(`需要至少 2 个有效 APPROVED 审查，当前仅 ${approvals.length} 个。`);
+              return;
+            }
+
+            core.info(`Dual-machine gate passed with approvals: ${approvals.join(", ")}`);

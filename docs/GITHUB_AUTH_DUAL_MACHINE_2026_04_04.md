@@ -25,6 +25,7 @@ Formal entry commands:
 
 - `npm run security:auth:validate`
 - `npm run security:auth:harden`
+- `npm run security:branch:protect`
 
 ## Machine A / B Setup
 
@@ -69,6 +70,26 @@ npm run security:auth:harden
 ```
 
 3. Re-run posture check and confirm `riskCount` drops.
+
+## Branch Protection and Review Gate
+
+Apply standard dual-machine PR policy (when account plan supports branch protection on this repo):
+
+```powershell
+npm run security:branch:protect
+```
+
+Expected rules:
+
+- Require status checks:
+  - `phase5-hardening-gate / hardening-gate`
+  - `dual-machine-pr-gate / dual-machine-review-gate`
+- Require 2 approvals
+- Require CODEOWNERS review
+- Require conversation resolution
+- Block force-push and branch deletion
+
+If GitHub returns plan limitation (`Upgrade to GitHub Pro...`), keep using workflow+template+CODEOWNERS fallback until plan upgrade or public repo mode.
 
 ## PAT Fallback Policy
 

@@ -59,7 +59,25 @@ const server = createServer(async (req, res) => {
   const requestUrl = new URL(req.url ?? '/', `http://${req.headers.host ?? `${host}:${port}`}`)
 
   if (req.method === 'GET' && requestUrl.pathname === '/api/health') {
-    writeJson(res, 200, { ok: true })
+    const world = getWorldStateReadonly()
+    writeJson(res, 200, {
+      ok: true,
+      service: 'slg-backend',
+      now: new Date().toISOString(),
+      uptimeSec: Math.floor(process.uptime()),
+      runtime: {
+        host,
+        port,
+        gameClockEnabled,
+      },
+      world: {
+        tick: world.tick,
+        worldVersion: world.worldVersion,
+        factionCount: Object.keys(world.factions).length,
+        unitCount: world.units.length,
+        reportCount: world.reports.length,
+      },
+    })
     return
   }
 

@@ -5,6 +5,12 @@ on:
     types: [opened, edited, synchronize, reopened, ready_for_review]
   pull_request_review:
     types: [submitted, dismissed]
+  workflow_dispatch:
+    inputs:
+      prNumber:
+        description: "Manual PR number to validate when pull_request trigger is missing."
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -24,10 +30,18 @@ jobs:
               "rltsgxol4437"
             ];
 
+            const manualPrNumberInput = core.getInput("prNumber");
+            const manualPrNumber = manualPrNumberInput ? Number(manualPrNumberInput) : undefined;
+            if (manualPrNumberInput && !Number.isInteger(manualPrNumber)) {
+              core.setFailed(`Invalid prNumber input: ${manualPrNumberInput}`);
+              return;
+            }
+
+            const resolvedPrNumber = manualPrNumber || context.issue.number;
             const pr = context.payload.pull_request || (await github.rest.pulls.get({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: context.issue.number
+              pull_number: resolvedPrNumber
             })).data;
 
             if (pr.draft) {

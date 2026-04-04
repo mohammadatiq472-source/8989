@@ -49,6 +49,13 @@ Then add the printed public key into GitHub:
 - GitHub -> Settings -> SSH and GPG keys -> New SSH key
 - Title recommendation: `8989-A` or `8989-B`
 
+If Windows OpenSSH reports KEX/host-key errors, ensure your `~/.ssh/config` host block contains:
+
+```text
+StrictHostKeyChecking accept-new
+KexAlgorithms curve25519-sha256
+```
+
 ## Harden Existing Repo
 
 Optional SSH remote switch:

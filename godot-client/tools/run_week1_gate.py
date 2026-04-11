@@ -308,8 +308,20 @@ def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, s
     ordered = battle > tile_control > logistics
     positive = logistics > 0.0
     frame_filter_ok = 'kind == "battle" or kind == "tile_control" or kind == "logistics"' in source
+    normalize_hook_ok = "_normalize_replay_engage_kind(" in source and "_register_replay_engage_kind(" in source
+    unknown_record_ok = "_replay_engage_unknown_kind_count" in source and "_replay_engage_unknown_kind_samples" in source
+    direction_metrics_ok = "_replay_engage_direction_direct_hits" in source and "_replay_engage_direction_fallback_hits" in source
+    frame_metrics_snapshot_ok = "_update_replay_engage_metrics_snapshot(" in source and 'set_meta("replay_engage_metrics"' in source
 
-    ok = ordered and positive and frame_filter_ok
+    ok = (
+        ordered
+        and positive
+        and frame_filter_ok
+        and normalize_hook_ok
+        and unknown_record_ok
+        and direction_metrics_ok
+        and frame_metrics_snapshot_ok
+    )
     detail = "unit view engage intensity contract passed" if ok else "unit view engage intensity contract failed"
     return ok, detail, {
         "file": str(path),
@@ -319,6 +331,54 @@ def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, s
         "ordered": ordered,
         "positive": positive,
         "frameFilterIncludesKinds": frame_filter_ok,
+        "normalizeHookOk": normalize_hook_ok,
+        "unknownRecordOk": unknown_record_ok,
+        "directionMetricsOk": direction_metrics_ok,
+        "frameMetricsSnapshotOk": frame_metrics_snapshot_ok,
+    }
+
+
+def _validate_replay_engage_kind_contract(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
+    rules_path = repo_root / "shared" / "domain" / "rules.ts"
+    unit_view_path = repo_root / "godot-client" / "scripts" / "map" / "unit_view_layer.gd"
+    rules_source = rules_path.read_text(encoding="utf-8")
+    unit_view_source = unit_view_path.read_text(encoding="utf-8")
+
+    required_rule_tokens = (
+        "const ENGAGE_REPLAY_HIGHLIGHT_KIND_WHITELIST",
+        "function normalizeEngageReplayHighlightKind(",
+        "function createEngageReplayHighlight(",
+        "engageKindDowngradedFrom",
+    )
+    missing_rule_tokens = [token for token in required_rule_tokens if token not in rules_source]
+
+    raw_engage_create_calls: list[int] = []
+    rule_lines = rules_source.splitlines()
+    for idx, line in enumerate(rule_lines, start=1):
+        if "createReplayHighlight(" not in line:
+            continue
+        if "function createReplayHighlight(" in line:
+            continue
+        window = "\n".join(rule_lines[idx - 1 : idx + 8])
+        if "'battle'" in window or "'tile_control'" in window or "'logistics'" in window:
+            raw_engage_create_calls.append(idx)
+
+    required_unit_view_tokens = (
+        "const ENGAGE_KIND_FALLBACK",
+        "const KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS",
+        "func _normalize_replay_engage_kind(",
+        "func _register_replay_engage_kind(",
+    )
+    missing_unit_view_tokens = [token for token in required_unit_view_tokens if token not in unit_view_source]
+
+    ok = not missing_rule_tokens and not raw_engage_create_calls and not missing_unit_view_tokens
+    detail = "replay engage kind contract passed" if ok else "replay engage kind contract failed"
+    return ok, detail, {
+        "rulesPath": str(rules_path),
+        "unitViewPath": str(unit_view_path),
+        "missingRuleTokens": missing_rule_tokens,
+        "rawEngageCreateReplayCallLines": raw_engage_create_calls,
+        "missingUnitViewTokens": missing_unit_view_tokens,
     }
 
 
@@ -673,6 +733,179 @@ def _validate_runtime_replay_highlights(
     return True, "runtime replay highlight sanity passed", {"checkedHighlights": checked}
 
 
+def _collect_runtime_replay_engage_metrics(world_payload: Any) -> dict[str, Any]:
+    target_kinds = ("battle", "tile_control", "logistics")
+    known_non_engage = {"enemy_turn", "alliance_turn", "intel", "planning"}
+    metrics: dict[str, Any] = {
+        "kindCounts": {kind: 0 for kind in target_kinds},
+        "unknownDowngradedKindCount": 0,
+        "unknownDowngradedKindSamples": [],
+        "engageHighlightTotal": 0,
+        "engageAnchoredHighlightTotal": 0,
+        "directionDirectCount": 0,
+        "directionFallbackCount": 0,
+        "estimatedTriggerCount": 0,
+        "frameSample": [],
+        "replayCount": 0,
+        "frameCount": 0,
+    }
+    if not isinstance(world_payload, dict):
+        return metrics
+
+    history = world_payload.get("history", {})
+    if not isinstance(history, dict):
+        return metrics
+    replays = history.get("executionReplays", [])
+    if not isinstance(replays, list):
+        return metrics
+
+    metrics["replayCount"] = len(replays)
+    for replay_idx, replay in enumerate(replays):
+        if not isinstance(replay, dict):
+            continue
+        frames = replay.get("frames", [])
+        if not isinstance(frames, list):
+            continue
+        metrics["frameCount"] += len(frames)
+        for frame_idx, frame in enumerate(frames):
+            if not isinstance(frame, dict):
+                continue
+            highlights = frame.get("highlights", [])
+            if not isinstance(highlights, list):
+                highlights = []
+
+            frame_kind_counts: dict[str, int] = {kind: 0 for kind in target_kinds}
+            frame_engage_highlights = 0
+            frame_anchored_highlights = 0
+            frame_unknown_downgraded = 0
+
+            for highlight in highlights:
+                if not isinstance(highlight, dict):
+                    continue
+                raw_kind = str(highlight.get("kind", "")).strip()
+                has_anchor = any(
+                    str(highlight.get(key, "")).strip() != ""
+                    for key in ("unitId", "tileId", "fromTileId", "toTileId")
+                )
+                normalized_kind = ""
+                if raw_kind in target_kinds:
+                    normalized_kind = raw_kind
+                elif raw_kind == "" or raw_kind in known_non_engage:
+                    normalized_kind = ""
+                elif has_anchor:
+                    normalized_kind = "tile_control"
+                    metrics["unknownDowngradedKindCount"] += 1
+                    frame_unknown_downgraded += 1
+                    if len(metrics["unknownDowngradedKindSamples"]) < 8 and raw_kind not in metrics["unknownDowngradedKindSamples"]:
+                        metrics["unknownDowngradedKindSamples"].append(raw_kind)
+
+                if normalized_kind == "":
+                    continue
+                metrics["kindCounts"][normalized_kind] += 1
+                frame_kind_counts[normalized_kind] += 1
+                metrics["engageHighlightTotal"] += 1
+                frame_engage_highlights += 1
+
+                if has_anchor:
+                    metrics["engageAnchoredHighlightTotal"] += 1
+                    frame_anchored_highlights += 1
+
+                from_tile_id = str(highlight.get("fromTileId", "")).strip()
+                to_tile_id = str(highlight.get("toTileId", "")).strip()
+                if from_tile_id != "" and to_tile_id != "" and from_tile_id != to_tile_id:
+                    metrics["directionDirectCount"] += 1
+                else:
+                    metrics["directionFallbackCount"] += 1
+
+            frame_fallback_targets = 0
+            if frame_engage_highlights == 0:
+                order_states = frame.get("orderStates", [])
+                if isinstance(order_states, list):
+                    seen_units: set[str] = set()
+                    for order_state in order_states:
+                        if not isinstance(order_state, dict):
+                            continue
+                        status = str(order_state.get("status", "")).strip()
+                        if status not in {"running", "completed", "failed"}:
+                            continue
+                        unit_id = str(order_state.get("unitId", "")).strip()
+                        if unit_id == "" or unit_id in seen_units:
+                            continue
+                        seen_units.add(unit_id)
+                        if len(seen_units) >= 4:
+                            break
+                    frame_fallback_targets = len(seen_units)
+                if frame_fallback_targets > 0:
+                    metrics["kindCounts"]["tile_control"] += frame_fallback_targets
+                    frame_kind_counts["tile_control"] += frame_fallback_targets
+                    metrics["directionFallbackCount"] += frame_fallback_targets
+
+            metrics["estimatedTriggerCount"] += frame_anchored_highlights + frame_fallback_targets
+            if (
+                frame_engage_highlights > 0
+                or frame_fallback_targets > 0
+                or frame_unknown_downgraded > 0
+            ) and len(metrics["frameSample"]) < 24:
+                metrics["frameSample"].append(
+                    {
+                        "replayIndex": replay_idx,
+                        "frameIndex": frame_idx,
+                        "kindCounts": frame_kind_counts,
+                        "engageHighlights": frame_engage_highlights,
+                        "anchoredHighlights": frame_anchored_highlights,
+                        "fallbackTargets": frame_fallback_targets,
+                        "unknownDowngraded": frame_unknown_downgraded,
+                    }
+                )
+    return metrics
+
+
+def _validate_runtime_replay_engage_consistency(
+    world_payload: Any,
+    *,
+    require_target_highlights: bool = False,
+) -> tuple[bool, str, dict[str, Any]]:
+    metrics_first = _collect_runtime_replay_engage_metrics(world_payload)
+    metrics_second = _collect_runtime_replay_engage_metrics(world_payload)
+    deterministic = json.dumps(metrics_first, sort_keys=True) == json.dumps(metrics_second, sort_keys=True)
+
+    kind_counts = metrics_first.get("kindCounts", {})
+    kind_total = (
+        int(kind_counts.get("battle", 0))
+        + int(kind_counts.get("tile_control", 0))
+        + int(kind_counts.get("logistics", 0))
+    )
+    active_kinds = sum(1 for key in ("battle", "tile_control", "logistics") if int(kind_counts.get(key, 0)) > 0)
+    estimated_triggers = int(metrics_first.get("estimatedTriggerCount", 0))
+    unknown_downgraded = int(metrics_first.get("unknownDowngradedKindCount", 0))
+    direction_direct = int(metrics_first.get("directionDirectCount", 0))
+    direction_fallback = int(metrics_first.get("directionFallbackCount", 0))
+    engage_highlights = int(metrics_first.get("engageHighlightTotal", 0))
+
+    if not require_target_highlights and metrics_first.get("replayCount", 0) == 0:
+        return True, "runtime replay engage consistency skipped: no executionReplays", {
+            **metrics_first,
+            "deterministic": deterministic,
+            "skipped": True,
+        }
+
+    has_engage_data = kind_total > 0 and estimated_triggers > 0
+    variety_ok = active_kinds >= 2 if require_target_highlights else True
+    direction_metrics_ok = (direction_direct + direction_fallback) >= engage_highlights
+    unknown_ok = unknown_downgraded == 0
+    ok = deterministic and has_engage_data and variety_ok and direction_metrics_ok and unknown_ok
+
+    detail = "runtime replay engage consistency passed" if ok else "runtime replay engage consistency failed"
+    return ok, detail, {
+        **metrics_first,
+        "deterministic": deterministic,
+        "hasEngageData": has_engage_data,
+        "varietyOk": variety_ok,
+        "directionMetricsOk": direction_metrics_ok,
+        "unknownDowngradedKindsOk": unknown_ok,
+    }
+
+
 def _run_template_replay_seed(repo_root: Path, base_url: str, report_path: Path) -> tuple[bool, str, dict[str, Any]]:
     cli_path = repo_root / "godot-client" / "tools" / "slg_ops_cli.py"
     report_path.parent.mkdir(parents=True, exist_ok=True)
@@ -941,6 +1174,20 @@ def main() -> int:
     )
 
     t = time.time()
+    replay_consistency_ok, replay_consistency_detail, replay_consistency_extra = _validate_runtime_replay_engage_consistency(
+        runtime_world_payload,
+        require_target_highlights=args.require_runtime_replay,
+    )
+    _append_step(
+        steps,
+        "replay-engage-consistency-contract",
+        t,
+        replay_consistency_ok,
+        replay_consistency_detail,
+        replay_consistency_extra,
+    )
+
+    t = time.time()
     map_layout = _http_json("GET", f"{base_url}/api/world/map-layout?scope={args.map_scope}")
     if int(map_layout.get("status", -1)) == 403 and args.map_scope == "full":
         effective_map_scope = "bootstrap"
@@ -1019,6 +1266,17 @@ def main() -> int:
     )
 
     t = time.time()
+    replay_engage_kind_ok, replay_engage_kind_detail, replay_engage_kind_extra = _validate_replay_engage_kind_contract(repo_root)
+    _append_step(
+        steps,
+        "replay-engage-kind-contract",
+        t,
+        replay_engage_kind_ok,
+        replay_engage_kind_detail,
+        replay_engage_kind_extra,
+    )
+
+    t = time.time()
     unit_view_ok, unit_view_detail, unit_view_extra = _validate_unit_view_layer_engage_intensity(repo_root)
     _append_step(
         steps,
@@ -1071,7 +1329,9 @@ def main() -> int:
         "map-layout",
         "godot-headless",
         "replay-highlight-runtime-sanity",
+        "replay-engage-consistency-contract",
         "replay-highlight-anchor-contract",
+        "replay-engage-kind-contract",
         "unitview-engage-intensity-contract",
         "unitmarker-engage-profile-contract",
         "theme-manifest-contract",

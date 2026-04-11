@@ -1199,7 +1199,7 @@ function processAutoExpansion(
         `铺路 ${paved} 格，开荒 ${pioneered} 格资源地${cityNote}。`,
       )
       highlights.push(
-        createReplayHighlight(
+        createEngageReplayHighlight(
           world.tick,
           'tile_control',
           paved + pioneered > 100 ? 'medium' : 'low',
@@ -1355,7 +1355,7 @@ function processAutoLevelUp(
         `${target.hero.name} 升级至 Lv.${newLevel}（+${levelGain}级），战力提升至 ${target.strength}。`,
       )
       highlights.push(
-        createReplayHighlight(
+        createEngageReplayHighlight(
           world.tick,
           'logistics',
           'low',
@@ -1579,7 +1579,7 @@ export function advanceTick(world: WorldState): WorldState {
     `后勤线回补完成，${summaryFoodLabel}，补给线健康度 ${theaterSnapshot.supplyLineHealth}，同盟协同 ${theaterSnapshot.allianceCoordination}，战斗风险 ${theaterSnapshot.battleRisk}。`,
   )
   tickHighlights.push(
-    createReplayHighlight(
+    createEngageReplayHighlight(
       nextWorld.tick,
       'logistics',
       'low',
@@ -2424,7 +2424,7 @@ function resolveActionAtTarget(
       targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
       if (previousOwner !== factionId) {
         highlights.push(
-          createReplayHighlight(
+          createEngageReplayHighlight(
             world.tick,
             'tile_control',
             tileControlSeverity(targetTile.type),
@@ -2457,7 +2457,7 @@ function resolveActionAtTarget(
       targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
       if (previousOwner !== factionId) {
         highlights.push(
-          createReplayHighlight(
+          createEngageReplayHighlight(
             world.tick,
             'tile_control',
             tileControlSeverity(targetTile.type),
@@ -2529,7 +2529,7 @@ function resolveActionAtTarget(
 
       targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
       highlights.push(
-        createReplayHighlight(
+        createEngageReplayHighlight(
           world.tick,
           'logistics',
           'medium',
@@ -2913,7 +2913,7 @@ function resolveBattleAtTile(
 
   prependReport(world, world.tick, attackerWon ? '前线接敌取胜' : '前线接敌失利', message)
   highlights.push(
-    createReplayHighlight(
+    createEngageReplayHighlight(
       world.tick,
       'battle',
       attackerWon ? 'high' : 'medium',
@@ -3401,19 +3401,31 @@ function deriveExecutionOutcome(execution: PlanExecution | null): ExecutionRepla
   return 'completed'
 }
 
+type ReplayHighlightContext = {
+  unitId?: string
+  tileId?: string
+  fromTileId?: string
+  toTileId?: string
+  factionId?: FactionId
+}
+
+type EngageReplayHighlightKind = 'battle' | 'tile_control' | 'logistics'
+
+const ENGAGE_REPLAY_HIGHLIGHT_KIND_WHITELIST: ReadonlySet<EngageReplayHighlightKind> = new Set([
+  'battle',
+  'tile_control',
+  'logistics',
+])
+
+const LOGGED_UNKNOWN_ENGAGE_REPLAY_KINDS = new Set<string>()
+
 function createReplayHighlight(
   tick: number,
   kind: ReplayHighlight['kind'],
   severity: ReplayHighlight['severity'],
   title: string,
   detail: string,
-  context?: {
-    unitId?: string
-    tileId?: string
-    fromTileId?: string
-    toTileId?: string
-    factionId?: FactionId
-  },
+  context?: ReplayHighlightContext,
 ): ReplayHighlight {
   const normalizedTileId = context?.tileId ?? context?.toTileId ?? context?.fromTileId
   const normalizedToTileId = context?.toTileId ?? normalizedTileId
@@ -3431,6 +3443,48 @@ function createReplayHighlight(
     toTileId: normalizedToTileId,
     factionId: context?.factionId,
   }
+}
+
+function normalizeEngageReplayHighlightKind(kind: string): {
+  normalizedKind: EngageReplayHighlightKind
+  downgradedFrom: string | null
+} {
+  if (ENGAGE_REPLAY_HIGHLIGHT_KIND_WHITELIST.has(kind as EngageReplayHighlightKind)) {
+    return {
+      normalizedKind: kind as EngageReplayHighlightKind,
+      downgradedFrom: null,
+    }
+  }
+  return {
+    normalizedKind: 'tile_control',
+    downgradedFrom: kind,
+  }
+}
+
+function createEngageReplayHighlight(
+  tick: number,
+  kind: string,
+  severity: ReplayHighlight['severity'],
+  title: string,
+  detail: string,
+  context?: ReplayHighlightContext,
+): ReplayHighlight {
+  const { normalizedKind, downgradedFrom } = normalizeEngageReplayHighlightKind(kind)
+  if (downgradedFrom !== null && !LOGGED_UNKNOWN_ENGAGE_REPLAY_KINDS.has(downgradedFrom)) {
+    LOGGED_UNKNOWN_ENGAGE_REPLAY_KINDS.add(downgradedFrom)
+    console.warn(
+      `[replay-highlight] downgraded unknown engage kind "${downgradedFrom}" -> "${normalizedKind}"`,
+    )
+  }
+  const normalizedDetail =
+    downgradedFrom === null ? detail : `${detail} [engageKindDowngradedFrom=${downgradedFrom}]`
+  return createReplayHighlight(tick, normalizedKind, severity, title, normalizedDetail, {
+    unitId: context?.unitId,
+    tileId: context?.tileId,
+    fromTileId: context?.fromTileId,
+    toTileId: context?.toTileId,
+    factionId: context?.factionId,
+  })
 }
 
 function tileControlSeverity(tileType: Tile['type']): ReplayHighlight['severity'] {

@@ -1,6 +1,16 @@
 extends Node2D
 
 const UnitMarkerScript = preload("res://scripts/map/unit_marker.gd")
+const ENGAGE_KIND_BATTLE: String = "battle"
+const ENGAGE_KIND_TILE_CONTROL: String = "tile_control"
+const ENGAGE_KIND_LOGISTICS: String = "logistics"
+const ENGAGE_KIND_FALLBACK: String = ENGAGE_KIND_TILE_CONTROL
+const KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS: Array[String] = [
+	"enemy_turn",
+	"alliance_turn",
+	"intel",
+	"planning",
+]
 
 @export var map_grid_path: NodePath = NodePath("../MapGrid")
 @export var marker_radius: float = 4.0
@@ -13,6 +23,17 @@ var _markers_by_unit_id: Dictionary = {}
 var _prev_units_by_id: Dictionary = {}
 var _seen_replay_frame_ids: Dictionary = {}
 var _seen_replay_frame_order: Array = []
+var _replay_engage_kind_counts: Dictionary = {
+	ENGAGE_KIND_BATTLE: 0,
+	ENGAGE_KIND_TILE_CONTROL: 0,
+	ENGAGE_KIND_LOGISTICS: 0,
+}
+var _replay_engage_unknown_kind_count: int = 0
+var _replay_engage_unknown_kind_samples: Array[String] = []
+var _replay_engage_trigger_count: int = 0
+var _replay_engage_direction_direct_hits: int = 0
+var _replay_engage_direction_fallback_hits: int = 0
+var _replay_engage_last_frame_summary: Dictionary = {}
 
 func _ready() -> void:
 	_map_grid = get_node_or_null(map_grid_path)
@@ -282,6 +303,8 @@ func _trigger_engage_from_replay_frames(world_payload: Dictionary, next_units_by
 			var engage_targets: Dictionary = _collect_engage_targets_from_highlights(frame, units_by_tile)
 			if engage_targets.is_empty():
 				engage_targets = _collect_engage_targets_from_frame(frame)
+				_replay_engage_kind_counts[ENGAGE_KIND_TILE_CONTROL] = int(_replay_engage_kind_counts.get(ENGAGE_KIND_TILE_CONTROL, 0)) + engage_targets.size()
+			var frame_trigger_count: int = 0
 			for unit_id_variant in engage_targets.keys():
 				var unit_id: String = str(unit_id_variant)
 				if not _markers_by_unit_id.has(unit_id):
@@ -297,6 +320,9 @@ func _trigger_engage_from_replay_frames(world_payload: Dictionary, next_units_by
 						next_units_by_id,
 					)
 					marker.call("play_engage", target_intensity, replay_direction, target_kind)
+					frame_trigger_count += 1
+					_replay_engage_trigger_count += 1
+			_update_replay_engage_metrics_snapshot(frame_id, frame_trigger_count)
 
 func _build_replay_frame_id(request_id: String, frame: Dictionary) -> String:
 	var tick: int = int(frame.get("tick", -1))
@@ -315,10 +341,46 @@ func _frame_has_engage_highlight(frame: Dictionary) -> bool:
 		if not (highlight_variant is Dictionary):
 			continue
 		var highlight: Dictionary = highlight_variant as Dictionary
-		var kind: String = str(highlight.get("kind", ""))
+		var kind: String = str(highlight.get("kind", "")).strip_edges()
 		if kind == "battle" or kind == "tile_control" or kind == "logistics":
 			return true
+		if _is_replay_engage_unknown_with_anchor(kind, highlight):
+			return true
 	return false
+
+func _is_known_non_engage_kind(kind: String) -> bool:
+	return kind in KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS
+
+func _is_replay_engage_unknown_with_anchor(kind: String, highlight: Dictionary) -> bool:
+	if kind == "" or _is_known_non_engage_kind(kind):
+		return false
+	return _highlight_has_engage_anchor(highlight)
+
+func _highlight_has_engage_anchor(highlight: Dictionary) -> bool:
+	return (
+		str(highlight.get("unitId", "")).strip_edges() != ""
+		or str(highlight.get("tileId", "")).strip_edges() != ""
+		or str(highlight.get("fromTileId", "")).strip_edges() != ""
+		or str(highlight.get("toTileId", "")).strip_edges() != ""
+	)
+
+func _normalize_replay_engage_kind(raw_kind: String, highlight: Dictionary) -> String:
+	var kind: String = raw_kind.strip_edges()
+	if kind == ENGAGE_KIND_BATTLE or kind == ENGAGE_KIND_TILE_CONTROL or kind == ENGAGE_KIND_LOGISTICS:
+		return kind
+	if kind == "" or _is_known_non_engage_kind(kind):
+		return ""
+	if not _highlight_has_engage_anchor(highlight):
+		return ""
+	_replay_engage_unknown_kind_count += 1
+	if _replay_engage_unknown_kind_samples.size() < 8 and not _replay_engage_unknown_kind_samples.has(kind):
+		_replay_engage_unknown_kind_samples.append(kind)
+	return ENGAGE_KIND_FALLBACK
+
+func _register_replay_engage_kind(kind: String) -> void:
+	if kind == "":
+		return
+	_replay_engage_kind_counts[kind] = int(_replay_engage_kind_counts.get(kind, 0)) + 1
 
 func _collect_engage_targets_from_frame(frame: Dictionary) -> Dictionary:
 	var targets: Dictionary = {}
@@ -358,7 +420,10 @@ func _collect_engage_targets_from_highlights(frame: Dictionary, units_by_tile: D
 		if not (highlight_variant is Dictionary):
 			continue
 		var highlight: Dictionary = highlight_variant as Dictionary
-		var kind: String = str(highlight.get("kind", "")).strip_edges()
+		var kind: String = _normalize_replay_engage_kind(str(highlight.get("kind", "")).strip_edges(), highlight)
+		if kind == "":
+			continue
+		_register_replay_engage_kind(kind)
 		var intensity: float = _resolve_engage_intensity_for_kind(kind)
 		if intensity <= 0.0:
 			continue
@@ -425,6 +490,19 @@ func _remember_replay_frame_id(frame_id: String) -> void:
 		var stale_id: String = str(_seen_replay_frame_order.pop_front())
 		_seen_replay_frame_ids.erase(stale_id)
 
+func _update_replay_engage_metrics_snapshot(frame_id: String, frame_trigger_count: int) -> void:
+	_replay_engage_last_frame_summary = {
+		"frameId": frame_id,
+		"frameTriggerCount": frame_trigger_count,
+		"totalTriggerCount": _replay_engage_trigger_count,
+		"kindCounts": _replay_engage_kind_counts.duplicate(true),
+		"unknownKindCount": _replay_engage_unknown_kind_count,
+		"unknownKindSamples": _replay_engage_unknown_kind_samples.duplicate(),
+		"directionDirectHits": _replay_engage_direction_direct_hits,
+		"directionFallbackHits": _replay_engage_direction_fallback_hits,
+	}
+	set_meta("replay_engage_metrics", _replay_engage_last_frame_summary)
+
 func _index_unit_ids_by_tile(next_units_by_id: Dictionary) -> Dictionary:
 	var indexed: Dictionary = {}
 	for unit_id_variant in next_units_by_id.keys():
@@ -461,8 +539,10 @@ func _resolve_replay_engage_direction(unit_id: String, target_meta: Dictionary, 
 	var to_tile_id: String = str(target_meta.get("toTileId", "")).strip_edges()
 	var replay_vector: Vector2 = _resolve_tile_direction_vector(from_tile_id, to_tile_id)
 	if replay_vector != Vector2.ZERO:
+		_replay_engage_direction_direct_hits += 1
 		return replay_vector
 
+	_replay_engage_direction_fallback_hits += 1
 	if _prev_units_by_id.has(unit_id) and next_units_by_id.has(unit_id):
 		var previous_unit: Dictionary = _prev_units_by_id[unit_id] as Dictionary
 		var next_unit: Dictionary = next_units_by_id[unit_id] as Dictionary

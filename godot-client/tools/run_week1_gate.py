@@ -253,6 +253,45 @@ def _extract_case_return(source: str, case_name: str) -> float | None:
         return None
 
 
+def _extract_case_return_dict(source: str, case_token: str) -> dict[str, float] | None:
+    pattern = re.compile(
+        rf"{re.escape(case_token)}\s*:\s*\n\s*return\s*\{{(?P<body>.*?)\n\s*\}}",
+        re.DOTALL,
+    )
+    match = pattern.search(source)
+    if not match:
+        return None
+    body = match.group("body")
+    parsed: dict[str, float] = {}
+    for kv in re.finditer(r'"(?P<key>[^"]+)"\s*:\s*(?P<value>[0-9]+(?:\.[0-9]+)?)', body):
+        key = kv.group("key")
+        try:
+            parsed[key] = float(kv.group("value"))
+        except ValueError:
+            continue
+    return parsed
+
+
+def _extract_case_return_color(source: str, case_token: str) -> tuple[float, float, float, float] | None:
+    pattern = re.compile(
+        rf"{re.escape(case_token)}\s*:\s*\n\s*return\s+Color\((?P<rgba>[^\)]*)\)",
+        re.DOTALL,
+    )
+    match = pattern.search(source)
+    if not match:
+        return None
+    raw_parts = [part.strip() for part in match.group("rgba").split(",")]
+    if len(raw_parts) < 4:
+        return None
+    values: list[float] = []
+    for part in raw_parts[:4]:
+        try:
+            values.append(float(part))
+        except ValueError:
+            return None
+    return values[0], values[1], values[2], values[3]
+
+
 def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
     path = repo_root / "godot-client" / "scripts" / "map" / "unit_view_layer.gd"
     source = path.read_text(encoding="utf-8")
@@ -281,6 +320,289 @@ def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, s
         "positive": positive,
         "frameFilterIncludesKinds": frame_filter_ok,
     }
+
+
+def _validate_unit_marker_engage_profile_contract(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
+    path = repo_root / "godot-client" / "scripts" / "map" / "unit_marker.gd"
+    source = path.read_text(encoding="utf-8")
+
+    case_tokens = {
+        "battle": "ENGAGE_KIND_BATTLE",
+        "tile_control": "ENGAGE_KIND_TILE_CONTROL",
+        "logistics": "ENGAGE_KIND_LOGISTICS",
+    }
+    required_profile_keys = (
+        "boost",
+        "preScale",
+        "peakScale",
+        "preDuration",
+        "burstDuration",
+        "settleDuration",
+        "push",
+    )
+
+    profile_values: dict[str, dict[str, float]] = {}
+    missing_profile_cases: list[str] = []
+    missing_profile_keys: dict[str, list[str]] = {}
+    for kind, token in case_tokens.items():
+        parsed = _extract_case_return_dict(source, token)
+        if parsed is None:
+            missing_profile_cases.append(kind)
+            continue
+        profile_values[kind] = parsed
+        missing_keys = [key for key in required_profile_keys if key not in parsed]
+        if missing_keys:
+            missing_profile_keys[kind] = missing_keys
+
+    accent_colors: dict[str, tuple[float, float, float, float]] = {}
+    missing_accent_cases: list[str] = []
+    for kind, token in case_tokens.items():
+        parsed = _extract_case_return_color(source, token)
+        if parsed is None:
+            missing_accent_cases.append(kind)
+            continue
+        accent_colors[kind] = parsed
+
+    normalize_default_ok = (
+        re.search(
+            r"func\s+_normalize_engage_kind\(kind:\s*String\)\s*->\s*String:\s*"
+            r".*?match\s+kind:\s*.*?_\s*:\s*\n\s*return\s+ENGAGE_KIND_BATTLE",
+            source,
+            re.DOTALL,
+        )
+        is not None
+    )
+
+    boost_ordered = False
+    push_ordered = False
+    peak_scale_ordered = False
+    settle_duration_escalates = False
+    if all(kind in profile_values for kind in case_tokens):
+        battle_profile = profile_values["battle"]
+        tile_control_profile = profile_values["tile_control"]
+        logistics_profile = profile_values["logistics"]
+        boost_ordered = (
+            battle_profile.get("boost", 0.0)
+            > tile_control_profile.get("boost", 0.0)
+            > logistics_profile.get("boost", 0.0)
+            > 0.0
+        )
+        push_ordered = (
+            battle_profile.get("push", 0.0)
+            > tile_control_profile.get("push", 0.0)
+            > logistics_profile.get("push", 0.0)
+            > 0.0
+        )
+        peak_scale_ordered = (
+            battle_profile.get("peakScale", 0.0)
+            > tile_control_profile.get("peakScale", 0.0)
+            > logistics_profile.get("peakScale", 0.0)
+            > 0.0
+        )
+        settle_duration_escalates = (
+            battle_profile.get("settleDuration", 0.0)
+            < tile_control_profile.get("settleDuration", 0.0)
+            < logistics_profile.get("settleDuration", 0.0)
+        )
+
+    battle_red_dominant = False
+    tile_control_warm = False
+    logistics_cool = False
+    if all(kind in accent_colors for kind in case_tokens):
+        battle_rgba = accent_colors["battle"]
+        tile_control_rgba = accent_colors["tile_control"]
+        logistics_rgba = accent_colors["logistics"]
+        battle_red_dominant = battle_rgba[0] > battle_rgba[2]
+        tile_control_warm = tile_control_rgba[0] >= tile_control_rgba[1] > tile_control_rgba[2]
+        logistics_cool = logistics_rgba[2] > logistics_rgba[0]
+
+    ok = (
+        not missing_profile_cases
+        and not missing_profile_keys
+        and not missing_accent_cases
+        and normalize_default_ok
+        and boost_ordered
+        and push_ordered
+        and peak_scale_ordered
+        and settle_duration_escalates
+        and battle_red_dominant
+        and tile_control_warm
+        and logistics_cool
+    )
+    detail = "unit marker engage profile contract passed" if ok else "unit marker engage profile contract failed"
+    return ok, detail, {
+        "file": str(path),
+        "missingProfileCases": missing_profile_cases,
+        "missingProfileKeys": missing_profile_keys,
+        "missingAccentCases": missing_accent_cases,
+        "normalizeDefaultOk": normalize_default_ok,
+        "boostOrdered": boost_ordered,
+        "pushOrdered": push_ordered,
+        "peakScaleOrdered": peak_scale_ordered,
+        "settleDurationEscalates": settle_duration_escalates,
+        "battleRedDominant": battle_red_dominant,
+        "tileControlWarm": tile_control_warm,
+        "logisticsCool": logistics_cool,
+        "profiles": profile_values,
+        "accentColors": accent_colors,
+    }
+
+
+def _load_json_manifest(path: Path) -> tuple[Any | None, str | None]:
+    if not path.exists():
+        return None, f"missing file: {path}"
+    try:
+        return json.loads(path.read_text(encoding="utf-8")), None
+    except json.JSONDecodeError as exc:
+        return None, f"json parse failed: {path} ({exc})"
+
+
+def _validate_theme_manifest_contract(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
+    manifests_root = repo_root / "godot-client" / "assets" / "themes" / "slgclient" / "manifests"
+    unit_manifest_path = manifests_root / "unit_frames_manifest.json"
+    overlay_manifest_path = manifests_root / "overlay_frames_manifest.json"
+    asset_manifest_path = manifests_root / "slgclient_asset_manifest.json"
+
+    errors: list[str] = []
+    details: dict[str, Any] = {
+        "unitManifestPath": str(unit_manifest_path),
+        "overlayManifestPath": str(overlay_manifest_path),
+        "assetManifestPath": str(asset_manifest_path),
+    }
+
+    unit_manifest, unit_err = _load_json_manifest(unit_manifest_path)
+    if unit_err is not None:
+        errors.append(unit_err)
+    overlay_manifest, overlay_err = _load_json_manifest(overlay_manifest_path)
+    if overlay_err is not None:
+        errors.append(overlay_err)
+    asset_manifest, asset_err = _load_json_manifest(asset_manifest_path)
+    if asset_err is not None:
+        errors.append(asset_err)
+
+    expected_directions = {"r", "ru", "u", "lu", "l", "ld", "d", "rd"}
+    missing_directions: list[str] = []
+    empty_direction_frames: list[str] = []
+    invalid_direction_frames: list[str] = []
+    if isinstance(unit_manifest, dict):
+        directions = unit_manifest.get("directions", {})
+        if not isinstance(directions, dict):
+            errors.append("unit_frames_manifest directions must be an object")
+            directions = {}
+        details["unitDirectionCount"] = len(directions)
+        for direction in sorted(expected_directions):
+            frame_list = directions.get(direction)
+            if not isinstance(frame_list, list):
+                missing_directions.append(direction)
+                continue
+            if len(frame_list) == 0:
+                empty_direction_frames.append(direction)
+                continue
+            invalid_frame = any(
+                not isinstance(frame, dict) or str(frame.get("texturePath", "")).strip() == "" for frame in frame_list
+            )
+            if invalid_frame:
+                invalid_direction_frames.append(direction)
+        details["unitFrameCountsByDirection"] = {
+            direction: len(directions.get(direction, [])) if isinstance(directions.get(direction), list) else 0
+            for direction in sorted(expected_directions)
+        }
+    else:
+        if unit_manifest is not None:
+            errors.append("unit_frames_manifest must be an object")
+    if missing_directions:
+        errors.append(f"unit_frames_manifest missing directions: {', '.join(missing_directions)}")
+    if empty_direction_frames:
+        errors.append(f"unit_frames_manifest has empty frame arrays: {', '.join(empty_direction_frames)}")
+    if invalid_direction_frames:
+        errors.append(f"unit_frames_manifest has invalid frame entries: {', '.join(invalid_direction_frames)}")
+
+    required_overlay_prefix_groups = (
+        ("land_ground_",),
+        ("land_1_",),
+        ("land_2_",),
+        ("land_3_",),
+        ("home_defend",),
+        ("flag_blue_", "out_flag_blue_"),
+        ("flag_red_", "out_flag_red_"),
+        ("hill1", "hill2", "hill3", "hill4", "hill5"),
+        ("water_edge_", "water_"),
+        ("sand_edge_", "sand_"),
+    )
+    missing_overlay_prefix_groups: list[str] = []
+    overlay_frame_count = 0
+    if isinstance(overlay_manifest, dict):
+        overlay_frames = overlay_manifest.get("frames", {})
+        if not isinstance(overlay_frames, dict):
+            errors.append("overlay_frames_manifest frames must be an object")
+            overlay_frames = {}
+        overlay_keys = list(overlay_frames.keys())
+        overlay_frame_count = len(overlay_keys)
+        details["overlayFrameCount"] = overlay_frame_count
+        for group in required_overlay_prefix_groups:
+            if not any(any(key.startswith(prefix) for prefix in group) for key in overlay_keys):
+                missing_overlay_prefix_groups.append(" | ".join(group))
+    else:
+        if overlay_manifest is not None:
+            errors.append("overlay_frames_manifest must be an object")
+    if overlay_frame_count <= 0:
+        errors.append("overlay_frames_manifest has no frames")
+    if missing_overlay_prefix_groups:
+        errors.append(
+            "overlay_frames_manifest missing required frame prefix groups: "
+            + ", ".join(missing_overlay_prefix_groups)
+        )
+
+    exchange_manifest_exists = False
+    exchange_stats_ok = False
+    if isinstance(asset_manifest, dict):
+        exchange_bundle = asset_manifest.get("exchangeBundle", {})
+        if not isinstance(exchange_bundle, dict):
+            errors.append("slgclient_asset_manifest exchangeBundle must be an object")
+            exchange_bundle = {}
+        manifest_rel = str(exchange_bundle.get("manifestPath", "")).strip()
+        if manifest_rel == "":
+            errors.append("slgclient_asset_manifest exchangeBundle.manifestPath is empty")
+        else:
+            exchange_manifest_path = repo_root / manifest_rel
+            exchange_manifest_exists = exchange_manifest_path.exists()
+            if not exchange_manifest_exists:
+                errors.append(f"exchange bundle manifest missing: {exchange_manifest_path}")
+            details["exchangeManifestPath"] = str(exchange_manifest_path)
+        stats = exchange_bundle.get("stats", {})
+        if not isinstance(stats, dict):
+            errors.append("slgclient_asset_manifest exchangeBundle.stats must be an object")
+            stats = {}
+        required_stats_groups = ("world", "units", "overlays", "manifests")
+        group_errors: list[str] = []
+        for group in required_stats_groups:
+            value = stats.get(group)
+            if not isinstance(value, dict):
+                group_errors.append(group)
+                continue
+            file_count = int(value.get("files", 0) or 0)
+            if file_count <= 0:
+                group_errors.append(group)
+        exchange_stats_ok = len(group_errors) == 0
+        if group_errors:
+            errors.append(f"exchange bundle stats missing or empty groups: {', '.join(group_errors)}")
+        details["exchangeStats"] = stats
+    else:
+        if asset_manifest is not None:
+            errors.append("slgclient_asset_manifest must be an object")
+
+    details["missingDirections"] = missing_directions
+    details["emptyDirectionFrames"] = empty_direction_frames
+    details["invalidDirectionFrames"] = invalid_direction_frames
+    details["missingOverlayPrefixGroups"] = missing_overlay_prefix_groups
+    details["exchangeManifestExists"] = exchange_manifest_exists
+    details["exchangeStatsOk"] = exchange_stats_ok
+
+    ok = len(errors) == 0
+    if errors:
+        details["errors"] = errors
+    detail = "theme manifest contract passed" if ok else f"theme manifest contract failed ({len(errors)} issue(s))"
+    return ok, detail, details
 
 
 def _validate_runtime_replay_highlights(
@@ -707,6 +1029,28 @@ def main() -> int:
         unit_view_extra,
     )
 
+    t = time.time()
+    unit_marker_ok, unit_marker_detail, unit_marker_extra = _validate_unit_marker_engage_profile_contract(repo_root)
+    _append_step(
+        steps,
+        "unitmarker-engage-profile-contract",
+        t,
+        unit_marker_ok,
+        unit_marker_detail,
+        unit_marker_extra,
+    )
+
+    t = time.time()
+    theme_manifest_ok, theme_manifest_detail, theme_manifest_extra = _validate_theme_manifest_contract(repo_root)
+    _append_step(
+        steps,
+        "theme-manifest-contract",
+        t,
+        theme_manifest_ok,
+        theme_manifest_detail,
+        theme_manifest_extra,
+    )
+
     if token:
         t = time.time()
         leave = _http_json("POST", f"{base_url}/api/session/leave", body={"token": token})
@@ -729,6 +1073,8 @@ def main() -> int:
         "replay-highlight-runtime-sanity",
         "replay-highlight-anchor-contract",
         "unitview-engage-intensity-contract",
+        "unitmarker-engage-profile-contract",
+        "theme-manifest-contract",
     }
     overall_ok = True
     for step in steps:

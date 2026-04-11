@@ -213,6 +213,8 @@
   },
   "active": "148b5398ec1cd850",
   "lastOpenFiles": [
+    "tmp/gates/gate-trio/gate_trio_summary_2026-04-11T07-37-13-172Z.json",
+    "tmp/gates/godot_week1_gate_20260411_153707.json",
     "tmp/gates/gate-trio/gate_trio_summary_2026-04-11T07-35-26-790Z.json",
     "tmp/gates/ai-nightly-acceptance/ai_nightly_2026-04-11T07-35-01-785Z.json",
     "tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-11T07-35-22-388Z.json.restore.tmp.failed.1775892925399",
@@ -222,8 +224,6 @@
     "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z.json",
     "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z_workspace/world_save_slots.json.restore.tmp",
     "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z_workspace/world_save_slots.json.restore.bak.1775892915240",
-    "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z_workspace/world_save_slots.json.lock",
-    "tmp/v2_game_state.json.tmp",
     "docs/CLOSEOUT_B3_C11_2026_04_11.md",
     "docs/CLOSEOUT_B3_C10_2026_04_11.md",
     "docs/CLOSEOUT_B3_C09_2026_04_11.md",

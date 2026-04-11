@@ -1,0 +1,269 @@
+{
+  "main": {
+    "id": "8f4c5beb7298c20b",
+    "type": "split",
+    "children": [
+      {
+        "id": "af01450abd1b206e",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "148b5398ec1cd850",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "node_modules/bl/LICENSE.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "LICENSE"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "c7050296f182cada",
+    "type": "split",
+    "children": [
+      {
+        "id": "958e405f8af31f98",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "8fbaccee67037a6f",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "文件列表"
+            }
+          },
+          {
+            "id": "fad421f38165fccb",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "Claudian ",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "搜索"
+            }
+          },
+          {
+            "id": "0ee6ec7c174f1da6",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "书签"
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "4f0d97f9d0825f41",
+    "type": "split",
+    "children": [
+      {
+        "id": "20e5f32e9b5f0f0f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "aa59f086e2528a1a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "未命名.canvas",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "未命名 的反向链接列表"
+            }
+          },
+          {
+            "id": "4f0401835acee0b8",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "未命名.canvas",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "未命名 的出链列表"
+            }
+          },
+          {
+            "id": "1d5e3613e781b5c2",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "标签"
+            }
+          },
+          {
+            "id": "33c415b021c8606e",
+            "type": "leaf",
+            "state": {
+              "type": "all-properties",
+              "state": {
+                "sortOrder": "frequency",
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-archive",
+              "title": "添加笔记属性"
+            }
+          },
+          {
+            "id": "ea6454c33d34252c",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "node_modules/bl/LICENSE.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "LICENSE 的大纲"
+            }
+          },
+          {
+            "id": "0bab0c0f0fbf298c",
+            "type": "leaf",
+            "state": {
+              "type": "footnotes",
+              "state": {
+                "file": "00-OpenClaw-Hub/03-Handoffs/SMOKE_2026-04-07_03-00-40.md"
+              },
+              "icon": "lucide-file-signature",
+              "title": "脚注"
+            }
+          },
+          {
+            "id": "a71e534de391b02a",
+            "type": "leaf",
+            "state": {
+              "type": "claudian-view",
+              "state": {},
+              "icon": "bot",
+              "title": "Claudian"
+            }
+          }
+        ],
+        "currentTab": 6
+      }
+    ],
+    "direction": "horizontal",
+    "width": 518.5
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "zk-prefixer:创建时间戳笔记": false,
+      "claudian:Open Claudian": false,
+      "switcher:打开快速切换": false,
+      "graph:查看关系图谱": false,
+      "canvas:新建白板": false,
+      "daily-notes:打开/创建今天的日记": false,
+      "templates:插入模板": false,
+      "command-palette:打开命令面板": false,
+      "bases:新建数据库": false,
+      "markdown-importer:打开 Markdown 格式转换器": false,
+      "random-note:开始漫游笔记": false,
+      "audio-recorder:开始/结束录音": false
+    }
+  },
+  "active": "148b5398ec1cd850",
+  "lastOpenFiles": [
+    "tmp/gates/gate-trio/gate_trio_summary_2026-04-11T07-35-26-790Z.json",
+    "tmp/gates/ai-nightly-acceptance/ai_nightly_2026-04-11T07-35-01-785Z.json",
+    "tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-11T07-35-22-388Z.json.restore.tmp.failed.1775892925399",
+    "tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-11T07-35-22-388Z.json.restore.tmp",
+    "tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-11T07-35-22-388Z.json.restore.bak.1775892922388",
+    "tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-11T07-35-22-388Z.json",
+    "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z.json",
+    "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z_workspace/world_save_slots.json.restore.tmp",
+    "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z_workspace/world_save_slots.json.restore.bak.1775892915240",
+    "tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_2026-04-11T07-35-02-536Z_workspace/world_save_slots.json.lock",
+    "tmp/v2_game_state.json.tmp",
+    "docs/CLOSEOUT_B3_C11_2026_04_11.md",
+    "docs/CLOSEOUT_B3_C10_2026_04_11.md",
+    "docs/CLOSEOUT_B3_C09_2026_04_11.md",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_131_1.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_12_3.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_12_1.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_122_3.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_122_1.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_11_3.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_11_1.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_112_3.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_112_1.png",
+    "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays/frames/water_102_3.png",
+    "docs/CLOSEOUT_B3_C07_2026_04_11.md",
+    "docs/GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md",
+    "docs/GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md",
+    "docs/CLOSEOUT_B3_C06_2026_04_10.md",
+    "docs/GODOT_AI_PLAYER_ANIMATION_FALLBACK_2026_04_10.md",
+    "tmp/third_party/slgclient/README.md",
+    "docs/CLOSEOUT_B3_C05_2026_04_10.md",
+    "docs/CLOSEOUT_B3_C04_2026_04_10.md",
+    "docs/CLOSEOUT_B3_C03_2026_04_10.md",
+    "docs/CLOSEOUT_B3_C02_2026_04_10.md",
+    "docs/CLOSEOUT_B3_C01_2026_04_10.md",
+    "docs/TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md",
+    "docs/CLOSEOUT_B2_C23_2026_04_10.md",
+    "docs/GATE_TRIO_HANDOFF_2026_04_10.md",
+    "docs/CLOSEOUT_B2_C22_2026_04_10.md",
+    "docs/CLOSEOUT_B2_C21_2026_04_10.md",
+    "docs/CLOSEOUT_B2_C20_2026_04_10.md",
+    "docs/CLOSEOUT_B2_C19_2026_04_10.md",
+    "docs/CLOSEOUT_B2_C18_2026_04_10.md",
+    "docs/CLOSEOUT_B2_C16_C17_2026_04_10.md",
+    "docs/GODOT_MCP_CLI_CONTROL_SURFACE_2026_04_10.md",
+    "docs/AI_NATIVE_SLG_ALIGNMENT_AUDIT_2026_04_10.md",
+    "未命名 5.canvas",
+    "未命名 4.canvas",
+    "未命名 3.canvas",
+    "未命名 2.canvas",
+    "未命名.canvas",
+    "未命名 1.canvas"
+  ]
+}

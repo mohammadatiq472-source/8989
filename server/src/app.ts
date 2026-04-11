@@ -10,7 +10,12 @@ import {
   handleCourtSessionRoute,
   handleCivilMemoryRoute,
   handleSaveSlotLoadRoute,
+  handleSaveSlotArchiveRestoreApplyRoute,
+  handleSaveSlotArchiveRestoreDrillRoute,
+  handleSaveSlotArchiveRestoreRollbackDrillRoute,
+  handleSaveSlotFixturePrimeRoute,
   handleSaveSlotSaveRoute,
+  handleSaveSlotsArchiveRoute,
   handleSaveSlotsRoute,
   handleWorldEventsRoute,
   handleWorldEventsStreamRoute,
@@ -28,16 +33,23 @@ import { dispatchV2Routes } from './routes/v2game'
 import { isHttpBodyError, writeJson } from './routes/http'
 import { dispatchFactionConfigRoutes } from './routes/factionConfigRoutes'
 import { handleWorldActionRoute, handleWorldMapLayoutRoute, handleWorldSummaryRoute } from './routes/world'
+import { flushAiHubConfigPersist, getAiHubConfigPersistHealth } from './application/ai/AiConfigService'
+import { flushFactionConfigPersist, getFactionConfigPersistHealth } from './application/faction/FactionConfigStore'
+import { flushV2GamePersist, getV2GamePersistHealth } from './application/v2/V2GameService'
 import {
   flushWorldPersist,
   flushNarrativePersist,
   flushGovernancePersist,
+  flushSaveSlotsPersist,
+  getSaveSlotsPersistHealth,
   getWorldStateReadonly,
 } from './application/world/WorldService'
 import { attachWebSocket, broadcastTickDelta } from './ws/GameWebSocket'
 import { createWorldStore } from './infra/store/RedisWorldStore'
 import { gameClock } from './application/clock/GameClock'
 import { runtimeConfig } from './runtime/runtimeConfig'
+import { flushNegotiationInboxPersist } from './agents/general/GeneralNegotiationChannel'
+import { flushSessionPersist, getSessionPersistHealth } from './multiplayer/SessionManager'
 
 const { host, port, allowFullMapLayout, gameClockEnabled } = runtimeConfig
 
@@ -45,6 +57,205 @@ const MAX_WORLD_SUMMARY_HISTORY_LIMIT = 500
 const MAX_WORLD_REPLAY_LIMIT = 500
 const MAX_WORLD_REPLAY_FRAME_LIMIT = 1000
 const MAX_AI_LOGS_LIMIT = 200
+
+type PersistenceSeverity = 'high' | 'medium' | 'low'
+
+type PersistenceAlert = {
+  severity: PersistenceSeverity
+  source: 'factionConfig' | 'aiConfig' | 'v2Game' | 'session' | 'saveSlots'
+  code: string
+  message: string
+}
+
+function buildPersistenceSnapshot() {
+  const factionConfig = getFactionConfigPersistHealth()
+  const aiConfig = getAiHubConfigPersistHealth()
+  const v2Game = getV2GamePersistHealth()
+  const session = getSessionPersistHealth()
+  const saveSlots = getSaveSlotsPersistHealth()
+  const alerts = buildPersistenceAlerts({
+    factionConfig,
+    aiConfig,
+    v2Game,
+    session,
+    saveSlots,
+  })
+
+  return {
+    factionConfig,
+    aiConfig,
+    v2Game,
+    session,
+    saveSlots,
+    alerts,
+  }
+}
+
+function buildPersistenceAlerts(input: {
+  factionConfig: ReturnType<typeof getFactionConfigPersistHealth>
+  aiConfig: ReturnType<typeof getAiHubConfigPersistHealth>
+  v2Game: ReturnType<typeof getV2GamePersistHealth>
+  session: ReturnType<typeof getSessionPersistHealth>
+  saveSlots: ReturnType<typeof getSaveSlotsPersistHealth>
+}): PersistenceAlert[] {
+  const alerts: PersistenceAlert[] = []
+
+  if (input.factionConfig.security.secretPersistMode === 'memory_only') {
+    alerts.push({
+      severity: 'high',
+      source: 'factionConfig',
+      code: 'missing_encryption_key',
+      message:
+        'BYOK apiKey persistence is disabled because FACTION_APIKEY_ENCRYPTION_KEY is missing and plaintext persist is off.',
+    })
+  }
+
+  if (input.factionConfig.security.allowPlaintextPersist) {
+    alerts.push({
+      severity: 'medium',
+      source: 'factionConfig',
+      code: 'plaintext_persist_enabled',
+      message: 'FACTION_APIKEY_ALLOW_PLAINTEXT_PERSIST is enabled; BYOK apiKey may be persisted in plaintext.',
+    })
+  }
+
+  const persistFailureRules: Array<{
+    source: PersistenceAlert['source']
+    failureCount: number
+  }> = [
+    { source: 'factionConfig', failureCount: input.factionConfig.persistFailureCount },
+    { source: 'aiConfig', failureCount: input.aiConfig.persistFailureCount },
+    { source: 'v2Game', failureCount: input.v2Game.persistFailureCount },
+    { source: 'session', failureCount: input.session.persistFailureCount },
+    { source: 'saveSlots', failureCount: input.saveSlots.persistFailureCount },
+  ]
+
+  for (const rule of persistFailureRules) {
+    if (rule.failureCount <= 0) {
+      continue
+    }
+
+    alerts.push({
+      severity: rule.failureCount >= 5 ? 'high' : 'medium',
+      source: rule.source,
+      code: 'persist_failures',
+      message: `Detected ${rule.failureCount} persistence write failures for ${rule.source}.`,
+    })
+  }
+
+  const quarantineRules: Array<{
+    source: PersistenceAlert['source']
+    quarantineCount: number
+  }> = [
+    { source: 'factionConfig', quarantineCount: input.factionConfig.corruptQuarantineCount },
+    { source: 'aiConfig', quarantineCount: input.aiConfig.corruptQuarantineCount },
+    { source: 'v2Game', quarantineCount: input.v2Game.corruptQuarantineCount },
+    { source: 'session', quarantineCount: input.session.corruptQuarantineCount },
+    { source: 'saveSlots', quarantineCount: input.saveSlots.corruptQuarantineCount },
+  ]
+
+  for (const rule of quarantineRules) {
+    if (rule.quarantineCount <= 0) {
+      continue
+    }
+
+    alerts.push({
+      severity: rule.quarantineCount >= 3 ? 'high' : 'medium',
+      source: rule.source,
+      code: rule.quarantineCount >= 3 ? 'quarantine_surge' : 'quarantine_detected',
+      message: `Detected ${rule.quarantineCount} corrupt-store quarantine events for ${rule.source}.`,
+    })
+  }
+
+  const saveSlotsFileSizeBytes = input.saveSlots.fileSizeBytes
+  if (input.saveSlots.fileSizeLevel === 'hard' && typeof saveSlotsFileSizeBytes === 'number') {
+    alerts.push({
+      severity: 'high',
+      source: 'saveSlots',
+      code: 'save_slots_oversize_hard',
+      message: `Save-slot store size ${saveSlotsFileSizeBytes} bytes reached hard limit ${input.saveSlots.hardLimitBytes} bytes.`,
+    })
+  } else if (input.saveSlots.fileSizeLevel === 'soft' && typeof saveSlotsFileSizeBytes === 'number') {
+    alerts.push({
+      severity: 'medium',
+      source: 'saveSlots',
+      code: 'save_slots_oversize_soft',
+      message: `Save-slot store size ${saveSlotsFileSizeBytes} bytes reached soft limit ${input.saveSlots.softLimitBytes} bytes.`,
+    })
+  }
+
+  if (input.saveSlots.archiveFailureCount > 0) {
+    alerts.push({
+      severity: input.saveSlots.archiveFailureCount >= 3 ? 'high' : 'medium',
+      source: 'saveSlots',
+      code: 'save_slots_archive_failures',
+      message: `Save-slot archive pipeline has ${input.saveSlots.archiveFailureCount} failures.`,
+    })
+  }
+
+  if (input.saveSlots.lockContentionCount > 0) {
+    alerts.push({
+      severity: input.saveSlots.lockContentionCount >= 3 ? 'high' : 'medium',
+      source: 'saveSlots',
+      code: 'save_slots_lock_contention',
+      message: `Save-slot persist lock contention observed ${input.saveSlots.lockContentionCount} times.`,
+    })
+  }
+
+  if (input.saveSlots.lockFailureCount > 0) {
+    alerts.push({
+      severity: 'high',
+      source: 'saveSlots',
+      code: 'save_slots_lock_failures',
+      message: `Save-slot persist lock operations failed ${input.saveSlots.lockFailureCount} times.`,
+    })
+  }
+
+  if (input.saveSlots.restoreDrillFailureCount > 0) {
+    alerts.push({
+      severity: input.saveSlots.restoreDrillFailureCount >= 3 ? 'high' : 'medium',
+      source: 'saveSlots',
+      code: 'save_slots_restore_drill_failures',
+      message: `Save-slot archive restore drills failed ${input.saveSlots.restoreDrillFailureCount} times.`,
+    })
+  }
+
+  if (input.saveSlots.restoreApplyFailureCount > 0) {
+    alerts.push({
+      severity: input.saveSlots.restoreApplyFailureCount >= 3 ? 'high' : 'medium',
+      source: 'saveSlots',
+      code: 'save_slots_restore_apply_failures',
+      message: `Save-slot archive restore apply failed ${input.saveSlots.restoreApplyFailureCount} times.`,
+    })
+  }
+
+  if (input.saveSlots.restoreRollbackDrillFailureCount > 0) {
+    alerts.push({
+      severity: input.saveSlots.restoreRollbackDrillFailureCount >= 3 ? 'high' : 'medium',
+      source: 'saveSlots',
+      code: 'save_slots_restore_rollback_drill_failures',
+      message: `Save-slot restore rollback drills failed ${input.saveSlots.restoreRollbackDrillFailureCount} times.`,
+    })
+  }
+
+  return alerts
+}
+
+function logPersistenceStartupAlerts(snapshot: ReturnType<typeof buildPersistenceSnapshot>) {
+  if (snapshot.alerts.length === 0) {
+    console.log('[startup-check] persistence health: ok')
+    return
+  }
+
+  for (const alert of snapshot.alerts) {
+    const line = `[startup-check][persistence][${alert.severity.toUpperCase()}][${alert.source}][${alert.code}] ${alert.message}`
+    if (alert.severity === 'high') {
+      console.error(line)
+      continue
+    }
+    console.warn(line)
+  }
+}
 
 const server = createServer(async (req, res) => {
   try {
@@ -60,6 +271,7 @@ const server = createServer(async (req, res) => {
 
   if (req.method === 'GET' && requestUrl.pathname === '/api/health') {
     const world = getWorldStateReadonly()
+    const persistence = buildPersistenceSnapshot()
     writeJson(res, 200, {
       ok: true,
       service: 'slg-backend',
@@ -77,6 +289,7 @@ const server = createServer(async (req, res) => {
         unitCount: world.units.length,
         reportCount: world.reports.length,
       },
+      persistence,
     })
     return
   }
@@ -280,6 +493,11 @@ const server = createServer(async (req, res) => {
     return
   }
 
+  if (req.method === 'GET' && requestUrl.pathname === '/api/save-slots/archive') {
+    handleSaveSlotsArchiveRoute(req, res)
+    return
+  }
+
   if (req.method === 'POST' && requestUrl.pathname === '/api/save-slots/save') {
     await handleSaveSlotSaveRoute(req, res)
     return
@@ -287,6 +505,26 @@ const server = createServer(async (req, res) => {
 
   if (req.method === 'POST' && requestUrl.pathname === '/api/save-slots/load') {
     await handleSaveSlotLoadRoute(req, res)
+    return
+  }
+
+  if (req.method === 'POST' && requestUrl.pathname === '/api/save-slots/fixture/prime') {
+    await handleSaveSlotFixturePrimeRoute(req, res)
+    return
+  }
+
+  if (req.method === 'POST' && requestUrl.pathname === '/api/save-slots/archive/restore-drill') {
+    await handleSaveSlotArchiveRestoreDrillRoute(req, res)
+    return
+  }
+
+  if (req.method === 'POST' && requestUrl.pathname === '/api/save-slots/archive/restore') {
+    await handleSaveSlotArchiveRestoreApplyRoute(req, res)
+    return
+  }
+
+  if (req.method === 'POST' && requestUrl.pathname === '/api/save-slots/archive/restore-rollback-drill') {
+    await handleSaveSlotArchiveRestoreRollbackDrillRoute(req, res)
     return
   }
 
@@ -346,28 +584,6 @@ const server = createServer(async (req, res) => {
     return
   }
 
-  // Unity-first aliases (avoid Unity coupling to web-oriented /api/session naming)
-  if (req.method === 'GET' && requestUrl.pathname === '/api/unity/runtime') {
-    await dispatchSessionRoutes(req, res, '/api/session/runtime')
-    return
-  }
-  if (req.method === 'POST' && requestUrl.pathname === '/api/unity/join') {
-    await dispatchSessionRoutes(req, res, '/api/session/join')
-    return
-  }
-  if (req.method === 'POST' && requestUrl.pathname === '/api/unity/heartbeat') {
-    await dispatchSessionRoutes(req, res, '/api/session/heartbeat')
-    return
-  }
-  if (req.method === 'POST' && requestUrl.pathname === '/api/unity/leave') {
-    await dispatchSessionRoutes(req, res, '/api/session/leave')
-    return
-  }
-  if (req.method === 'POST' && requestUrl.pathname === '/api/unity/autonomy') {
-    await dispatchSessionRoutes(req, res, '/api/session/autonomy')
-    return
-  }
-
   if (requestUrl.pathname.startsWith('/api/session')) {
     await dispatchSessionRoutes(req, res, requestUrl.pathname)
     return
@@ -409,6 +625,9 @@ server.listen(port, host, () => {
   if (gameClockEnabled) {
     gameClock.start()
   }
+
+  const persistence = buildPersistenceSnapshot()
+  logPersistenceStartupAlerts(persistence)
 })
 
 // WebSocket Delta 协议挂载（ws://host:port/ws）
@@ -430,6 +649,12 @@ async function gracefulShutdown(signal: string) {
       flushWorldPersist(),
       flushNarrativePersist(),
       flushGovernancePersist(),
+      flushNegotiationInboxPersist(),
+      flushFactionConfigPersist(),
+      flushAiHubConfigPersist(),
+      flushV2GamePersist(),
+      flushSessionPersist(),
+      flushSaveSlotsPersist(),
     ])
   } finally {
     process.exit(0)

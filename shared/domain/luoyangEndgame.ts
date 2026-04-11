@@ -76,6 +76,8 @@ export function processSiegeDecay(world: WorldState, highlights: ReplayHighlight
 
     if (!hasUnitOnLuoyang) {
       world.luoyangSiegeProgress[factionId] = 0
+      const luoyangAnchorTileId = Array.from(luoyangTileIds)[0]
+      const factionAnchorUnit = world.units.find((u) => u.faction === factionId)
 
       world.reports.unshift({
         id: `siege_break_${world.tick}_${factionId}`,
@@ -89,6 +91,10 @@ export function processSiegeDecay(world: WorldState, highlights: ReplayHighlight
         severity: 'medium',
         title: '围城中断',
         detail: `${factionId} 对洛阳的围攻中断，进度归零。`,
+        unitId: factionAnchorUnit?.id,
+        tileId: luoyangAnchorTileId,
+        toTileId: luoyangAnchorTileId,
+        factionId,
       })
     }
   }

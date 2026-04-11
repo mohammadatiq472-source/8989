@@ -29,7 +29,9 @@ import {
   getAllAlliances,
   joinAlliance,
   getV2GameState,
+  syncV2StateWithWorld,
 } from '../application/v2/V2GameService'
+import { getWorldStateReadonly } from '../application/world/WorldService'
 import {
   parseRecruitRequestBody,
   parseStarUpgradeRequestBody,
@@ -210,7 +212,9 @@ export async function dispatchV2Routes(
 
   // ── V2 完整状态 ──
   if (req.method === 'GET' && pathname === '/api/v2/state') {
-    writeJson(res, 200, getV2GameState())
+    const world = getWorldStateReadonly()
+    syncV2StateWithWorld(world)
+    writeJson(res, 200, getV2GameState(world))
     return
   }
 

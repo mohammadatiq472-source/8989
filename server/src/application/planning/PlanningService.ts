@@ -15,6 +15,7 @@ export async function createPlanningResult(
   const requestId = randomUUID()
   const startedAt = Date.now()
   const lifecycle = createPlanningJobLifecycle()
+  const gatewayStrictMode = isGatewayStrictMode()
   const STALE_TIMEOUT_MS = 120_000
 
   logTrace('planning.started', {
@@ -80,13 +81,14 @@ export async function createPlanningResult(
     clearTimeout(staleTimer)
     lifecycle.send('FAIL')
 
-    if (config.mode === 'gateway' && isGatewayStrictMode()) {
+    if (config.mode === 'gateway' && gatewayStrictMode) {
       const message = error instanceof Error ? error.message : 'gateway planning unavailable'
       const failureCategory = classifyPlanningFailure(error)
       logTrace('planning.failed', {
         requestId,
         lifecycleStatus: lifecycle.getStatus(),
         mode: config.mode,
+        strictMode: gatewayStrictMode,
         tick: world.tick,
         worldVersion: world.worldVersion,
         latencyMs: Date.now() - startedAt,
@@ -106,6 +108,7 @@ export async function createPlanningResult(
       requestId,
       lifecycleStatus: lifecycle.getStatus(),
       mode: config.mode,
+      strictMode: gatewayStrictMode,
       tick: world.tick,
       worldVersion: world.worldVersion,
       latencyMs: Date.now() - startedAt,
@@ -115,7 +118,9 @@ export async function createPlanningResult(
 
     return {
       ...fallback,
-      note: `${message}. Fallback to Mock Planner.`,
+      note:
+        `${message}. Fallback to Mock Planner.` +
+        ` [strictMode=${gatewayStrictMode ? 'on' : 'off'}; fallbackCause=${failureCategory}]`,
       metrics: {
         requestId,
         gatewayProvider: fallbackProvider,

@@ -12,7 +12,7 @@ scripts/generate_map_v2.py — V2 地图生成器（历史轮廓模式）
   Phase 2: 每游戏格 → 参考图像素 → 最近颜色 → 州ID
            同色相邻组用多郡城坐标消歧义（不用单一种子点）
   Phase 3: 约束 Voronoi → 每格郡ID（同州内最近郡治城市）
-  Phase 4: RLE 压缩输出（兼容 Unity TileRegionsLoader）
+  Phase 4: RLE 压缩输出（引擎无关 rows[x] 结构）
 
 城市坐标: 来自 STZB map_regions.json 的 center(x,y)，仅用中心点，不用 BBox。
           BBox 已完全弃用。
@@ -29,8 +29,8 @@ import numpy as np
 
 # ─── 路径 ────────────────────────────────────────────────────────────────────
 ROOT        = pathlib.Path(__file__).parent.parent
-MAP_REGIONS = ROOT / "My project/Assets/StreamingAssets/map_regions.json"
-OUTPUT_JSON = ROOT / "My project/Assets/StreamingAssets/map_tile_regions.json"
+MAP_REGIONS = ROOT / "tmp/map_data/map_regions.json"
+OUTPUT_JSON = ROOT / "tmp/map_data/map_tile_regions.json"
 DEBUG_SVG   = ROOT / "tmp/map_v2_debug.svg"
 
 # ─── 游戏网格（与 V1 兼容）────────────────────────────────────────────────────
@@ -383,7 +383,7 @@ def assign_counties(grid_state: np.ndarray,
 # ═══════════════════════════════════════════════════════════════════════════════
 
 def compress_rle(grid_county: np.ndarray) -> dict:
-    """与 V1 相同的 RLE 格式，兼容 Unity TileRegionsLoader"""
+    """与 V1 相同的 RLE 格式，供 Godot/后端按需解码"""
     rows_rle: dict = {}
     for gx in range(X_MIN, X_MAX + 1):
         row = grid_county[gx, Y_MIN:Y_MAX + 1]
@@ -690,7 +690,7 @@ def main():
     print('\n=== 下一步 ===')
     print('  1. 打开 tmp/map_v2_debug.svg 验证州形状')
     print('  2. 如州界有问题，调整 --conf 值（默认 0.82，调低更保守）')
-    print('  3. Unity 读取 StreamingAssets/map_tile_regions.json（格式未变）')
+    print('  3. 读取 tmp/map_data/map_tile_regions.json（格式未变）')
 
 
 if __name__ == '__main__':

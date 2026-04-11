@@ -17,6 +17,9 @@
 
 import type { WorldState } from '../../../../shared/contracts/game'
 import type { GeneralProfile } from './GeneralProfileStore'
+import { existsSync, mkdirSync, readFileSync } from 'node:fs'
+import { rename, writeFile } from 'node:fs/promises'
+import { dirname, join } from 'node:path'
 
 // ─── 类型定义 ─────────────────────────────────────────────────────────────────
 
@@ -49,6 +52,12 @@ export type NegotiationOutbox = Map<string, NegotiationMessage[]>
 // ─── 全局通信通道（进程级单例，仿真共享） ────────────────────────────────────
 
 const globalInbox: NegotiationInbox = new Map()
+const NEGOTIATION_INBOX_PERSIST_PATH = join(process.cwd(), 'tmp', 'general_negotiation_inbox.json')
+const NEGOTIATION_INBOX_PERSIST_DEBOUNCE_MS = 1_000
+const MAX_PERSISTED_MESSAGES = 600
+let persistTimer: ReturnType<typeof setTimeout> | null = null
+let persistInFlight: Promise<void> | null = null
+let persistDirty = false
 
 /** 相邻距离阈值（格数），超过此距离不触发战场对话 */
 const NEGOTIATION_RANGE = 5
@@ -56,12 +65,18 @@ const NEGOTIATION_RANGE = 5
 /** 每回合最多生成的谈判消息对数（避免日志爆炸） */
 const MAX_NEGOTIATIONS_PER_TICK = 6
 
+loadPersistedNegotiationInbox()
+
 // ─── 公共接口 ─────────────────────────────────────────────────────────────────
 
 /** 读取某将领的待处理谈判消息（并清空 inbox） */
 export function drainNegotiationInbox(generalId: string): NegotiationMessage[] {
+  const hadEntry = globalInbox.has(generalId)
   const messages = globalInbox.get(generalId) ?? []
   globalInbox.delete(generalId)
+  if (hadEntry) {
+    schedulePersistNegotiationInbox()
+  }
   return messages
 }
 
@@ -90,6 +105,7 @@ export function detectAndPostNegotiations(
   generals: GeneralProfile[],
 ): NegotiationMessage[] {
   const generated: NegotiationMessage[] = []
+  let inboxChanged = false
 
   // 构建 tileId → unit 快速索引
   const unitByTile = new Map<string, { unitId: string; factionId: string; general: GeneralProfile }>()
@@ -139,6 +155,7 @@ export function detectAndPostNegotiations(
           const existing = globalInbox.get(neighbor.general.id) ?? []
           existing.push(msg)
           globalInbox.set(neighbor.general.id, existing)
+          inboxChanged = true
 
           generated.push(msg)
           count++
@@ -152,9 +169,16 @@ export function detectAndPostNegotiations(
 
   // TTL 衰减：移除过期消息
   for (const [gid, msgs] of globalInbox.entries()) {
+    if (msgs.length > 0) {
+      inboxChanged = true
+    }
     const alive = msgs.map(m => ({ ...m, ttl: m.ttl - 1 })).filter(m => m.ttl > 0)
     if (alive.length === 0) globalInbox.delete(gid)
     else globalInbox.set(gid, alive)
+  }
+
+  if (inboxChanged) {
+    schedulePersistNegotiationInbox()
   }
 
   return generated
@@ -217,4 +241,116 @@ function buildNegotiationMessage(
     suggestedResponse,
     ttl: 3,
   }
+}
+
+type PersistedNegotiationInbox = Array<[string, NegotiationMessage[]]>
+
+function loadPersistedNegotiationInbox(): void {
+  try {
+    if (!existsSync(NEGOTIATION_INBOX_PERSIST_PATH)) {
+      return
+    }
+
+    const raw = readFileSync(NEGOTIATION_INBOX_PERSIST_PATH, 'utf8')
+    const parsed = JSON.parse(raw) as PersistedNegotiationInbox
+    if (!Array.isArray(parsed)) {
+      return
+    }
+
+    let restored = 0
+    for (const item of parsed) {
+      if (!Array.isArray(item) || item.length !== 2) {
+        continue
+      }
+
+      const generalId = typeof item[0] === 'string' ? item[0] : ''
+      const messages = Array.isArray(item[1]) ? item[1] : []
+      if (!generalId || messages.length === 0) {
+        continue
+      }
+
+      const alive = messages
+        .filter((message) => typeof message?.ttl === 'number' && message.ttl > 0)
+        .slice(-MAX_NEGOTIATIONS_PER_TICK * 3)
+      if (alive.length === 0) {
+        continue
+      }
+
+      globalInbox.set(generalId, alive)
+      restored += alive.length
+    }
+
+    if (restored > 0) {
+      console.log(`[GeneralNegotiationChannel] restored ${restored} pending negotiation messages`)
+    }
+  } catch {
+    console.warn('[GeneralNegotiationChannel] failed to restore negotiation inbox, starting fresh')
+  }
+}
+
+function schedulePersistNegotiationInbox(): void {
+  persistDirty = true
+  if (persistTimer) {
+    return
+  }
+
+  persistTimer = setTimeout(() => {
+    persistTimer = null
+    void flushNegotiationInboxPersist()
+  }, NEGOTIATION_INBOX_PERSIST_DEBOUNCE_MS)
+}
+
+export async function flushNegotiationInboxPersist(): Promise<void> {
+  if (!persistDirty) {
+    return
+  }
+
+  if (persistInFlight) {
+    await persistInFlight
+    return
+  }
+
+  const snapshot = buildPersistedNegotiationInbox()
+  persistDirty = false
+
+  persistInFlight = (async () => {
+    try {
+      mkdirSync(dirname(NEGOTIATION_INBOX_PERSIST_PATH), { recursive: true })
+      const tmpPath = `${NEGOTIATION_INBOX_PERSIST_PATH}.tmp-${process.pid}-${Date.now()}`
+      await writeFile(tmpPath, JSON.stringify(snapshot, null, 2), 'utf8')
+      await rename(tmpPath, NEGOTIATION_INBOX_PERSIST_PATH)
+    } catch {
+      persistDirty = true
+      console.warn('[GeneralNegotiationChannel] failed to persist negotiation inbox')
+    } finally {
+      persistInFlight = null
+      if (persistDirty && !persistTimer) {
+        schedulePersistNegotiationInbox()
+      }
+    }
+  })()
+
+  await persistInFlight
+}
+
+function buildPersistedNegotiationInbox(): PersistedNegotiationInbox {
+  const persisted: PersistedNegotiationInbox = []
+  let remaining = MAX_PERSISTED_MESSAGES
+
+  for (const [generalId, messages] of globalInbox.entries()) {
+    if (remaining <= 0) {
+      break
+    }
+
+    const alive = messages.filter((message) => message.ttl > 0)
+    if (alive.length === 0) {
+      continue
+    }
+
+    const kept = alive.slice(-Math.min(alive.length, remaining))
+    persisted.push([generalId, kept])
+    remaining -= kept.length
+  }
+
+  return persisted
 }

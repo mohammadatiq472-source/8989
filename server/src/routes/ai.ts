@@ -8,6 +8,23 @@ import { resolveRelayModelDiscoveryTarget } from '../config/modelGateway'
 import { isHttpBodyError, writeJson } from './http'
 
 const FACTION_ID_PATTERN = /^[a-z0-9_-]{1,40}$/
+const FALLBACK_CAUSE_KEYS = [
+  'gateway_timeout',
+  'gateway_network',
+  'gateway_http',
+  'gateway_quota',
+  'provider_error',
+  'validation',
+  'unknown',
+] as const
+
+type FallbackCause = (typeof FALLBACK_CAUSE_KEYS)[number]
+type StrictModeFlag = 'on' | 'off' | 'n/a'
+type AiLogObservabilityEntry = AiLogEntry & {
+  strictMode: StrictModeFlag
+  fallbackUsed: boolean
+  fallbackCause?: FallbackCause
+}
 
 function resolveDefaultFactionId(): string {
   const world = getWorldStateReadonly()
@@ -98,25 +115,85 @@ export async function handleAiConfigSaveRoute(req: IncomingMessage, res: ServerR
 export function handleAiLogsRoute(_req: IncomingMessage, res: ServerResponse, limit = 20) {
   const normalizedLimit = Number.isFinite(limit) ? Math.max(1, Math.min(100, Math.floor(limit))) : 20
   const world = getWorldStateReadonly()
+  const gatewayStrictEnabled = readGatewayStrictMode()
 
-  const items: AiLogEntry[] = world.history.planningJobs.slice(0, normalizedLimit).map((entry) => ({
-    id: entry.id,
-    status: entry.status,
-    sourceMode: entry.sourceMode,
-    requestedTick: entry.requestedTick,
-    requestedWorldVersion: entry.requestedWorldVersion,
-    message: entry.message,
-    resolvedSource: entry.resolvedSource,
-    plannerNote: entry.plannerNote,
-    completedTick: entry.completedTick,
-    completedWorldVersion: entry.completedWorldVersion,
-  }))
+  const items: AiLogObservabilityEntry[] = world.history.planningJobs.slice(0, normalizedLimit).map((entry) => {
+    const strictMode: StrictModeFlag = entry.sourceMode === 'gateway' ? (gatewayStrictEnabled ? 'on' : 'off') : 'n/a'
+    const fallbackUsed = entry.sourceMode !== 'mock' && entry.resolvedSource === 'mock'
+    const fallbackCause = fallbackUsed
+      ? inferFallbackCause([entry.message, entry.plannerNote, entry.plannerExplanation])
+      : undefined
+
+    return {
+      id: entry.id,
+      status: entry.status,
+      sourceMode: entry.sourceMode,
+      requestedTick: entry.requestedTick,
+      requestedWorldVersion: entry.requestedWorldVersion,
+      message: entry.message,
+      resolvedSource: entry.resolvedSource,
+      plannerNote: entry.plannerNote,
+      completedTick: entry.completedTick,
+      completedWorldVersion: entry.completedWorldVersion,
+      strictMode,
+      fallbackUsed,
+      fallbackCause,
+    }
+  })
+
+  const fallbackUsedCount = items.filter((item) => item.fallbackUsed).length
 
   writeJson(res, 200, {
     items,
     limit: normalizedLimit,
     fetchedAt: new Date().toISOString(),
+    gatewayStrictMode: gatewayStrictEnabled ? 'on' : 'off',
+    fallbackUsedCount,
   })
+}
+
+function readGatewayStrictMode() {
+  const raw = process.env.PLANNER_GATEWAY_STRICT?.trim().toLowerCase()
+  if (!raw) {
+    return true
+  }
+
+  return !['0', 'false', 'off', 'no'].includes(raw)
+}
+
+function inferFallbackCause(parts: Array<string | undefined>): FallbackCause {
+  const joined = parts
+    .map((part) => part?.trim().toLowerCase())
+    .filter((part): part is string => Boolean(part))
+    .join(' | ')
+
+  for (const key of FALLBACK_CAUSE_KEYS) {
+    if (joined.includes(`fallbackcause=${key}`) || joined.includes(key)) {
+      return key
+    }
+  }
+
+  if (joined.includes('timeout') || joined.includes('timed out')) {
+    return 'gateway_timeout'
+  }
+
+  if (joined.includes('network') || joined.includes('fetch') || joined.includes('econn')) {
+    return 'gateway_network'
+  }
+
+  if (joined.includes('http') || joined.includes('status')) {
+    return 'gateway_http'
+  }
+
+  if (joined.includes('quota') || joined.includes('rate limit') || joined.includes('too many requests')) {
+    return 'gateway_quota'
+  }
+
+  if (joined.includes('schema') || joined.includes('json') || joined.includes('invalid')) {
+    return 'validation'
+  }
+
+  return 'unknown'
 }
 
 type CacheEntry = {

@@ -8,6 +8,7 @@ import type {
   ReplayHighlightKind,
   ReplayHighlightSeverity,
 } from './common'
+import type { CivilMemoryEntry } from '../civilMemory'
 
 export type AllianceActionSummary = {
   id: string
@@ -16,6 +17,11 @@ export type AllianceActionSummary = {
   title: string
   detail: string
   severity: ReplayHighlightSeverity
+  unitId?: string
+  tileId?: string
+  fromTileId?: string
+  toTileId?: string
+  factionId?: FactionId
 }
 
 export type BattleOutcomeRecord = {
@@ -91,6 +97,11 @@ export type ReplayHighlight = {
   severity: ReplayHighlightSeverity
   title: string
   detail: string
+  unitId?: string
+  tileId?: string
+  fromTileId?: string
+  toTileId?: string
+  factionId?: FactionId
 }
 
 export type ExecutionReplayFrame = {
@@ -160,8 +171,41 @@ export type ReplayArchiveResponse = {
   items: ReplayArchiveEntry[]
 }
 
+export type WebSocketObservabilityError = {
+  at: string
+  stage: string
+  factionId: string | null
+  message: string
+}
+
+export type WebSocketObservabilityStats = {
+  totalConnections: number
+  subscribedConnections: number
+  factionDistribution: Record<string, number>
+  recentErrors: WebSocketObservabilityError[]
+}
+
 export type WorldEventsResponse = {
   items: WorldEventRecord[]
+  wsStats?: WebSocketObservabilityStats
+}
+
+export type MemoryProviderRequested = 'mem0' | 'in_memory'
+export type MemoryProviderActive = MemoryProviderRequested | 'unknown'
+export type MemoryProviderLifecycle = 'uninitialized' | 'ready' | 'degraded'
+
+export type MemoryProviderObservability = {
+  requestedProvider: MemoryProviderRequested
+  activeProvider: MemoryProviderActive
+  lifecycle: MemoryProviderLifecycle
+  downgraded: boolean
+  reason?: string
+  updatedAt: string
+}
+
+export type CivilMemoryObservabilityResponse = {
+  items: CivilMemoryEntry[]
+  memoryProvider: MemoryProviderObservability
 }
 
 export type SaveSlotRecord = {

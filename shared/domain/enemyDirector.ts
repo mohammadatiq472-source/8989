@@ -7,6 +7,18 @@ type EnemyDirectorOptions = {
 }
 
 export type OpposingDirectorOptions = EnemyDirectorOptions
+export type OpposingActionTrace = {
+  summary: string
+  unitId?: string
+  tileId?: string
+  fromTileId?: string
+  toTileId?: string
+  factionId: string
+}
+export type OpposingDirectorResult = {
+  actions: string[]
+  traces: OpposingActionTrace[]
+}
 
 function resolveDefaultOpposingDirectorOptions(world: WorldState): OpposingDirectorOptions {
   const factionIds = Object.keys(world.factions)
@@ -16,9 +28,33 @@ function resolveDefaultOpposingDirectorOptions(world: WorldState): OpposingDirec
 }
 
 export function runOpposingDirector(world: WorldState, options?: OpposingDirectorOptions) {
+  return runOpposingDirectorDetailed(world, options).actions
+}
+
+export function runOpposingDirectorDetailed(world: WorldState, options?: OpposingDirectorOptions): OpposingDirectorResult {
   const resolvedOptions = options ?? resolveDefaultOpposingDirectorOptions(world)
   const { defenderFactionId, targetFactionId } = resolvedOptions
   const actions: string[] = []
+  const traces: OpposingActionTrace[] = []
+  const recordAction = (
+    summary: string,
+    context: {
+      unitId?: string
+      tileId?: string
+      fromTileId?: string
+      toTileId?: string
+    } = {},
+  ) => {
+    actions.push(summary)
+    traces.push({
+      summary,
+      factionId: defenderFactionId,
+      unitId: context.unitId,
+      tileId: context.tileId,
+      fromTileId: context.fromTileId,
+      toTileId: context.toTileId,
+    })
+  }
   const theater = buildTheaterSnapshot(world, targetFactionId)
   const northRecon = theater.macroRegions.find((region) => region.id === 'north_recon')
   const westFront = theater.macroRegions.find((region) => region.id === 'west_front')
@@ -38,10 +74,16 @@ export function runOpposingDirector(world: WorldState, options?: OpposingDirecto
       scout.tileId !== nextScoutTile.id &&
       canOpposingUnitMoveInto(world, nextScoutTile, targetFactionId)
     ) {
+      const fromScoutTileId = scout.tileId
       scout.tileId = nextScoutTile.id
       scout.status = '侦察中'
       scout.currentTask = `盯防${nextScoutTile.name}`
-      actions.push(`敌侦察转移至 ${nextScoutTile.name}`)
+      recordAction(`敌侦察转移至 ${nextScoutTile.name}`, {
+        unitId: scout.id,
+        tileId: nextScoutTile.id,
+        fromTileId: fromScoutTileId,
+        toTileId: nextScoutTile.id,
+      })
     }
   }
 
@@ -54,25 +96,40 @@ export function runOpposingDirector(world: WorldState, options?: OpposingDirecto
 
   if (westPass && westFront && (westFront.friendlyUnits >= 1 || westFront.control !== defenderFactionId)) {
     westPass.enemyPressure = Math.min(5, westPass.enemyPressure + 1)
-    actions.push(`敌方对 ${westPass.name} 增加强压`)
+    recordAction(`敌方对 ${westPass.name} 增加强压`, {
+      tileId: westPass.id,
+      toTileId: westPass.id,
+    })
   }
 
   if (riverPlain && westFront && westFront.friendlyUnits >= 2) {
     riverPlain.enemyPressure = Math.min(5, riverPlain.enemyPressure + 1)
-    actions.push(`敌方对 ${riverPlain.name} 实施压制`)
+    recordAction(`敌方对 ${riverPlain.name} 实施压制`, {
+      tileId: riverPlain.id,
+      toTileId: riverPlain.id,
+    })
   }
 
   if (reserve && northJunction) {
+    const fromReserveTileId = reserve.tileId
     reserve.tileId = 'tile_09'
     reserve.status = '驻防中'
     reserve.currentTask = `压住${northJunction.name}`
     northJunction.enemyPressure = Math.min(5, northJunction.enemyPressure + 1)
-    actions.push(`敌机动稳固 ${northJunction.name}`)
+    recordAction(`敌机动稳固 ${northJunction.name}`, {
+      unitId: reserve.id,
+      tileId: northJunction.id,
+      fromTileId: fromReserveTileId,
+      toTileId: northJunction.id,
+    })
   }
 
   if (midSupply && theater.supplyLineHealth >= 60) {
     midSupply.enemyPressure = Math.min(5, midSupply.enemyPressure + 1)
-    actions.push(`敌军开始试探 ${midSupply.name}，意图切断我方补给线`)
+    recordAction(`敌军开始试探 ${midSupply.name}，意图切断我方补给线`, {
+      tileId: midSupply.id,
+      toTileId: midSupply.id,
+    })
   }
 
   if (fortress) {
@@ -84,12 +141,20 @@ export function runOpposingDirector(world: WorldState, options?: OpposingDirecto
     easternGuard.status = '驻防中'
     easternGuard.currentTask = `卡住${easternPass.name}`
     easternPass.enemyPressure = Math.min(5, easternPass.enemyPressure + 1)
-    actions.push(`敌左翼强化 ${easternPass.name}`)
+    recordAction(`敌左翼强化 ${easternPass.name}`, {
+      unitId: easternGuard.id,
+      tileId: easternPass.id,
+      fromTileId: easternGuard.tileId,
+      toTileId: easternPass.id,
+    })
   }
 
   if (eastResource && eastExpansion && (eastExpansion.friendlyUnits > 0 || eastExpansion.friendlyControlledTiles > 0)) {
     eastResource.enemyPressure = Math.min(5, eastResource.enemyPressure + 1)
-    actions.push(`敌军察觉我方向 ${eastResource.name} 发育，开始加压`)
+    recordAction(`敌军察觉我方向 ${eastResource.name} 发育，开始加压`, {
+      tileId: eastResource.id,
+      toTileId: eastResource.id,
+    })
   }
 
   // Generic AI for all defender units not covered by hardcoded logic above.
@@ -125,15 +190,21 @@ export function runOpposingDirector(world: WorldState, options?: OpposingDirecto
       })[0]
 
     if (moveTarget) {
+      const fromTileId = unit.tileId
       unit.tileId = moveTarget.id
       unit.status = '行军中'
       unit.currentTask = `向 ${moveTarget.name} 推进`
       moveTarget.enemyPressure = Math.min(5, moveTarget.enemyPressure + 1)
-      actions.push(`敌 ${unit.name} 向 ${moveTarget.name} 推进`)
+      recordAction(`敌 ${unit.name} 向 ${moveTarget.name} 推进`, {
+        unitId: unit.id,
+        tileId: moveTarget.id,
+        fromTileId,
+        toTileId: moveTarget.id,
+      })
     }
   }
 
-  return actions
+  return { actions, traces }
 }
 
 function canOpposingUnitMoveInto(world: WorldState, tile: Tile, targetFactionId: string) {

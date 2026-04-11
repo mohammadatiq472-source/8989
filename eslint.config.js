@@ -8,7 +8,6 @@ export default defineConfig([
     'dist',
     'tmp',
     '.codex-harness-home',
-    'My project/Library/PackageCache',
   ]),
   {
     files: ['**/*.ts'],

@@ -1,6 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 
 const MAX_BODY_SIZE = 1_048_576 // 1 MB
+const CLIENT_ERROR_STATUS = 400
+const SERVER_ERROR_STATUS = 500
 
 export class HttpBodyError extends Error {
   readonly statusCode: number
@@ -26,7 +28,7 @@ export function readJsonBody(req: IncomingMessage) {
       totalSize += buf.length
       if (totalSize > MAX_BODY_SIZE) {
         req.destroy()
-        reject(new HttpBodyError('Request body too large.', 413))
+        reject(new HttpBodyError('Request body too large.', CLIENT_ERROR_STATUS))
         return
       }
       chunks.push(buf)
@@ -44,7 +46,21 @@ export function readJsonBody(req: IncomingMessage) {
 }
 
 export function writeJson(res: ServerResponse, statusCode: number, payload: unknown) {
-  res.statusCode = statusCode
+  res.statusCode = normalizeHttpStatusCode(statusCode)
   res.setHeader('Content-Type', 'application/json; charset=utf-8')
   res.end(JSON.stringify(payload))
+}
+
+export function normalizeHttpStatusCode(statusCode: number): number {
+  if (!Number.isFinite(statusCode)) {
+    return SERVER_ERROR_STATUS
+  }
+  const normalized = Math.trunc(statusCode)
+  if (normalized < CLIENT_ERROR_STATUS) {
+    return normalized
+  }
+  if (normalized < SERVER_ERROR_STATUS) {
+    return normalized
+  }
+  return SERVER_ERROR_STATUS
 }

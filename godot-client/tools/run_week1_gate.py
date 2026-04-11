@@ -135,6 +135,30 @@ def _append_step(steps: list[dict[str, Any]], name: str, started: float, ok: boo
     steps.append(item)
 
 
+def _snapshot_repo_file(path: Path) -> bytes | None:
+    if not path.exists():
+        return None
+    return path.read_bytes()
+
+
+def _restore_repo_file(path: Path, baseline: bytes | None) -> tuple[bool, str]:
+    try:
+        if baseline is None:
+            if path.exists():
+                path.unlink()
+                return True, "removed generated file without baseline"
+            return True, "skipped: baseline missing and file absent"
+
+        current = path.read_bytes() if path.exists() else None
+        if current == baseline:
+            return True, "already matches baseline"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(baseline)
+        return True, "restored file to baseline"
+    except Exception as exc:  # pragma: no cover
+        return False, f"restore failed: {exc}"
+
+
 def _find_balanced_segment(text: str, start_idx: int, open_char: str, close_char: str) -> tuple[int, str]:
     depth = 1
     idx = start_idx
@@ -993,6 +1017,8 @@ def main() -> int:
     godot_exe = _resolve_godot_exe(args.godot_exe)
     godot_path = args.godot_path
     repo_root = Path(__file__).resolve().parents[2]
+    tactical_skills_path = repo_root / "server" / "src" / "config" / "tactical_skills.json"
+    tactical_skills_baseline = _snapshot_repo_file(tactical_skills_path)
 
     steps: list[dict[str, Any]] = []
     started_at = _now_iso()
@@ -1321,6 +1347,17 @@ def main() -> int:
             {"status": leave.get("status")},
         )
 
+    t = time.time()
+    restore_tactical_ok, restore_tactical_detail = _restore_repo_file(tactical_skills_path, tactical_skills_baseline)
+    _append_step(
+        steps,
+        "restore-tactical-skills-config",
+        t,
+        restore_tactical_ok,
+        restore_tactical_detail,
+        {"path": str(tactical_skills_path)},
+    )
+
     required = {
         "health",
         "runtime",
@@ -1335,6 +1372,7 @@ def main() -> int:
         "unitview-engage-intensity-contract",
         "unitmarker-engage-profile-contract",
         "theme-manifest-contract",
+        "restore-tactical-skills-config",
     }
     overall_ok = True
     for step in steps:

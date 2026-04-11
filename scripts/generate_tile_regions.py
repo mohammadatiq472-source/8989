@@ -7,8 +7,8 @@ Phase 1 (默认): BBox 近似光栅化，立即可用
 Phase 2 (--image <path>): 历史参考图轮廓线分割精化，需要 opencv-python
 
 输出:
-  My project/Assets/StreamingAssets/map_tile_regions.json  (Unity 消费)
-  tmp/map_tile_regions_debug.svg                           (可视化验证)
+  tmp/map_data/map_tile_regions.json                        (引擎无关消费)
+  tmp/map_tile_regions_debug.svg                            (可视化验证)
 
 坐标系: pos = x*10000 + y, X 南↓ (1→1851), Y 东→ (1→1501)
         X 扩展到 1851 以容纳交州南端（日南郡）
@@ -26,8 +26,8 @@ from typing import Dict, List, Tuple
 SCRIPT_DIR = pathlib.Path(__file__).parent
 ROOT       = SCRIPT_DIR.parent
 
-MAP_REGIONS_JSON = ROOT / "My project/Assets/StreamingAssets/map_regions.json"
-OUTPUT_JSON      = ROOT / "My project/Assets/StreamingAssets/map_tile_regions.json"
+MAP_REGIONS_JSON = ROOT / "tmp/map_data/map_regions.json"
+OUTPUT_JSON      = ROOT / "tmp/map_data/map_tile_regions.json"
 DEBUG_SVG        = ROOT / "tmp/map_tile_regions_debug.svg"
 
 # ── 网格尺寸 ─────────────────────────────────────────────────────────────────
@@ -1073,8 +1073,8 @@ def main():
     print("  1. 浏览器打开 tmp/map_tile_regions_debug.svg 验证形状")
     print("  2. 准备历史参考图: cp <图片路径> tmp/historical_map.png")
     print("     然后: py -3 scripts/generate_tile_regions.py --image tmp/historical_map.png")
-    print("  3. Unity C# 读取 StreamingAssets/map_tile_regions.json")
-    print("     可在 MapRegionsData.cs 添加 GetJunxianIdAt(int x, int y) 方法")
+    print("  3. Godot/后端读取 tmp/map_data/map_tile_regions.json")
+    print("     建议按 rows[x] 的 RLE 结构做按需解码")
 
 
 if __name__ == "__main__":

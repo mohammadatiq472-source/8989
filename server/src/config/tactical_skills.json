@@ -26,18 +26,18 @@
       "pressure:high",
       "scenario:e4_于_tile_08"
     ],
-    "tacticSummary": "unit_liang_10 于 luoyang_4_4 失利，战损 A8/D0，协同 0。；unit_yang_r7 于 grid_224_158 失利，战损 A8/D9，协同 0。",
+    "tacticSummary": "u1 于 tile_10 失利，战损 A11/D60，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.20000000000000007,
-    "tickRecorded": 30,
+    "outcomeScore": 0.345075,
+    "tickRecorded": 21,
     "factionId": "e4",
     "id": "b5e2e5e5-b82a-4a7a-9fe9-5ca1aacae1ee",
-    "uses": 358
+    "uses": 361
   },
   {
     "situationTags": [
@@ -46,18 +46,18 @@
       "pressure:low",
       "scenario:东境屯垦军_推进_eas"
     ],
-    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 153-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.5,
-    "tickRecorded": 44,
+    "outcomeScore": 0.699999793814838,
+    "tickRecorded": 2,
     "factionId": "alliance",
     "id": "643d4c93-abee-44a2-9cdc-8d31edf04681",
-    "uses": 12673
+    "uses": 12705
   },
   {
     "situationTags": [
@@ -106,18 +106,18 @@
       "pressure:medium",
       "scenario:unit_jing_5_"
     ],
-    "tacticSummary": "unit_jing_5 于 luoyang_4_5 失利，战损 A8/D4，协同 0。；unit_jing_3 于 luoyang_4_5 失利，战损 A8/D12，协同 0。",
+    "tacticSummary": "u1 于 tile_09 取胜，战损 A8/D14，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.500000000027976,
-    "tickRecorded": 6,
+    "outcomeScore": 0.9754888605482465,
+    "tickRecorded": 2,
     "factionId": "unit_jing_5",
     "id": "476d2f6f-93eb-4ff7-b617-f407d2e08577",
-    "uses": 156
+    "uses": 163
   },
   {
     "situationTags": [

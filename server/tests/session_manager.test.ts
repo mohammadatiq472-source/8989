@@ -153,6 +153,7 @@ function testNameValidationAndMetrics() {
   assert.equal(metrics.delegatedSessions, 0)
   assert.equal(metrics.claimedFactions, 1)
   assert.equal(metrics.maxSeatsPerFaction, 10)
+  assert.equal(metrics.tokenMaxAgeMs, 7 * 24 * 60 * 60_000)
   assert.equal(metrics.maxPlayerNameLength, 12)
 
   clock.advance(5_500)
@@ -221,13 +222,49 @@ function testTokenValidationAndLeave() {
   const badHeartbeat = heartbeat('bad-token')
   assert.equal(badHeartbeat.ok, false)
   assert.equal(badHeartbeat.error, 'Invalid token format')
+  assert.equal(badHeartbeat.errorCode, 'invalid_token_format')
 
   const badLeave = leaveSession('bad-token')
   assert.equal(badLeave.ok, false)
+  assert.equal(badLeave.errorCode, 'invalid_token_format')
 
   const removed = leaveSession(joined.token)
   assert.equal(removed.ok, true)
   assert.equal(getFactionAutonomyLevel('f1'), 'L2_delegated')
+
+  resetSessionManagerForTests()
+}
+
+function testTokenMaxAgeExpiry() {
+  resetSessionManagerForTests()
+  const clock = createClock(70_000)
+  setSessionTimeSourceForTests(clock.now)
+  setSessionRuntimeConfigForTests({
+    heartbeatTimeoutMs: 5_000,
+    staleSessionTtlMs: 120_000,
+    tokenMaxAgeMs: 60_000,
+    maxActiveSessions: 8,
+    maxSeatsPerFaction: 10,
+    maxPlayerNameLength: 32,
+  })
+
+  const joined = expectJoinSuccess(joinSession('f1', 'Alpha', ['f1']))
+  assert.equal(joined.tokenIssuedAt, 70_000)
+  assert.equal(joined.tokenExpiresAt, 130_000)
+
+  clock.advance(60_100)
+
+  const expiredHeartbeat = heartbeat(joined.token)
+  assert.equal(expiredHeartbeat.ok, false)
+  assert.equal(expiredHeartbeat.error, 'Token expired')
+  assert.equal(expiredHeartbeat.errorCode, 'token_expired')
+
+  const status = getSessionStatus(['f1'])
+  assert.equal(status.players.length, 0)
+
+  const expiredLeave = leaveSession(joined.token)
+  assert.equal(expiredLeave.ok, false)
+  assert.equal(expiredLeave.errorCode, 'invalid_token')
 
   resetSessionManagerForTests()
 }
@@ -239,6 +276,7 @@ function run() {
   testNameValidationAndMetrics()
   testNegotiatedAutonomyAndRuntimeSnapshot()
   testTokenValidationAndLeave()
+  testTokenMaxAgeExpiry()
   console.log('[session_manager] all checks passed')
 }
 

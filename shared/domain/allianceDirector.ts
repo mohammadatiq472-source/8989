@@ -30,6 +30,7 @@ export function runAllianceDirector(world: WorldState, beneficiaryFactionId: str
     if (!targetTile) {
       continue
     }
+    const anchorUnit = pickAllianceAnchorUnit(world, beneficiaryFactionId, region.tileIds)
 
     switch (directive.stance) {
       case 'hold':
@@ -41,6 +42,13 @@ export function runAllianceDirector(world: WorldState, beneficiaryFactionId: str
             'low',
             `${commander.name} 稳住 ${region.name}`,
             `${commander.name} 在 ${targetTile.name} 加固警戒，压低敌压并维持补给秩序。`,
+            {
+              factionId: beneficiaryFactionId,
+              unitId: anchorUnit?.id,
+              tileId: targetTile.id,
+              fromTileId: anchorUnit?.tileId,
+              toTileId: targetTile.id,
+            },
           ),
         )
         break
@@ -58,6 +66,13 @@ export function runAllianceDirector(world: WorldState, beneficiaryFactionId: str
             'medium',
             `${commander.name} 策应 ${region.name}`,
             `${commander.name} 向 ${region.name} 输送补给和侧翼策应，减轻 ${targetTile.name} 压力。`,
+            {
+              factionId: beneficiaryFactionId,
+              unitId: anchorUnit?.id,
+              tileId: targetTile.id,
+              fromTileId: anchorUnit?.tileId,
+              toTileId: targetTile.id,
+            },
           ),
         )
         break
@@ -75,6 +90,13 @@ export function runAllianceDirector(world: WorldState, beneficiaryFactionId: str
             'medium',
             `${commander.name} 骚扰 ${targetTile.name}`,
             `${commander.name} 对 ${targetTile.name} 发起袭扰并共享视野，压低敌军组织度。`,
+            {
+              factionId: beneficiaryFactionId,
+              unitId: anchorUnit?.id,
+              tileId: targetTile.id,
+              fromTileId: anchorUnit?.tileId,
+              toTileId: targetTile.id,
+            },
           ),
         )
         break
@@ -90,6 +112,13 @@ export function runAllianceDirector(world: WorldState, beneficiaryFactionId: str
             'high',
             `${commander.name} 推进 ${region.name}`,
             `${commander.name} 在 ${targetTile.name} 展开同盟先遣推进，为我方打开发展或接敌空间。`,
+            {
+              factionId: beneficiaryFactionId,
+              unitId: anchorUnit?.id,
+              tileId: targetTile.id,
+              fromTileId: anchorUnit?.tileId,
+              toTileId: targetTile.id,
+            },
           ),
         )
         break
@@ -141,6 +170,13 @@ function createAllianceAction(
   severity: AllianceActionSummary['severity'],
   title: string,
   detail: string,
+  context?: {
+    factionId?: string
+    unitId?: string
+    tileId?: string
+    fromTileId?: string
+    toTileId?: string
+  },
 ): AllianceActionSummary {
   return {
     id: `${world.tick}-${regionId}-${title}`,
@@ -149,5 +185,15 @@ function createAllianceAction(
     title,
     detail,
     severity,
+    factionId: context?.factionId,
+    unitId: context?.unitId,
+    tileId: context?.tileId,
+    fromTileId: context?.fromTileId,
+    toTileId: context?.toTileId,
   }
+}
+
+function pickAllianceAnchorUnit(world: WorldState, factionId: string, regionTileIds: string[]) {
+  return world.units.find((unit) => unit.faction === factionId && regionTileIds.includes(unit.tileId))
+    ?? world.units.find((unit) => unit.faction === factionId)
 }

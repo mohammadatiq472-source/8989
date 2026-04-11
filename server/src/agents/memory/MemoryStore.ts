@@ -18,6 +18,19 @@ export type MemoryProvider = {
   search: (agentId: string, query: string, limit?: number) => Promise<MemorySearchResult[]>
 }
 
+export type MemoryProviderRequested = 'mem0' | 'in_memory'
+export type MemoryProviderActive = MemoryProviderRequested | 'unknown'
+export type MemoryProviderLifecycle = 'uninitialized' | 'ready' | 'degraded'
+
+export type MemoryProviderDiagnostics = {
+  requestedProvider: MemoryProviderRequested
+  activeProvider: MemoryProviderActive
+  lifecycle: MemoryProviderLifecycle
+  downgraded: boolean
+  reason?: string
+  updatedAt: string
+}
+
 type Mem0ClientMethod = (payload: unknown, options?: Record<string, unknown>) => Promise<unknown>
 
 function asRecord(value: unknown): Record<string, unknown> | null {
@@ -150,12 +163,57 @@ class InMemoryProvider implements MemoryProvider {
 
 let providerPromise: Promise<MemoryProvider> | null = null
 
+const isMem0RequestedAtBoot = Boolean(process.env.MEM0_API_KEY?.trim())
+
+let providerDiagnostics: MemoryProviderDiagnostics = isMem0RequestedAtBoot
+  ? {
+      requestedProvider: 'mem0',
+      activeProvider: 'unknown',
+      lifecycle: 'uninitialized',
+      downgraded: false,
+      updatedAt: new Date().toISOString(),
+    }
+  : {
+      requestedProvider: 'in_memory',
+      activeProvider: 'in_memory',
+      lifecycle: 'ready',
+      downgraded: false,
+      reason: 'mem0_unconfigured',
+      updatedAt: new Date().toISOString(),
+    }
+
+function setProviderDiagnostics(next: Omit<MemoryProviderDiagnostics, 'updatedAt'>) {
+  providerDiagnostics = {
+    ...next,
+    updatedAt: new Date().toISOString(),
+  }
+}
+
+export function getMemoryProviderDiagnostics(): MemoryProviderDiagnostics {
+  const requestedProvider: MemoryProviderRequested = process.env.MEM0_API_KEY?.trim() ? 'mem0' : 'in_memory'
+  if (providerDiagnostics.requestedProvider === requestedProvider) {
+    return { ...providerDiagnostics }
+  }
+
+  return {
+    ...providerDiagnostics,
+    requestedProvider,
+  }
+}
+
 export async function getMemoryProvider(): Promise<MemoryProvider> {
   if (!providerPromise) {
     providerPromise = resolveMemoryProvider().catch((err) => {
       // 初始化失败时清除缓存，下次重试而非永久卡死
       providerPromise = null
       console.warn('[mem0] provider init failed, will retry next call:', err instanceof Error ? err.message : err)
+      setProviderDiagnostics({
+        requestedProvider: 'mem0',
+        activeProvider: 'in_memory',
+        lifecycle: 'degraded',
+        downgraded: true,
+        reason: err instanceof Error ? err.message : 'mem0_provider_init_failed',
+      })
       return new InMemoryProvider()
     })
   }
@@ -166,6 +224,13 @@ export async function getMemoryProvider(): Promise<MemoryProvider> {
 async function resolveMemoryProvider(): Promise<MemoryProvider> {
   const apiKey = process.env.MEM0_API_KEY?.trim()
   if (!apiKey) {
+    setProviderDiagnostics({
+      requestedProvider: 'in_memory',
+      activeProvider: 'in_memory',
+      lifecycle: 'ready',
+      downgraded: false,
+      reason: 'mem0_unconfigured',
+    })
     return new InMemoryProvider()
   }
 
@@ -180,6 +245,13 @@ async function resolveMemoryProvider(): Promise<MemoryProvider> {
       moduleExports?.mem0
     if (typeof Mem0 !== 'function') {
       console.warn('[mem0] mem0ai module loaded but no client export found, using in-memory fallback')
+      setProviderDiagnostics({
+        requestedProvider: 'mem0',
+        activeProvider: 'in_memory',
+        lifecycle: 'degraded',
+        downgraded: true,
+        reason: 'mem0_client_export_missing',
+      })
       return new InMemoryProvider()
     }
 
@@ -215,8 +287,22 @@ async function resolveMemoryProvider(): Promise<MemoryProvider> {
 
     if (!addFn || !searchFn) {
       console.warn('[mem0] mem0 client missing add/search, using in-memory fallback')
+      setProviderDiagnostics({
+        requestedProvider: 'mem0',
+        activeProvider: 'in_memory',
+        lifecycle: 'degraded',
+        downgraded: true,
+        reason: 'mem0_client_method_missing',
+      })
       return new InMemoryProvider()
     }
+
+    setProviderDiagnostics({
+      requestedProvider: 'mem0',
+      activeProvider: 'mem0',
+      lifecycle: 'ready',
+      downgraded: false,
+    })
 
     return {
       async add(agentId: string, text: string, metadata?: Record<string, unknown>) {
@@ -232,6 +318,13 @@ async function resolveMemoryProvider(): Promise<MemoryProvider> {
       '[mem0] mem0ai unavailable, using in-memory fallback:',
       error instanceof Error ? error.message : 'unknown error',
     )
+    setProviderDiagnostics({
+      requestedProvider: 'mem0',
+      activeProvider: 'in_memory',
+      lifecycle: 'degraded',
+      downgraded: true,
+      reason: error instanceof Error ? error.message : 'mem0_unknown_error',
+    })
     return new InMemoryProvider()
   }
 }

@@ -1,25 +1,58 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import type { CivilMemoryObservabilityResponse } from '../../../shared/contracts/game'
 import {
   getNarrativeEvents,
   getNationalAgendaSnapshot,
+  getSaveSlotsArchiveCatalog,
   getCourtSessionSnapshot,
   getCivilMemorySnapshot,
   getSaveSlots,
   getWorldEvents,
   loadWorldSlot,
+  primeReplayFixtureSlot,
+  runSaveSlotsArchiveRestoreApply,
+  runSaveSlotsArchiveRestoreDrill,
+  runSaveSlotsArchiveRestoreRollbackDrill,
   saveWorldSlot,
 } from '../application/world/WorldService'
 import { readJsonBody, writeJson } from './http'
+import { getMemoryProviderDiagnostics } from '../agents/memory/MemoryStore'
+import { civilMemoryObservabilityResponseSchema } from '../../../shared/schemas/civilMemory'
+import { getWebSocketStats } from '../ws/GameWebSocket'
+import { worldEventsResponseSchema } from '../../../shared/schemas/history'
 
 type SaveSlotPayload = {
   slotId?: string
   label?: string
 }
 
+type SaveSlotFixturePrimePayload = {
+  slotId?: string
+  label?: string
+  source?: 'initial_world_v1' | 'current_world'
+}
+
+type SaveSlotArchiveRestoreDrillPayload = {
+  archivePath?: string
+}
+
+type SaveSlotArchiveRestoreApplyPayload = {
+  archivePath?: string
+  force?: boolean
+}
+
+type SaveSlotArchiveRestoreRollbackDrillPayload = {
+  archivePath?: string
+}
+
 export function handleWorldEventsRoute(req: IncomingMessage, res: ServerResponse) {
   const requestUrl = new URL(req.url ?? '/', `http://${req.headers.host ?? '127.0.0.1'}`)
   const limit = Number(requestUrl.searchParams.get('limit') ?? '200')
-  writeJson(res, 200, getWorldEvents(limit))
+  const payload = worldEventsResponseSchema.parse({
+    ...getWorldEvents(limit),
+    wsStats: getWebSocketStats(),
+  })
+  writeJson(res, 200, payload)
 }
 
 export function handleWorldEventsStreamRoute(req: IncomingMessage, res: ServerResponse) {
@@ -124,20 +157,27 @@ export function handleCivilMemoryRoute(req: IncomingMessage, res: ServerResponse
   const tickToRaw = requestUrl.searchParams.get('tickTo')
   const tickTo = tickToRaw ? Number(tickToRaw) : undefined
 
-  writeJson(
-    res,
-    200,
-    getCivilMemorySnapshot({
-      limit,
-      type,
-      tickFrom: Number.isFinite(tickFrom) ? tickFrom : undefined,
-      tickTo: Number.isFinite(tickTo) ? tickTo : undefined,
-    }),
-  )
+  const snapshot = getCivilMemorySnapshot({
+    limit,
+    type,
+    tickFrom: Number.isFinite(tickFrom) ? tickFrom : undefined,
+    tickTo: Number.isFinite(tickTo) ? tickTo : undefined,
+  })
+
+  const responsePayload: CivilMemoryObservabilityResponse = {
+    ...snapshot,
+    memoryProvider: getMemoryProviderDiagnostics(),
+  }
+
+  writeJson(res, 200, civilMemoryObservabilityResponseSchema.parse(responsePayload))
 }
 
 export function handleSaveSlotsRoute(_req: IncomingMessage, res: ServerResponse) {
   writeJson(res, 200, getSaveSlots())
+}
+
+export function handleSaveSlotsArchiveRoute(_req: IncomingMessage, res: ServerResponse) {
+  writeJson(res, 200, getSaveSlotsArchiveCatalog())
 }
 
 export async function handleSaveSlotSaveRoute(req: IncomingMessage, res: ServerResponse) {
@@ -170,5 +210,71 @@ export async function handleSaveSlotLoadRoute(req: IncomingMessage, res: ServerR
     const message = error instanceof Error ? error.message : 'load slot failed'
     const statusCode = message.includes('slotId must match') ? 400 : 500
     writeJson(res, statusCode, { error: message })
+  }
+}
+
+export async function handleSaveSlotFixturePrimeRoute(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const payload = (await readJsonBody(req)) as SaveSlotFixturePrimePayload
+    if (!payload.slotId || typeof payload.slotId !== 'string') {
+      writeJson(res, 400, { error: 'slotId is required.' })
+      return
+    }
+
+    const source = payload.source === 'current_world' ? 'current_world' : 'initial_world_v1'
+    const record = primeReplayFixtureSlot(payload.slotId, {
+      label: payload.label,
+      source,
+    })
+    writeJson(res, 200, {
+      slot: record,
+      source,
+      fixture: {
+        slotId: record.slotId,
+        tick: record.tick,
+        worldVersion: record.worldVersion,
+      },
+    })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'prime fixture slot failed'
+    const statusCode = message.includes('slotId must match') ? 400 : 500
+    writeJson(res, statusCode, { error: message })
+  }
+}
+
+export async function handleSaveSlotArchiveRestoreDrillRoute(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const payload = (await readJsonBody(req)) as SaveSlotArchiveRestoreDrillPayload
+    const archivePath = typeof payload.archivePath === 'string' ? payload.archivePath.trim() : undefined
+    const drill = runSaveSlotsArchiveRestoreDrill({ archivePath })
+    writeJson(res, drill.status === 'failed' ? 422 : 200, { drill })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'archive restore drill failed'
+    writeJson(res, 400, { error: message })
+  }
+}
+
+export async function handleSaveSlotArchiveRestoreApplyRoute(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const payload = (await readJsonBody(req)) as SaveSlotArchiveRestoreApplyPayload
+    const archivePath = typeof payload.archivePath === 'string' ? payload.archivePath.trim() : undefined
+    const force = payload.force === true
+    const restore = await runSaveSlotsArchiveRestoreApply({ archivePath, force })
+    writeJson(res, restore.status === 'failed' ? 422 : 200, { restore })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'archive restore apply failed'
+    writeJson(res, 400, { error: message })
+  }
+}
+
+export async function handleSaveSlotArchiveRestoreRollbackDrillRoute(req: IncomingMessage, res: ServerResponse) {
+  try {
+    const payload = (await readJsonBody(req)) as SaveSlotArchiveRestoreRollbackDrillPayload
+    const archivePath = typeof payload.archivePath === 'string' ? payload.archivePath.trim() : undefined
+    const drill = runSaveSlotsArchiveRestoreRollbackDrill({ archivePath })
+    writeJson(res, drill.status === 'failed' ? 422 : 200, { drill })
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'archive restore rollback drill failed'
+    writeJson(res, 400, { error: message })
   }
 }

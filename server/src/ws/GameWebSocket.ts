@@ -25,7 +25,14 @@
 
 import { WebSocketServer, WebSocket } from 'ws'
 import type { Server, IncomingMessage } from 'node:http'
-import type { WorldState, NarrativeEvent, BattleOutcomeRecord, DiplomacyAgreement } from '../../../shared/contracts/game'
+import type {
+  WorldState,
+  NarrativeEvent,
+  BattleOutcomeRecord,
+  DiplomacyAgreement,
+  WebSocketObservabilityError,
+  WebSocketObservabilityStats,
+} from '../../../shared/contracts/game'
 import type { WsServerMessage } from '../../../shared/contracts/game/ws'
 import { getWorldStateReadonly } from '../application/world/WorldService'
 import { getFactionAutonomyLevel, validateToken } from '../multiplayer/SessionManager'
@@ -40,6 +47,8 @@ type ClientSession = {
 
 const clients = new Set<ClientSession>()
 let wss: WebSocketServer | null = null
+const MAX_RECENT_WS_ERRORS = 12
+const recentWsErrors: WebSocketObservabilityError[] = []
 
 // ─── 初始化 ───────────────────────────────────────────
 
@@ -76,6 +85,7 @@ export function attachWebSocket(server: Server): void {
     })
 
     ws.on('error', () => {
+      recordWebSocketError(session, 'socket', 'socket_error')
       clients.delete(session)
     })
   })
@@ -375,7 +385,7 @@ export function broadcastGeneralMessage(
 /**
  * 获取当前连接数和分布
  */
-export function getWebSocketStats(): { totalConnections: number; subscribedConnections: number; factionDistribution: Record<string, number> } {
+export function getWebSocketStats(): WebSocketObservabilityStats {
   const distribution: Record<string, number> = {}
   let subscribed = 0
   for (const session of clients) {
@@ -384,13 +394,40 @@ export function getWebSocketStats(): { totalConnections: number; subscribedConne
       distribution[session.factionId] = (distribution[session.factionId] ?? 0) + 1
     }
   }
-  return { totalConnections: clients.size, subscribedConnections: subscribed, factionDistribution: distribution }
+  return {
+    totalConnections: clients.size,
+    subscribedConnections: subscribed,
+    factionDistribution: distribution,
+    recentErrors: recentWsErrors.map((item) => ({ ...item })),
+  }
 }
 
 // ─── 工具函数 ─────────────────────────────────────────
 
+function recordWebSocketError(session: ClientSession | null, stage: string, message: string): void {
+  const normalizedMessage = message.trim() || 'unknown'
+  const item: WebSocketObservabilityError = {
+    at: new Date().toISOString(),
+    stage,
+    factionId: session?.factionId ?? null,
+    message: normalizedMessage.slice(0, 240),
+  }
+  recentWsErrors.unshift(item)
+  if (recentWsErrors.length > MAX_RECENT_WS_ERRORS) {
+    recentWsErrors.length = MAX_RECENT_WS_ERRORS
+  }
+}
+
 function sendToClient(session: ClientSession, data: WsServerMessage): void {
+  if (data.type === 'error') {
+    recordWebSocketError(session, 'protocol', data.message)
+  }
   if (session.ws.readyState === WebSocket.OPEN) {
-    session.ws.send(JSON.stringify(data))
+    try {
+      session.ws.send(JSON.stringify(data))
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'ws_send_failed'
+      recordWebSocketError(session, 'send', message)
+    }
   }
 }

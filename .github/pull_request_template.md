@@ -5,7 +5,7 @@
 ## 任务类型
 
 - [ ] 后端（`server/` 或 `shared/`）
-- [ ] 前端（Unity `My project/Assets/Scripts/`）
+- [ ] 前端（Godot `godot-client/`）
 - [ ] 测试/门禁（`server/tests/`、`server/src/evals/`、workflow）
 
 ## 双机协作核对（必须）
@@ -18,8 +18,8 @@
 ## A/B 分工（游戏项目）
 
 - A 负责模块（示例：`M03/M02/M14`）：<!-- server/shared 写入范围 -->
-- B 负责模块（示例：`M15/M16` Unity）：<!-- Unity 写入范围 -->
-- 跨模块触点（如 `shared/contracts`、`docs/unity`）：
+- B 负责模块（示例：`M15/M16` Godot）：<!-- godot-client 写入范围 -->
+- 跨模块触点（如 `shared/contracts`、`godot-client`）：
 
 ## 验证链（至少一条可复现）
 

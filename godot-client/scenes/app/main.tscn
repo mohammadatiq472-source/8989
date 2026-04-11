@@ -1,0 +1,81 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/app/main.gd" id="1_main"]
+[ext_resource type="Script" path="res://scripts/map/map_grid.gd" id="2_map_grid"]
+[ext_resource type="PackedScene" path="res://scenes/ui/observability_panel.tscn" id="3_observability_panel"]
+[ext_resource type="Script" path="res://scripts/map/unit_view_layer.gd" id="4_unit_view_layer"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_main")
+
+[node name="MapGrid" type="Node2D" parent="."]
+script = ExtResource("2_map_grid")
+
+[node name="UnitViewLayer" type="Node2D" parent="."]
+script = ExtResource("4_unit_view_layer")
+
+[node name="ObservabilityPanel" parent="." instance=ExtResource("3_observability_panel")]
+
+[node name="HoverLayer" type="CanvasLayer" parent="."]
+
+[node name="HudBackdrop" type="PanelContainer" parent="HoverLayer"]
+offset_left = 8.0
+offset_top = 8.0
+offset_right = 1186.0
+offset_bottom = 218.0
+
+[node name="HoverInfo" type="Label" parent="HoverLayer"]
+offset_left = 12.0
+offset_top = 10.0
+offset_right = 780.0
+offset_bottom = 74.0
+theme_override_font_sizes/font_size = 14
+text = "SLG Theme | waiting map data..."
+
+[node name="PerfInfo" type="Label" parent="HoverLayer"]
+offset_left = 12.0
+offset_top = 78.0
+offset_right = 1080.0
+offset_bottom = 106.0
+theme_override_font_sizes/font_size = 14
+text = "Perf(5s) | waiting frame samples..."
+
+[node name="ExportPerfButton" type="Button" parent="HoverLayer"]
+offset_left = 12.0
+offset_top = 112.0
+offset_right = 180.0
+offset_bottom = 144.0
+theme_override_font_sizes/font_size = 14
+text = "Export Baseline (F8)"
+
+[node name="ExportStatus" type="Label" parent="HoverLayer"]
+offset_left = 192.0
+offset_top = 116.0
+offset_right = 1180.0
+offset_bottom = 146.0
+theme_override_font_sizes/font_size = 14
+text = "Export status: waiting..."
+
+[node name="RefreshWorldButton" type="Button" parent="HoverLayer"]
+offset_left = 12.0
+offset_top = 150.0
+offset_right = 180.0
+offset_bottom = 182.0
+theme_override_font_sizes/font_size = 14
+text = "Refresh Snapshot"
+
+[node name="AdvanceTickButton" type="Button" parent="HoverLayer"]
+offset_left = 192.0
+offset_top = 150.0
+offset_right = 360.0
+offset_bottom = 182.0
+theme_override_font_sizes/font_size = 14
+text = "Advance Tick"
+
+[node name="RuntimeInfo" type="Label" parent="HoverLayer"]
+offset_left = 12.0
+offset_top = 186.0
+offset_right = 1500.0
+offset_bottom = 214.0
+theme_override_font_sizes/font_size = 14
+text = "Runtime | status=waiting..."

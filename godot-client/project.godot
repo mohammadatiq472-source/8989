@@ -1,0 +1,21 @@
+; Engine configuration file.
+; Editing via Godot editor is recommended.
+
+config_version=5
+
+[application]
+config/name="SLG Commander Godot Client"
+run/main_scene="res://scenes/app/main.tscn"
+config/features=PackedStringArray("4.6")
+
+[autoload]
+AppConfig="*res://autoload/app_config.gd"
+SessionStore="*res://autoload/session_store.gd"
+WorldStore="*res://autoload/world_store.gd"
+
+[display]
+window/size/viewport_width=1600
+window/size/viewport_height=900
+
+[rendering]
+renderer/rendering_method="forward_plus"

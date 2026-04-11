@@ -81,7 +81,7 @@
 - Next direct action:
   1. Configure `LLM_RELAY_URL` (and key set if needed), then rerun `gate:scale:3000:gateway`.
   2. Add strict gateway SLO thresholds (`successRate`, `fallbackRate`, `max-p95-ms`, timeout rate).
-  3. Keep Unity contract conformance gate as next cross-client blocker.
+  3. Keep Godot + backend contract conformance checks as next cross-client blocker.
 
 ## Generated At
 - `2026-03-27 00:37:54` local process time.

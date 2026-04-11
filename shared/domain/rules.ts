@@ -1,7 +1,7 @@
 import { getHeroPoolEntryById, buildHeroProfileFromPoolId } from './heroPool'
 import { findPath as hpaStarFindPath } from './hpaStar'
 import { runAllianceDirector } from './allianceDirector'
-import { runOpposingDirector } from './enemyDirector'
+import { runOpposingDirectorDetailed } from './enemyDirector'
 import { buildTheaterSnapshot } from './theater'
 import { syncAllFactionAiQuota } from './aiQuota'
 import { buildUnitsByFaction, computeAllFactionFoodIncomes, getTileByIdFast, partitionTiles } from './worldIndex'
@@ -25,6 +25,7 @@ import type {
   ExecutionReplay,
   ExecutionReplayFrame,
   ExecutionReplayOutcome,
+  FactionId,
   IntelligenceLevel,
   PlanExecution,
   PlanningJobHistoryEntry,
@@ -46,9 +47,19 @@ type MoveResult =
   | { ok: true; world: WorldState; message: string; unitId: string }
   | { ok: false; message: string }
 
+export type QueuePlanFailureCode =
+  | 'stale_world_version'
+  | 'unknown_faction'
+  | 'invalid_order_units'
+  | 'execution_chain_guard_missing'
+  | 'execution_chain_guard_mismatch'
+  | 'execution_chain_active_rejected'
+
+export type QueuePlanEnqueueOutcome = 'queued' | 'appended' | 'replaced'
+
 type QueuePlanResult =
-  | { ok: true; world: WorldState; message: string }
-  | { ok: false; message: string }
+  | { ok: true; world: WorldState; message: string; enqueueOutcome: QueuePlanEnqueueOutcome }
+  | { ok: false; message: string; failureCode: QueuePlanFailureCode }
 
 type DeployReserveResult =
   | { ok: true; world: WorldState; message: string; unitId: string }
@@ -708,6 +719,7 @@ export function queuePlanExecution(
     return {
       ok: false,
       message: `planning result stale: world is V${world.worldVersion}, plan is based on V${basedOnWorldVersion}.`,
+      failureCode: 'stale_world_version',
     }
   }
 
@@ -715,6 +727,7 @@ export function queuePlanExecution(
     return {
       ok: false,
       message: `unknown faction: ${factionId}.`,
+      failureCode: 'unknown_faction',
     }
   }
 
@@ -736,6 +749,7 @@ export function queuePlanExecution(
     return {
       ok: false,
       message: `invalid order units for faction ${factionId}: ${invalidOrderUnitIds.slice(0, 6).join(', ')}.`,
+      failureCode: 'invalid_order_units',
     }
   }
 
@@ -748,6 +762,7 @@ export function queuePlanExecution(
       return {
         ok: false,
         message: `execution chain guard: expected active requestId=${expectedRequestId}, but no active execution exists.`,
+        failureCode: 'execution_chain_guard_missing',
       }
     }
 
@@ -755,6 +770,7 @@ export function queuePlanExecution(
       return {
         ok: false,
         message: `execution chain guard: expected active requestId=${expectedRequestId}, actual=${activeExecution.requestId}.`,
+        failureCode: 'execution_chain_guard_mismatch',
       }
     }
   }
@@ -763,6 +779,7 @@ export function queuePlanExecution(
     return {
       ok: false,
       message: `execution chain is active (requestId=${activeExecution.requestId}); mode reject_if_active blocked the new plan.`,
+      failureCode: 'execution_chain_active_rejected',
     }
   }
 
@@ -805,6 +822,7 @@ export function queuePlanExecution(
       `${providerLabel} appended ${plannerOrders.length} orders and merged ${tacticalOrders.length} tactical overrides. intent=${plan.intent}.`,
     )
     bumpWorldVersion(nextWorld)
+    const appendedFocusOrder = tacticalOrders[0] ?? plannerOrders[0]
     syncExecutionReplay(nextWorld, factionId, 'plan_appended', 'running', true, [
       createReplayHighlight(
         nextWorld.tick,
@@ -812,6 +830,11 @@ export function queuePlanExecution(
         'medium',
         'Plan appended',
         `${providerLabel} appended ${plannerOrders.length + tacticalOrders.length} orders to active chain.`,
+        {
+          unitId: appendedFocusOrder?.unitId,
+          tileId: appendedFocusOrder?.target,
+          factionId,
+        },
       ),
     ])
 
@@ -819,10 +842,14 @@ export function queuePlanExecution(
       ok: true,
       world: nextWorld,
       message: `plan appended to active execution chain (requestId=${appendRequestId}), based on world V${basedOnWorldVersion}.`,
+      enqueueOutcome: 'appended',
     }
   }
 
   if (factionExec && hasActiveOrders(nextWorld, factionId)) {
+    const overriddenFocusOrder = factionExec.orders.find(
+      (order) => order.status === 'queued' || order.status === 'running',
+    ) ?? factionExec.orders[0]
     syncExecutionReplay(nextWorld, factionId, 'plan_overridden_by_new_request', 'cleared', true, [
       createReplayHighlight(
         nextWorld.tick,
@@ -830,6 +857,11 @@ export function queuePlanExecution(
         'medium',
         'Plan overridden',
         'a new strategic plan replaced the active execution chain.',
+        {
+          unitId: overriddenFocusOrder?.unitId,
+          tileId: overriddenFocusOrder?.target,
+          factionId,
+        },
       ),
     ])
   }
@@ -869,6 +901,7 @@ export function queuePlanExecution(
     `${providerLabel} produced ${plannerOrders.length} orders and merged ${tacticalOrders.length} tactical overrides. intent=${plan.intent}.`,
   )
   bumpWorldVersion(nextWorld)
+  const dispatchedFocusOrder = orders[0]
   syncExecutionReplay(nextWorld, factionId, 'plan_dispatched', 'running', true, [
     createReplayHighlight(
       nextWorld.tick,
@@ -876,6 +909,11 @@ export function queuePlanExecution(
       'medium',
       'Plan dispatched',
       `${providerLabel} dispatched ${orders.length} structured orders.`,
+      {
+        unitId: dispatchedFocusOrder?.unitId,
+        tileId: dispatchedFocusOrder?.target,
+        factionId,
+      },
     ),
   ])
 
@@ -883,6 +921,7 @@ export function queuePlanExecution(
     ok: true,
     world: nextWorld,
     message: `AI plan queued based on world version V${basedOnWorldVersion}.`,
+    enqueueOutcome: activeExecution ? 'replaced' : 'queued',
   }
 }
 
@@ -970,13 +1009,20 @@ function mergeStrategicPlanForAppend(current: StrategicPlan, incoming: Strategic
 export function clearPlanExecution(world: WorldState, factionId: string = resolveFallbackFactionId(world)) {
   const nextWorld = shallowCloneWorld(world)
   const hadActiveExecution = getExecution(nextWorld, factionId) && hasActiveOrders(nextWorld, factionId)
+  const clearedFocusOrder = nextWorld.executions[factionId]?.orders.find(
+    (order) => order.status === 'queued' || order.status === 'running',
+  ) ?? nextWorld.executions[factionId]?.orders[0]
 
   prependReport(nextWorld, nextWorld.tick, '计划已清空', '当前 AI 任务队列已移除，部队恢复为可手动调度状态。')
   bumpWorldVersion(nextWorld)
 
   if (hadActiveExecution) {
     syncExecutionReplay(nextWorld, factionId, '计划清空', 'cleared', true, [
-      createReplayHighlight(nextWorld.tick, 'planning', 'low', '计划被手动清空', '当前 AI 任务队列已移除。'),
+      createReplayHighlight(nextWorld.tick, 'planning', 'low', '计划被手动清空', '当前 AI 任务队列已移除。', {
+        unitId: clearedFocusOrder?.unitId,
+        tileId: clearedFocusOrder?.target,
+        factionId,
+      }),
     ])
   }
 
@@ -1095,9 +1141,11 @@ function processAutoExpansion(
 
     const paveQuota = idleUnits.length * PAVE_QUOTA_PER_UNIT
     const pioneerQuota = idleUnits.length * PIONEER_QUOTA_PER_UNIT
+    const expansionAnchorUnitId = idleUnits[0]?.id
     let paved = 0
     let pioneered = 0
     let capturedCityCount = 0
+    let lastClaimedTileId: string | undefined
 
     let qi = 0
     while (qi < frontierQ.length && (paved < paveQuota || pioneered < pioneerQuota)) {
@@ -1131,6 +1179,7 @@ function processAutoExpansion(
       }
 
       if (claimed) {
+        lastClaimedTileId = nId
         // 新占领格的中立邻居立即入队（波浪式扩张，不限步数）
         for (const nnId of world.map.connections[nId] ?? []) {
           if (!seen2.has(nnId) && ownerById.get(nnId) === 'neutral') {
@@ -1156,6 +1205,12 @@ function processAutoExpansion(
           paved + pioneered > 100 ? 'medium' : 'low',
           `${factionId} 自动扩张`,
           `铺路 ${paved} 格，开荒 ${pioneered} 格`,
+          {
+            unitId: expansionAnchorUnitId,
+            tileId: lastClaimedTileId,
+            toTileId: lastClaimedTileId,
+            factionId,
+          },
         ),
       )
     }
@@ -1306,6 +1361,11 @@ function processAutoLevelUp(
           'low',
           `${target.hero.name} 升级`,
           `${target.hero.name} Lv.${oldLevel}→${newLevel}，战力 ${target.strength}`,
+          {
+            unitId: target.id,
+            tileId: target.tileId,
+            factionId,
+          },
         ),
       )
     }
@@ -1402,6 +1462,7 @@ export function advanceTick(world: WorldState): WorldState {
       'AI 协作配额扩容',
       `${result.factionId} 协作席位从 ${result.previousQuota} 扩容到 ${result.currentQuota}（拉锯强度 ${result.tugIntensity}，成长分 ${result.growthScore}）。`,
     )
+    const quotaAnchorUnit = nextWorld.units.find((unit) => unit.faction === result.factionId)
     tickHighlights.push(
       createReplayHighlight(
         nextWorld.tick,
@@ -1409,6 +1470,11 @@ export function advanceTick(world: WorldState): WorldState {
         'medium',
         'AI 协作席位提升',
         `${result.factionId} 本回合解锁新 AI 协作位（${result.currentQuota}/10）。`,
+        {
+          unitId: quotaAnchorUnit?.id,
+          tileId: quotaAnchorUnit?.tileId,
+          factionId: result.factionId,
+        },
       ),
     )
   }
@@ -1458,14 +1524,23 @@ export function advanceTick(world: WorldState): WorldState {
         'medium',
         '同盟行动摘要',
         allianceActions.map((action) => action.detail).join('；'),
+        {
+          unitId: allianceActions[0]?.unitId,
+          tileId: allianceActions[0]?.tileId
+            ?? nextWorld.map.regions.find((region) => region.id === allianceActions[0]?.regionId)?.centerTileId,
+          fromTileId: allianceActions[0]?.fromTileId,
+          toTileId: allianceActions[0]?.toTileId ?? allianceActions[0]?.tileId,
+          factionId: allianceActions[0]?.factionId ?? primaryFactionId,
+        },
       ),
     )
   }
 
-  const opposingActions = runOpposingDirector(nextWorld, {
+  const opposingResult = runOpposingDirectorDetailed(nextWorld, {
     defenderFactionId: primaryOpposingFactionId,
     targetFactionId: primaryFactionId,
   })
+  const opposingActions = opposingResult.actions
   if (opposingActions.length > 0) {
     prependReport(
       nextWorld,
@@ -1480,6 +1555,15 @@ export function advanceTick(world: WorldState): WorldState {
         'high',
         '对立势力回合摘要',
         opposingActions.join('；'),
+        {
+          unitId: opposingResult.traces[0]?.unitId
+            ?? nextWorld.units.find((unit) => unit.faction === primaryOpposingFactionId)?.id,
+          tileId: opposingResult.traces[0]?.tileId
+            ?? nextWorld.units.find((unit) => unit.faction === primaryOpposingFactionId)?.tileId,
+          fromTileId: opposingResult.traces[0]?.fromTileId,
+          toTileId: opposingResult.traces[0]?.toTileId ?? opposingResult.traces[0]?.tileId,
+          factionId: primaryOpposingFactionId,
+        },
       ),
     )
   }
@@ -1501,6 +1585,11 @@ export function advanceTick(world: WorldState): WorldState {
       'low',
       '后勤回补',
       `补给线健康度 ${theaterSnapshot.supplyLineHealth}，发展能力 ${theaterSnapshot.developmentCapacity}，同盟协同 ${theaterSnapshot.allianceCoordination}，战斗风险 ${theaterSnapshot.battleRisk}。`,
+      {
+        unitId: nextWorld.units.find((unit) => unit.faction === primaryFactionId)?.id,
+        tileId: nextWorld.units.find((unit) => unit.faction === primaryFactionId)?.tileId,
+        factionId: primaryFactionId,
+      },
     ),
   )
 
@@ -1615,6 +1704,7 @@ function processFactionHeroDevelopment(
   }
 
   if (recruitedHeroes.length > 0) {
+    const factionAnchorUnit = (unitsByFaction.get(factionId) ?? [])[0]
     prependReport(
       world,
       world.tick,
@@ -1628,6 +1718,11 @@ function processFactionHeroDevelopment(
         'medium',
         `${factionId} 新增 reserve 武将`,
         `${recruitedHeroes.join('、')} 已通过发展加入 ${factionId} reserve。`,
+        {
+          unitId: factionAnchorUnit?.id,
+          tileId: factionAnchorUnit?.tileId,
+          factionId,
+        },
       ),
     )
   }
@@ -1713,6 +1808,11 @@ function autoDeployReserveHero(
       'high',
       `${factionId} 新增执行单元`,
       `${spawnedUnit.hero.name} 已完成编组并进入地图。`,
+      {
+        unitId: spawnedUnit.id,
+        tileId: spawnedUnit.tileId,
+        factionId,
+      },
     ),
   )
 }
@@ -1967,6 +2067,11 @@ function applyTacticalOverrides(world: WorldState, highlights: ReplayHighlight[]
           'medium',
           '战术插令并入当前计划',
           `${factionLabel} 本回合新增 ${injectedOrders.length} 条战术动作，优先于既有任务执行。`,
+          {
+            unitId: injectedOrders[0]?.unitId,
+            tileId: injectedOrders[0]?.target,
+            factionId,
+          },
         ),
       )
       continue
@@ -2016,6 +2121,11 @@ function applyTacticalOverrides(world: WorldState, highlights: ReplayHighlight[]
         'medium',
         '战术插令启动',
         `${factionLabel} 在本回合无新计划时，系统已直接执行 ${tacticalOrders.length} 条战术命令。`,
+        {
+          unitId: tacticalOrders[0]?.unitId,
+          tileId: tacticalOrders[0]?.target,
+          factionId,
+        },
       ),
     )
   }
@@ -2120,6 +2230,11 @@ function processExecutionForFaction(world: WorldState, factionId: string, highli
         'medium',
         '计划进入复盘窗口',
         '当前计划已达到复盘时点，可根据最新局势继续下达下一条战略命令。',
+        {
+          unitId: execution.orders[0]?.unitId,
+          tileId: execution.orders[0]?.target,
+          factionId,
+        },
       ),
     )
   }
@@ -2315,6 +2430,11 @@ function resolveActionAtTarget(
             tileControlSeverity(targetTile.type),
             `控制权变更：${targetTile.name}`,
             `${unit.name} 已将 ${targetTile.name} 从${ownerLabel(previousOwner)}转入 ${factionId} 控制。`,
+            {
+              unitId: unit.id,
+              tileId: targetTile.id,
+              factionId,
+            },
           ),
         )
       }
@@ -2343,6 +2463,11 @@ function resolveActionAtTarget(
             tileControlSeverity(targetTile.type),
             `控制权变更：${targetTile.name}`,
             `${unit.name} 驻防接管 ${targetTile.name}，前线支点已纳入 ${factionId}。`,
+            {
+              unitId: unit.id,
+              tileId: targetTile.id,
+              factionId,
+            },
           ),
         )
       }
@@ -2355,11 +2480,26 @@ function resolveActionAtTarget(
         return
       }
 
-      revealIntel(world, targetTile.id, 'confirmed', `侦察确认：${targetTile.name} 对立压力 ${targetTile.enemyPressure}。`, highlights)
+      revealIntel(
+        world,
+        targetTile.id,
+        'confirmed',
+        `侦察确认：${targetTile.name} 对立压力 ${targetTile.enemyPressure}。`,
+        highlights,
+        {
+          unitId: unit.id,
+          factionId,
+          fromTileId: unit.tileId,
+        },
+      )
       for (const neighborId of world.map.connections[targetTile.id] ?? []) {
         const intel = world.intel[neighborId]
         if (intel?.level === 'unknown') {
-          revealIntel(world, neighborId, 'suspected', `由 ${targetTile.name} 延伸获得轮廓情报。`, highlights)
+          revealIntel(world, neighborId, 'suspected', `由 ${targetTile.name} 延伸获得轮廓情报。`, highlights, {
+            unitId: unit.id,
+            factionId,
+            fromTileId: targetTile.id,
+          })
         }
       }
 
@@ -2395,6 +2535,11 @@ function resolveActionAtTarget(
           'medium',
           `战备支援：${targetTile.name}`,
           `${unit.name} 为 ${friendlyUnits.length} 支友军补充补给与战备。`,
+          {
+            unitId: unit.id,
+            tileId: targetTile.id,
+            factionId,
+          },
         ),
       )
       completeOrder(world, order, unit, '支援中', `支援${targetTile.name}`, `${unit.name} 已为 ${targetTile.name} 的友军补充战备。`)
@@ -2774,6 +2919,13 @@ function resolveBattleAtTile(
       attackerWon ? 'high' : 'medium',
       attackerWon ? `突破 ${tile.name}` : `${tile.name} 受阻`,
       message,
+      {
+        unitId: attacker.id,
+        tileId: tile.id,
+        fromTileId: originTileId,
+        toTileId: tile.id,
+        factionId: attacker.faction,
+      },
     ),
   )
 
@@ -3076,6 +3228,11 @@ function revealIntel(
   level: IntelligenceLevel,
   summary: string,
   highlights: ReplayHighlight[],
+  context?: {
+    unitId?: string
+    factionId?: FactionId
+    fromTileId?: string
+  },
 ) {
   const previousLevel = world.intel[tileId]?.level ?? 'unknown'
   world.intel[tileId] = {
@@ -3093,6 +3250,13 @@ function revealIntel(
         level === 'confirmed' ? 'high' : 'medium',
         `侦察更新：${tile?.name ?? tileId}`,
         summary,
+        {
+          unitId: context?.unitId,
+          tileId,
+          fromTileId: context?.fromTileId,
+          toTileId: tileId,
+          factionId: context?.factionId,
+        },
       ),
     )
   }
@@ -3243,13 +3407,29 @@ function createReplayHighlight(
   severity: ReplayHighlight['severity'],
   title: string,
   detail: string,
+  context?: {
+    unitId?: string
+    tileId?: string
+    fromTileId?: string
+    toTileId?: string
+    factionId?: FactionId
+  },
 ): ReplayHighlight {
+  const normalizedTileId = context?.tileId ?? context?.toTileId ?? context?.fromTileId
+  const normalizedToTileId = context?.toTileId ?? normalizedTileId
+  const idSuffix = context?.unitId ?? normalizedTileId ?? 'none'
+
   return {
-    id: `${kind}_${tick}_${title}`,
+    id: `${kind}_${tick}_${title}_${idSuffix}`,
     kind,
     severity,
     title,
     detail,
+    unitId: context?.unitId,
+    tileId: normalizedTileId,
+    fromTileId: context?.fromTileId,
+    toTileId: normalizedToTileId,
+    factionId: context?.factionId,
   }
 }
 

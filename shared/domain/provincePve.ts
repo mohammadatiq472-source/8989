@@ -117,6 +117,10 @@ export function processProvincePve(
         severity: 'low',
         title: `开荒完成：${node.name}`,
         detail: `${attacker.name} 清剿了 ${node.name}，获得 ${node.reward.food} 粮草和 ${node.reward.ap} 行动点。`,
+        unitId: attacker.id,
+        tileId: node.tileId,
+        toTileId: node.tileId,
+        factionId,
       })
     } else {
       // 清剿失败，守卫反击，攻击方受损
@@ -135,6 +139,10 @@ export function processProvincePve(
         severity: 'low',
         title: `守营抵抗：${node.name}`,
         detail: `${attacker.name} 开荒 ${node.name} 失败，损失 ${loss} 战力。`,
+        unitId: attacker.id,
+        tileId: node.tileId,
+        toTileId: node.tileId,
+        factionId,
       })
     }
   }

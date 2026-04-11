@@ -1,5 +1,23 @@
 import { randomUUID } from 'node:crypto'
 import {
+  existsSync,
+  mkdirSync,
+  openSync,
+  readFileSync,
+  readdirSync,
+  renameSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+  createReadStream,
+  createWriteStream,
+  closeSync,
+} from 'node:fs'
+import { writeFile } from 'node:fs/promises'
+import { basename, dirname, join, resolve as resolvePath } from 'node:path'
+import { pipeline } from 'node:stream/promises'
+import { createGzip, gunzipSync } from 'node:zlib'
+import {
   flushNarrativePersist as flushNarrativePersistFromPersistence,
   flushWorldPersist as flushWorldPersistFromPersistence,
   getNarrativeEvents as getNarrativeEventsFromPersistence,
@@ -8,6 +26,7 @@ import {
   recordSimulationNarrativeEvents as recordSimulationNarrativeEventsFromPersistence,
   scheduleWorldPersist,
 } from './persistence/worldPersistence'
+import { buildWorldPersistencePath } from './persistence/worldPersistencePaths'
 import {
   buildLayoutChunkByTileIds,
   listProvinceIds,
@@ -33,7 +52,7 @@ import { broadcastTickDelta, broadcastBattleReport } from '../../ws/GameWebSocke
 import { getFactionAutonomyLevel } from '../../multiplayer/SessionManager'
 import { createInitialWorldState } from '../../../../shared/domain/scenario'
 import { syncAllFactionAiQuota } from '../../../../shared/domain/aiQuota'
-import { settleResourcesForAllPlayers } from '../v2/V2GameService'
+import { settleResourcesForAllPlayers, syncV2StateWithWorld, syncWorldFactionResourcesFromV2 } from '../v2/V2GameService'
 import {
   advanceTick,
   appendPlanningJobHistory,
@@ -46,6 +65,7 @@ import {
   queueTacticalOverride,
   updateAllianceDirective,
 } from '../../../../shared/domain/rules'
+import type { QueuePlanFailureCode } from '../../../../shared/domain/rules'
 import type {
   ActionType,
   CityTechTrackId,
@@ -81,8 +101,126 @@ import type { CivilMemoryEventType } from '../../../../shared/contracts/civilMem
 const MAX_WORLD_EVENTS = 500
 const MAX_REPLAY_ARCHIVE = 160
 const MAX_SAVE_SLOTS = 12
+const SAVE_SLOTS_PERSIST_VERSION = 1
+const SAVE_SLOTS_PERSIST_DEBOUNCE_MS = 1_200
+const SAVE_SLOTS_PERSIST_PATH = process.env.WORLD_SAVE_SLOTS_PATH?.trim() || buildWorldPersistencePath('world_save_slots.json')
+const DEFAULT_SAVE_SLOTS_SOFT_LIMIT_BYTES = 128 * 1024 * 1024
+const DEFAULT_SAVE_SLOTS_HARD_LIMIT_BYTES = 512 * 1024 * 1024
+const DEFAULT_SAVE_SLOTS_LOCK_STALE_MS = 15_000
+const DEFAULT_SAVE_SLOTS_ARCHIVE_MAX_FILES = 12
+const SAVE_SLOTS_SOFT_LIMIT_BYTES = readSaveSlotsLimitBytesEnv(
+  'WORLD_SAVE_SLOTS_SOFT_LIMIT_BYTES',
+  DEFAULT_SAVE_SLOTS_SOFT_LIMIT_BYTES,
+)
+const SAVE_SLOTS_HARD_LIMIT_BYTES = Math.max(
+  SAVE_SLOTS_SOFT_LIMIT_BYTES,
+  readSaveSlotsLimitBytesEnv('WORLD_SAVE_SLOTS_HARD_LIMIT_BYTES', DEFAULT_SAVE_SLOTS_HARD_LIMIT_BYTES),
+)
+const SAVE_SLOTS_LOCK_PATH = `${SAVE_SLOTS_PERSIST_PATH}.lock`
+const SAVE_SLOTS_LOCK_STALE_MS = readSaveSlotsIntegerEnv(
+  'WORLD_SAVE_SLOTS_LOCK_STALE_MS',
+  DEFAULT_SAVE_SLOTS_LOCK_STALE_MS,
+  1_000,
+)
+const SAVE_SLOTS_ARCHIVE_ON_SOFT_LIMIT = readSaveSlotsBooleanEnv('WORLD_SAVE_SLOTS_ARCHIVE_ON_SOFT_LIMIT', true)
+const SAVE_SLOTS_ARCHIVE_DIR =
+  process.env.WORLD_SAVE_SLOTS_ARCHIVE_DIR?.trim() || buildWorldPersistencePath('world_save_slots_archive')
+const SAVE_SLOTS_ARCHIVE_MAX_FILES = readSaveSlotsIntegerEnv(
+  'WORLD_SAVE_SLOTS_ARCHIVE_MAX_FILES',
+  DEFAULT_SAVE_SLOTS_ARCHIVE_MAX_FILES,
+  1,
+)
+const SAVE_SLOTS_ARCHIVE_BASENAME = basename(SAVE_SLOTS_PERSIST_PATH).replace(/\.json$/i, '')
 
 const WORLD_MUTATION_BUSY_MESSAGE = 'world mutation busy'
+
+type QueuePlanFailureCategory = QueuePlanFailureCode | 'mutation_lock_busy' | 'unknown'
+type QueuePlanConflictCategory =
+  | 'mutation_lock_busy'
+  | 'stale_world_version'
+  | 'execution_chain_guard_missing'
+  | 'execution_chain_guard_mismatch'
+  | 'execution_chain_active_rejected'
+  | 'none'
+type AdvanceTickFailureCategory = 'mutation_lock_busy' | 'runtime_error'
+type SaveSlotsFileSizeLevel = 'none' | 'ok' | 'soft' | 'hard'
+
+type CategoryStats<T extends string> = {
+  total: number
+  byCategory: Record<T, number>
+}
+
+const queuePlanFailureStats: CategoryStats<QueuePlanFailureCategory> = {
+  total: 0,
+  byCategory: {
+    mutation_lock_busy: 0,
+    stale_world_version: 0,
+    unknown_faction: 0,
+    invalid_order_units: 0,
+    execution_chain_guard_missing: 0,
+    execution_chain_guard_mismatch: 0,
+    execution_chain_active_rejected: 0,
+    unknown: 0,
+  },
+}
+
+const queuePlanConflictStats: CategoryStats<QueuePlanConflictCategory> = {
+  total: 0,
+  byCategory: {
+    mutation_lock_busy: 0,
+    stale_world_version: 0,
+    execution_chain_guard_missing: 0,
+    execution_chain_guard_mismatch: 0,
+    execution_chain_active_rejected: 0,
+    none: 0,
+  },
+}
+
+const advanceTickFailureStats: CategoryStats<AdvanceTickFailureCategory> = {
+  total: 0,
+  byCategory: {
+    mutation_lock_busy: 0,
+    runtime_error: 0,
+  },
+}
+
+function bumpCategoryStats<T extends string>(stats: CategoryStats<T>, category: T) {
+  stats.total += 1
+  stats.byCategory[category] = (stats.byCategory[category] ?? 0) + 1
+}
+
+function snapshotCategoryStats<T extends string>(stats: CategoryStats<T>): CategoryStats<T> {
+  return {
+    total: stats.total,
+    byCategory: { ...stats.byCategory },
+  }
+}
+
+function readSaveSlotsLimitBytesEnv(name: string, fallback: number): number {
+  const raw = Number(process.env[name] ?? fallback)
+  if (!Number.isFinite(raw)) {
+    return fallback
+  }
+
+  return Math.max(1_024, Math.floor(raw))
+}
+
+function readSaveSlotsIntegerEnv(name: string, fallback: number, minimum: number): number {
+  const raw = Number(process.env[name] ?? fallback)
+  if (!Number.isFinite(raw)) {
+    return fallback
+  }
+
+  return Math.max(minimum, Math.floor(raw))
+}
+
+function readSaveSlotsBooleanEnv(name: string, fallback: boolean): boolean {
+  const raw = process.env[name]?.trim().toLowerCase()
+  if (!raw) {
+    return fallback
+  }
+  return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on'
+}
 
 const MAX_TILE_STATE_DIFF_HISTORY = 180
 const MAX_INTEL_DIFF_HISTORY = 180
@@ -118,6 +256,24 @@ const MAX_SUMMARY_REPLAY_FRAME_LIMIT = 60
 type SaveSlotState = {
   record: SaveSlotRecord
   world: WorldState
+}
+
+type SaveSlotsArchiveFile = {
+  path: string
+  mtimeMs: number
+  sizeBytes: number
+}
+
+type SaveSlotsArchiveRestoreDrillStatus = 'passed' | 'failed' | 'skipped'
+type SaveSlotsArchiveRestoreApplyStatus = 'restored' | 'skipped' | 'failed'
+type SaveSlotsArchiveRestoreRollbackDrillStatus = 'passed' | 'failed' | 'skipped'
+
+type ReplayFixtureSource = 'initial_world_v1' | 'current_world'
+
+type PersistedSaveSlotsPayload = {
+  version: number
+  savedAt: number
+  slots: SaveSlotState[]
 }
 
 type WorldSummaryOptions = {
@@ -177,12 +333,64 @@ const intelDiffByVersion = new Map<number, WorldState['intel']>()
 const worldEvents: WorldEventRecord[] = []
 const replayArchive = new Map<string, ReplayArchiveEntry>()
 const saveSlots = new Map<string, SaveSlotState>()
+let saveSlotsPersistDirty = false
+let saveSlotsPersistInFlight = false
+let saveSlotsPersistTimer: ReturnType<typeof setTimeout> | null = null
+let saveSlotsLoaded = false
+let saveSlotsPersistSuccessCount = 0
+let saveSlotsPersistFailureCount = 0
+let saveSlotsLastPersistAt: number | null = null
+let saveSlotsLastPersistErrorAt: number | null = null
+let saveSlotsCorruptQuarantineCount = 0
+let saveSlotsLastCorruptQuarantineAt: number | null = null
+let saveSlotsRestoredSlotCount = 0
+let saveSlotsLastRestoreAt: number | null = null
+let saveSlotsPersistLockContentionCount = 0
+let saveSlotsPersistLockStealCount = 0
+let saveSlotsPersistLockFailureCount = 0
+let saveSlotsArchiveFileCount = 0
+let saveSlotsArchiveSuccessCount = 0
+let saveSlotsArchiveFailureCount = 0
+let saveSlotsLastArchiveAt: number | null = null
+let saveSlotsLastArchiveErrorAt: number | null = null
+let saveSlotsLastArchivePath: string | null = null
+let saveSlotsRestoreDrillSuccessCount = 0
+let saveSlotsRestoreDrillFailureCount = 0
+let saveSlotsLastRestoreDrillAt: number | null = null
+let saveSlotsLastRestoreDrillErrorAt: number | null = null
+let saveSlotsLastRestoreDrillArchivePath: string | null = null
+let saveSlotsLastRestoreDrillSlotCount: number | null = null
+let saveSlotsLastRestoreDrillStatus: SaveSlotsArchiveRestoreDrillStatus | null = null
+let saveSlotsLastRestoreDrillMessage: string | null = null
+let saveSlotsRestoreApplySuccessCount = 0
+let saveSlotsRestoreApplyFailureCount = 0
+let saveSlotsLastRestoreApplyAt: number | null = null
+let saveSlotsLastRestoreApplyErrorAt: number | null = null
+let saveSlotsLastRestoreApplyArchivePath: string | null = null
+let saveSlotsLastRestoreApplyBackupPath: string | null = null
+let saveSlotsLastRestoreApplySlotCount: number | null = null
+let saveSlotsLastRestoreApplyStatus: SaveSlotsArchiveRestoreApplyStatus | null = null
+let saveSlotsLastRestoreApplyMessage: string | null = null
+let saveSlotsRestoreRollbackDrillSuccessCount = 0
+let saveSlotsRestoreRollbackDrillFailureCount = 0
+let saveSlotsLastRestoreRollbackDrillAt: number | null = null
+let saveSlotsLastRestoreRollbackDrillErrorAt: number | null = null
+let saveSlotsLastRestoreRollbackDrillArchivePath: string | null = null
+let saveSlotsLastRestoreRollbackDrillBackupPath: string | null = null
+let saveSlotsLastRestoreRollbackDrillStorePath: string | null = null
+let saveSlotsLastRestoreRollbackDrillSlotCount: number | null = null
+let saveSlotsLastRestoreRollbackDrillStatus: SaveSlotsArchiveRestoreRollbackDrillStatus | null = null
+let saveSlotsLastRestoreRollbackDrillMessage: string | null = null
+let saveSlotsLastRestoreRollbackDrillVerified: boolean | null = null
 let lastNationalAgenda: NationalAgendaWindow | null = null
 loadPersistedWorldState((savedWorldState) => {
   worldState = savedWorldState
   syncAllFactionAiQuota(worldState)
 }) // P0: restore world state first
 loadPersistedNarrativeEvents()
+loadPersistedSaveSlots()
+refreshSaveSlotsArchiveFileCount()
+syncV2StateWithWorld(worldState)
 
 appendWorldEvent({
   category: 'system',
@@ -278,11 +486,52 @@ function buildWorldMutationBusyResponse(includeWorld = true): WorldActionRespons
   })
 }
 
+function resolveQueuePlanFailureCategory(failureCode?: QueuePlanFailureCode): QueuePlanFailureCategory {
+  if (!failureCode) {
+    return 'unknown'
+  }
+
+  return failureCode
+}
+
+function resolveQueuePlanConflictCategory(failureCategory: QueuePlanFailureCategory): QueuePlanConflictCategory {
+  if (
+    failureCategory === 'mutation_lock_busy' ||
+    failureCategory === 'stale_world_version' ||
+    failureCategory === 'execution_chain_guard_missing' ||
+    failureCategory === 'execution_chain_guard_mismatch' ||
+    failureCategory === 'execution_chain_active_rejected'
+  ) {
+    return failureCategory
+  }
+
+  return 'none'
+}
+
 export function getWorldEvents(limit = 200): WorldEventsResponse {
   const normalizedLimit = Number.isFinite(limit) ? Math.max(1, Math.min(500, Math.floor(limit))) : 200
   return {
     items: worldEvents.slice(0, normalizedLimit),
   }
+}
+
+export function appendRuntimeWorldEvent(params: {
+  action: string
+  success: boolean
+  category?: WorldEventRecord['category']
+  message?: string
+  metadata?: Record<string, unknown>
+}): void {
+  const world = getWorldStateReadonly()
+  appendWorldEvent({
+    category: params.category ?? 'system',
+    action: params.action,
+    success: params.success,
+    tick: world.tick,
+    worldVersion: world.worldVersion,
+    message: params.message,
+    metadata: params.metadata,
+  })
 }
 
 export function getNarrativeEvents(limit = 200) {
@@ -337,6 +586,632 @@ export function getSaveSlots(): SaveSlotsResponse {
   }
 }
 
+function resolveSaveSlotsFileSizeSnapshot(): { fileSizeBytes: number | null; fileSizeLevel: SaveSlotsFileSizeLevel } {
+  let fileSizeBytes: number | null = null
+  let fileSizeLevel: SaveSlotsFileSizeLevel = 'none'
+
+  if (existsSync(SAVE_SLOTS_PERSIST_PATH)) {
+    try {
+      const stats = statSync(SAVE_SLOTS_PERSIST_PATH)
+      fileSizeBytes = Number.isFinite(stats.size) ? stats.size : null
+      if (typeof fileSizeBytes === 'number') {
+        if (fileSizeBytes >= SAVE_SLOTS_HARD_LIMIT_BYTES) {
+          fileSizeLevel = 'hard'
+        } else if (fileSizeBytes >= SAVE_SLOTS_SOFT_LIMIT_BYTES) {
+          fileSizeLevel = 'soft'
+        } else {
+          fileSizeLevel = 'ok'
+        }
+      }
+    } catch {
+      fileSizeLevel = 'none'
+    }
+  }
+
+  return {
+    fileSizeBytes,
+    fileSizeLevel,
+  }
+}
+
+export function getSaveSlotsArchiveCatalog() {
+  const archives = listSaveSlotsArchiveFiles().map((item) => ({
+    path: item.path,
+    sizeBytes: item.sizeBytes,
+    modifiedAt: new Date(item.mtimeMs).toISOString(),
+  }))
+
+  return {
+    archives,
+  }
+}
+
+function resolveSaveSlotsArchiveSelection(options: { archivePath?: string } = {}) {
+  const archiveFiles = listSaveSlotsArchiveFiles()
+  const archiveCount = archiveFiles.length
+  const requestedArchivePath = options.archivePath?.trim()
+  let selectedArchive: SaveSlotsArchiveFile | null = null
+
+  if (requestedArchivePath) {
+    const normalizedRequestedPath = resolvePath(requestedArchivePath)
+    selectedArchive =
+      archiveFiles.find((item) => resolvePath(item.path) === normalizedRequestedPath) ??
+      (() => {
+        if (!existsSync(normalizedRequestedPath)) {
+          return null
+        }
+        try {
+          const stats = statSync(normalizedRequestedPath)
+          return {
+            path: normalizedRequestedPath,
+            mtimeMs: stats.mtimeMs,
+            sizeBytes: stats.size,
+          } satisfies SaveSlotsArchiveFile
+        } catch {
+          return null
+        }
+      })()
+  } else {
+    selectedArchive = archiveFiles[0] ?? null
+  }
+
+  return {
+    archiveCount,
+    selectedArchive,
+  }
+}
+
+function parseSaveSlotsArchivePayload(archivePath: string): {
+  slots: SaveSlotState[]
+  persistVersion: number | null
+} {
+  const compressed = readFileSync(archivePath)
+  const restoredJson = gunzipSync(compressed).toString('utf8')
+  const parsed = JSON.parse(restoredJson) as unknown
+  const slots = extractPersistedSaveSlots(parsed)
+  const persistVersion =
+    typeof parsed === 'object' && parsed !== null && typeof (parsed as { version?: unknown }).version === 'number'
+      ? ((parsed as { version: number }).version ?? null)
+      : null
+
+  return {
+    slots,
+    persistVersion,
+  }
+}
+
+function buildNormalizedSaveSlotStates(slots: SaveSlotState[]): SaveSlotState[] {
+  const normalized: SaveSlotState[] = []
+  for (const slot of slots) {
+    const normalizedSlotId = normalizeSlotId(slot.record.slotId)
+    normalized.push({
+      record: {
+        ...slot.record,
+        slotId: normalizedSlotId,
+      },
+      world: slot.world,
+    })
+  }
+
+  normalized.sort((a, b) => (a.record.savedAt < b.record.savedAt ? 1 : a.record.savedAt > b.record.savedAt ? -1 : 0))
+  return normalized.slice(0, MAX_SAVE_SLOTS)
+}
+
+function buildSaveSlotsRecordSignature(slots: SaveSlotState[]): string {
+  const normalizedRecords: Array<{
+    slotId: string
+    label: string
+    tick: number
+    worldVersion: number
+    savedAt: string
+  }> = []
+
+  for (const slot of slots) {
+    try {
+      const slotId = normalizeSlotId(slot.record.slotId)
+      normalizedRecords.push({
+        slotId,
+        label: slot.record.label,
+        tick: slot.record.tick,
+        worldVersion: slot.record.worldVersion,
+        savedAt: slot.record.savedAt,
+      })
+    } catch {
+      // ignore malformed records in signature comparison
+    }
+  }
+
+  normalizedRecords.sort((a, b) => (a.savedAt < b.savedAt ? 1 : a.savedAt > b.savedAt ? -1 : 0))
+  return JSON.stringify(normalizedRecords)
+}
+
+export function runSaveSlotsArchiveRestoreDrill(options: { archivePath?: string } = {}) {
+  const executedAt = new Date().toISOString()
+  const { archiveCount, selectedArchive } = resolveSaveSlotsArchiveSelection(options)
+
+  const finish = (
+    status: SaveSlotsArchiveRestoreDrillStatus,
+    message: string,
+    params: {
+      archivePath?: string | null
+      slotCount?: number | null
+      persistVersion?: number | null
+    } = {},
+  ) => {
+    const archivePath = params.archivePath ?? null
+    const slotCount = params.slotCount ?? null
+    const persistVersion = params.persistVersion ?? null
+    saveSlotsLastRestoreDrillStatus = status
+    saveSlotsLastRestoreDrillMessage = message
+    saveSlotsLastRestoreDrillArchivePath = archivePath
+    saveSlotsLastRestoreDrillSlotCount = slotCount
+
+    if (status === 'passed') {
+      saveSlotsRestoreDrillSuccessCount += 1
+      saveSlotsLastRestoreDrillAt = Date.now()
+    } else if (status === 'failed') {
+      saveSlotsRestoreDrillFailureCount += 1
+      saveSlotsLastRestoreDrillErrorAt = Date.now()
+    }
+
+    return {
+      status,
+      executedAt,
+      archivePath,
+      archiveCount,
+      slotCount,
+      persistVersion,
+      message,
+    }
+  }
+
+  if (!selectedArchive) {
+    const { fileSizeLevel } = resolveSaveSlotsFileSizeSnapshot()
+    const shouldRequireArchive = SAVE_SLOTS_ARCHIVE_ON_SOFT_LIMIT && (fileSizeLevel === 'soft' || fileSizeLevel === 'hard')
+    if (shouldRequireArchive) {
+      return finish(
+        'failed',
+        'No save-slot archive available while store is oversize; restore drill cannot be performed.',
+      )
+    }
+    return finish('skipped', 'No save-slot archive available; restore drill skipped.')
+  }
+
+  try {
+    const parsed = parseSaveSlotsArchivePayload(selectedArchive.path)
+    const slots = parsed.slots
+    if (slots.length <= 0) {
+      return finish('failed', 'Archive payload contains no valid save slots.', {
+        archivePath: selectedArchive.path,
+      })
+    }
+
+    return finish('passed', 'Archive restore drill passed (dry-run parse).', {
+      archivePath: selectedArchive.path,
+      slotCount: slots.length,
+      persistVersion: parsed.persistVersion,
+    })
+  } catch (error) {
+    return finish('failed', `Archive restore drill failed: ${error instanceof Error ? error.message : String(error)}`, {
+      archivePath: selectedArchive.path,
+    })
+  }
+}
+
+export async function runSaveSlotsArchiveRestoreApply(options: { archivePath?: string; force?: boolean } = {}) {
+  const executedAt = new Date().toISOString()
+  const { archiveCount, selectedArchive } = resolveSaveSlotsArchiveSelection(options)
+  const forceApply = options.force === true
+
+  const finish = (
+    status: SaveSlotsArchiveRestoreApplyStatus,
+    message: string,
+    params: {
+      archivePath?: string | null
+      backupPath?: string | null
+      slotCount?: number | null
+      persistVersion?: number | null
+    } = {},
+  ) => {
+    const archivePath = params.archivePath ?? null
+    const backupPath = params.backupPath ?? null
+    const slotCount = params.slotCount ?? null
+    const persistVersion = params.persistVersion ?? null
+    saveSlotsLastRestoreApplyStatus = status
+    saveSlotsLastRestoreApplyMessage = message
+    saveSlotsLastRestoreApplyArchivePath = archivePath
+    saveSlotsLastRestoreApplyBackupPath = backupPath
+    saveSlotsLastRestoreApplySlotCount = slotCount
+
+    if (status === 'restored') {
+      saveSlotsRestoreApplySuccessCount += 1
+      saveSlotsLastRestoreApplyAt = Date.now()
+    } else if (status === 'failed') {
+      saveSlotsRestoreApplyFailureCount += 1
+      saveSlotsLastRestoreApplyErrorAt = Date.now()
+    }
+
+    return {
+      status,
+      executedAt,
+      archivePath,
+      backupPath,
+      archiveCount,
+      slotCount,
+      persistVersion,
+      message,
+      forced: forceApply,
+    }
+  }
+
+  if (!selectedArchive) {
+    return finish('failed', 'No save-slot archive available; restore apply cannot be performed.')
+  }
+
+  let parsedArchive: ReturnType<typeof parseSaveSlotsArchivePayload>
+  let normalizedSlots: SaveSlotState[]
+  try {
+    parsedArchive = parseSaveSlotsArchivePayload(selectedArchive.path)
+    if (parsedArchive.slots.length <= 0) {
+      return finish('failed', 'Archive payload contains no valid save slots.', {
+        archivePath: selectedArchive.path,
+        persistVersion: parsedArchive.persistVersion,
+      })
+    }
+    normalizedSlots = buildNormalizedSaveSlotStates(parsedArchive.slots)
+  } catch (error) {
+    return finish('failed', `Archive restore apply parse failed: ${error instanceof Error ? error.message : String(error)}`, {
+      archivePath: selectedArchive.path,
+    })
+  }
+
+  await flushSaveSlotsPersist()
+  const lockToken = tryAcquireSaveSlotsPersistLock()
+  if (!lockToken) {
+    return finish('failed', 'Save-slot restore apply lock contention: unable to acquire lock.', {
+      archivePath: selectedArchive.path,
+      slotCount: normalizedSlots.length,
+      persistVersion: parsedArchive.persistVersion,
+    })
+  }
+
+  const restorePayload: PersistedSaveSlotsPayload = {
+    version: SAVE_SLOTS_PERSIST_VERSION,
+    savedAt: Date.now(),
+    slots: normalizedSlots,
+  }
+  const restoreSerializedPayload = JSON.stringify(restorePayload, null, 2)
+  const restoreTempPath = `${SAVE_SLOTS_PERSIST_PATH}.restore.tmp`
+  const restoreBackupPath = `${SAVE_SLOTS_PERSIST_PATH}.restore.bak.${Date.now()}`
+  let existingPayload: string | null = null
+  let backupWritten = false
+  const targetSignature = buildSaveSlotsRecordSignature(normalizedSlots)
+
+  try {
+    if (existsSync(SAVE_SLOTS_PERSIST_PATH)) {
+      existingPayload = readFileSync(SAVE_SLOTS_PERSIST_PATH, 'utf8')
+    }
+
+    if (!forceApply && typeof existingPayload === 'string') {
+      try {
+        const existingParsed = JSON.parse(existingPayload) as unknown
+        const existingSlots = extractPersistedSaveSlots(existingParsed)
+        const existingSignature = buildSaveSlotsRecordSignature(existingSlots)
+        if (existingSignature === targetSignature) {
+          return finish('skipped', 'Restore skipped: archive slot-state already matches active save-slot store.', {
+            archivePath: selectedArchive.path,
+            slotCount: normalizedSlots.length,
+            persistVersion: parsedArchive.persistVersion,
+          })
+        }
+      } catch {
+        // ignore existing payload parse errors; restore can still proceed and overwrite with valid payload
+      }
+    }
+
+    mkdirSync(dirname(SAVE_SLOTS_PERSIST_PATH), { recursive: true })
+
+    if (typeof existingPayload === 'string') {
+      await writeFile(restoreBackupPath, existingPayload, 'utf8')
+      backupWritten = true
+    }
+
+    await writeFile(restoreTempPath, restoreSerializedPayload, 'utf8')
+    renameSync(restoreTempPath, SAVE_SLOTS_PERSIST_PATH)
+
+    saveSlots.clear()
+    for (const slot of normalizedSlots) {
+      saveSlots.set(slot.record.slotId, {
+        record: { ...slot.record },
+        world: slot.world,
+      })
+    }
+    trimSaveSlots()
+    saveSlotsLoaded = true
+    saveSlotsRestoredSlotCount = saveSlots.size
+    saveSlotsLastRestoreAt = Date.now()
+    saveSlotsPersistDirty = false
+    saveSlotsPersistInFlight = false
+
+    return finish('restored', 'Archive restore applied to active save-slot store.', {
+      archivePath: selectedArchive.path,
+      backupPath: backupWritten ? restoreBackupPath : null,
+      slotCount: saveSlots.size,
+      persistVersion: parsedArchive.persistVersion,
+    })
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    let rollbackMessage = ''
+
+    if (typeof existingPayload === 'string') {
+      try {
+        await writeFile(SAVE_SLOTS_PERSIST_PATH, existingPayload, 'utf8')
+        rollbackMessage = ' Rollback succeeded using pre-restore payload.'
+      } catch (rollbackError) {
+        rollbackMessage = ` Rollback failed: ${rollbackError instanceof Error ? rollbackError.message : String(rollbackError)}`
+      }
+    }
+
+    try {
+      if (existsSync(restoreTempPath)) {
+        renameSync(restoreTempPath, `${restoreTempPath}.failed.${Date.now()}`)
+      }
+    } catch {
+      // ignore temp cleanup failures
+    }
+
+    return finish('failed', `Archive restore apply failed: ${errorMessage}.${rollbackMessage}`.trim(), {
+      archivePath: selectedArchive.path,
+      backupPath: backupWritten ? restoreBackupPath : null,
+      slotCount: normalizedSlots.length,
+      persistVersion: parsedArchive.persistVersion,
+    })
+  } finally {
+    releaseSaveSlotsPersistLock(lockToken)
+  }
+}
+
+export function runSaveSlotsArchiveRestoreRollbackDrill(options: { archivePath?: string; drillDir?: string } = {}) {
+  const executedAt = new Date().toISOString()
+  const { archiveCount, selectedArchive } = resolveSaveSlotsArchiveSelection(options)
+  const requestedDrillDir = options.drillDir?.trim()
+  const drillDir = requestedDrillDir
+    ? resolvePath(requestedDrillDir)
+    : join(SAVE_SLOTS_ARCHIVE_DIR, '__restore_rollback_drill__')
+
+  const finish = (
+    status: SaveSlotsArchiveRestoreRollbackDrillStatus,
+    message: string,
+    params: {
+      archivePath?: string | null
+      backupPath?: string | null
+      drillStorePath?: string | null
+      slotCount?: number | null
+      persistVersion?: number | null
+      rollbackVerified?: boolean | null
+    } = {},
+  ) => {
+    const archivePath = params.archivePath ?? null
+    const backupPath = params.backupPath ?? null
+    const drillStorePath = params.drillStorePath ?? null
+    const slotCount = params.slotCount ?? null
+    const persistVersion = params.persistVersion ?? null
+    const rollbackVerified = params.rollbackVerified ?? null
+
+    saveSlotsLastRestoreRollbackDrillStatus = status
+    saveSlotsLastRestoreRollbackDrillMessage = message
+    saveSlotsLastRestoreRollbackDrillArchivePath = archivePath
+    saveSlotsLastRestoreRollbackDrillBackupPath = backupPath
+    saveSlotsLastRestoreRollbackDrillStorePath = drillStorePath
+    saveSlotsLastRestoreRollbackDrillSlotCount = slotCount
+    saveSlotsLastRestoreRollbackDrillVerified = rollbackVerified
+
+    if (status === 'passed') {
+      saveSlotsRestoreRollbackDrillSuccessCount += 1
+      saveSlotsLastRestoreRollbackDrillAt = Date.now()
+    } else if (status === 'failed') {
+      saveSlotsRestoreRollbackDrillFailureCount += 1
+      saveSlotsLastRestoreRollbackDrillErrorAt = Date.now()
+    }
+
+    return {
+      status,
+      executedAt,
+      archivePath,
+      backupPath,
+      drillStorePath,
+      archiveCount,
+      slotCount,
+      persistVersion,
+      rollbackVerified,
+      message,
+    }
+  }
+
+  if (!selectedArchive) {
+    const { fileSizeLevel } = resolveSaveSlotsFileSizeSnapshot()
+    const shouldRequireArchive = SAVE_SLOTS_ARCHIVE_ON_SOFT_LIMIT && (fileSizeLevel === 'soft' || fileSizeLevel === 'hard')
+    if (shouldRequireArchive) {
+      return finish(
+        'failed',
+        'No save-slot archive available while store is oversize; restore rollback drill cannot be performed.',
+      )
+    }
+    return finish('skipped', 'No save-slot archive available; restore rollback drill skipped.')
+  }
+
+  let parsedArchive: ReturnType<typeof parseSaveSlotsArchivePayload>
+  let normalizedSlots: SaveSlotState[]
+  try {
+    parsedArchive = parseSaveSlotsArchivePayload(selectedArchive.path)
+    if (parsedArchive.slots.length <= 0) {
+      return finish('failed', 'Archive payload contains no valid save slots.', {
+        archivePath: selectedArchive.path,
+        persistVersion: parsedArchive.persistVersion,
+      })
+    }
+    normalizedSlots = buildNormalizedSaveSlotStates(parsedArchive.slots)
+  } catch (error) {
+    return finish('failed', `Archive restore rollback drill parse failed: ${error instanceof Error ? error.message : String(error)}`, {
+      archivePath: selectedArchive.path,
+    })
+  }
+
+  const restorePayload: PersistedSaveSlotsPayload = {
+    version: SAVE_SLOTS_PERSIST_VERSION,
+    savedAt: Date.now(),
+    slots: normalizedSlots,
+  }
+  const restoreSerializedPayload = JSON.stringify(restorePayload, null, 2)
+  let baselinePayload: string
+
+  try {
+    baselinePayload = existsSync(SAVE_SLOTS_PERSIST_PATH)
+      ? readFileSync(SAVE_SLOTS_PERSIST_PATH, 'utf8')
+      : JSON.stringify(buildSaveSlotsPersistPayload(), null, 2)
+  } catch (error) {
+    return finish('failed', `Restore rollback drill baseline snapshot failed: ${error instanceof Error ? error.message : String(error)}`, {
+      archivePath: selectedArchive.path,
+      slotCount: normalizedSlots.length,
+      persistVersion: parsedArchive.persistVersion,
+    })
+  }
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-')
+  const drillStorePath = join(drillDir, `${SAVE_SLOTS_ARCHIVE_BASENAME}.rollback-drill.${stamp}.json`)
+  const restoreTempPath = `${drillStorePath}.restore.tmp`
+  const restoreBackupPath = `${drillStorePath}.restore.bak.${Date.now()}`
+
+  try {
+    mkdirSync(drillDir, { recursive: true })
+    writeFileSync(drillStorePath, baselinePayload, 'utf8')
+    writeFileSync(restoreBackupPath, baselinePayload, 'utf8')
+    writeFileSync(restoreTempPath, restoreSerializedPayload, 'utf8')
+    throw new Error('Simulated restore apply failure after backup write.')
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error)
+    let rollbackSucceeded = false
+    let rollbackErrorMessage = ''
+
+    try {
+      writeFileSync(drillStorePath, baselinePayload, 'utf8')
+      rollbackSucceeded = true
+    } catch (rollbackError) {
+      rollbackErrorMessage = rollbackError instanceof Error ? rollbackError.message : String(rollbackError)
+    }
+
+    try {
+      if (existsSync(restoreTempPath)) {
+        renameSync(restoreTempPath, `${restoreTempPath}.failed.${Date.now()}`)
+      }
+    } catch {
+      // ignore temp cleanup failures in drill mode
+    }
+
+    let rollbackVerified = false
+    try {
+      rollbackVerified = readFileSync(drillStorePath, 'utf8') === baselinePayload
+    } catch {
+      rollbackVerified = false
+    }
+
+    if (rollbackSucceeded && rollbackVerified) {
+      return finish(
+        'passed',
+        `Restore rollback drill passed: simulated failure recovered via baseline rollback (${errorMessage}).`,
+        {
+          archivePath: selectedArchive.path,
+          backupPath: restoreBackupPath,
+          drillStorePath,
+          slotCount: normalizedSlots.length,
+          persistVersion: parsedArchive.persistVersion,
+          rollbackVerified: true,
+        },
+      )
+    }
+
+    const rollbackReason = rollbackErrorMessage
+      ? `Rollback write failed: ${rollbackErrorMessage}.`
+      : 'Rollback write or verification failed.'
+    return finish('failed', `Restore rollback drill failed: ${rollbackReason} Simulated failure: ${errorMessage}`, {
+      archivePath: selectedArchive.path,
+      backupPath: restoreBackupPath,
+      drillStorePath,
+      slotCount: normalizedSlots.length,
+      persistVersion: parsedArchive.persistVersion,
+      rollbackVerified,
+    })
+  }
+}
+
+export function getSaveSlotsPersistHealth() {
+  refreshSaveSlotsArchiveFileCount()
+  const { fileSizeBytes, fileSizeLevel } = resolveSaveSlotsFileSizeSnapshot()
+
+  return {
+    path: SAVE_SLOTS_PERSIST_PATH,
+    loaded: saveSlotsLoaded,
+    slotCount: saveSlots.size,
+    persistDirty: saveSlotsPersistDirty,
+    persistInFlight: saveSlotsPersistInFlight,
+    persistSuccessCount: saveSlotsPersistSuccessCount,
+    persistFailureCount: saveSlotsPersistFailureCount,
+    lastPersistAt: saveSlotsLastPersistAt,
+    lastPersistErrorAt: saveSlotsLastPersistErrorAt,
+    corruptQuarantineCount: saveSlotsCorruptQuarantineCount,
+    lastCorruptQuarantineAt: saveSlotsLastCorruptQuarantineAt,
+    restoredSlotCount: saveSlotsRestoredSlotCount,
+    lastRestoreAt: saveSlotsLastRestoreAt,
+    persistVersion: SAVE_SLOTS_PERSIST_VERSION,
+    lockPath: SAVE_SLOTS_LOCK_PATH,
+    lockStaleMs: SAVE_SLOTS_LOCK_STALE_MS,
+    lockContentionCount: saveSlotsPersistLockContentionCount,
+    lockStealCount: saveSlotsPersistLockStealCount,
+    lockFailureCount: saveSlotsPersistLockFailureCount,
+    archiveOnSoftLimit: SAVE_SLOTS_ARCHIVE_ON_SOFT_LIMIT,
+    archiveDir: SAVE_SLOTS_ARCHIVE_DIR,
+    archiveMaxFiles: SAVE_SLOTS_ARCHIVE_MAX_FILES,
+    archiveFileCount: saveSlotsArchiveFileCount,
+    archiveSuccessCount: saveSlotsArchiveSuccessCount,
+    archiveFailureCount: saveSlotsArchiveFailureCount,
+    lastArchiveAt: saveSlotsLastArchiveAt,
+    lastArchiveErrorAt: saveSlotsLastArchiveErrorAt,
+    lastArchivePath: saveSlotsLastArchivePath,
+    restoreDrillSuccessCount: saveSlotsRestoreDrillSuccessCount,
+    restoreDrillFailureCount: saveSlotsRestoreDrillFailureCount,
+    lastRestoreDrillAt: saveSlotsLastRestoreDrillAt,
+    lastRestoreDrillErrorAt: saveSlotsLastRestoreDrillErrorAt,
+    lastRestoreDrillArchivePath: saveSlotsLastRestoreDrillArchivePath,
+    lastRestoreDrillSlotCount: saveSlotsLastRestoreDrillSlotCount,
+    lastRestoreDrillStatus: saveSlotsLastRestoreDrillStatus,
+    lastRestoreDrillMessage: saveSlotsLastRestoreDrillMessage,
+    restoreApplySuccessCount: saveSlotsRestoreApplySuccessCount,
+    restoreApplyFailureCount: saveSlotsRestoreApplyFailureCount,
+    lastRestoreApplyAt: saveSlotsLastRestoreApplyAt,
+    lastRestoreApplyErrorAt: saveSlotsLastRestoreApplyErrorAt,
+    lastRestoreApplyArchivePath: saveSlotsLastRestoreApplyArchivePath,
+    lastRestoreApplyBackupPath: saveSlotsLastRestoreApplyBackupPath,
+    lastRestoreApplySlotCount: saveSlotsLastRestoreApplySlotCount,
+    lastRestoreApplyStatus: saveSlotsLastRestoreApplyStatus,
+    lastRestoreApplyMessage: saveSlotsLastRestoreApplyMessage,
+    restoreRollbackDrillSuccessCount: saveSlotsRestoreRollbackDrillSuccessCount,
+    restoreRollbackDrillFailureCount: saveSlotsRestoreRollbackDrillFailureCount,
+    lastRestoreRollbackDrillAt: saveSlotsLastRestoreRollbackDrillAt,
+    lastRestoreRollbackDrillErrorAt: saveSlotsLastRestoreRollbackDrillErrorAt,
+    lastRestoreRollbackDrillArchivePath: saveSlotsLastRestoreRollbackDrillArchivePath,
+    lastRestoreRollbackDrillBackupPath: saveSlotsLastRestoreRollbackDrillBackupPath,
+    lastRestoreRollbackDrillStorePath: saveSlotsLastRestoreRollbackDrillStorePath,
+    lastRestoreRollbackDrillSlotCount: saveSlotsLastRestoreRollbackDrillSlotCount,
+    lastRestoreRollbackDrillStatus: saveSlotsLastRestoreRollbackDrillStatus,
+    lastRestoreRollbackDrillMessage: saveSlotsLastRestoreRollbackDrillMessage,
+    lastRestoreRollbackDrillVerified: saveSlotsLastRestoreRollbackDrillVerified,
+    fileSizeBytes,
+    fileSizeLevel,
+    softLimitBytes: SAVE_SLOTS_SOFT_LIMIT_BYTES,
+    hardLimitBytes: SAVE_SLOTS_HARD_LIMIT_BYTES,
+  }
+}
+
 export function saveWorldSlot(slotId: string, label?: string): SaveSlotRecord {
   const normalizedSlotId = normalizeSlotId(slotId)
   const now = new Date().toISOString()
@@ -354,6 +1229,7 @@ export function saveWorldSlot(slotId: string, label?: string): SaveSlotRecord {
   })
 
   trimSaveSlots()
+  scheduleSaveSlotsPersist()
 
   appendWorldEvent({
     category: 'persistence',
@@ -365,6 +1241,54 @@ export function saveWorldSlot(slotId: string, label?: string): SaveSlotRecord {
     metadata: {
       slotId: normalizedSlotId,
       label: record.label,
+    },
+  })
+
+  return record
+}
+
+export function primeReplayFixtureSlot(
+  slotId: string,
+  options: {
+    label?: string
+    source?: ReplayFixtureSource
+  } = {},
+): SaveSlotRecord {
+  const normalizedSlotId = normalizeSlotId(slotId)
+  const source: ReplayFixtureSource = options.source === 'current_world' ? 'current_world' : 'initial_world_v1'
+  const fixtureWorld = source === 'current_world' ? structuredClone(worldState) : createInitialWorldState()
+  syncAllFactionAiQuota(fixtureWorld)
+
+  const now = new Date().toISOString()
+  const record: SaveSlotRecord = {
+    slotId: normalizedSlotId,
+    label: options.label?.trim() || `Replay Fixture ${normalizedSlotId}`,
+    tick: fixtureWorld.tick,
+    worldVersion: fixtureWorld.worldVersion,
+    savedAt: now,
+  }
+
+  saveSlots.set(normalizedSlotId, {
+    record,
+    world: fixtureWorld,
+  })
+
+  trimSaveSlots()
+  scheduleSaveSlotsPersist()
+
+  appendWorldEvent({
+    category: 'persistence',
+    action: 'save_slot_fixture',
+    success: true,
+    tick: worldState.tick,
+    worldVersion: worldState.worldVersion,
+    message: `save slot fixture ${normalizedSlotId} primed`,
+    metadata: {
+      slotId: normalizedSlotId,
+      label: record.label,
+      source,
+      fixtureTick: fixtureWorld.tick,
+      fixtureWorldVersion: fixtureWorld.worldVersion,
     },
   })
 
@@ -518,23 +1442,51 @@ export async function queuePlanExecutionAction(
   params: QueuePlanExecutionActionParams,
   includeWorld = true,
 ): Promise<WorldActionResponse> {
+  const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+  const autonomyLevel = getFactionAutonomyLevel(targetFactionId)
+  const controlMode =
+    autonomyLevel === 'L1_assigned'
+      ? 'human_assigned'
+      : autonomyLevel === 'L3_negotiated'
+        ? 'ai_negotiated'
+        : 'ai_delegated'
+
   const mutationLock = tryAcquireWorldMutationLock('queue_plan_execution')
   if (!mutationLock) {
-    return buildWorldMutationBusyResponse(includeWorld)
+    const failed = buildWorldMutationBusyResponse(includeWorld)
+    const failureCategory: QueuePlanFailureCategory = 'mutation_lock_busy'
+    const conflictCategory: QueuePlanConflictCategory = 'mutation_lock_busy'
+    bumpCategoryStats(queuePlanFailureStats, failureCategory)
+    bumpCategoryStats(queuePlanConflictStats, conflictCategory)
+
+    appendWorldEvent({
+      category: 'planning',
+      action: 'queue_plan_execution',
+      success: false,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId: params.requestId,
+      message: failed.message,
+      metadata: {
+        source: params.source,
+        factionId: targetFactionId,
+        autonomyLevel,
+        controlMode,
+        basedOnWorldVersion: params.basedOnWorldVersion,
+        failureCategory,
+        conflictCategory,
+        queuePlanFailureStats: snapshotCategoryStats(queuePlanFailureStats),
+        queuePlanConflictStats: snapshotCategoryStats(queuePlanConflictStats),
+      },
+    })
+
+    return failed
   }
 
   try {
     let planForExecution = params.plan
     let generalDispatchMeta: Record<string, unknown> | undefined
     let generalDirectiveMeta: Record<string, unknown> | undefined
-    const targetFactionId = params.factionId ?? resolveDefaultFactionId()
-    const autonomyLevel = getFactionAutonomyLevel(targetFactionId)
-    const controlMode =
-      autonomyLevel === 'L1_assigned'
-        ? 'human_assigned'
-        : autonomyLevel === 'L3_negotiated'
-          ? 'ai_negotiated'
-          : 'ai_delegated'
 
     const side = params.generalSide ?? targetFactionId
     let cachedGenerals: FactionGeneral[] | undefined
@@ -601,6 +1553,13 @@ export async function queuePlanExecutionAction(
     )
 
     if (!result.ok) {
+      const failureCategory = resolveQueuePlanFailureCategory(result.failureCode)
+      const conflictCategory = resolveQueuePlanConflictCategory(failureCategory)
+      bumpCategoryStats(queuePlanFailureStats, failureCategory)
+      if (conflictCategory !== 'none') {
+        bumpCategoryStats(queuePlanConflictStats, conflictCategory)
+      }
+
       const failed = buildWorldActionResponse({
         ok: false,
         includeWorld,
@@ -624,6 +1583,11 @@ export async function queuePlanExecutionAction(
           orderCount: planForExecution.orders.length,
           executionMode,
           expectedExecutionRequestId,
+          failureCode: result.failureCode,
+          failureCategory,
+          conflictCategory,
+          queuePlanFailureStats: snapshotCategoryStats(queuePlanFailureStats),
+          queuePlanConflictStats: snapshotCategoryStats(queuePlanConflictStats),
           ...(generalDirectiveMeta ?? {}),
           ...(generalDispatchMeta ?? {}),
         },
@@ -658,6 +1622,9 @@ export async function queuePlanExecutionAction(
         orderCount: planForExecution.orders.length,
         executionMode,
         expectedExecutionRequestId,
+        enqueueOutcome: result.enqueueOutcome,
+        queuePlanFailureStats: snapshotCategoryStats(queuePlanFailureStats),
+        queuePlanConflictStats: snapshotCategoryStats(queuePlanConflictStats),
         ...(generalDirectiveMeta ?? {}),
         ...(generalDispatchMeta ?? {}),
       },
@@ -1511,7 +2478,24 @@ function normalizeMatchText(value: string) {
 export async function advanceTickAction(includeWorld = true): Promise<WorldActionResponse> {
   const mutationLock = tryAcquireWorldMutationLock('advance_tick')
   if (!mutationLock) {
-    return buildWorldMutationBusyResponse(includeWorld)
+    const failed = buildWorldMutationBusyResponse(includeWorld)
+    const failureCategory: AdvanceTickFailureCategory = 'mutation_lock_busy'
+    bumpCategoryStats(advanceTickFailureStats, failureCategory)
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'advance_tick',
+      success: false,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      message: failed.message,
+      metadata: {
+        failureCategory,
+        advanceTickFailureStats: snapshotCategoryStats(advanceTickFailureStats),
+      },
+    })
+
+    return failed
   }
 
   try {
@@ -1568,12 +2552,14 @@ export async function advanceTickAction(includeWorld = true): Promise<WorldActio
     commitWorldState(advanceTick(worldState))
     refreshReplayArchive()
 
-    // V2 resource settlement: apply per-tick resource gains and costs for all V2 AI players
+    // V2 sync + resource settlement: align captured tile/city snapshot first, then settle and mirror back to world.
+    const v2Sync = syncV2StateWithWorld(worldState)
     settleResourcesForAllPlayers((tileId: string) => {
       const tile = worldState.map.tiles.find((t: { id: string; type: string; cityLevel?: number; resourceKind?: string }) => t.id === tileId)
       if (!tile) return undefined
       return { type: tile.type, cityLevel: tile.cityLevel, resourceKind: tile.resourceKind }
     })
+    syncWorldFactionResourcesFromV2(worldState)
 
     const reflectResult = await reflectWorldTick({
       before: previousWorld,
@@ -1633,10 +2619,30 @@ export async function advanceTickAction(includeWorld = true): Promise<WorldActio
         courtSeatCount: courtSession.seats.length,
         courtProposalCount: courtSession.proposals.length,
         courtResolutionPassed: passedResolutions.length,
+        v2AutoPlayersSynced: v2Sync.autoPlayers,
+        v2SyncedFactions: v2Sync.syncedFactions,
+        advanceTickFailureStats: snapshotCategoryStats(advanceTickFailureStats),
       },
     })
 
     return response
+  } catch (error) {
+    const failureCategory: AdvanceTickFailureCategory = 'runtime_error'
+    bumpCategoryStats(advanceTickFailureStats, failureCategory)
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'advance_tick',
+      success: false,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      message: error instanceof Error ? error.message : 'advance_tick failed',
+      metadata: {
+        failureCategory,
+        errorName: error instanceof Error ? error.name : 'UnknownError',
+        advanceTickFailureStats: snapshotCategoryStats(advanceTickFailureStats),
+      },
+    })
+    throw error
   } finally {
     mutationLock.release()
   }
@@ -2733,6 +3739,372 @@ function refreshReplayArchive() {
   replayArchive.clear()
   for (const entry of entries.slice(0, MAX_REPLAY_ARCHIVE)) {
     replayArchive.set(entry.requestId, entry)
+  }
+}
+
+function loadPersistedSaveSlots() {
+  saveSlotsLoaded = true
+  try {
+    if (!existsSync(SAVE_SLOTS_PERSIST_PATH)) {
+      return
+    }
+
+    const raw = readFileSync(SAVE_SLOTS_PERSIST_PATH, 'utf8')
+    const parsed = JSON.parse(raw) as unknown
+    const persistedSlots = extractPersistedSaveSlots(parsed)
+    if (persistedSlots.length === 0) {
+      return
+    }
+
+    for (const slot of persistedSlots) {
+      try {
+        const normalizedSlotId = normalizeSlotId(slot.record.slotId)
+        saveSlots.set(normalizedSlotId, {
+          record: {
+            ...slot.record,
+            slotId: normalizedSlotId,
+          },
+          world: structuredClone(slot.world),
+        })
+      } catch {
+        // drop malformed slot
+      }
+    }
+
+    trimSaveSlots()
+    saveSlotsRestoredSlotCount = saveSlots.size
+    saveSlotsLastRestoreAt = Date.now()
+    console.log(`[WorldService] restored ${saveSlots.size} save slots from disk`)
+  } catch {
+    const quarantinePath = `${SAVE_SLOTS_PERSIST_PATH}.corrupt.${Date.now()}`
+    try {
+      renameSync(SAVE_SLOTS_PERSIST_PATH, quarantinePath)
+      saveSlotsCorruptQuarantineCount += 1
+      saveSlotsLastCorruptQuarantineAt = Date.now()
+      console.warn(`[WorldService] save-slot persistence parse failed; quarantined -> ${quarantinePath}`)
+    } catch {
+      console.warn('[WorldService] save-slot persistence parse failed; quarantine skipped')
+    }
+  }
+}
+
+function extractPersistedSaveSlots(raw: unknown): SaveSlotState[] {
+  if (Array.isArray(raw)) {
+    return raw.filter(isSaveSlotStateLike)
+  }
+
+  if (typeof raw !== 'object' || raw === null) {
+    return []
+  }
+
+  const payload = raw as Partial<PersistedSaveSlotsPayload>
+  if (!Array.isArray(payload.slots)) {
+    return []
+  }
+
+  return payload.slots.filter(isSaveSlotStateLike)
+}
+
+function isSaveSlotStateLike(value: unknown): value is SaveSlotState {
+  if (typeof value !== 'object' || value === null) {
+    return false
+  }
+
+  const record = (value as { record?: unknown }).record
+  const world = (value as { world?: unknown }).world
+  if (typeof record !== 'object' || record === null || typeof world !== 'object' || world === null) {
+    return false
+  }
+
+  const slotId = (record as { slotId?: unknown }).slotId
+  const tick = (record as { tick?: unknown }).tick
+  const worldTick = (world as { tick?: unknown }).tick
+  return typeof slotId === 'string' && typeof tick === 'number' && typeof worldTick === 'number'
+}
+
+function isFsErrorCode(error: unknown, code: string) {
+  return typeof error === 'object' && error !== null && 'code' in error && (error as { code?: unknown }).code === code
+}
+
+function listSaveSlotsArchiveFiles() {
+  if (!existsSync(SAVE_SLOTS_ARCHIVE_DIR)) {
+    return [] as SaveSlotsArchiveFile[]
+  }
+
+  const entries = readdirSync(SAVE_SLOTS_ARCHIVE_DIR, { withFileTypes: true })
+  const files: SaveSlotsArchiveFile[] = []
+  for (const entry of entries) {
+    if (!entry.isFile()) {
+      continue
+    }
+
+    if (!entry.name.startsWith(`${SAVE_SLOTS_ARCHIVE_BASENAME}.`) || !entry.name.endsWith('.json.gz')) {
+      continue
+    }
+
+    const archivePath = join(SAVE_SLOTS_ARCHIVE_DIR, entry.name)
+    try {
+      const stats = statSync(archivePath)
+      files.push({ path: archivePath, mtimeMs: stats.mtimeMs, sizeBytes: stats.size })
+    } catch {
+      // ignore stat failure for partially-created archive file
+    }
+  }
+
+  files.sort((a, b) => b.mtimeMs - a.mtimeMs)
+  return files
+}
+
+function refreshSaveSlotsArchiveFileCount() {
+  try {
+    saveSlotsArchiveFileCount = listSaveSlotsArchiveFiles().length
+  } catch {
+    saveSlotsArchiveFileCount = 0
+  }
+}
+
+function pruneSaveSlotsArchiveFiles() {
+  const files = listSaveSlotsArchiveFiles()
+  if (files.length <= SAVE_SLOTS_ARCHIVE_MAX_FILES) {
+    saveSlotsArchiveFileCount = files.length
+    return
+  }
+
+  for (const item of files.slice(SAVE_SLOTS_ARCHIVE_MAX_FILES)) {
+    try {
+      unlinkSync(item.path)
+    } catch {
+      // ignore cleanup failure, surfaced by archiveFileCount drift on next health snapshot
+    }
+  }
+
+  refreshSaveSlotsArchiveFileCount()
+}
+
+async function archiveSaveSlotsPersistFileIfNeeded(fileSizeBytes: number) {
+  if (!SAVE_SLOTS_ARCHIVE_ON_SOFT_LIMIT || fileSizeBytes < SAVE_SLOTS_SOFT_LIMIT_BYTES) {
+    return
+  }
+
+  const stamp = new Date().toISOString().replace(/[:.]/g, '-')
+  const archivePath = join(SAVE_SLOTS_ARCHIVE_DIR, `${SAVE_SLOTS_ARCHIVE_BASENAME}.${stamp}.json.gz`)
+
+  try {
+    mkdirSync(SAVE_SLOTS_ARCHIVE_DIR, { recursive: true })
+    await pipeline(createReadStream(SAVE_SLOTS_PERSIST_PATH), createGzip({ level: 6 }), createWriteStream(archivePath))
+    saveSlotsArchiveSuccessCount += 1
+    saveSlotsLastArchiveAt = Date.now()
+    saveSlotsLastArchivePath = archivePath
+    pruneSaveSlotsArchiveFiles()
+  } catch (error) {
+    saveSlotsArchiveFailureCount += 1
+    saveSlotsLastArchiveErrorAt = Date.now()
+    console.warn(
+      '[WorldService] save-slot archive write failed:',
+      error instanceof Error ? error.message : error,
+    )
+  } finally {
+    refreshSaveSlotsArchiveFileCount()
+  }
+}
+
+function tryAcquireSaveSlotsPersistLock() {
+  mkdirSync(dirname(SAVE_SLOTS_LOCK_PATH), { recursive: true })
+
+  for (let attempt = 0; attempt < 2; attempt += 1) {
+    try {
+      const lockToken = `${process.pid}:${Date.now()}:${randomUUID()}`
+      const fd = openSync(SAVE_SLOTS_LOCK_PATH, 'wx')
+      writeFileSync(fd, lockToken, 'utf8')
+      closeSync(fd)
+      return lockToken
+    } catch (error) {
+      if (!isFsErrorCode(error, 'EEXIST')) {
+        saveSlotsPersistLockFailureCount += 1
+        console.warn(
+          '[WorldService] save-slot lock acquire failed:',
+          error instanceof Error ? error.message : error,
+        )
+        return null
+      }
+
+      const now = Date.now()
+      let lockAgeMs = 0
+      try {
+        const stats = statSync(SAVE_SLOTS_LOCK_PATH)
+        lockAgeMs = Math.max(0, now - stats.mtimeMs)
+      } catch (statError) {
+        if (isFsErrorCode(statError, 'ENOENT')) {
+          continue
+        }
+        saveSlotsPersistLockFailureCount += 1
+        console.warn(
+          '[WorldService] save-slot lock stat failed:',
+          statError instanceof Error ? statError.message : statError,
+        )
+        return null
+      }
+
+      if (lockAgeMs < SAVE_SLOTS_LOCK_STALE_MS) {
+        saveSlotsPersistLockContentionCount += 1
+        return null
+      }
+
+      const stalePath = `${SAVE_SLOTS_LOCK_PATH}.stale.${now}`
+      try {
+        renameSync(SAVE_SLOTS_LOCK_PATH, stalePath)
+        saveSlotsPersistLockStealCount += 1
+      } catch (renameError) {
+        if (isFsErrorCode(renameError, 'ENOENT')) {
+          continue
+        }
+        saveSlotsPersistLockFailureCount += 1
+        console.warn(
+          '[WorldService] save-slot stale lock quarantine failed:',
+          renameError instanceof Error ? renameError.message : renameError,
+        )
+        return null
+      }
+    }
+  }
+
+  saveSlotsPersistLockContentionCount += 1
+  return null
+}
+
+function releaseSaveSlotsPersistLock(lockToken: string | null) {
+  if (!lockToken) {
+    return
+  }
+
+  try {
+    if (!existsSync(SAVE_SLOTS_LOCK_PATH)) {
+      return
+    }
+
+    const currentToken = readFileSync(SAVE_SLOTS_LOCK_PATH, 'utf8').trim()
+    if (currentToken !== lockToken) {
+      return
+    }
+  } catch (error) {
+    if (!isFsErrorCode(error, 'ENOENT')) {
+      saveSlotsPersistLockFailureCount += 1
+      console.warn(
+        '[WorldService] save-slot lock verify failed:',
+        error instanceof Error ? error.message : error,
+      )
+    }
+    return
+  }
+
+  try {
+    unlinkSync(SAVE_SLOTS_LOCK_PATH)
+  } catch (error) {
+    if (!isFsErrorCode(error, 'ENOENT')) {
+      saveSlotsPersistLockFailureCount += 1
+      console.warn(
+        '[WorldService] save-slot lock release failed:',
+        error instanceof Error ? error.message : error,
+      )
+    }
+  }
+}
+
+function scheduleSaveSlotsPersist() {
+  saveSlotsPersistDirty = true
+  if (saveSlotsPersistTimer || saveSlotsPersistInFlight) {
+    return
+  }
+
+  saveSlotsPersistTimer = setTimeout(() => {
+    saveSlotsPersistTimer = null
+    void persistSaveSlotsNow()
+  }, SAVE_SLOTS_PERSIST_DEBOUNCE_MS)
+}
+
+function buildSaveSlotsPersistPayload(): PersistedSaveSlotsPayload {
+  const slots = Array.from(saveSlots.values()).sort((a, b) =>
+    a.record.savedAt < b.record.savedAt ? 1 : a.record.savedAt > b.record.savedAt ? -1 : 0,
+  )
+
+  return {
+    version: SAVE_SLOTS_PERSIST_VERSION,
+    savedAt: Date.now(),
+    slots: structuredClone(slots),
+  }
+}
+
+async function persistSaveSlotsNow() {
+  if (!saveSlotsPersistDirty || saveSlotsPersistInFlight) {
+    return
+  }
+
+  saveSlotsPersistDirty = false
+  saveSlotsPersistInFlight = true
+  const payload = buildSaveSlotsPersistPayload()
+  const serializedPayload = JSON.stringify(payload, null, 2)
+  const dir = dirname(SAVE_SLOTS_PERSIST_PATH)
+  const tempPath = `${SAVE_SLOTS_PERSIST_PATH}.tmp`
+  const lockToken = tryAcquireSaveSlotsPersistLock()
+
+  try {
+    if (!lockToken) {
+      saveSlotsPersistDirty = true
+      return
+    }
+
+    mkdirSync(dir, { recursive: true })
+    await writeFile(tempPath, serializedPayload, 'utf8')
+    renameSync(tempPath, SAVE_SLOTS_PERSIST_PATH)
+    saveSlotsPersistSuccessCount += 1
+    saveSlotsLastPersistAt = Date.now()
+    await archiveSaveSlotsPersistFileIfNeeded(Buffer.byteLength(serializedPayload, 'utf8'))
+  } catch (error) {
+    saveSlotsPersistDirty = true
+    saveSlotsPersistFailureCount += 1
+    saveSlotsLastPersistErrorAt = Date.now()
+    try {
+      if (existsSync(tempPath)) {
+        renameSync(tempPath, `${tempPath}.failed.${Date.now()}`)
+      }
+    } catch {
+      // ignore temp cleanup failures
+    }
+    console.warn(
+      '[WorldService] save-slot persistence write failed:',
+      error instanceof Error ? error.message : error,
+    )
+  } finally {
+    releaseSaveSlotsPersistLock(lockToken)
+    saveSlotsPersistInFlight = false
+    if (saveSlotsPersistDirty && !saveSlotsPersistTimer) {
+      saveSlotsPersistTimer = setTimeout(() => {
+        saveSlotsPersistTimer = null
+        void persistSaveSlotsNow()
+      }, SAVE_SLOTS_PERSIST_DEBOUNCE_MS)
+    }
+  }
+}
+
+export async function flushSaveSlotsPersist() {
+  if (saveSlotsPersistTimer) {
+    clearTimeout(saveSlotsPersistTimer)
+    saveSlotsPersistTimer = null
+  }
+
+  if (saveSlotsPersistDirty && !saveSlotsPersistInFlight) {
+    await persistSaveSlotsNow()
+  }
+
+  while (saveSlotsPersistInFlight) {
+    await new Promise((resolve) => setTimeout(resolve, 20))
+  }
+
+  if (saveSlotsPersistDirty) {
+    await persistSaveSlotsNow()
+    while (saveSlotsPersistInFlight) {
+      await new Promise((resolve) => setTimeout(resolve, 20))
+    }
   }
 }
 

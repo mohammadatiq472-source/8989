@@ -1,7 +1,7 @@
-# AI Native Alliance War Backend (Unity First)
+# AI Native Alliance War Backend (Godot First)
 
-This repository is now backend-only. The React/Vite web client has been removed.
-Unity is the primary front-end target.
+This repository uses a Node.js authoritative backend + Godot client.
+Legacy compatibility routes and legacy client artifacts have been removed.
 
 ## Runtime Commands
 
@@ -13,15 +13,7 @@ Unity is the primary front-end target.
 - Session manager test: `npm run test:session:manager`
 - World mutation lock test: `npm run test:world:mutation-lock`
 
-## Unity-First API Aliases
-
-The backend keeps `/api/session/*` and also exposes Unity-friendly aliases:
-
-- `GET /api/unity/runtime`
-- `POST /api/unity/join`
-- `POST /api/unity/heartbeat`
-- `POST /api/unity/leave`
-- `POST /api/unity/autonomy`
+## Primary API Surface
 
 Short-term control policy:
 
@@ -30,7 +22,10 @@ Short-term control policy:
 
 ## Key Integration Docs
 
-See `docs/unity/` for endpoint contracts, C# DTO/client skeletons, and call-order checklist.
+- AI quick navigation index: `docs/AI_QUICK_NAV_INDEX_2026_04_10.md`
+- Current execution baseline: `docs/AGENTS_EXECUTION_CURRENT_2026_04.md`
+- Godot client runtime chain: `godot-client/README.md`
+- Backend runtime routes: `server/src/app.ts`
 
 ## GitHub Auth Hardening (A/B Machines)
 

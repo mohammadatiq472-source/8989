@@ -4,7 +4,7 @@
 
 输入: tmp/extracted_cfg/split/cfg_map_world.json (47表, 6.6MB)
 输出:
-  - My project/Assets/StreamingAssets/map_regions.json  — Unity可用的结构化区划数据
+  - tmp/map_data/map_regions.json                       — 引擎无关结构化区划数据
   - tmp/map_all_provinces.svg                           — 可视化验证图
 
 坐标系统:
@@ -27,7 +27,7 @@ from pathlib import Path
 # ── 路径 ──────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
 CFG_MAP = ROOT / "tmp" / "extracted_cfg" / "split" / "cfg_map_world.json"
-OUT_JSON = ROOT / "My project" / "Assets" / "StreamingAssets" / "map_regions.json"
+OUT_JSON = ROOT / "tmp" / "map_data" / "map_regions.json"
 OUT_SVG  = ROOT / "tmp" / "map_all_provinces.svg"
 
 # ── 雍州拆分策略 ──────────────────────────────────────
@@ -526,8 +526,8 @@ def main():
     print("\n=== 完成 ===")
     print("下一步:")
     print("  1. 在浏览器中打开 tmp/map_all_provinces.svg 验证地图布局")
-    print("  2. Unity C# 读取 StreamingAssets/map_regions.json")
-    print("  3. 可参考 generate_youzhou_map_v4.py 为每州生成精细terrainGrid")
+    print("  2. 后续地图管线读取 tmp/map_data/map_regions.json")
+    print("  3. 如需逐格郡归属，继续执行 scripts/generate_tile_regions.py")
 
 
 if __name__ == "__main__":

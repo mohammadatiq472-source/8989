@@ -1,0 +1,1384 @@
+{
+  "schemaVersion": 1,
+  "theme": "slgclient",
+  "importedAt": "2026-04-11T04:21:15+00:00",
+  "framesRoot": "res://assets/themes/slgclient/current/units/qibing_frames",
+  "directions": {
+    "r": [
+      {
+        "name": "map_qibing_0_0.png",
+        "direction": "r",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 2,
+          "y": 242,
+          "w": 96,
+          "h": 60,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_00_map_qibing_0_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_1.png",
+        "direction": "r",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 198,
+          "y": 242,
+          "w": 96,
+          "h": 56,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_01_map_qibing_0_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_2.png",
+        "direction": "r",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 2,
+          "y": 514,
+          "w": 94,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_02_map_qibing_0_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_3.png",
+        "direction": "r",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 2,
+          "y": 822,
+          "w": 92,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_03_map_qibing_0_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_4.png",
+        "direction": "r",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 96,
+          "y": 814,
+          "w": 92,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_04_map_qibing_0_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_5.png",
+        "direction": "r",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 2,
+          "y": 762,
+          "w": 92,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_05_map_qibing_0_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_6.png",
+        "direction": "r",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 96,
+          "y": 754,
+          "w": 92,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_06_map_qibing_0_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_7.png",
+        "direction": "r",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 98,
+          "y": 504,
+          "w": 94,
+          "h": 60,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_07_map_qibing_0_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_8.png",
+        "direction": "r",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 196,
+          "y": 340,
+          "w": 94,
+          "h": 58,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_08_map_qibing_0_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_0_9.png",
+        "direction": "r",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 194,
+          "y": 436,
+          "w": 94,
+          "h": 60,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/r_09_map_qibing_0_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "ru": [
+      {
+        "name": "map_qibing_315_0.png",
+        "direction": "ru",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 84,
+          "y": 1362,
+          "w": 78,
+          "h": 76,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_00_map_qibing_315_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_1.png",
+        "direction": "ru",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 84,
+          "y": 1220,
+          "w": 80,
+          "h": 76,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_01_map_qibing_315_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_2.png",
+        "direction": "ru",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 178,
+          "y": 1050,
+          "w": 82,
+          "h": 76,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_02_map_qibing_315_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_3.png",
+        "direction": "ru",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 86,
+          "y": 1062,
+          "w": 82,
+          "h": 74,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_03_map_qibing_315_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_4.png",
+        "direction": "ru",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1062,
+          "w": 82,
+          "h": 74,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_04_map_qibing_315_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_5.png",
+        "direction": "ru",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1198,
+          "w": 80,
+          "h": 80,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_05_map_qibing_315_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_6.png",
+        "direction": "ru",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 2,
+          "y": 982,
+          "w": 82,
+          "h": 78,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_06_map_qibing_315_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_7.png",
+        "direction": "ru",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 92,
+          "y": 980,
+          "w": 80,
+          "h": 84,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_07_map_qibing_315_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_8.png",
+        "direction": "ru",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 86,
+          "y": 1138,
+          "w": 80,
+          "h": 80,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_08_map_qibing_315_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_315_9.png",
+        "direction": "ru",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 168,
+          "y": 1202,
+          "w": 80,
+          "h": 78,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ru_09_map_qibing_315_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "u": [
+      {
+        "name": "qibing_270_0.png",
+        "direction": "u",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 2,
+          "y": 574,
+          "w": 36,
+          "h": 94,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_00_qibing_270_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_1.png",
+        "direction": "u",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 98,
+          "y": 566,
+          "w": 36,
+          "h": 94,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_01_qibing_270_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_2.png",
+        "direction": "u",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 2,
+          "y": 882,
+          "w": 36,
+          "h": 92,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_02_qibing_270_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_3.png",
+        "direction": "u",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 96,
+          "y": 874,
+          "w": 36,
+          "h": 92,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_03_qibing_270_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_4.png",
+        "direction": "u",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 100,
+          "y": 254,
+          "w": 36,
+          "h": 96,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_04_qibing_270_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_5.png",
+        "direction": "u",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 2,
+          "y": 2,
+          "w": 38,
+          "h": 104,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_05_qibing_270_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_6.png",
+        "direction": "u",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 108,
+          "y": 40,
+          "w": 36,
+          "h": 102,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_06_qibing_270_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_7.png",
+        "direction": "u",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 108,
+          "y": 2,
+          "w": 36,
+          "h": 102,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_07_qibing_270_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_8.png",
+        "direction": "u",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 104,
+          "y": 78,
+          "w": 36,
+          "h": 100,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_08_qibing_270_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "qibing_270_9.png",
+        "direction": "u",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 212,
+          "y": 2,
+          "w": 38,
+          "h": 100,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/u_09_qibing_270_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "lu": [
+      {
+        "name": "map_qibing_225_0.png",
+        "direction": "lu",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 96,
+          "y": 912,
+          "w": 66,
+          "h": 88,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_00_map_qibing_225_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_1.png",
+        "direction": "lu",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 192,
+          "y": 626,
+          "w": 62,
+          "h": 90,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_01_map_qibing_225_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_2.png",
+        "direction": "lu",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 2,
+          "y": 920,
+          "w": 60,
+          "h": 88,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_02_map_qibing_225_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_3.png",
+        "direction": "lu",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 194,
+          "y": 532,
+          "w": 60,
+          "h": 92,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_03_map_qibing_225_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_4.png",
+        "direction": "lu",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 2,
+          "y": 448,
+          "w": 64,
+          "h": 94,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_04_map_qibing_225_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_5.png",
+        "direction": "lu",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 2,
+          "y": 42,
+          "w": 64,
+          "h": 100,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_05_map_qibing_225_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_6.png",
+        "direction": "lu",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 2,
+          "y": 108,
+          "w": 64,
+          "h": 98,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_06_map_qibing_225_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_7.png",
+        "direction": "lu",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 100,
+          "y": 188,
+          "w": 64,
+          "h": 96,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_07_map_qibing_225_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_8.png",
+        "direction": "lu",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 98,
+          "y": 438,
+          "w": 64,
+          "h": 94,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_08_map_qibing_225_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_225_9.png",
+        "direction": "lu",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 190,
+          "y": 718,
+          "w": 64,
+          "h": 92,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/lu_09_map_qibing_225_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "l": [
+      {
+        "name": "map_qibing_180_0.png",
+        "direction": "l",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 2,
+          "y": 174,
+          "w": 96,
+          "h": 66,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_00_map_qibing_180_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_1.png",
+        "direction": "l",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 102,
+          "y": 116,
+          "w": 96,
+          "h": 70,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_01_map_qibing_180_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_2.png",
+        "direction": "l",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 100,
+          "y": 292,
+          "w": 94,
+          "h": 74,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_02_map_qibing_180_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_3.png",
+        "direction": "l",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 2,
+          "y": 612,
+          "w": 92,
+          "h": 74,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_03_map_qibing_180_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_4.png",
+        "direction": "l",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 98,
+          "y": 604,
+          "w": 92,
+          "h": 74,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_04_map_qibing_180_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_5.png",
+        "direction": "l",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 2,
+          "y": 688,
+          "w": 92,
+          "h": 72,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_05_map_qibing_180_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_6.png",
+        "direction": "l",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 96,
+          "y": 680,
+          "w": 92,
+          "h": 72,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_06_map_qibing_180_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_7.png",
+        "direction": "l",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 2,
+          "y": 304,
+          "w": 94,
+          "h": 72,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_07_map_qibing_180_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_8.png",
+        "direction": "l",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 2,
+          "y": 378,
+          "w": 94,
+          "h": 68,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_08_map_qibing_180_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_180_9.png",
+        "direction": "l",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 98,
+          "y": 368,
+          "w": 94,
+          "h": 68,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/l_09_map_qibing_180_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "ld": [
+      {
+        "name": "map_qibing_135_0.png",
+        "direction": "ld",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1416,
+          "w": 78,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_00_map_qibing_135_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_1.png",
+        "direction": "ld",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 166,
+          "y": 1350,
+          "w": 80,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_01_map_qibing_135_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_2.png",
+        "direction": "ld",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1138,
+          "w": 82,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_02_map_qibing_135_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_3.png",
+        "direction": "ld",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 190,
+          "y": 812,
+          "w": 82,
+          "h": 64,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_03_map_qibing_135_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_4.png",
+        "direction": "ld",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 170,
+          "y": 1134,
+          "w": 82,
+          "h": 66,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_04_map_qibing_135_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_5.png",
+        "direction": "ld",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 186,
+          "y": 968,
+          "w": 80,
+          "h": 68,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_05_map_qibing_135_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_6.png",
+        "direction": "ld",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1280,
+          "w": 80,
+          "h": 70,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_06_map_qibing_135_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_7.png",
+        "direction": "ld",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 166,
+          "y": 1282,
+          "w": 80,
+          "h": 66,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_07_map_qibing_135_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_8.png",
+        "direction": "ld",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1352,
+          "w": 80,
+          "h": 62,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_08_map_qibing_135_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_135_9.png",
+        "direction": "ld",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 84,
+          "y": 1298,
+          "w": 80,
+          "h": 62,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/ld_09_map_qibing_135_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "d": [
+      {
+        "name": "map_qibing_90_0.png",
+        "direction": "d",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1516,
+          "w": 38,
+          "h": 68,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_00_map_qibing_90_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_1.png",
+        "direction": "d",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 70,
+          "y": 1582,
+          "w": 38,
+          "h": 66,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_01_map_qibing_90_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_2.png",
+        "direction": "d",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 204,
+          "y": 1620,
+          "w": 36,
+          "h": 62,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_02_map_qibing_90_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_3.png",
+        "direction": "d",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 208,
+          "y": 1552,
+          "w": 36,
+          "h": 66,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_03_map_qibing_90_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_4.png",
+        "direction": "d",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 78,
+          "y": 1478,
+          "w": 36,
+          "h": 72,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_04_map_qibing_90_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_5.png",
+        "direction": "d",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1476,
+          "w": 38,
+          "h": 74,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_05_map_qibing_90_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_6.png",
+        "direction": "d",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 82,
+          "y": 1440,
+          "w": 36,
+          "h": 76,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_06_map_qibing_90_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_7.png",
+        "direction": "d",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 164,
+          "y": 1410,
+          "w": 36,
+          "h": 76,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_07_map_qibing_90_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_8.png",
+        "direction": "d",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 206,
+          "y": 104,
+          "w": 38,
+          "h": 74,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_08_map_qibing_90_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_90_9.png",
+        "direction": "d",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 160,
+          "y": 1448,
+          "w": 36,
+          "h": 72,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/d_09_map_qibing_90_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ],
+    "rd": [
+      {
+        "name": "map_qibing_45_0.png",
+        "direction": "rd",
+        "sequence": 0,
+        "sourceFrame": {
+          "x": 140,
+          "y": 1552,
+          "w": 66,
+          "h": 62,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_00_map_qibing_45_0.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_1.png",
+        "direction": "rd",
+        "sequence": 1,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1622,
+          "w": 62,
+          "h": 58,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_01_map_qibing_45_1.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_2.png",
+        "direction": "rd",
+        "sequence": 2,
+        "sourceFrame": {
+          "x": 200,
+          "y": 180,
+          "w": 60,
+          "h": 54,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_02_map_qibing_45_2.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_3.png",
+        "direction": "rd",
+        "sequence": 3,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1682,
+          "w": 60,
+          "h": 60,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_03_map_qibing_45_3.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_4.png",
+        "direction": "rd",
+        "sequence": 4,
+        "sourceFrame": {
+          "x": 66,
+          "y": 1622,
+          "w": 64,
+          "h": 62,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_04_map_qibing_45_4.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_5.png",
+        "direction": "rd",
+        "sequence": 5,
+        "sourceFrame": {
+          "x": 138,
+          "y": 1616,
+          "w": 64,
+          "h": 64,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_05_map_qibing_45_5.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_6.png",
+        "direction": "rd",
+        "sequence": 6,
+        "sourceFrame": {
+          "x": 2,
+          "y": 1556,
+          "w": 64,
+          "h": 66,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_06_map_qibing_45_6.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_7.png",
+        "direction": "rd",
+        "sequence": 7,
+        "sourceFrame": {
+          "x": 190,
+          "y": 896,
+          "w": 64,
+          "h": 70,
+          "rotated": false
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_07_map_qibing_45_7.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_8.png",
+        "direction": "rd",
+        "sequence": 8,
+        "sourceFrame": {
+          "x": 152,
+          "y": 1486,
+          "w": 64,
+          "h": 68,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_08_map_qibing_45_8.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      },
+      {
+        "name": "map_qibing_45_9.png",
+        "direction": "rd",
+        "sequence": 9,
+        "sourceFrame": {
+          "x": 72,
+          "y": 1516,
+          "w": 64,
+          "h": 66,
+          "rotated": true
+        },
+        "texturePath": "res://assets/themes/slgclient/current/units/qibing_frames/rd_09_map_qibing_45_9.png",
+        "size": {
+          "w": 160,
+          "h": 120
+        }
+      }
+    ]
+  }
+}

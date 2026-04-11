@@ -1,0 +1,91 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/observability_panel.gd" id="1_observability_panel"]
+
+[node name="ObservabilityPanel" type="CanvasLayer"]
+script = ExtResource("1_observability_panel")
+
+[node name="Panel" type="PanelContainer" parent="."]
+offset_left = 1220.0
+offset_top = 8.0
+offset_right = 1910.0
+offset_bottom = 432.0
+
+[node name="Margin" type="MarginContainer" parent="Panel"]
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="Content" type="VBoxContainer" parent="Panel/Margin"]
+theme_override_constants/separation = 6
+
+[node name="Title" type="Label" parent="Panel/Margin/Content"]
+theme_override_font_sizes/font_size = 14
+text = "Observability"
+
+[node name="WsSection" type="PanelContainer" parent="Panel/Margin/Content"]
+
+[node name="WsMargin" type="MarginContainer" parent="Panel/Margin/Content/WsSection"]
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="WsContent" type="VBoxContainer" parent="Panel/Margin/Content/WsSection/WsMargin"]
+theme_override_constants/separation = 4
+
+[node name="WsHeader" type="HBoxContainer" parent="Panel/Margin/Content/WsSection/WsMargin/WsContent"]
+theme_override_constants/separation = 6
+
+[node name="WsStateDot" type="ColorRect" parent="Panel/Margin/Content/WsSection/WsMargin/WsContent/WsHeader"]
+custom_minimum_size = Vector2(10, 10)
+color = Color(0.95, 0.72, 0.2, 1)
+
+[node name="WsTitle" type="Label" parent="Panel/Margin/Content/WsSection/WsMargin/WsContent/WsHeader"]
+theme_override_font_sizes/font_size = 13
+text = "WS: WAITING"
+
+[node name="WsInfo" type="Label" parent="Panel/Margin/Content/WsSection/WsMargin/WsContent"]
+theme_override_font_sizes/font_size = 13
+text = "WS | waiting..."
+autowrap_mode = 3
+
+[node name="EventsSection" type="PanelContainer" parent="Panel/Margin/Content"]
+
+[node name="EventsMargin" type="MarginContainer" parent="Panel/Margin/Content/EventsSection"]
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="EventsInfo" type="Label" parent="Panel/Margin/Content/EventsSection/EventsMargin"]
+theme_override_font_sizes/font_size = 13
+text = "Events | waiting..."
+autowrap_mode = 3
+
+[node name="RuntimeSection" type="PanelContainer" parent="Panel/Margin/Content"]
+
+[node name="RuntimeMargin" type="MarginContainer" parent="Panel/Margin/Content/RuntimeSection"]
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="RuntimeInfo" type="Label" parent="Panel/Margin/Content/RuntimeSection/RuntimeMargin"]
+theme_override_font_sizes/font_size = 13
+text = "Runtime | waiting..."
+autowrap_mode = 3
+
+[node name="CivilMemorySection" type="PanelContainer" parent="Panel/Margin/Content"]
+
+[node name="CivilMemoryMargin" type="MarginContainer" parent="Panel/Margin/Content/CivilMemorySection"]
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 6
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 6
+
+[node name="CivilMemoryInfo" type="Label" parent="Panel/Margin/Content/CivilMemorySection/CivilMemoryMargin"]
+theme_override_font_sizes/font_size = 13
+text = "CivilMemory | waiting..."
+autowrap_mode = 3

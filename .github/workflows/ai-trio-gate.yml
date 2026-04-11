@@ -1,0 +1,233 @@
+name: ai-trio-gate
+
+on:
+  pull_request:
+  push:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  ai-trio-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Run gate trio
+        id: gate_trio
+        continue-on-error: true
+        run: npm run gate:ai:trio
+
+      - name: Render failure summary payload
+        if: always()
+        run: |
+          npm run gate:ai:trio:failure-summary -- --summary-path tmp/gates/gate-trio/gate_trio_summary_latest.json --output tmp/gates/gate-trio/gate_trio_failure_summary.md --pr-auto-prompt-output tmp/gates/gate-trio/gate_trio_pr_auto_prompt.md --ci-outcome "${{ steps.gate_trio.outcome }}"
+
+      - name: Resolve PR auto-comment gate
+        if: always()
+        id: pr_auto_comment_gate
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_IS_FORK: ${{ github.event.pull_request.head.repo.fork || false }}
+          PR_BODY: ${{ github.event.pull_request.body || '' }}
+        run: |
+          enabled=true
+          reason=enabled
+          downgrade_hint='none'
+
+          if [[ "$EVENT_NAME" != "pull_request" ]]; then
+            enabled=false
+            reason=not_pull_request
+            downgrade_hint='not pull_request event; fallback to Step Summary + artifacts only.'
+          elif [[ "$PR_IS_FORK" == "true" ]]; then
+            enabled=false
+            reason=fork_permission_restricted
+            downgrade_hint='fork PR detected; potential comment permission restriction, fallback to manual copy/paste path.'
+          elif [[ ! -s tmp/gates/gate-trio/gate_trio_pr_auto_prompt.md ]]; then
+            enabled=false
+            reason=no_high_risk_prompt
+            downgrade_hint='no high-risk prompt generated for this run.'
+          elif printf '%s' "$PR_BODY" | grep -Eqi 'ai-trio-auto-comment:[[:space:]]*manual'; then
+            enabled=false
+            reason=manual_override
+            downgrade_hint='manual override detected in PR body.'
+          fi
+
+          echo "enabled=$enabled" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+          echo "downgrade_hint=$downgrade_hint" >> "$GITHUB_OUTPUT"
+          {
+            echo ""
+            echo "### PR Auto Comment Gate"
+            echo "- enabled: \`$enabled\`"
+            echo "- reason: \`$reason\`"
+            echo "- downgradeHint: \`$downgrade_hint\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Post PR auto comment (failure/high-risk)
+        if: always() && steps.pr_auto_comment_gate.outputs.enabled == 'true'
+        id: post_pr_auto_comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('node:fs');
+            const marker = '<!-- ai-trio-gate:auto-comment:failure-high-risk -->';
+            const bodyPath = 'tmp/gates/gate-trio/gate_trio_pr_auto_prompt.md';
+            const body = fs.readFileSync(bodyPath, 'utf8').trim();
+            if (!body) {
+              core.info('No PR auto prompt payload, skip comment publish.');
+              core.setOutput('status', 'skipped');
+              core.setOutput('reason', 'no_payload');
+              return;
+            }
+
+            const pullNumber = context.payload.pull_request?.number;
+            if (!pullNumber) {
+              core.info('No pull_request context, skip comment publish.');
+              core.setOutput('status', 'skipped');
+              core.setOutput('reason', 'missing_pull_request_context');
+              return;
+            }
+
+            try {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pullNumber,
+                per_page: 100,
+              });
+              const existing = comments.find(
+                (comment) =>
+                  comment.user?.type === 'Bot' &&
+                  typeof comment.body === 'string' &&
+                  comment.body.includes(marker),
+              );
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  comment_id: existing.id,
+                  body,
+                });
+                core.setOutput('status', 'updated');
+                core.setOutput('reason', 'updated_existing');
+                core.setOutput('comment_id', String(existing.id));
+                core.info(`Updated existing PR auto comment id=${existing.id}.`);
+                return;
+              }
+
+              const created = await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: pullNumber,
+                body,
+              });
+              core.setOutput('status', 'posted');
+              core.setOutput('reason', 'created_new');
+              core.setOutput('comment_id', String(created.data.id));
+              core.info('Created PR auto comment.');
+            } catch (error) {
+              const status = typeof error === 'object' && error && 'status' in error ? Number(error.status) : 0;
+              const message = error instanceof Error ? error.message : String(error);
+              const reason = status === 403 ? 'permission_denied' : 'api_error';
+              core.setOutput('status', 'failed');
+              core.setOutput('reason', reason);
+              core.warning(`Failed to publish PR auto comment: ${message}`);
+            }
+
+      - name: Reconcile PR auto comment result
+        if: always()
+        id: pr_auto_comment_reconcile
+        env:
+          GATE_ENABLED: ${{ steps.pr_auto_comment_gate.outputs.enabled }}
+          GATE_REASON: ${{ steps.pr_auto_comment_gate.outputs.reason }}
+          GATE_DOWNGRADE_HINT: ${{ steps.pr_auto_comment_gate.outputs.downgrade_hint }}
+          PUBLISH_STATUS: ${{ steps.post_pr_auto_comment.outputs.status }}
+          PUBLISH_REASON: ${{ steps.post_pr_auto_comment.outputs.reason }}
+          PUBLISH_COMMENT_ID: ${{ steps.post_pr_auto_comment.outputs.comment_id }}
+        run: |
+          status=unknown
+          reason=unknown
+          comment_id=
+          downgrade_hint="$GATE_DOWNGRADE_HINT"
+
+          if [[ "$GATE_ENABLED" == "true" ]]; then
+            status="${PUBLISH_STATUS:-failed}"
+            reason="${PUBLISH_REASON:-workflow_step_not_run}"
+            comment_id="${PUBLISH_COMMENT_ID:-}"
+            if [[ -z "$downgrade_hint" || "$downgrade_hint" == "none" ]]; then
+              downgrade_hint='auto comment publish attempted.'
+            fi
+          else
+            status=skipped
+            reason="${GATE_REASON:-gate_blocked}"
+          fi
+
+          mkdir -p tmp/gates/gate-trio
+          cat > tmp/gates/gate-trio/gate_trio_pr_auto_comment_reconcile_latest.json <<EOF
+          {
+            "status": "${status}",
+            "reason": "${reason}",
+            "commentId": "${comment_id}",
+            "downgradeHint": "${downgrade_hint}"
+          }
+          EOF
+
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          echo "reason=$reason" >> "$GITHUB_OUTPUT"
+          echo "comment_id=$comment_id" >> "$GITHUB_OUTPUT"
+          echo "downgrade_hint=$downgrade_hint" >> "$GITHUB_OUTPUT"
+          {
+            echo ""
+            echo "### PR Auto Comment Reconcile"
+            echo "- status: \`$status\`"
+            echo "- reason: \`$reason\`"
+            echo "- commentId: \`${comment_id:-n/a}\`"
+            echo "- downgradeHint: \`$downgrade_hint\`"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Render failure summary template
+        if: always()
+        run: |
+          npm run gate:ai:trio:failure-summary -- --summary-path tmp/gates/gate-trio/gate_trio_summary_latest.json --output tmp/gates/gate-trio/gate_trio_failure_summary.md --pr-auto-prompt-output tmp/gates/gate-trio/gate_trio_pr_auto_prompt.md --ci-outcome "${{ steps.gate_trio.outcome }}" --pr-auto-comment-status "${{ steps.pr_auto_comment_reconcile.outputs.status }}" --pr-auto-comment-reason "${{ steps.pr_auto_comment_reconcile.outputs.reason }}"
+          cat tmp/gates/gate-trio/gate_trio_failure_summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload gate trio artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-trio-gate-artifacts
+          if-no-files-found: warn
+          path: |
+            tmp/gates/gate-trio/gate_trio_summary_latest.json
+            tmp/gates/gate-trio/gate_trio_failure_summary.md
+            tmp/gates/gate-trio/gate_trio_pr_auto_prompt.md
+            tmp/gates/gate-trio/gate_trio_pr_auto_comment_reconcile_latest.json
+            tmp/gates/ai-nightly-acceptance/ai_nightly_acceptance_latest.json
+            tmp/gates/session-security-gate/session_security_gate_latest.json
+            tmp/gates/ai-mainline-stability/ai_mainline_stability_latest.json
+            tmp/gates/ai_ops_template_replay_latest.json
+            tmp/gates/save-slots-restore-apply-gate/save_slots_restore_apply_gate_latest.json
+
+      - name: Fail on trio gate failure
+        if: steps.gate_trio.outcome == 'failure'
+        run: exit 1

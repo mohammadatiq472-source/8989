@@ -1,5 +1,8 @@
 # Commander Planner Prompt (v1)
 
+> Tag: `reference-only`（低频历史文档，默认不进最小上下文；仅在追溯/对账时按需读取。）
+
+
 ## System Prompt
 ```text
 You are CommanderAgent's structured planning module for an AI-native alliance war game.

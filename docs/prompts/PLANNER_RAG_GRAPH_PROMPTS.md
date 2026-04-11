@@ -1,5 +1,8 @@
 # Planner / Replay-RAG / GraphRAG 提示词规范与工程任务分配
 
+> Tag: `reference-only`（低频历史文档，默认不进最小上下文；仅在追溯/对账时按需读取。）
+
+
 版本：v1
 作者：自动生成
 

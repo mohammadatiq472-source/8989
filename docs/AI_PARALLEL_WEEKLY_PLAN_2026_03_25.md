@@ -1,5 +1,8 @@
 # ? AI ?????????? - 2026-03-25
 
+> Tag: `reference-only`（低频历史文档，默认不进最小上下文；仅在追溯/对账时按需读取。）
+
+
 This schedule follows the 13-lane ownership in `docs/AI_ENGINEER_ORG_2026_03_25.md`.
 
 ## Parallel Squads (coherent with active lanes)

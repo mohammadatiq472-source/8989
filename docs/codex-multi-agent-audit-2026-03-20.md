@@ -1,5 +1,8 @@
 # Codex Multi-Agent Audit (2026-03-20)
 
+> Tag: `reference-only`（低频历史文档，默认不进最小上下文；仅在追溯/对账时按需读取。）
+
+
 ## Scope
 - `server/src` (routes, world pipeline, agent chain, gateway)
 - `shared/contracts` + `shared/schemas` + `shared/domain`

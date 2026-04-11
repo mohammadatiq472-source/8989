@@ -1,9 +1,31 @@
-import { mkdirSync, readFileSync, statSync, writeFileSync } from 'node:fs'
+import { mkdirSync, readFileSync, readdirSync, rmSync, statSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 type GateCheck = {
   name?: string
   passed?: boolean
+}
+
+type FreshnessSourceKey = 'sessionSecurity' | 'mainline' | 'nightly' | 'templateReplay' | 'saveSlotsRestoreApply'
+type FreshnessSeverity = 'fresh' | 'stale_notice' | 'stale_warning' | 'stale_high' | 'stale_critical' | 'unknown'
+
+type FreshnessTriageItem = {
+  report: FreshnessSourceKey
+  checkName: string
+  runId?: string
+  generatedAt?: string
+  ageSec: number | null
+  maxAgeSec: number
+  overdueSec: number | null
+  passed: boolean
+  stale: boolean
+  severity: FreshnessSeverity
+  troubleshooting: {
+    primaryCommand: string
+    componentRefreshCommand: string
+    rerunSummaryCommand: string
+    note: string
+  }
 }
 
 type SessionSecurityLatestReport = {
@@ -94,6 +116,23 @@ type GateTrioSummaryReport = {
   runId: string
   generatedAt: string
   overallPassed: boolean
+  policy: {
+    maxReportAgeSec: number
+    keepRecent: number
+  }
+  artifacts?: {
+    retainedRunIds: string[]
+    prunedRunIds: string[]
+    prunedReports: number
+  }
+  freshnessTriage: {
+    staleDetected: boolean
+    staleCount: number
+    highestSeverity: FreshnessSeverity
+    primaryRecommendation?: string
+    standaloneSummaryCommand: string
+    items: FreshnessTriageItem[]
+  }
   reports: {
     sessionSecurity: {
       path: string
@@ -185,6 +224,112 @@ function readJsonWithMtime<T>(path: string): { data: T; mtimeIso: string } {
   }
 }
 
+function parseSummaryMaxReportAgeSec() {
+  const raw = Number(process.env.GATE_TRIO_SUMMARY_MAX_REPORT_AGE_SEC ?? '900')
+  if (!Number.isFinite(raw)) {
+    return 900
+  }
+  return Math.max(60, Math.min(86_400, Math.floor(raw)))
+}
+
+function parseSummaryKeepRecent() {
+  const raw = Number(process.env.GATE_TRIO_SUMMARY_KEEP_RECENT ?? '12')
+  if (!Number.isFinite(raw)) {
+    return 12
+  }
+  return Math.max(1, Math.min(200, Math.floor(raw)))
+}
+
+function getComponentRefreshCommand(report: FreshnessSourceKey) {
+  switch (report) {
+    case 'sessionSecurity':
+      return 'npm run gate:session:security'
+    case 'mainline':
+      return 'npm run gate:ai:mainline:stability'
+    case 'nightly':
+      return 'npm run gate:ai:nightly:acceptance'
+    case 'templateReplay':
+      return 'npm run gate:ai:mainline:stability'
+    case 'saveSlotsRestoreApply':
+      return 'npm run gate:save-slots:restore-apply:stability'
+    default:
+      return 'npm run gate:ai:trio'
+  }
+}
+
+function classifyFreshnessSeverity(ageSec: number | null, maxAgeSec: number): FreshnessSeverity {
+  if (typeof ageSec !== 'number') {
+    return 'unknown'
+  }
+  if (ageSec <= maxAgeSec) {
+    return 'fresh'
+  }
+  const overdueSec = ageSec - maxAgeSec
+  const noticeThreshold = Math.max(60, Math.floor(maxAgeSec * 0.1))
+  const warningThreshold = Math.max(300, Math.floor(maxAgeSec * 0.5))
+  const highThreshold = Math.max(1800, Math.floor(maxAgeSec * 2))
+  if (overdueSec <= noticeThreshold) {
+    return 'stale_notice'
+  }
+  if (overdueSec <= warningThreshold) {
+    return 'stale_warning'
+  }
+  if (overdueSec <= highThreshold) {
+    return 'stale_high'
+  }
+  return 'stale_critical'
+}
+
+function freshnessSeverityRank(severity: FreshnessSeverity) {
+  switch (severity) {
+    case 'fresh':
+      return 0
+    case 'stale_notice':
+      return 1
+    case 'stale_warning':
+      return 2
+    case 'stale_high':
+      return 3
+    case 'stale_critical':
+      return 4
+    case 'unknown':
+      return 5
+    default:
+      return 5
+  }
+}
+
+function buildFreshnessTriageItem(args: {
+  report: FreshnessSourceKey
+  checkName: string
+  runId?: string
+  generatedAt?: string
+  ageSec: number | null
+  maxAgeSec: number
+}): FreshnessTriageItem {
+  const severity = classifyFreshnessSeverity(args.ageSec, args.maxAgeSec)
+  const stale = severity !== 'fresh'
+  return {
+    report: args.report,
+    checkName: args.checkName,
+    runId: args.runId,
+    generatedAt: args.generatedAt,
+    ageSec: args.ageSec,
+    maxAgeSec: args.maxAgeSec,
+    overdueSec: typeof args.ageSec === 'number' ? Math.max(0, args.ageSec - args.maxAgeSec) : null,
+    passed: !stale,
+    stale,
+    severity,
+    troubleshooting: {
+      primaryCommand: 'npm run gate:ai:trio',
+      componentRefreshCommand: getComponentRefreshCommand(args.report),
+      rerunSummaryCommand: 'npm run gate:ai:trio:summary',
+      note:
+        '单跑 trio summary 发现陈旧时，优先执行 full trio 刷新链；仅在定位局部问题时再执行组件级刷新命令。',
+    },
+  }
+}
+
 function tryReadJsonWithMtime<T>(path: string): { data: T; mtimeIso: string } | null {
   try {
     return readJsonWithMtime<T>(path)
@@ -211,6 +356,40 @@ function collectFailedChecks(checks: GateCheck[] | undefined): string[] {
     .map((item) => (typeof item.name === 'string' && item.name.length > 0 ? item.name : 'unknown_check'))
 }
 
+function resolveStampedRunFreshness(
+  runDir: string,
+  runId: string | undefined,
+  maxReportAgeSec: number,
+): {
+  exists: boolean
+  fresh: boolean
+  ageSec: number | null
+  generatedAt?: string
+  path?: string
+} {
+  if (typeof runId !== 'string' || runId.length === 0) {
+    return { exists: false, fresh: false, ageSec: null }
+  }
+  const path = join(runDir, `${runId}.json`)
+  const payload = tryReadJsonWithMtime<{ generatedAt?: string }>(path)
+  if (!payload) {
+    return {
+      exists: false,
+      fresh: false,
+      ageSec: null,
+      path,
+    }
+  }
+  const ageSec = resolveAgeSeconds(payload.data.generatedAt, payload.mtimeIso)
+  return {
+    exists: true,
+    fresh: typeof ageSec === 'number' && ageSec <= maxReportAgeSec,
+    ageSec,
+    generatedAt: payload.data.generatedAt,
+    path,
+  }
+}
+
 function hasPassedCheck(checks: GateCheck[] | undefined, name: string): boolean {
   if (!Array.isArray(checks)) {
     return false
@@ -218,8 +397,45 @@ function hasPassedCheck(checks: GateCheck[] | undefined, name: string): boolean 
   return checks.some((item) => item.name === name && item.passed === true)
 }
 
+function pruneSummaryReports(runDir: string, keepRecent: number) {
+  const stampedReports: Array<{ runId: string; path: string; mtimeMs: number }> = []
+  for (const name of readdirSync(runDir)) {
+    if (name === 'gate_trio_summary_latest.json') {
+      continue
+    }
+    if (!name.startsWith('gate_trio_summary_') || !name.endsWith('.json')) {
+      continue
+    }
+    const fullPath = join(runDir, name)
+    try {
+      const stat = statSync(fullPath)
+      if (!stat.isFile()) {
+        continue
+      }
+      const runId = name.slice(0, -'.json'.length)
+      stampedReports.push({ runId, path: fullPath, mtimeMs: stat.mtimeMs })
+    } catch {
+      // ignore unreadable file
+    }
+  }
+
+  stampedReports.sort((a, b) => b.mtimeMs - a.mtimeMs)
+  const retained = stampedReports.slice(0, keepRecent)
+  const pruned = stampedReports.slice(keepRecent)
+  for (const item of pruned) {
+    rmSync(item.path, { force: true })
+  }
+  return {
+    retainedRunIds: retained.map((item) => item.runId),
+    prunedRunIds: pruned.map((item) => item.runId),
+    prunedReports: pruned.length,
+  }
+}
+
 function main() {
   const runId = `gate_trio_summary_${new Date().toISOString().replace(/[:.]/g, '-')}`
+  const maxReportAgeSec = parseSummaryMaxReportAgeSec()
+  const keepRecent = parseSummaryKeepRecent()
 
   const sessionPath = join(process.cwd(), 'tmp', 'gates', 'session-security-gate', 'session_security_gate_latest.json')
   const mainlinePath = join(process.cwd(), 'tmp', 'gates', 'ai-mainline-stability', 'ai_mainline_stability_latest.json')
@@ -239,6 +455,29 @@ function main() {
   const templateReplay = readJsonWithMtime<TemplateReplayLatestReport>(templateReplayPath)
   const saveSlotsRestoreApply = tryReadJsonWithMtime<SaveSlotsRestoreApplyLatestReport>(saveSlotsRestoreApplyPath)
 
+  const mainlineRunDir = join(process.cwd(), 'tmp', 'gates', 'ai-mainline-stability')
+  const templateReplayRunDir = join(process.cwd(), 'tmp', 'gates', 'ai-ops-template-replay')
+
+  const sessionAgeSec = resolveAgeSeconds(session.data.generatedAt, session.mtimeIso)
+  const mainlineAgeSec = resolveAgeSeconds(mainline.data.generatedAt, mainline.mtimeIso)
+  const nightlyAgeSec = resolveAgeSeconds(nightly.data.generatedAt, nightly.mtimeIso)
+  const templateReplayAgeSec = resolveAgeSeconds(templateReplay.data.generatedAt, templateReplay.mtimeIso)
+  const saveSlotsRestoreApplyAgeSec =
+    saveSlotsRestoreApply?.data && saveSlotsRestoreApply.mtimeIso
+      ? resolveAgeSeconds(saveSlotsRestoreApply.data.generatedAt, saveSlotsRestoreApply.mtimeIso)
+      : null
+
+  const nightlyMainlineReference = resolveStampedRunFreshness(
+    mainlineRunDir,
+    nightly.data.mainlineGate?.runId,
+    maxReportAgeSec,
+  )
+  const nightlyTemplateReplayReference = resolveStampedRunFreshness(
+    templateReplayRunDir,
+    nightly.data.templateReplayGate?.runId,
+    maxReportAgeSec,
+  )
+
   const sessionFailedChecks = collectFailedChecks(session.data.checks)
   const mainlineFailedChecks = collectFailedChecks(mainline.data.checks)
   const nightlyFailedChecks = collectFailedChecks(nightly.data.checks)
@@ -255,6 +494,54 @@ function main() {
     saveSlotsRestoreApply?.data.restore?.firstStatus === 'restored' &&
     saveSlotsRestoreApply?.data.restore?.secondStatus === 'skipped' &&
     saveSlotsRestoreApply?.data.restore?.thirdStatus === 'restored'
+
+  const freshnessItems = [
+    buildFreshnessTriageItem({
+      report: 'sessionSecurity',
+      checkName: 'session_security_report_fresh',
+      runId: session.data.runId,
+      generatedAt: session.data.generatedAt,
+      ageSec: sessionAgeSec,
+      maxAgeSec: maxReportAgeSec,
+    }),
+    buildFreshnessTriageItem({
+      report: 'mainline',
+      checkName: 'mainline_report_fresh',
+      runId: mainline.data.runId,
+      generatedAt: mainline.data.generatedAt,
+      ageSec: mainlineAgeSec,
+      maxAgeSec: maxReportAgeSec,
+    }),
+    buildFreshnessTriageItem({
+      report: 'nightly',
+      checkName: 'nightly_report_fresh',
+      runId: nightly.data.runId,
+      generatedAt: nightly.data.generatedAt,
+      ageSec: nightlyAgeSec,
+      maxAgeSec: maxReportAgeSec,
+    }),
+    buildFreshnessTriageItem({
+      report: 'templateReplay',
+      checkName: 'template_replay_report_fresh',
+      runId: templateReplay.data.runId,
+      generatedAt: templateReplay.data.generatedAt,
+      ageSec: templateReplayAgeSec,
+      maxAgeSec: maxReportAgeSec,
+    }),
+    buildFreshnessTriageItem({
+      report: 'saveSlotsRestoreApply',
+      checkName: 'save_slots_restore_apply_report_fresh',
+      runId: saveSlotsRestoreApply?.data.runId,
+      generatedAt: saveSlotsRestoreApply?.data.generatedAt,
+      ageSec: saveSlotsRestoreApplyAgeSec,
+      maxAgeSec: maxReportAgeSec,
+    }),
+  ]
+  const freshnessMap = new Map(freshnessItems.map((item) => [item.checkName, item] as const))
+  const staleFreshnessItems = freshnessItems.filter((item) => item.stale)
+  const highestFreshnessSeverity = freshnessItems.reduce<FreshnessSeverity>((acc, item) => {
+    return freshnessSeverityRank(item.severity) > freshnessSeverityRank(acc) ? item.severity : acc
+  }, 'fresh')
 
   const checks: GateTrioSummaryReport['checks'] = [
     {
@@ -283,8 +570,14 @@ function main() {
     },
     {
       name: 'nightly_references_latest_mainline',
-      passed: nightly.data.mainlineGate?.runId === mainline.data.runId,
-      details: { nightlyRunId: nightly.data.mainlineGate?.runId, latestRunId: mainline.data.runId },
+      passed: nightly.data.mainlineGate?.runId === mainline.data.runId || nightlyMainlineReference.fresh,
+      details: {
+        nightlyRunId: nightly.data.mainlineGate?.runId,
+        latestRunId: mainline.data.runId,
+        referenceFresh: nightlyMainlineReference.fresh,
+        referenceExists: nightlyMainlineReference.exists,
+        referenceAgeSec: nightlyMainlineReference.ageSec,
+      },
     },
     {
       name: 'nightly_references_latest_session_security',
@@ -293,8 +586,14 @@ function main() {
     },
     {
       name: 'nightly_references_latest_template_replay',
-      passed: nightly.data.templateReplayGate?.runId === templateReplay.data.runId,
-      details: { nightlyRunId: nightly.data.templateReplayGate?.runId, latestRunId: templateReplay.data.runId },
+      passed: nightly.data.templateReplayGate?.runId === templateReplay.data.runId || nightlyTemplateReplayReference.fresh,
+      details: {
+        nightlyRunId: nightly.data.templateReplayGate?.runId,
+        latestRunId: templateReplay.data.runId,
+        referenceFresh: nightlyTemplateReplayReference.fresh,
+        referenceExists: nightlyTemplateReplayReference.exists,
+        referenceAgeSec: nightlyTemplateReplayReference.ageSec,
+      },
     },
     {
       name: 'template_replay_fixture_checks_passed',
@@ -343,6 +642,71 @@ function main() {
         thirdStatus: saveSlotsRestoreApply?.data.restore?.thirdStatus,
       },
     },
+    {
+      name: 'session_security_report_fresh',
+      passed: freshnessMap.get('session_security_report_fresh')?.passed === true,
+      details: {
+        ageSec: sessionAgeSec,
+        maxAgeSec: maxReportAgeSec,
+        generatedAt: session.data.generatedAt,
+        stale: freshnessMap.get('session_security_report_fresh')?.stale,
+        severity: freshnessMap.get('session_security_report_fresh')?.severity,
+        overdueSec: freshnessMap.get('session_security_report_fresh')?.overdueSec,
+        troubleshooting: freshnessMap.get('session_security_report_fresh')?.troubleshooting,
+      },
+    },
+    {
+      name: 'mainline_report_fresh',
+      passed: freshnessMap.get('mainline_report_fresh')?.passed === true,
+      details: {
+        ageSec: mainlineAgeSec,
+        maxAgeSec: maxReportAgeSec,
+        generatedAt: mainline.data.generatedAt,
+        stale: freshnessMap.get('mainline_report_fresh')?.stale,
+        severity: freshnessMap.get('mainline_report_fresh')?.severity,
+        overdueSec: freshnessMap.get('mainline_report_fresh')?.overdueSec,
+        troubleshooting: freshnessMap.get('mainline_report_fresh')?.troubleshooting,
+      },
+    },
+    {
+      name: 'nightly_report_fresh',
+      passed: freshnessMap.get('nightly_report_fresh')?.passed === true,
+      details: {
+        ageSec: nightlyAgeSec,
+        maxAgeSec: maxReportAgeSec,
+        generatedAt: nightly.data.generatedAt,
+        stale: freshnessMap.get('nightly_report_fresh')?.stale,
+        severity: freshnessMap.get('nightly_report_fresh')?.severity,
+        overdueSec: freshnessMap.get('nightly_report_fresh')?.overdueSec,
+        troubleshooting: freshnessMap.get('nightly_report_fresh')?.troubleshooting,
+      },
+    },
+    {
+      name: 'template_replay_report_fresh',
+      passed: freshnessMap.get('template_replay_report_fresh')?.passed === true,
+      details: {
+        ageSec: templateReplayAgeSec,
+        maxAgeSec: maxReportAgeSec,
+        generatedAt: templateReplay.data.generatedAt,
+        stale: freshnessMap.get('template_replay_report_fresh')?.stale,
+        severity: freshnessMap.get('template_replay_report_fresh')?.severity,
+        overdueSec: freshnessMap.get('template_replay_report_fresh')?.overdueSec,
+        troubleshooting: freshnessMap.get('template_replay_report_fresh')?.troubleshooting,
+      },
+    },
+    {
+      name: 'save_slots_restore_apply_report_fresh',
+      passed: freshnessMap.get('save_slots_restore_apply_report_fresh')?.passed === true,
+      details: {
+        ageSec: saveSlotsRestoreApplyAgeSec,
+        maxAgeSec: maxReportAgeSec,
+        generatedAt: saveSlotsRestoreApply?.data.generatedAt,
+        stale: freshnessMap.get('save_slots_restore_apply_report_fresh')?.stale,
+        severity: freshnessMap.get('save_slots_restore_apply_report_fresh')?.severity,
+        overdueSec: freshnessMap.get('save_slots_restore_apply_report_fresh')?.overdueSec,
+        troubleshooting: freshnessMap.get('save_slots_restore_apply_report_fresh')?.troubleshooting,
+      },
+    },
   ]
 
   const overallPassed = checks.every((item) => item.passed)
@@ -351,13 +715,25 @@ function main() {
     runId,
     generatedAt: new Date().toISOString(),
     overallPassed,
+    policy: {
+      maxReportAgeSec,
+      keepRecent,
+    },
+    freshnessTriage: {
+      staleDetected: staleFreshnessItems.length > 0,
+      staleCount: staleFreshnessItems.length,
+      highestSeverity: highestFreshnessSeverity,
+      primaryRecommendation: staleFreshnessItems.length > 0 ? 'npm run gate:ai:trio' : undefined,
+      standaloneSummaryCommand: 'npm run gate:ai:trio:summary',
+      items: freshnessItems,
+    },
     reports: {
       sessionSecurity: {
         path: sessionPath,
         runId: session.data.runId,
         passed: session.data.passed,
         generatedAt: session.data.generatedAt,
-        ageSec: resolveAgeSeconds(session.data.generatedAt, session.mtimeIso),
+        ageSec: sessionAgeSec,
         failedChecks: sessionFailedChecks,
       },
       mainline: {
@@ -365,7 +741,7 @@ function main() {
         runId: mainline.data.runId,
         passed: mainline.data.passed,
         generatedAt: mainline.data.generatedAt,
-        ageSec: resolveAgeSeconds(mainline.data.generatedAt, mainline.mtimeIso),
+        ageSec: mainlineAgeSec,
         failedChecks: mainlineFailedChecks,
         templateReplayRunId: mainline.data.templateReplay?.runId,
       },
@@ -374,7 +750,7 @@ function main() {
         runId: nightly.data.runId,
         passed: nightly.data.passed,
         generatedAt: nightly.data.generatedAt,
-        ageSec: resolveAgeSeconds(nightly.data.generatedAt, nightly.mtimeIso),
+        ageSec: nightlyAgeSec,
         executionMode: nightly.data.executionMode,
         failedChecks: nightlyFailedChecks,
         references: {
@@ -394,7 +770,7 @@ function main() {
         runId: templateReplay.data.runId,
         passed: templateReplay.data.passed,
         generatedAt: templateReplay.data.generatedAt,
-        ageSec: resolveAgeSeconds(templateReplay.data.generatedAt, templateReplay.mtimeIso),
+        ageSec: templateReplayAgeSec,
         failedChecks: templateReplayFailedChecks,
         requiredFailedSteps: templateReplayRequiredFailedSteps,
         allStepsRequired: templateReplayAllStepsRequired,
@@ -404,10 +780,7 @@ function main() {
         runId: saveSlotsRestoreApply?.data.runId ?? 'missing',
         passed: saveSlotsRestoreApply?.data.passed === true,
         generatedAt: saveSlotsRestoreApply?.data.generatedAt,
-        ageSec:
-          saveSlotsRestoreApply?.data && saveSlotsRestoreApply.mtimeIso
-            ? resolveAgeSeconds(saveSlotsRestoreApply.data.generatedAt, saveSlotsRestoreApply.mtimeIso)
-            : null,
+        ageSec: saveSlotsRestoreApplyAgeSec,
         failedChecks: saveSlotsRestoreApplyFailedChecks,
         sourceArchiveMode: saveSlotsRestoreApply?.data.source?.archiveSourceMode,
         restore: {
@@ -436,9 +809,14 @@ function main() {
   mkdirSync(runDir, { recursive: true })
   const latestPath = join(runDir, 'gate_trio_summary_latest.json')
   const stampedPath = join(runDir, `${runId}.json`)
-  const payload = JSON.stringify(report, null, 2)
-  writeFileSync(latestPath, payload, 'utf8')
-  writeFileSync(stampedPath, payload, 'utf8')
+  const writeReport = (target: GateTrioSummaryReport) => {
+    const payload = JSON.stringify(target, null, 2)
+    writeFileSync(latestPath, payload, 'utf8')
+    writeFileSync(stampedPath, payload, 'utf8')
+  }
+  writeReport(report)
+  report.artifacts = pruneSummaryReports(runDir, keepRecent)
+  writeReport(report)
 
   console.info(JSON.stringify(report, null, 2))
   process.exit(overallPassed ? 0 : 1)

@@ -33,6 +33,7 @@
     "gate:ai:trio": "npm run gate:session:security && npm run gate:ai:mainline:stability && set NIGHTLY_REUSE_LATEST_GATES=1&& set NIGHTLY_REUSE_MAX_REPORT_AGE_SEC=900&& tsx server/src/evals/runAiNightlyAcceptanceGate.ts && tsx server/src/evals/runGateTrioSummary.ts",
     "gate:ai:nightly:acceptance": "tsx server/src/evals/runAiNightlyAcceptanceGate.ts",
     "gate:ai:trio:summary": "tsx server/src/evals/runGateTrioSummary.ts",
+    "gate:ai:trio:failure-summary": "tsx server/src/evals/renderGateTrioFailureSummary.ts",
     "gate:godot:week1": "py -3.11 godot-client/tools/run_week1_gate.py --no-allow-stale-runtime-schema",
     "gate:godot:week1:compat": "npm run gate:godot:week1:compat:debug-only",
     "gate:godot:week1:compat:debug-only": "py -3.11 godot-client/tools/run_week1_gate.py",

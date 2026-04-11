@@ -102,7 +102,7 @@ function pruneHistoricalArtifacts(runDir: string, keepRecent: number) {
   stampedReports.sort((a, b) => b.mtimeMs - a.mtimeMs)
   const retained = stampedReports.slice(0, keepRecent)
   const pruned = stampedReports.slice(keepRecent)
-  const retainedRunIdSet = new Set(retained.map((item) => item.runId))
+  const prunedRunIdSet = new Set(pruned.map((item) => item.runId))
 
   for (const item of pruned) {
     rmSync(item.path, { force: true })
@@ -110,11 +110,10 @@ function pruneHistoricalArtifacts(runDir: string, keepRecent: number) {
 
   let prunedWorkspaces = 0
   for (const item of workspaceDirs) {
-    if (retainedRunIdSet.has(item.runId)) {
-      continue
+    if (prunedRunIdSet.has(item.runId)) {
+      rmSync(item.path, { recursive: true, force: true })
+      prunedWorkspaces += 1
     }
-    rmSync(item.path, { recursive: true, force: true })
-    prunedWorkspaces += 1
   }
 
   return {

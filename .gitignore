@@ -16,17 +16,6 @@ dist-ssr
 .playwright-cli/
 tmp/
 
-# Unity generated data
-My project/Library/
-My project/Temp/
-My project/Logs/
-My project/Obj/
-My project/Build/
-My project/Bin/
-My project/MemoryCaptures/
-My project/UserSettings/
-My project/tmp/
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

@@ -49,68 +49,50 @@ server/src/evals/runMultiFactionSimulation.ts ← 13州模拟主入口
 docs/P0_PLAYABLE_ALPHA_EXECUTION_PLAN.md     ← 当前迭代计划
 docs/HANDOFF_2026_03_19.md                   ← 最新交接状态
 
-Unity 地图系统（必读）:
-My project/Assets/Editor/Map/MapEditorWindow.cs   ← 幽州地图编辑器主窗口（菜单 YouZhou→Map Editor）
-My project/Assets/Scripts/Map/Data/LogicalMapData.cs ← 300×106 逻辑网格，byte[] 地形
-My project/Assets/Scripts/Map/Isometric/IsometricMapBuilder.cs ← 逻辑→视觉 Tilemap 渲染（900×318）
-My project/Assets/StreamingAssets/youzhou_map.json  ← 幽州地形数据（编辑器输出）
-My project/Assets/StreamingAssets/map_regions.json  ← 13州94郡区划数据（Python脚本输出）
-scripts/generate_all_provinces_map.py               ← 全国区划数据生成脚本
+Godot 客户端（必读）:
+godot-client/project.godot                         ← Godot 工程入口
+godot-client/scenes/app/main.tscn                  ← 主场景入口
+godot-client/scripts/app/main.gd                   ← 启动链（bootstrap/join/world/map）
+godot-client/scripts/map/map_grid.gd               ← 地图基础渲染（含裁剪/缩放/拖拽/hover/FPS）
+godot-client/autoload/world_store.gd               ← 世界状态与 map_layout 存储
+server/src/app.ts                                  ← 后端 API 主路由（Godot 通过 /api/* 接入）
+scripts/generate_all_provinces_map.py              ← 区划数据离线生成（tmp/map_data）
 ```
 
-## Unity 地图系统架构（幽州地图编辑器）
+## Godot 地图系统架构（当前主链）
 
-当前 Unity 工程已有一套**完整的幽州等距地图编辑器**，是全国地图开发的参考标准。
+当前项目已切换为 **Godot + Node.js 后端** 主链；旧引擎客户端与兼容路由均已下线。
 
 ### 坐标系与网格规格
-- **幽州逻辑网格**：300×106 格（每格 byte，存 TerrainType 0-11）
-- **视觉 Tilemap**：900×318 格（每逻辑格 3×3 视觉 tile 扩展）
-- **全国区划网格**：1500×1500（`map_regions.json`，`pos = x*10000 + y`，X 南↓ Y 东→）
-- 两套坐标系**目前独立**，全国地图尚未接入 Tilemap 渲染
+- **WorldStore.map_layout.chunk**：后端下发的地图块（当前 MVP 以基础 tile 渲染）
+- **MapGrid 视口裁剪**：仅绘制可见区域，避免大图全量重绘
+- **全国区划网格**：1500×1500（离线脚本输出，`pos = x*10000 + y`，X 南↓ Y 东→）
 
 ### 关键脚本
 | 脚本 | 位置 | 功能 |
 |------|------|------|
-| `MapEditorWindow.cs` | Editor/Map/ | 编辑器主窗口，笔刷/桶填充/取色器，50步撤销，小地图预览 |
-| `LdtkMapImporter.cs` | Editor/Map/ | 从 LDtk 文件导入地形数据 → `youzhou_map.json` |
-| `AutoConfigureMapSprites.cs` | Editor/Map/ | 自动配置地形精灵 bitmask（16种边缘样式） |
-| `IsometricMapBuilder.cs` | Scripts/Map/Isometric/ | 批量渲染逻辑格→Tilemap，auto-tiling 4邻居位掩码 |
-| `MapPersistence.cs` | Scripts/Map/Isometric/ | 原子读写 `youzhou_map.json` |
-| `MapRegionsData.cs` | Scripts/Map/Data/ | 加载全国区划 `map_regions.json`（94郡BBox） |
-| `TileRegionsLoader.cs` | Scripts/Map/Data/ | 加载 `map_tile_regions.json` 逐格郡归属，提供 `GetJunxianIdAt(x,y)` |
-
-### 12 种地形类型（TerrainType 枚举）
-`Snow(0)` 雪地 / `SnowForest(1)` 雪地森林 / `IceLake(2)` 冰湖 / `SnowRoad(3)` 雪道 /
-`Town(4)` 城镇 / `SnowMountain(5)` 雪山 / `Grass(6)` 草地 / `GrassForest(7)` 草地森林 /
-`River(8)` 河流 / `IceRiver(9)` 冰河 / `Wall(10)` 城墙 / `Farmland(11)` 农田
+| `main.gd` | `godot-client/scripts/app/` | 启动时串联 session/world/map 拉取，并刷新 HUD |
+| `map_grid.gd` | `godot-client/scripts/map/` | 地图瓦片绘制、缩放/拖拽、hover、可见裁剪、性能统计 |
+| `backend_api_client.gd` | `godot-client/scripts/infra/http/` | Godot 侧 HTTP 调用封装 |
+| `WorldService.ts` | `server/src/application/world/` | 世界快照与 map layout 输出 |
+| `generate_all_provinces_map.py` | `scripts/` | 生成 `tmp/map_data/map_regions.json` |
+| `generate_tile_regions.py` | `scripts/` | 生成 `tmp/map_data/map_tile_regions.json` |
 
 ### 数据流
 ```
-Python 脚本 → map_regions.json (94郡BBox, 1500×1500坐标系)
-                ↓ MapRegionsData.cs
-                全国区划（州/郡/县归属判断）
-
-generate_tile_regions.py → map_tile_regions.json (RLE格式, 1851×1501网格)
-                ↓ TileRegionsLoader.cs
-                GetJunxianIdAt(x,y) → junxian_id
-
-MapEditorWindow → youzhou_map.json (300×106 地形byte[])
-                ↓ IsometricMapBuilder.cs
-                Unity Tilemap 900×318（auto-tile 渲染）
-             ← Tilemap渲染与郡归属查询尚未打通 →
+Node server `/api/world` + `/api/world/map-layout`
+                ↓
+      Godot `backend_api_client.gd`
+                ↓
+      `WorldStore` 写入 world/map_layout
+                ↓
+          `MapGrid` 基础 tile 渲染
+   （含可见裁剪 + FPS/FrameMs + baseline 导出）
 ```
 
-### map_tile_regions.json 格式
-- 脚本: `scripts/generate_tile_regions.py`（Phase 1 BBox光栅化；`--image` 启用 Phase 2 图像精化）
-- 格式: RLE行压缩，`rows["x"] = [[y_start, y_end, junxian_id], ...]`
-- 网格: X=1~1851（含交州南端），Y=1~1501，坐标系同 map_regions.json
-- 101郡: 94原始郡 + 交州合成7郡（id=1501-1507）
-- Unity查询: `TileRegionsLoader.GetJunxianIdAt(int gameX, int gameY)` → junxian_id（0=海/沙漠）
-
-### 待解决：BBox→Tile 地形问题
-当前 `map_regions.json` 只有矩形 BBox 边界，不能直接用于 Tilemap 地形渲染。
-`map_tile_regions.json` 提供逐格郡归属查询，但未链接地形贴图。
-幽州编辑器是全国地图"形状化"的参考路径，属于中期目标。
+### 状态说明
+- 旧引擎客户端、旧兼容接口、旧编辑器链路已移除。
+- 保留的是地图离线数据脚本与后端规则引擎主线，前端统一由 Godot 承接。
 
 ## 验证命令
 

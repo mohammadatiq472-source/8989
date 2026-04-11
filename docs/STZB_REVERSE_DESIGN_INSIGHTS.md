@@ -532,9 +532,9 @@ Server: 42.186.76.238:8001
 |------|-------|------|------|
 | FlxSNX/stzbHelper | 44 | Go | **核心参考**：完整协议解析、BattleData 结构、宿主机 Npcap 抓包 |
 | Wind0622/stzbhelper-java | 0 | Java | stzbHelper Java 移植版 |
-| Perfare/Il2CppDumper | 8742 | C# | IL2CPP 逆向（率土非 Unity，不适用） |
-| Perfare/AssetStudio | 15162 | C# | Unity 资源提取（同上） |
-| K0lb3/UnityPy | 1257 | Python | Python Unity API（同上） |
+| Perfare/Il2CppDumper | 8742 | C# | IL2CPP 逆向（率土非旧客户端栈，不适用） |
+| Perfare/AssetStudio | 15162 | C# | 旧客户端资源提取（同上） |
+| K0lb3/U-Py | 1257 | Python | Python 旧客户端 API（同上） |
 | yairm210/Unciv | 10177 | Kotlin | 开源文明5（架构参考） |
 
 ---
@@ -779,7 +779,7 @@ xian_id    ÷ 100 = junxian_id
 ```
 
 每个郡/县的 BBox 定义了地图上的矩形边界，可直接用于：
-- Unity Tilemap 区域形状生成
+- 旧客户端 Tilemap 区域形状生成
 - Polygon/Rect Collider 点击检测
 - 战区自动划分算法的空间输入
 

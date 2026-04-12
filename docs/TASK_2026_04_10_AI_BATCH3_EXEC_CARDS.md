@@ -23,6 +23,8 @@
 | B3-C15 | stale 高危分级高亮与 PR 自动提示文案卡（failure-only） | M18 | 在 `ai-trio-gate` 失败场景自动高亮 `stale_high/stale_critical/unknown` 并生成可直接粘贴的 PR 自动提示文案，降低高危陈旧漏判 | `server/src/evals/renderGateTrioFailureSummary.ts`, `.github/workflows/ai-trio-gate.yml`, `.github/pull_request_template.md`, `docs/modules_v2/M18.md`, `docs/GATE_TRIO_HANDOFF_2026_04_10.md`, `docs/TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md` | `npm run build`；`npm run gate:ai:nightly:acceptance`；`npm run gate:ai:trio` |
 | B3-C16 | PR 高危自动提示自动评论接线卡（含人工覆盖开关） | M18 | 将 `PR Auto Prompt (Failure/High-Risk)` 在 `pull_request` 场景自动写入 PR 讨论区，并支持手工改为人工粘贴模式 | `server/src/evals/renderGateTrioFailureSummary.ts`, `.github/workflows/ai-trio-gate.yml`, `.github/pull_request_template.md`, `docs/modules_v2/M18.md`, `docs/GATE_TRIO_HANDOFF_2026_04_10.md`, `docs/TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md`, `docs/AI_QUICK_NAV_INDEX_2026_04_10.md`, `docs/CLOSEOUT_B3_C16_2026_04_11.md`, `docs/AI_ENGINEER_HUB_2026_03_25.md` | `npm run build`；`npm run gate:ai:nightly:acceptance`；`npm run gate:ai:trio` |
 | B3-C17 | PR 自动评论降级提示与对账字段卡（fork/权限受限） | M18 | 补齐 fork/权限受限场景自动降级提示，并把“自动评论是否成功”纳入失败摘要可复制字段 | `server/src/evals/renderGateTrioFailureSummary.ts`, `.github/workflows/ai-trio-gate.yml`, `.github/pull_request_template.md`, `docs/modules_v2/M18.md`, `docs/GATE_TRIO_HANDOFF_2026_04_10.md`, `docs/TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md`, `docs/AI_QUICK_NAV_INDEX_2026_04_10.md`, `docs/CLOSEOUT_B3_C17_2026_04_11.md`, `docs/AI_ENGINEER_HUB_2026_03_25.md` | `npm run build`；`npm run gate:ai:nightly:acceptance`；`npm run gate:ai:trio` |
+| B3-C18 | docs 第二阶段精简归档治理卡（reference-only 落地） | M18 | 将低频历史 prompt 文档迁入 `docs/archive/prompts/`，原路径保留 stub，收口 quick-nav/governance/候选台账 | `docs/archive/prompts/*`, `docs/prompts/PLANNER_RAG_GRAPH_PROMPTS.md`, `docs/prompts/planner.prompt.md`, `docs/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md`, `docs/codex-multi-agent-audit-2026-03-20.md`, `docs/AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md`, `docs/PROMPT_ARCHIVE_CANDIDATES_2026_04_11.md`, `docs/AI_QUICK_NAV_INDEX_2026_04_10.md`, `docs/modules_v2/M18.md`, `docs/TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md`, `docs/AI_ENGINEER_HUB_2026_03_25.md`, `docs/CLOSEOUT_B3_C18_2026_04_12.md` | `npm run build`；`npm run gate:ai:nightly:acceptance`；`npm run gate:ai:trio` |
+| B3-C19 | docs 第三阶段收口治理卡（旧路径回写 + archive/stub 逆向索引 + 回滚演练记录） | M18 | 回写跨文档旧路径到 archive 主路径，补齐 archive/stub 双向索引，并附 latest nightly rollback drill 实录 | `docs/archive/prompts/PLANNER_RAG_GRAPH_PROMPTS.md`, `docs/AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md`, `docs/PROMPT_ARCHIVE_CANDIDATES_2026_04_11.md`, `docs/AI_QUICK_NAV_INDEX_2026_04_10.md`, `docs/TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md`, `docs/modules_v2/M18.md`, `docs/CLOSEOUT_B3_C18_2026_04_12.md`, `docs/CLOSEOUT_B3_C19_2026_04_12.md`, `docs/AI_ENGINEER_HUB_2026_03_25.md` | `npm run build`；`npm run gate:ai:nightly:acceptance`；`npm run gate:ai:trio` |
 
 ## 2. 执行进展
 
@@ -45,6 +47,8 @@
 | B3-C15 | done | `ai-trio-gate` 失败时会自动高亮高危 stale 分级并输出 `PR Auto Prompt (Failure/High-Risk)` 文案，避免高危陈旧在 PR 线程中被忽略。 |
 | B3-C16 | done | `ai-trio-gate` 现已在 PR 场景自动创建/更新高危提示评论，并支持 `ai-trio-auto-comment: manual` 人工覆盖开关。 |
 | B3-C17 | done | 已补齐 fork/权限受限场景降级提示，并把 `prAutoCommentStatus/prAutoCommentReason/prAutoCommentOutcome` 与 `autoCommentReconcileStatus/Reason` 收敛为失败摘要 + PR 模板统一对账字段。 |
+| B3-C18 | done | docs 第二阶段归档已完成，且 runId 已按 2026-04-12 重跑结果统一更新。 |
+| B3-C19 | done | docs 第三阶段已完成：旧路径回写、archive/stub 逆向索引、rollback drill 实录已收口。 |
 
 ## 3. B3-C01 验证记录
 
@@ -254,12 +258,52 @@
    - fork/权限受限场景会输出 `prAutoCommentStatus/prAutoCommentReason/prAutoCommentOutcome`，并附带降级动作提示（手工粘贴 + 回填对账字段）。
    - PR 模板已同步 `autoCommentReconcileStatus/Reason` 字段，便于人工核对自动评论是否成功。
 
-## 19. 下一默认推进
+## 19. B3-C18 验证记录
 
-当前已核对 Batch3 执行进展：`B3-C01 ~ B3-C17` 已完成。
+1. `npm run build` -> `PASS`
+2. `npm run gate:ai:nightly:acceptance` -> `PASS`（runId: `ai_nightly_2026-04-12T05-40-21-916Z`）
+3. `npm run gate:ai:trio` -> `PASS`（nightly runId: `ai_nightly_2026-04-12T05-45-31-386Z`，summary runId: `gate_trio_summary_2026-04-12T05-45-46-735Z`）
+4. docs 归档落地：
+   - 原文迁移至 `docs/archive/prompts/`：
+     - `PLANNER_RAG_GRAPH_PROMPTS.md`
+     - `planner.prompt.md`
+     - `AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md`
+     - `codex-multi-agent-audit-2026-03-20.md`
+   - 原路径均保留 stub（仅“已归档 + 新路径”）。
+5. 环境修复记录（与代码无关）：
+   - 首次 nightly 失败由损坏归档包触发（`unexpected end of file`）。
+   - 已把坏包隔离至 `tmp/world_save_slots_archive/_quarantine_corrupt/` 后复跑通过。
+
+## 20. B3-C19 验证记录
+
+1. `npm run build` -> `PASS`
+2. `npm run gate:ai:nightly:acceptance` -> `PASS`（runId: `ai_nightly_2026-04-12T05-40-21-916Z`）
+3. `npm run gate:ai:trio` -> `PASS`（nightly runId: `ai_nightly_2026-04-12T05-45-31-386Z`，summary runId: `gate_trio_summary_2026-04-12T05-45-46-735Z`）
+4. 旧路径回写：
+   - `docs/archive/prompts/PLANNER_RAG_GRAPH_PROMPTS.md` 中两处 `docs/prompts/planner.prompt.md` 已回写为 `docs/archive/prompts/planner.prompt.md`。
+5. archive/stub 逆向索引：
+   - `docs/AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md` 与 `docs/PROMPT_ARCHIVE_CANDIDATES_2026_04_11.md` 已补齐双向映射与“新写链接使用 archive 主路径”口径。
+6. 回滚演练记录（latest nightly 报告）：
+   - `save_slots_archive_restore_rollback_drill_passed = true`
+   - `executedAt = 2026-04-12T05:45:41.967Z`
+   - `archivePath = tmp/world_save_slots_archive/world_save_slots.2026-04-11T09-34-13-073Z.json.gz`
+   - `backupPath = tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-12T05-45-43-878Z.json.restore.bak.1775972743878`
+
+## 21. 下一默认推进
+
+当前已核对 Batch3 执行进展：`B3-C01 ~ B3-C19` 已完成。
 
 执行结论：
 
-1. `AI_QUICK_NAV_INDEX_2026_04_10.md` 已从“推进 B3-C17”切换为“建议创建 B3-C18（docs 历史 prompt 精简归档治理）”。
-2. 本轮已完成第二阶段精简的落盘准备：低频历史 prompt 文档已打 `reference-only` 标签，并输出归档候选清单。
-3. 后续可在新工作树继续推进 B3-C18（仅 docs 治理，不改业务代码）。
+1. `AI_QUICK_NAV_INDEX_2026_04_10.md` 已从“建议创建并执行 B3-C19”切换为“建议推进 P5（docs 包 PR 收口）”。
+2. docs 第三阶段已落地：旧路径回写完成，archive/stub 逆向索引已补齐，并附 rollback drill 实录。
+3. P4 已完成（AnimatedSprite2D 8向 + 可复现验证 + 文档）；后续建议推进 P5：docs 包 PR 收口。
+4. `P5` 已完成：已基于 `codex/week1-gate` 拆出 docs-only 可审阅变更包（见 `docs/CLOSEOUT_P5_DOCS_PR_PACKAGE_2026_04_12.md`）。
+
+
+## 22. P5（docs 包 PR 收口）验证记录
+
+1. docs-only 收口分支：`codex/week1-gate-docs-pack`（base: `codex/week1-gate`）。
+2. 收口目标：在不引入非 docs 代码变更的前提下，形成可审阅、可合并的 docs 变更包。
+3. 正式入口复用：`npm run build`、`npm run gate:ai:trio`。
+4. 结果：`npm` 在当前终端环境触发 Node CSPRNG 断言（`Could not determine Node.js install directory`），本轮无法复跑 trio；已完成 docs 白名单校验与 UTF-8 回读（`19/19` 文件 `PASS`）。

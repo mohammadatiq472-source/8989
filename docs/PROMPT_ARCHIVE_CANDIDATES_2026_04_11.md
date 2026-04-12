@@ -8,10 +8,10 @@
 
 | 文档 | 当前标签 | 引用计数（docs/AGENTS/README） | 建议动作 | 备注 |
 | --- | --- | --- | --- | --- |
-| `docs/prompts/PLANNER_RAG_GRAPH_PROMPTS.md` | reference-only | 0 | 可归档（优先） | 纯历史方案草案，当前主链未直接引用 |
-| `docs/prompts/planner.prompt.md` | reference-only | 1 | 可归档（次优先） | 保留一份快照后可迁入 `docs/archive/prompts/` |
-| `docs/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md` | reference-only | 2 | 可归档 | 历史周计划，执行口径已由 2026-04 文档替代 |
-| `docs/codex-multi-agent-audit-2026-03-20.md` | reference-only | 1 | 可归档（审计快照） | 建议仅保留链接索引，不作为默认上下文 |
+| `docs/prompts/PLANNER_RAG_GRAPH_PROMPTS.md` | archived + stub | 0 | 已归档（B3-C18） | 原文迁移至 `docs/archive/prompts/PLANNER_RAG_GRAPH_PROMPTS.md`，原路径保留 stub |
+| `docs/prompts/planner.prompt.md` | archived + stub | 1 | 已归档（B3-C18） | 原文迁移至 `docs/archive/prompts/planner.prompt.md`，原路径保留 stub |
+| `docs/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md` | archived + stub | 2 | 已归档（B3-C18） | 原文迁移至 `docs/archive/prompts/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md`，原路径保留 stub |
+| `docs/codex-multi-agent-audit-2026-03-20.md` | archived + stub | 1 | 已归档（B3-C18） | 原文迁移至 `docs/archive/prompts/codex-multi-agent-audit-2026-03-20.md`，原路径保留 stub |
 | `docs/AGENTS_HISTORY_2026_03.md` | reference-only | 5 | 保留原位（历史主索引） | 有追溯价值，继续留在 docs 根目录 |
 | `docs/AI_SUBAGENT_LAUNCH_PROMPTS_2026_03_26.md` | on-demand | 4 | 暂不归档 | 仍用于子代理启动模板，先保留 |
 
@@ -27,3 +27,32 @@
 
 1. 将文档移回原路径；
 2. 恢复 quick-nav 与 governance 中的原始链接。
+
+## 4. B3-C18 Execution Result (2026-04-12)
+
+1. 已完成归档迁移：
+   - `docs/prompts/PLANNER_RAG_GRAPH_PROMPTS.md` -> `docs/archive/prompts/PLANNER_RAG_GRAPH_PROMPTS.md`
+   - `docs/prompts/planner.prompt.md` -> `docs/archive/prompts/planner.prompt.md`
+   - `docs/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md` -> `docs/archive/prompts/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md`
+   - `docs/codex-multi-agent-audit-2026-03-20.md` -> `docs/archive/prompts/codex-multi-agent-audit-2026-03-20.md`
+2. 原路径均已补 stub（仅保留“已归档 + 新路径”说明），用于兼容历史链接。
+
+
+## 5. B3-C19 Reverse Index（archive <-> stub）
+
+| archive 原文路径 | stub 兼容路径 | 状态 |
+| --- | --- | --- |
+| `docs/archive/prompts/PLANNER_RAG_GRAPH_PROMPTS.md` | `docs/prompts/PLANNER_RAG_GRAPH_PROMPTS.md` | 已建立双向索引，后续新增链接统一写 archive 路径。 |
+| `docs/archive/prompts/planner.prompt.md` | `docs/prompts/planner.prompt.md` | 已建立双向索引，后续新增链接统一写 archive 路径。 |
+| `docs/archive/prompts/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md` | `docs/AI_PARALLEL_WEEKLY_PLAN_2026_03_25.md` | 已建立双向索引，后续新增链接统一写 archive 路径。 |
+| `docs/archive/prompts/codex-multi-agent-audit-2026-03-20.md` | `docs/codex-multi-agent-audit-2026-03-20.md` | 已建立双向索引，后续新增链接统一写 archive 路径。 |
+
+## 6. B3-C19 Rollback Drill Record（from latest nightly）
+
+1. Report: `tmp/gates/ai-nightly-acceptance/ai_nightly_acceptance_latest.json`
+2. Check: `save_slots_archive_restore_rollback_drill_passed = true`
+3. executedAt: `2026-04-12T05:45:41.967Z`
+4. archivePath: `tmp/world_save_slots_archive/world_save_slots.2026-04-11T09-34-13-073Z.json.gz`
+5. backupPath: `tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-12T05-45-43-878Z.json.restore.bak.1775972743878`
+6. drillStorePath: `tmp/gates/ai-nightly-acceptance/save-slots-rollback-drill/world_save_slots.rollback-drill.2026-04-12T05-45-43-878Z.json`
+7. rollbackVerified: `true`

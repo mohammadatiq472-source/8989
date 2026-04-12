@@ -43,12 +43,17 @@
 31. [收尾总览（B3-C14）](CLOSEOUT_B3_C14_2026_04_11.md)
 32. [收尾总览（B3-C15）](CLOSEOUT_B3_C15_2026_04_11.md)
 33. [收尾总览（B3-C16）](CLOSEOUT_B3_C16_2026_04_11.md)
-34. [Godot AI 玩家动画与原型兜底](GODOT_AI_PLAYER_ANIMATION_FALLBACK_2026_04_10.md)
-35. [Godot 视觉替换执行文档（TMX + UnitView）](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md)
-36. [Godot 视觉替换上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md)
-37. [多工作树并行快速入口](../WORKTREE_PARALLEL_QUICKSTART_2026_04_11.md)
-38. [提示词上下文治理](AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md)
-39. [子代理资产审计](SUBAGENT_ASSET_AUDIT_2026_04_11.md)
+34. [收尾总览（B3-C17）](CLOSEOUT_B3_C17_2026_04_11.md)
+35. [收尾总览（B3-C18）](CLOSEOUT_B3_C18_2026_04_12.md)
+36. [收尾总览（B3-C19）](CLOSEOUT_B3_C19_2026_04_12.md)
+37. [收尾总览（P4，AI 玩家动画增强版）](CLOSEOUT_P4_AI_PLAYER_ANIMATION_2026_04_12.md)
+38. [Godot AI 玩家动画与原型兜底](GODOT_AI_PLAYER_ANIMATION_FALLBACK_2026_04_10.md)
+39. [Godot 视觉替换执行文档（TMX + UnitView）](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md)
+40. [Godot 视觉替换上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md)
+41. [多工作树并行快速入口](../WORKTREE_PARALLEL_QUICKSTART_2026_04_11.md)
+42. [提示词上下文治理](AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md)
+43. [Prompt 归档候选清单](PROMPT_ARCHIVE_CANDIDATES_2026_04_11.md)
+44. [子代理资产审计](SUBAGENT_ASSET_AUDIT_2026_04_11.md)
 
 ## 3) 按“要改什么”快速定位
 
@@ -92,4 +97,4 @@ obsidian backlinks path='docs/GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md' total
 
 ## 6) 下一默认推进卡
 
-当前建议下一步：创建并执行 `B3-C18`（docs 第二阶段精简：低频历史 prompt 文档统一打 `reference-only` 标签，并完成可归档清单与收口）。
+当前建议下一步：`P5` 已完成（docs 包 PR 收口已形成可审阅变更包）；等待用户下发下一优先级卡。

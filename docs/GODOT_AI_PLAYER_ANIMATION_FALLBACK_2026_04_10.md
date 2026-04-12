@@ -2,7 +2,7 @@
 
 ## 1. 当前实现结论（可运行）
 
-当前 AI 玩家表现已经具备最小可运行动画骨架：
+当前 AI 玩家表现已升级为可复用的 8 向动画骨架：
 
 1. 单位标记动画入口：`godot-client/scripts/map/unit_marker.gd`
 2. 回放驱动触发：`godot-client/scripts/map/unit_view_layer.gd`
@@ -12,9 +12,10 @@
 
 表现形态（当前）：
 
-- 2D marker 两段脉冲（预压 -> 爆发 -> 回落）
-- 可选方向位移冲量（pre_offset / burst_offset）
-- 与世界回放高亮对齐，已支持 `unitId/tileId/fromTileId/toTileId`
+- `AnimatedSprite2D` 8 向（`run_*` + `idle_*`）
+- replay 驱动 engage 两段脉冲（预压 -> 爆发 -> 回落）
+- 移动动画按位移距离动态调速
+- 与世界回放高亮对齐，支持 `unitId/tileId/fromTileId/toTileId`，缺失锚点时保留回退路径
 
 ## 2. 外部原型评估（llr104/slgclient）
 
@@ -59,3 +60,15 @@ npm run godot:ops:cli -- --output tmp/gates/godot_ops_bootstrap_unitview_latest.
 - `docs/GODOT_MCP_CLI_CONTROL_SURFACE_2026_04_10.md`
 - `docs/GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md`
 - `godot-client/README.md`
+
+
+## 6. P4 实施更新（2026-04-12）
+
+1. 代码落地：
+   - `unit_marker.gd` 已切换 `AnimatedSprite2D` 8 向动画主链，保留 fallback 圆环可视语义。
+   - `unit_view_layer.gd` 已接入按位移距离调速（短距平滑，长距提速）。
+2. 正式验证：
+   - `npm run gate:godot:week1` -> `PASS`（`tmp/gates/godot_week1_gate_latest.json`）
+   - `npm run gate:ai:trio` -> `PASS`（nightly runId: `ai_nightly_2026-04-12T06-02-44-650Z`，summary runId: `gate_trio_summary_2026-04-12T06-03-06-977Z`）
+3. 收尾文档：
+   - 见 `docs/CLOSEOUT_P4_AI_PLAYER_ANIMATION_2026_04_12.md`。

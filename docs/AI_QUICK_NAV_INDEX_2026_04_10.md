@@ -18,42 +18,45 @@
 6. [Godot 迁移卡（Week1）](TASK_2026_04_05_GODOT_WEEK1_EXEC_CARDS.md)
 7. [目标对齐审计（2026-04-10）](AI_NATIVE_SLG_ALIGNMENT_AUDIT_2026_04_10.md)
 8. [Godot MCP/CLI 控制面](GODOT_MCP_CLI_CONTROL_SURFACE_2026_04_10.md)
-9. [收尾总览（B2-C16 + B2-C17）](CLOSEOUT_B2_C16_C17_2026_04_10.md)
-10. [收尾总览（B2-C18）](CLOSEOUT_B2_C18_2026_04_10.md)
-11. [收尾总览（B2-C19）](CLOSEOUT_B2_C19_2026_04_10.md)
-12. [收尾总览（B2-C20）](CLOSEOUT_B2_C20_2026_04_10.md)
-13. [收尾总览（B2-C21）](CLOSEOUT_B2_C21_2026_04_10.md)
-14. [收尾总览（B2-C22）](CLOSEOUT_B2_C22_2026_04_10.md)
-15. [门禁三件套交接入口](GATE_TRIO_HANDOFF_2026_04_10.md)
-16. [收尾总览（B2-C23）](CLOSEOUT_B2_C23_2026_04_10.md)
-17. [Batch3 执行卡](TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md)
-18. [收尾总览（B3-C01）](CLOSEOUT_B3_C01_2026_04_10.md)
-19. [收尾总览（B3-C02）](CLOSEOUT_B3_C02_2026_04_10.md)
-20. [收尾总览（B3-C03）](CLOSEOUT_B3_C03_2026_04_10.md)
-21. [收尾总览（B3-C04）](CLOSEOUT_B3_C04_2026_04_10.md)
-22. [收尾总览（B3-C05）](CLOSEOUT_B3_C05_2026_04_10.md)
-23. [收尾总览（B3-C06）](CLOSEOUT_B3_C06_2026_04_10.md)
-24. [收尾总览（B3-C07）](CLOSEOUT_B3_C07_2026_04_11.md)
-25. [收尾总览（B3-C08）](CLOSEOUT_B3_C08_2026_04_11.md)
-26. [收尾总览（B3-C09）](CLOSEOUT_B3_C09_2026_04_11.md)
-27. [收尾总览（B3-C10）](CLOSEOUT_B3_C10_2026_04_11.md)
-28. [收尾总览（B3-C11）](CLOSEOUT_B3_C11_2026_04_11.md)
-29. [收尾总览（B3-C12）](CLOSEOUT_B3_C12_2026_04_11.md)
-30. [收尾总览（B3-C13）](CLOSEOUT_B3_C13_2026_04_11.md)
-31. [收尾总览（B3-C14）](CLOSEOUT_B3_C14_2026_04_11.md)
-32. [收尾总览（B3-C15）](CLOSEOUT_B3_C15_2026_04_11.md)
-33. [收尾总览（B3-C16）](CLOSEOUT_B3_C16_2026_04_11.md)
-34. [收尾总览（B3-C17）](CLOSEOUT_B3_C17_2026_04_11.md)
-35. [收尾总览（B3-C18）](CLOSEOUT_B3_C18_2026_04_12.md)
-36. [收尾总览（B3-C19）](CLOSEOUT_B3_C19_2026_04_12.md)
-37. [收尾总览（P4，AI 玩家动画增强版）](CLOSEOUT_P4_AI_PLAYER_ANIMATION_2026_04_12.md)
-38. [Godot AI 玩家动画与原型兜底](GODOT_AI_PLAYER_ANIMATION_FALLBACK_2026_04_10.md)
-39. [Godot 视觉替换执行文档（TMX + UnitView）](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md)
-40. [Godot 视觉替换上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md)
-41. [多工作树并行快速入口](../WORKTREE_PARALLEL_QUICKSTART_2026_04_11.md)
-42. [提示词上下文治理](AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md)
-43. [Prompt 归档候选清单](PROMPT_ARCHIVE_CANDIDATES_2026_04_11.md)
-44. [子代理资产审计](SUBAGENT_ASSET_AUDIT_2026_04_11.md)
+9. [Godot UI Preview 三线索引（Sandbox / 插件 / MCP CLI）](GODOT_UI_PREVIEW_THREE_LINE_INDEX_2026_04_14.md)
+10. [Godot UI Preview 文档治理（第二轮）](GODOT_UI_PREVIEW_DOC_GOVERNANCE_2026_04_14.md)
+11. [产品前台四卡执行文档](TASK_2026_04_14_PRODUCT_FRONTEND_EXEC_CARDS.md)
+12. [收尾总览（B2-C16 + B2-C17）](CLOSEOUT_B2_C16_C17_2026_04_10.md)
+13. [收尾总览（B2-C18）](CLOSEOUT_B2_C18_2026_04_10.md)
+14. [收尾总览（B2-C19）](CLOSEOUT_B2_C19_2026_04_10.md)
+15. [收尾总览（B2-C20）](CLOSEOUT_B2_C20_2026_04_10.md)
+16. [收尾总览（B2-C21）](CLOSEOUT_B2_C21_2026_04_10.md)
+17. [收尾总览（B2-C22）](CLOSEOUT_B2_C22_2026_04_10.md)
+18. [门禁三件套交接入口](GATE_TRIO_HANDOFF_2026_04_10.md)
+19. [收尾总览（B2-C23）](CLOSEOUT_B2_C23_2026_04_10.md)
+20. [Batch3 执行卡](TASK_2026_04_10_AI_BATCH3_EXEC_CARDS.md)
+21. [收尾总览（B3-C01）](CLOSEOUT_B3_C01_2026_04_10.md)
+22. [收尾总览（B3-C02）](CLOSEOUT_B3_C02_2026_04_10.md)
+23. [收尾总览（B3-C03）](CLOSEOUT_B3_C03_2026_04_10.md)
+24. [收尾总览（B3-C04）](CLOSEOUT_B3_C04_2026_04_10.md)
+25. [收尾总览（B3-C05）](CLOSEOUT_B3_C05_2026_04_10.md)
+26. [收尾总览（B3-C06）](CLOSEOUT_B3_C06_2026_04_10.md)
+27. [收尾总览（B3-C07）](CLOSEOUT_B3_C07_2026_04_11.md)
+28. [收尾总览（B3-C08）](CLOSEOUT_B3_C08_2026_04_11.md)
+29. [收尾总览（B3-C09）](CLOSEOUT_B3_C09_2026_04_11.md)
+30. [收尾总览（B3-C10）](CLOSEOUT_B3_C10_2026_04_11.md)
+31. [收尾总览（B3-C11）](CLOSEOUT_B3_C11_2026_04_11.md)
+32. [收尾总览（B3-C12）](CLOSEOUT_B3_C12_2026_04_11.md)
+33. [收尾总览（B3-C13）](CLOSEOUT_B3_C13_2026_04_11.md)
+34. [收尾总览（B3-C14）](CLOSEOUT_B3_C14_2026_04_11.md)
+35. [收尾总览（B3-C15）](CLOSEOUT_B3_C15_2026_04_11.md)
+36. [收尾总览（B3-C16）](CLOSEOUT_B3_C16_2026_04_11.md)
+37. [收尾总览（B3-C17）](CLOSEOUT_B3_C17_2026_04_11.md)
+38. [收尾总览（B3-C18）](CLOSEOUT_B3_C18_2026_04_12.md)
+39. [收尾总览（B3-C19）](CLOSEOUT_B3_C19_2026_04_12.md)
+40. [收尾总览（P4，AI 玩家动画增强版）](CLOSEOUT_P4_AI_PLAYER_ANIMATION_2026_04_12.md)
+41. [Godot AI 玩家动画与原型兜底](GODOT_AI_PLAYER_ANIMATION_FALLBACK_2026_04_10.md)
+42. [Godot 视觉替换执行文档（TMX + UnitView）](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md)
+43. [Godot 视觉替换上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md)
+44. [多工作树并行快速入口](../WORKTREE_PARALLEL_QUICKSTART_2026_04_11.md)
+45. [提示词上下文治理](AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md)
+46. [Prompt 归档候选清单](PROMPT_ARCHIVE_CANDIDATES_2026_04_11.md)
+47. [子代理资产审计](SUBAGENT_ASSET_AUDIT_2026_04_11.md)
 
 ## 3) 按“要改什么”快速定位
 
@@ -63,7 +66,11 @@
 | Godot 地图渲染/性能（MapGrid） | [M16](modules_v2/M16.md), [godot-client/README](../godot-client/README.md), [视觉上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md) | `godot-client/scripts/map/map_grid.gd`（含 mountain bitmask + river/sand edge bitmask overlay + mountain_visual_profile 预设 + resource/home 参数化与 world-city 回退锚点） | `npm run gate:godot:week1` + baseline 导出 JSON |
 | AI 玩家动画/表现（UnitView + replay engage） | [godot-client/README](../godot-client/README.md), [动画兜底文档](GODOT_AI_PLAYER_ANIMATION_FALLBACK_2026_04_10.md) | `godot-client/scripts/map/unit_view_layer.gd` `godot-client/scripts/map/unit_marker.gd` | 打开 Godot 编辑器观察 + `npm run gate:godot:week1` |
 | Godot 视觉替换主链（TMX 静态底图 + 8 向单位 + overlay 贴图） | [视觉替换执行文档](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md), [Godot 控制面](GODOT_MCP_CLI_CONTROL_SURFACE_2026_04_10.md) | `godot-client/assets/themes/slgclient/**` `godot-client/scripts/map/map_grid.gd` `godot-client/scripts/map/unit_marker.gd` `godot-client/scripts/map/unit_view_layer.gd` `godot-client/tools/validate_visual_mapping.py` | `py -3.11 godot-client/tools/import_slgclient_theme_assets.py` + `npm run gate:godot:week1`（strict） + `npm run godot:ops:cli -- --output tmp/gates/godot_ops_bootstrap_latest.json bootstrap-chain` + `npm run godot:ops:cli -- --timeout-sec 180 --output tmp/gates/ai_ops_template_replay_latest.json template-replay --scenario baseline_v1` + `npm run godot:ops:visual-validate` |
-| slgclient 资产集中出口（供 Gemini/Banana 替换） | [视觉替换执行文档](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md), [视觉上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md) | `godot-client/assets/themes/slgclient/replacements/exchange_bundle/**` `godot-client/assets/themes/slgclient/manifests/overlay_frames_manifest.json` | `py -3.11 godot-client/tools/import_slgclient_theme_assets.py`（自动刷新 exchange bundle）+ 读取 `exchange_bundle_manifest.json` 校验文件数/体积 |
+| UI Preview Sandbox / 编辑器插件 / MCP CLI 三线索引 | [Godot UI Preview 三线索引](GODOT_UI_PREVIEW_THREE_LINE_INDEX_2026_04_14.md), [Godot 控制面](GODOT_MCP_CLI_CONTROL_SURFACE_2026_04_10.md), [Godot UI Preview Handoff](GODOT_UI_PREVIEW_HANDOFF_2026_04_13.md) | `godot-client/data/ui_preview/stories/stories_manifest.json` `godot-client/addons/ui_preview_sandbox/**` `server/src/mcp/gameServer.ts` `godot-client/tools/slg_ops_cli.py` | `py -3.11 godot-client/tools/run_ui_preview_sandbox.py` + `py -3.11 godot-client/tools/validate_ui_preview_sandbox.py --presentation-capture --report-path tmp/screenshots/ui_preview_sandbox/preview_validation_report.json --screenshot-dir tmp/screenshots/ui_preview_sandbox` + `npm run godot:ui:preview:regress` + `npm run godot:ops:cli -- bootstrap-chain --output tmp/gates/godot_ops_bootstrap_latest.json` |
+| UI Preview Sandbox 文档分层治理 | [UI Preview 文档治理](GODOT_UI_PREVIEW_DOC_GOVERNANCE_2026_04_14.md), [Godot UI Preview 三线索引](GODOT_UI_PREVIEW_THREE_LINE_INDEX_2026_04_14.md), [Godot UI Preview Handoff](GODOT_UI_PREVIEW_HANDOFF_2026_04_13.md) | `docs/GODOT_UI_PREVIEW_DOC_GOVERNANCE_2026_04_14.md` `docs/GODOT_UI_PREVIEW_*` `docs/GODOT_MAP_*` | `py -3.11 -c "from pathlib import Path; p=Path(r'C:/Users/Buffoon Queer/Desktop/8989/docs/GODOT_UI_PREVIEW_DOC_GOVERNANCE_2026_04_14.md'); print('ok' if p.read_text(encoding='utf-8') else 'empty')"` |
+| 产品前台四卡（A/B/C/D） | [产品前台四卡执行文档](TASK_2026_04_14_PRODUCT_FRONTEND_EXEC_CARDS.md), [Godot UI Preview 文档治理](GODOT_UI_PREVIEW_DOC_GOVERNANCE_2026_04_14.md), [Godot UI Preview 三线索引](GODOT_UI_PREVIEW_THREE_LINE_INDEX_2026_04_14.md) | `godot-client/scenes/dev/**` `godot-client/scripts/dev/**` `godot-client/data/ui_preview/stories/**` | `py -3.11 godot-client/tools/run_ui_preview_sandbox.py` + `py -3.11 godot-client/tools/validate_ui_preview_sandbox.py --presentation-capture --report-path tmp/screenshots/ui_preview_sandbox/preview_validation_report.json --screenshot-dir tmp/screenshots/ui_preview_sandbox` |
+| 四卡状态图谱（落盘锚点） | [产品前台四卡执行文档](TASK_2026_04_14_PRODUCT_FRONTEND_EXEC_CARDS.md), [Godot UI Preview Handoff](GODOT_UI_PREVIEW_HANDOFF_2026_04_13.md) | `docs/TASK_2026_04_14_PRODUCT_FRONTEND_EXEC_CARDS.md` `docs/GODOT_UI_PREVIEW_HANDOFF_2026_04_13.md` | `obsidian files folder='docs' ext=md` + `obsidian backlinks path='docs/TASK_2026_04_14_PRODUCT_FRONTEND_EXEC_CARDS.md' total` + `obsidian backlinks path='docs/GODOT_UI_PREVIEW_HANDOFF_2026_04_13.md' total` |
+| slgclient 资产集中出口（供外部替换/索引工具消费） | [视觉替换执行文档](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md), [视觉上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md) | `godot-client/assets/themes/slgclient/replacements/exchange_bundle/**` `godot-client/assets/themes/slgclient/manifests/overlay_frames_manifest.json` | `py -3.11 godot-client/tools/import_slgclient_theme_assets.py`（自动刷新 exchange bundle）+ 读取 `exchange_bundle_manifest.json` 校验文件数/体积 |
 | Godot 上下文防漂移（首读锚点） | [视觉上下文锚点](GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md), [视觉替换执行文档](GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md) | `docs/GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md` | 新会话先读锚点，再执行 strict/ops 链；不要仅凭历史对话记忆推进 |
 | Session/autonomy 控制链 | [M06](modules_v2/M06.md), [M07](modules_v2/M07.md), [M08](modules_v2/M08.md), [M14](modules_v2/M14.md) | `server/src/multiplayer/SessionManager.ts` `server/src/routes/session.ts` `shared/contracts/game/session.ts` | `npm run test:session:manager` + `npm run gate:session:security` + `GET /api/session/runtime` |
 | Planning/Commander/General/Reflect 主链 | [M03](modules_v2/M03.md), [M04](modules_v2/M04.md), [M05](modules_v2/M05.md), [后端深读](AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md) | `server/src/application/world/WorldService.ts` `server/src/agents/commander/CommanderAgent.ts` `server/src/agents/general/*` `server/src/agents/reflect/*` | `npm run gate:ai:mainline:stability` |
@@ -78,6 +85,8 @@
 obsidian files folder='docs' ext=md
 obsidian backlinks path='docs/AI_QUICK_NAV_INDEX_2026_04_10.md' total
 obsidian backlinks path='docs/AGENTS_EXECUTION_CURRENT_2026_04.md' total
+obsidian backlinks path='docs/TASK_2026_04_14_PRODUCT_FRONTEND_EXEC_CARDS.md' total
+obsidian backlinks path='docs/GODOT_UI_PREVIEW_HANDOFF_2026_04_13.md' total
 obsidian backlinks path='docs/AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md' total
 obsidian backlinks path='docs/GODOT_VISUAL_REPLACEMENT_EXECUTION_2026_04_10.md' total
 obsidian backlinks path='docs/GODOT_VISUAL_CONTEXT_ANCHOR_2026_04_11.md' total

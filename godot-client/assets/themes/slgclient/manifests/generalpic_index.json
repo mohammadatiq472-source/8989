@@ -1,0 +1,103 @@
+{
+  "schemaVersion": 1,
+  "theme": "slgclient",
+  "packId": "map_surface_generalpic",
+  "packRoot": "godot-client/assets/themes/slgclient/current/generalpic",
+  "headWrapPath": "godot-client/assets/themes/slgclient/current/generalpic/head_wrap.png",
+  "count": 448,
+  "sourceRepo": "https://github.com/llr104/slgclient",
+  "sourceRoot": "tmp/third_party/slgclient/assets/resources/generalpic",
+  "targetRoot": "godot-client/assets/themes/slgclient/current/generalpic",
+  "examplePortraits": [
+    {
+      "cfgId": 1,
+      "name": "card_1.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_1.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_1.png",
+      "sha256": "66f5638f534db0083f8ca853a7b53469fb4de0dcabb5bda473fe9008d6797caf"
+    },
+    {
+      "cfgId": 2,
+      "name": "card_2.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_2.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_2.png",
+      "sha256": "c1be7b3bd6efe952df4db13f0bf2ae72a0bdbef8f6e64ad29889badb7927f014"
+    },
+    {
+      "cfgId": 100001,
+      "name": "card_100001.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100001.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100001.png",
+      "sha256": "aa01bf6220feaec2e57f8b304b85c6119876ad6a665cee6a065c6a23ac5172d0"
+    },
+    {
+      "cfgId": 100110,
+      "name": "card_100110.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100110.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100110.png",
+      "sha256": "8590b83a95367bc8ec0fb91fa996e3ef6cac054dc9031bb2257d9dcd6e7a2209"
+    },
+    {
+      "cfgId": 100310,
+      "name": "card_100310.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100310.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100310.png",
+      "sha256": "07a2feaf53bd77b1863e31a4f46d2a3c43cbaf7c0992fd75c619602267d303f3"
+    },
+    {
+      "cfgId": 100502,
+      "name": "card_100502.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100502.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100502.png",
+      "sha256": "abc7414bc68694154a522c1bd95b9b9e6644a409e1fa11ce883069bc6c74f81b"
+    },
+    {
+      "cfgId": 100574,
+      "name": "card_100574.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100574.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100574.png",
+      "sha256": "52728b046c537b9bb43fc7ecd72c3d351866f2a109ce86b88e279cdea7a7d902"
+    },
+    {
+      "cfgId": 110001,
+      "name": "card_110001.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110001.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110001.png",
+      "sha256": "52cda55258ae85f061cc7ca8efae4beec7dbcf930572c42105928501ef363ddd"
+    },
+    {
+      "cfgId": 110311,
+      "name": "card_110311.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110311.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110311.png",
+      "sha256": "3e40b309856ef415f16872411a510d92cbe6fb49ca623cc1b6cd09f1bcc29928"
+    },
+    {
+      "cfgId": 110411,
+      "name": "card_110411.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110411.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110411.png",
+      "sha256": "8492247ec8a56ba30e0f3d0bbefa30246e261419416c39f65c25b90735362842"
+    },
+    {
+      "cfgId": 110500,
+      "name": "card_110500.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110500.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110500.png",
+      "sha256": "74521f652c0e61d024ea6a030b79002f63601c744c9e93d1b0e0a44f2734c442"
+    },
+    {
+      "cfgId": 120001,
+      "name": "card_120001.png",
+      "path": "godot-client/assets/themes/slgclient/current/generalpic/card_120001.png",
+      "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_120001.png",
+      "sha256": "bfe2531e568e07a59ed5504dc4e4b7b2989e61636afa426621f612c950248d3d"
+    }
+  ],
+  "lookupRules": [
+    "Resolve portraits by cfgId through card_<cfgId>.png under packRoot.",
+    "Use headWrapPath when a head frame shell is required.",
+    "This pack is portrait-only and excludes .meta sidecars.",
+    "If a cfgId is not in examplePortraits, search generalpic_manifest.json by cfgId or file name."
+  ]
+}

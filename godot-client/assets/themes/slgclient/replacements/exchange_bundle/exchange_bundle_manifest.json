@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "theme": "slgclient",
-  "importedAt": "2026-04-11T08:08:40+00:00",
+  "importedAt": "2026-04-12T18:04:29+00:00",
   "source": {
     "repo": "https://github.com/llr104/slgclient",
     "commit": "767065453e358abc1b463f9396079d8026d0baf4"
@@ -9,14 +9,20 @@
   "bundleRoot": "godot-client/assets/themes/slgclient/replacements/exchange_bundle",
   "segments": {
     "world": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/world",
+    "generalpic": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/generalpic",
     "units": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/units",
     "overlays": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays",
+    "ui": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/ui",
     "manifests": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/manifests"
   },
   "stats": {
     "world": {
       "files": 27,
       "bytes": 14310406
+    },
+    "generalpic": {
+      "files": 449,
+      "bytes": 150417849
     },
     "units": {
       "files": 80,
@@ -26,9 +32,13 @@
       "files": 204,
       "bytes": 4876185
     },
+    "ui": {
+      "files": 110,
+      "bytes": 2020565
+    },
     "manifests": {
-      "files": 3,
-      "bytes": 179878
+      "files": 6,
+      "bytes": 568964
     }
   }
 }

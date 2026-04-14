@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "storyId": "ui_canvas",
+  "title": "UI Canvas Story",
+  "description": "Canvas-level shell preview for overlay zoning, hierarchy, and spacing rhythm.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": [
+      "fixture"
+    ]
+  },
+  "captureTargets": [
+    "Shell",
+    "Shell/ShellMargin/RootVBox/MainRow/CanvasPanel/CanvasMargin/CanvasVBox/CanvasSurface",
+    "Shell/ShellMargin/RootVBox/MainRow/LibraryPanel",
+    "Shell/ShellMargin/RootVBox/MainRow/InspectorPanel"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "Shell",
+      "Shell/ShellMargin/RootVBox/MainRow/CanvasPanel/CanvasMargin/CanvasVBox/CanvasSurface",
+      "Shell/ShellMargin/RootVBox/MainRow/LibraryPanel",
+      "Shell/ShellMargin/RootVBox/MainRow/InspectorPanel"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "baseline_canvas",
+      "label": "Baseline Canvas",
+      "headline": "UI Canvas | Baseline Layout",
+      "scope": "fixture-ui-canvas-baseline",
+      "tick": 4120,
+      "worldVersion": 101,
+      "canvasPreset": "command",
+      "gridDensity": "balanced",
+      "focusRegion": "center"
+    },
+    {
+      "id": "dense_canvas",
+      "label": "Dense Canvas",
+      "headline": "UI Canvas | Dense Operations",
+      "scope": "fixture-ui-canvas-dense",
+      "tick": 4126,
+      "worldVersion": 102,
+      "canvasPreset": "operations",
+      "gridDensity": "dense",
+      "focusRegion": "right"
+    },
+    {
+      "id": "declutter_canvas",
+      "label": "Declutter Canvas",
+      "headline": "UI Canvas | Decluttered Focus",
+      "scope": "fixture-ui-canvas-declutter",
+      "tick": 4132,
+      "worldVersion": 103,
+      "canvasPreset": "focus",
+      "gridDensity": "light",
+      "focusRegion": "left"
+    }
+  ]
+}

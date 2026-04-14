@@ -39,6 +39,7 @@
     "gate:godot:week1:compat:debug-only": "py -3.11 godot-client/tools/run_week1_gate.py",
     "godot:ops:cli": "py -3.11 godot-client/tools/slg_ops_cli.py",
     "godot:ops:visual-validate": "py -3.11 godot-client/tools/validate_visual_mapping.py",
+    "godot:ui:preview:regress": "py -3.11 godot-client/tools/run_ui_preview_sandbox_regression.py",
     "gate:harness:isolation": "py -3.11 scripts/run_harness_isolation_gate.py",
     "test:ai:quota": "tsx server/tests/ai_quota.test.ts",
     "test:world:mutation-lock": "tsx server/tests/world_mutation_lock.test.ts",

@@ -1,0 +1,129 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/slg_panel_stack.gd" id="1_stack"]
+[ext_resource type="PackedScene" path="res://scenes/ui/slg_panel_shell.tscn" id="2_shell"]
+
+[node name="SLGPanelStack" type="CanvasLayer"]
+layer = 40
+script = ExtResource("1_stack")
+
+[node name="Stage" type="Control" parent="."]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
+
+[node name="Backdrop" type="ColorRect" parent="Stage"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+color = Color(0.05, 0.07, 0.11, 0.58)
+mouse_filter = 1
+
+[node name="MainHUD" type="PanelContainer" parent="Stage"]
+offset_left = 24.0
+offset_top = 24.0
+offset_right = 620.0
+offset_bottom = 208.0
+
+[node name="MainMargin" type="MarginContainer" parent="Stage/MainHUD"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="MainVBox" type="VBoxContainer" parent="Stage/MainHUD/MainMargin"]
+theme_override_constants/separation = 10
+
+[node name="MainAccentBar" type="ColorRect" parent="Stage/MainHUD/MainMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 5)
+color = Color(0.34, 0.81, 0.68, 1)
+
+[node name="MainTitle" type="Label" parent="Stage/MainHUD/MainMargin/MainVBox"]
+theme_override_font_sizes/font_size = 20
+text = "MainHUD"
+
+[node name="MainSummary" type="Label" parent="Stage/MainHUD/MainMargin/MainVBox"]
+custom_minimum_size = Vector2(0, 54)
+theme_override_font_sizes/font_size = 14
+text = "UI stack demo. Click Open L2 to push deeper layers, then use Back or Close to collapse back to MainHUD."
+autowrap_mode = 3
+
+[node name="MainPath" type="Label" parent="Stage/MainHUD/MainMargin/MainVBox"]
+theme_override_font_sizes/font_size = 13
+text = "Stack: MainHUD"
+autowrap_mode = 3
+
+[node name="MainActions" type="HBoxContainer" parent="Stage/MainHUD/MainMargin/MainVBox"]
+theme_override_constants/separation = 8
+
+[node name="OpenL2Button" type="Button" parent="Stage/MainHUD/MainMargin/MainVBox/MainActions"]
+custom_minimum_size = Vector2(160, 0)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "Open L2"
+
+[node name="ResetButton" type="Button" parent="Stage/MainHUD/MainMargin/MainVBox/MainActions"]
+custom_minimum_size = Vector2(160, 0)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "Reset to Main"
+
+[node name="ShellHost" type="Control" parent="Stage"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+
+[node name="L2Panel" parent="Stage/ShellHost" instance=ExtResource("2_shell")]
+offset_left = 72.0
+offset_top = 180.0
+offset_right = 684.0
+offset_bottom = 520.0
+panel_id = "l2"
+panel_title = "L2: Command Deck"
+panel_depth_label = "L2"
+panel_body = "Layer 2 is the first drill-down. It stays above MainHUD, keeps the parent alive behind it, and proves the stack order is stable."
+primary_button_label = "Open L3"
+secondary_button_label = "Back to Main"
+back_button_label = "Close L2"
+close_button_label = "Close L2"
+primary_target_id = "l3"
+secondary_target_id = "main"
+back_target_id = "main"
+close_target_id = "main"
+accent_color = Color(0.25, 0.58, 0.94, 1)
+
+[node name="L3Panel" parent="Stage/ShellHost" instance=ExtResource("2_shell")]
+offset_left = 248.0
+offset_top = 248.0
+offset_right = 896.0
+offset_bottom = 606.0
+panel_id = "l3"
+panel_title = "L3: Branch Sheet"
+panel_depth_label = "L3"
+panel_body = "Layer 3 sits on top of Layer 2. Opening it should not lose L2; backing out should restore the previous active sheet."
+primary_button_label = "Open L4 Popup"
+secondary_button_label = "Back to L2"
+back_button_label = "Close L3"
+close_button_label = "Close L3"
+primary_target_id = "l4"
+secondary_target_id = "l2"
+back_target_id = "l2"
+close_target_id = "l2"
+accent_color = Color(0.82, 0.57, 0.22, 1)
+
+[node name="L4Panel" parent="Stage/ShellHost" instance=ExtResource("2_shell")]
+offset_left = 422.0
+offset_top = 304.0
+offset_right = 1094.0
+offset_bottom = 700.0
+panel_id = "l4"
+panel_title = "L4: Popup"
+panel_depth_label = "POPUP"
+panel_body = "Layer 4 is the popup tier. It is the top of the stack, and both Back and Close should dismiss it without disturbing lower layers."
+primary_button_label = "Close Popup"
+secondary_button_label = "Back to L3"
+back_button_label = "Close Popup"
+close_button_label = "Close Popup"
+primary_target_id = "l3"
+secondary_target_id = "l3"
+back_target_id = "l3"
+close_target_id = "l3"
+accent_color = Color(0.88, 0.35, 0.44, 1)

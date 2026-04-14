@@ -1,0 +1,137 @@
+{
+  "schemaVersion": 1,
+  "storyId": "map_units",
+  "title": "Map Units Story",
+  "description": "Unit marker, movement, and engage preview over the persistent map stage.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": ["fixture"]
+  },
+  "captureTargets": [
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/UnitsRosterPanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/UnitActionPanel"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/UnitsRosterPanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/UnitActionPanel"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "staging",
+      "label": "Staging",
+      "headline": "Map Units | staging roster",
+      "scope": "preview_units_staging",
+      "tick": 4096,
+      "worldVersion": 96,
+      "zoom": 0.58,
+      "hoverTileId": "city_player_base",
+      "hoverX": 1,
+      "hoverY": 5,
+      "accentColor": { "r": 0.93, "g": 0.63, "b": 0.42, "a": 1.0 },
+      "rosterLines": [
+        "Roster",
+        "Vanguard Spear | tile city_player_base | ready",
+        "Supply Guard | tile tile_03_05 | ready",
+        "Western Banner | tile city_enemy_base | watch"
+      ],
+      "actionLines": [
+        "Action Feed",
+        "This state checks marker color separation and idle positioning.",
+        "Use it as the baseline before move and contest states."
+      ],
+      "units": [
+        { "id": "unit_vanguard", "tileId": "city_player_base", "faction": "player", "status": "ready", "strength": 100 },
+        { "id": "unit_supply", "tileId": "tile_03_05", "faction": "player", "status": "ready", "strength": 82 },
+        { "id": "unit_western", "tileId": "city_enemy_base", "faction": "enemy_west", "status": "watch", "strength": 92 }
+      ]
+    },
+    {
+      "id": "march",
+      "label": "March",
+      "headline": "Map Units | march and intercept",
+      "scope": "preview_units_march",
+      "tick": 4102,
+      "worldVersion": 97,
+      "zoom": 0.64,
+      "hoverTileId": "tile_05_05",
+      "hoverX": 5,
+      "hoverY": 5,
+      "accentColor": { "r": 0.54, "g": 0.81, "b": 0.91, "a": 1.0 },
+      "rosterLines": [
+        "Roster",
+        "Vanguard Spear | tile tile_04_05 | marching",
+        "Supply Guard | tile tile_05_05 | escort",
+        "Western Banner | tile tile_06_03 | intercept"
+      ],
+      "actionLines": [
+        "Action Feed",
+        "Cycle into this state to preview move transitions and marker drift.",
+        "The map shell should still feel readable while units move."
+      ],
+      "units": [
+        { "id": "unit_vanguard", "tileId": "tile_04_05", "faction": "player", "status": "marching", "strength": 98 },
+        { "id": "unit_supply", "tileId": "tile_05_05", "faction": "player", "status": "escort", "strength": 80 },
+        { "id": "unit_western", "tileId": "tile_06_03", "faction": "enemy_west", "status": "intercept", "strength": 92 }
+      ]
+    },
+    {
+      "id": "contest",
+      "label": "Contest",
+      "headline": "Map Units | contest and engage",
+      "scope": "preview_units_contest",
+      "tick": 4110,
+      "worldVersion": 98,
+      "zoom": 0.72,
+      "hoverTileId": "tile_05_03",
+      "hoverX": 5,
+      "hoverY": 3,
+      "accentColor": { "r": 0.90, "g": 0.38, "b": 0.43, "a": 1.0 },
+      "rosterLines": [
+        "Roster",
+        "Vanguard Spear | tile tile_05_03 | fighting",
+        "Supply Guard | tile tile_04_05 | fallback",
+        "Western Banner | tile tile_05_03 | contest"
+      ],
+      "actionLines": [
+        "Action Feed",
+        "Cycle into this state to preview contest pressure around one tile.",
+        "The unit layer should remain legible over the terrain and overlay stack."
+      ],
+      "history": {
+        "executionReplays": [
+          {
+            "requestId": "preview_units_contest",
+            "frames": [
+              {
+                "tick": 4110,
+                "worldVersion": 98,
+                "label": "contest",
+                "highlights": [
+                  {
+                    "kind": "battle",
+                    "unitId": "unit_vanguard",
+                    "fromTileId": "tile_04_05",
+                    "toTileId": "tile_05_03",
+                    "tileId": "tile_05_03"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      "units": [
+        { "id": "unit_vanguard", "tileId": "tile_05_03", "faction": "player", "status": "fighting", "strength": 72 },
+        { "id": "unit_supply", "tileId": "tile_04_05", "faction": "player", "status": "fallback", "strength": 64 },
+        { "id": "unit_western", "tileId": "tile_05_03", "faction": "enemy_west", "status": "contest", "strength": 81 }
+      ]
+    }
+  ]
+}

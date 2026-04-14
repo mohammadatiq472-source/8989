@@ -1,5 +1,6 @@
 extends Node2D
 
+const FactionVisualsScript = preload("res://scripts/map/faction_visuals.gd")
 const MAX_VISIBLE_TILE_DRAW_COUNT: int = 20000
 const THEME_MAP_TMX_PATH: String = "res://assets/themes/slgclient/current/world/map.tmx"
 const THEME_WORLD_ROOT: String = "res://assets/themes/slgclient/current/world"
@@ -591,6 +592,7 @@ func _draw_home_city_overlays(visible_bounds: Dictionary) -> void:
 		return
 
 	var font: Font = ThemeDB.fallback_font
+	var human_faction_id: String = _resolve_human_faction_id()
 	var scale: float = clampf(home_city_overlay_scale, 0.2, 1.8)
 	for entry_variant in _home_city_overlay_entries:
 		if not (entry_variant is Dictionary):
@@ -602,8 +604,9 @@ func _draw_home_city_overlays(visible_bounds: Dictionary) -> void:
 			continue
 
 		var center: Vector2 = _tmx_to_screen(tmx_x, tmx_y)
+		var faction_id: String = str(entry.get("factionId", "")).strip_edges()
 		var is_human: bool = bool(entry.get("isHuman", false))
-		var accent: Color = Color(0.48, 0.94, 0.66, 0.96) if is_human else Color(1.0, 0.57, 0.48, 0.95)
+		var accent: Color = FactionVisualsScript.resolve_marker_color(faction_id, human_faction_id)
 		var defend_center: Vector2 = center + Vector2(0.0, -_tmx_tile_height * 0.05 * _zoom * scale)
 		var flag_center: Vector2 = center + Vector2(0.0, -_tmx_tile_height * 0.28 * _zoom * scale)
 		var defend_drawn: bool = _draw_overlay_frame(
@@ -712,7 +715,7 @@ func _try_append_home_city_entry(faction_id: String, faction_data: Dictionary, h
 			"factionId": faction_id,
 			"isHuman": is_human,
 			"label": HUMAN_HOME_LABEL if is_human else AI_HOME_LABEL,
-			"flagFrame": _resolve_home_city_flag_frame(is_human, city_level),
+			"flagFrame": _resolve_home_city_flag_frame(faction_id, human_faction_id, city_level),
 			"homeDefendFrame": "home_defend.png",
 		}
 	)
@@ -1313,18 +1316,13 @@ func _resolve_resource_overlay_frame(resource_kind: String, resource_level: int)
 			return "land_3_%d.png" % level_index
 
 
-func _resolve_home_city_flag_frame(is_human: bool, city_level: int) -> String:
-	var level: int = clampi(city_level, 1, 5)
-	var preferred: String = "flag_blue_%d.png" % level if is_human else "flag_red_%d.png" % level
-	if _overlay_texture_by_frame.has(preferred):
-		return preferred
-	var fallback_primary: String = "flag_blue_3.png" if is_human else "flag_red_3.png"
-	if _overlay_texture_by_frame.has(fallback_primary):
-		return fallback_primary
-	var fallback_outside: String = "out_flag_blue_3.png" if is_human else "out_flag_red_3.png"
-	if _overlay_texture_by_frame.has(fallback_outside):
-		return fallback_outside
-	return ""
+func _resolve_home_city_flag_frame(faction_id: String, human_faction_id: String, city_level: int) -> String:
+	return FactionVisualsScript.resolve_flag_frame(
+		_overlay_texture_by_frame,
+		faction_id,
+		human_faction_id,
+		city_level,
+	)
 
 
 func _load_overlay_manifest() -> void:

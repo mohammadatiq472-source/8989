@@ -1,0 +1,243 @@
+{
+  "schemaVersion": 1,
+  "storyId": "nation_layer",
+  "title": "国家层预览",
+  "description": "国家层预览：颜色块、国号、国力、首都与立国入口。",
+  "macroFlow": {
+    "badge": "宏观终点",
+    "note": "国家层是流程收口页，只在此完成确认。",
+    "entryLabel": "完成收口"
+  },
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": [
+      "fixture"
+    ]
+  },
+  "captureTargets": [
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/NationBannerPanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/NationPalettePanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/NationEntryPanel"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/NationBannerPanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/NationPalettePanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/NationEntryPanel"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "foundation_ready",
+      "label": "立国就绪",
+      "headline": "国家层｜立国",
+      "subtitle": "颜色块、国号、国力、首都、入口。",
+      "scope": "fixture-nation-layer-foundation",
+      "tick": 4096,
+      "worldVersion": 72,
+      "zoom": 0.28,
+      "hoverTileId": "city_luoyang",
+      "hoverX": 2,
+      "hoverY": 3,
+      "nationName": "汉室",
+      "nationCode": "HAN-01",
+      "nationPower": "9860",
+      "capitalName": "洛阳",
+      "nationColor": { "r": 0.35, "g": 0.78, "b": 0.68, "a": 1.0 },
+      "macroFlow": {
+        "badge": "宏观终点",
+        "note": "国家层是流程收口页，只在此完成确认。",
+        "entryLabel": "完成收口"
+      },
+      "overviewLines": [
+        "国家层优先展示颜色块、国号、国力与首都。",
+        "入口要一眼可读，避免细长竖排。"
+      ],
+      "entryPrompt": "确认国号、颜色与首都后进入。",
+      "entryStatus": "待定",
+      "entryButtonLabel": "进入立国",
+      "entrySteps": [
+        "确认中心城池",
+        "选择国家颜色",
+        "锁定首都"
+      ],
+      "nationPalette": [
+        {
+          "code": "HAN",
+          "name": "汉室",
+          "power": "9860",
+          "capital": "洛阳",
+          "selected": true,
+          "color": { "r": 0.35, "g": 0.78, "b": 0.68, "a": 1.0 }
+        },
+        {
+          "code": "WEI",
+          "name": "魏国",
+          "power": "8420",
+          "capital": "许昌",
+          "selected": false,
+          "color": { "r": 0.95, "g": 0.71, "b": 0.18, "a": 1.0 }
+        },
+        {
+          "code": "SHU",
+          "name": "蜀国",
+          "power": "7985",
+          "capital": "成都",
+          "selected": false,
+          "color": { "r": 0.82, "g": 0.48, "b": 0.94, "a": 1.0 }
+        },
+        {
+          "code": "WU",
+          "name": "吴国",
+          "power": "7812",
+          "capital": "建业",
+          "selected": false,
+          "color": { "r": 0.91, "g": 0.34, "b": 0.38, "a": 1.0 }
+        }
+      ]
+    },
+    {
+      "id": "border_hold",
+      "label": "边境稳态",
+      "headline": "国家层｜边境",
+      "subtitle": "颜色块清晰，首都与国力压在头部。",
+      "scope": "fixture-nation-layer-border",
+      "tick": 4102,
+      "worldVersion": 73,
+      "zoom": 0.33,
+      "hoverTileId": "city_xuchang",
+      "hoverX": 6,
+      "hoverY": 3,
+      "nationName": "魏国",
+      "nationCode": "WEI-02",
+      "nationPower": "8420",
+      "capitalName": "许昌",
+      "nationColor": { "r": 0.95, "g": 0.71, "b": 0.18, "a": 1.0 },
+      "macroFlow": {
+        "badge": "宏观终点",
+        "note": "国家层是流程收口页，只在此完成确认。",
+        "entryLabel": "完成收口"
+      },
+      "overviewLines": [
+        "边境态强调国力对比与首都归属。",
+        "颜色块压在一眼能扫到的位置。"
+      ],
+      "entryPrompt": "边境态仍需保持入口可读。",
+      "entryStatus": "可进入",
+      "entryButtonLabel": "查看立国",
+      "entrySteps": [
+        "确认边境颜色",
+        "核对首都国力",
+        "读取战区压强"
+      ],
+      "nationPalette": [
+        {
+          "code": "WEI",
+          "name": "魏国",
+          "power": "8420",
+          "capital": "许昌",
+          "selected": true,
+          "color": { "r": 0.95, "g": 0.71, "b": 0.18, "a": 1.0 }
+        },
+        {
+          "code": "HAN",
+          "name": "汉室",
+          "power": "9860",
+          "capital": "洛阳",
+          "selected": false,
+          "color": { "r": 0.35, "g": 0.78, "b": 0.68, "a": 1.0 }
+        },
+        {
+          "code": "SHU",
+          "name": "蜀国",
+          "power": "7985",
+          "capital": "成都",
+          "selected": false,
+          "color": { "r": 0.82, "g": 0.48, "b": 0.94, "a": 1.0 }
+        },
+        {
+          "code": "WU",
+          "name": "吴国",
+          "power": "7812",
+          "capital": "建业",
+          "selected": false,
+          "color": { "r": 0.91, "g": 0.34, "b": 0.38, "a": 1.0 }
+        }
+      ]
+    },
+    {
+      "id": "capital_lock",
+      "label": "首都锁定",
+      "headline": "国家层｜首都",
+      "subtitle": "国号、颜色、国力与首都组成入口。",
+      "scope": "fixture-nation-layer-capital",
+      "tick": 4109,
+      "worldVersion": 74,
+      "zoom": 0.38,
+      "hoverTileId": "city_jianye",
+      "hoverX": 9,
+      "hoverY": 2,
+      "nationName": "吴国",
+      "nationCode": "WU-03",
+      "nationPower": "7812",
+      "capitalName": "建业",
+      "nationColor": { "r": 0.91, "g": 0.34, "b": 0.38, "a": 1.0 },
+      "macroFlow": {
+        "badge": "宏观终点",
+        "note": "国家层是流程收口页，只在此完成确认。",
+        "entryLabel": "完成收口"
+      },
+      "overviewLines": [
+        "首都锁定态展示最终提交感。",
+        "颜色块保持强对比和快速识别。"
+      ],
+      "entryPrompt": "锁定首都后即可提交。",
+      "entryStatus": "已锁定",
+      "entryButtonLabel": "提交国态",
+      "entrySteps": [
+        "确认国号",
+        "选择国家颜色",
+        "锁定首都"
+      ],
+      "nationPalette": [
+        {
+          "code": "WU",
+          "name": "吴国",
+          "power": "7812",
+          "capital": "建业",
+          "selected": true,
+          "color": { "r": 0.91, "g": 0.34, "b": 0.38, "a": 1.0 }
+        },
+        {
+          "code": "HAN",
+          "name": "汉室",
+          "power": "9860",
+          "capital": "洛阳",
+          "selected": false,
+          "color": { "r": 0.35, "g": 0.78, "b": 0.68, "a": 1.0 }
+        },
+        {
+          "code": "WEI",
+          "name": "魏国",
+          "power": "8420",
+          "capital": "许昌",
+          "selected": false,
+          "color": { "r": 0.95, "g": 0.71, "b": 0.18, "a": 1.0 }
+        },
+        {
+          "code": "SHU",
+          "name": "蜀国",
+          "power": "7985",
+          "capital": "成都",
+          "selected": false,
+          "color": { "r": 0.82, "g": 0.48, "b": 0.94, "a": 1.0 }
+        }
+      ]
+    }
+  ]
+}

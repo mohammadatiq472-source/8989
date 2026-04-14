@@ -1,81 +1,164 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=6 format=3]
 
 [ext_resource type="Script" path="res://scripts/app/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/map/map_grid.gd" id="2_map_grid"]
 [ext_resource type="PackedScene" path="res://scenes/ui/observability_panel.tscn" id="3_observability_panel"]
 [ext_resource type="Script" path="res://scripts/map/unit_view_layer.gd" id="4_unit_view_layer"]
+[ext_resource type="PackedScene" path="res://scenes/ui/slg_panel_stack.tscn" id="5_panel_stack"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_main")
+runtime_label_path = NodePath("HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/RuntimeSection/RuntimeContent/RuntimeInfo")
+refresh_button_path = NodePath("HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons/RefreshWorldButton")
+advance_tick_button_path = NodePath("HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons/AdvanceTickButton")
 
 [node name="MapGrid" type="Node2D" parent="."]
 script = ExtResource("2_map_grid")
+hover_label_path = NodePath("../HoverLayer/HudRoot/TopLeftInfoCard/InfoMargin/InfoColumn/HoverInfo")
+perf_label_path = NodePath("../HoverLayer/HudRoot/TopLeftInfoCard/InfoMargin/InfoColumn/PerfInfo")
+export_button_path = NodePath("../HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons/ExportPerfButton")
+export_status_label_path = NodePath("../HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/StatusSection/StatusContent/ExportStatus")
 
 [node name="UnitViewLayer" type="Node2D" parent="."]
 script = ExtResource("4_unit_view_layer")
 
 [node name="ObservabilityPanel" parent="." instance=ExtResource("3_observability_panel")]
 
+[node name="PanelStack" parent="." instance=ExtResource("5_panel_stack")]
+
 [node name="HoverLayer" type="CanvasLayer" parent="."]
 
-[node name="HudBackdrop" type="PanelContainer" parent="HoverLayer"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 1186.0
-offset_bottom = 218.0
+[node name="HudRoot" type="Control" parent="HoverLayer"]
+anchor_right = 1.0
+anchor_bottom = 1.0
+mouse_filter = 2
 
-[node name="HoverInfo" type="Label" parent="HoverLayer"]
+[node name="TopLeftInfoCard" type="PanelContainer" parent="HoverLayer/HudRoot"]
 offset_left = 12.0
-offset_top = 10.0
-offset_right = 780.0
-offset_bottom = 74.0
+offset_top = 12.0
+offset_right = 860.0
+offset_bottom = 128.0
+
+[node name="InfoMargin" type="MarginContainer" parent="HoverLayer/HudRoot/TopLeftInfoCard"]
+offset_right = 848.0
+offset_bottom = 116.0
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="InfoColumn" type="VBoxContainer" parent="HoverLayer/HudRoot/TopLeftInfoCard/InfoMargin"]
+offset_right = 828.0
+offset_bottom = 100.0
+theme_override_constants/separation = 6
+
+[node name="HoverInfo" type="Label" parent="HoverLayer/HudRoot/TopLeftInfoCard/InfoMargin/InfoColumn"]
+custom_minimum_size = Vector2(0, 42)
 theme_override_font_sizes/font_size = 14
 text = "SLG Theme | waiting map data..."
+autowrap_mode = 3
 
-[node name="PerfInfo" type="Label" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 78.0
-offset_right = 1080.0
-offset_bottom = 106.0
+[node name="PerfInfo" type="Label" parent="HoverLayer/HudRoot/TopLeftInfoCard/InfoMargin/InfoColumn"]
+custom_minimum_size = Vector2(0, 30)
 theme_override_font_sizes/font_size = 14
 text = "Perf(5s) | waiting frame samples..."
+autowrap_mode = 2
 
-[node name="ExportPerfButton" type="Button" parent="HoverLayer"]
+[node name="BottomBar" type="PanelContainer" parent="HoverLayer/HudRoot"]
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
 offset_left = 12.0
-offset_top = 112.0
-offset_right = 180.0
-offset_bottom = 144.0
-theme_override_font_sizes/font_size = 14
-text = "Export Baseline (F8)"
+offset_top = -144.0
+offset_right = -12.0
+offset_bottom = -12.0
 
-[node name="ExportStatus" type="Label" parent="HoverLayer"]
-offset_left = 192.0
-offset_top = 116.0
-offset_right = 1180.0
-offset_bottom = 146.0
-theme_override_font_sizes/font_size = 14
-text = "Export status: waiting..."
+[node name="BottomMargin" type="MarginContainer" parent="HoverLayer/HudRoot/BottomBar"]
+offset_right = 1330.0
+offset_bottom = 132.0
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
 
-[node name="RefreshWorldButton" type="Button" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 150.0
-offset_right = 180.0
-offset_bottom = 182.0
+[node name="BottomRow" type="HBoxContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin"]
+offset_right = 1306.0
+offset_bottom = 112.0
+theme_override_constants/separation = 14
+
+[node name="OpsSection" type="PanelContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow"]
+custom_minimum_size = Vector2(470, 0)
+
+[node name="OpsContent" type="VBoxContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection"]
+offset_right = 470.0
+offset_bottom = 112.0
+theme_override_constants/separation = 8
+
+[node name="OpsTitle" type="Label" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent"]
+theme_override_font_sizes/font_size = 13
+text = "Operations"
+
+[node name="OpsButtons" type="HBoxContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent"]
+offset_top = 22.0
+offset_right = 470.0
+offset_bottom = 54.0
+theme_override_constants/separation = 8
+
+[node name="RefreshWorldButton" type="Button" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons"]
+custom_minimum_size = Vector2(146, 0)
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 text = "Refresh Snapshot"
 
-[node name="AdvanceTickButton" type="Button" parent="HoverLayer"]
-offset_left = 192.0
-offset_top = 150.0
-offset_right = 360.0
-offset_bottom = 182.0
+[node name="AdvanceTickButton" type="Button" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons"]
+custom_minimum_size = Vector2(134, 0)
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 text = "Advance Tick"
 
-[node name="RuntimeInfo" type="Label" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 186.0
-offset_right = 1500.0
-offset_bottom = 214.0
+[node name="ExportPerfButton" type="Button" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons"]
+custom_minimum_size = Vector2(162, 0)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = "Export Baseline (F8)"
+
+[node name="StatusSection" type="PanelContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow"]
+custom_minimum_size = Vector2(300, 0)
+
+[node name="StatusContent" type="VBoxContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/StatusSection"]
+offset_right = 300.0
+offset_bottom = 112.0
+theme_override_constants/separation = 8
+
+[node name="StatusTitle" type="Label" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/StatusSection/StatusContent"]
+theme_override_font_sizes/font_size = 13
+text = "Export"
+
+[node name="ExportStatus" type="Label" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/StatusSection/StatusContent"]
+offset_top = 22.0
+offset_right = 300.0
+offset_bottom = 84.0
+theme_override_font_sizes/font_size = 14
+text = "Export status: waiting..."
+autowrap_mode = 3
+
+[node name="RuntimeSection" type="PanelContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow"]
+size_flags_horizontal = 3
+
+[node name="RuntimeContent" type="VBoxContainer" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/RuntimeSection"]
+offset_right = 522.0
+offset_bottom = 112.0
+theme_override_constants/separation = 8
+
+[node name="RuntimeTitle" type="Label" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/RuntimeSection/RuntimeContent"]
+theme_override_font_sizes/font_size = 13
+text = "Runtime"
+
+[node name="RuntimeInfo" type="Label" parent="HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/RuntimeSection/RuntimeContent"]
+offset_top = 22.0
+offset_right = 522.0
+offset_bottom = 100.0
+size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
 text = "Runtime | status=waiting..."
+autowrap_mode = 3

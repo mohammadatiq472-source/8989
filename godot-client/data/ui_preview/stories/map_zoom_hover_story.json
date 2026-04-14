@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "storyId": "map_zoom_hover",
+  "title": "Map Zoom Hover Story",
+  "description": "Zoom and hover sandbox for province, warzone, and tile-level readability.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": ["fixture"]
+  },
+  "captureTargets": [
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/ZoomFocusPanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/ZoomLegendPanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/HoverCallout"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/ZoomFocusPanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/ZoomLegendPanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/HoverCallout"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "province",
+      "label": "Province",
+      "headline": "Map Zoom/Hover | province overview",
+      "scope": "fixture-map-zoom-hover-overview",
+      "tick": 2048,
+      "worldVersion": 64,
+      "zoom": 0.34,
+      "hoverTileId": "city_loyang",
+      "hoverX": 2,
+      "hoverY": 3,
+      "accentColor": { "r": 0.48, "g": 0.82, "b": 0.94, "a": 1.0 },
+      "focusLines": [
+        "Focus: L1 province overview",
+        "Zoom target: 0.34",
+        "Hover target: Luoyang anchor",
+        "Goal: readability while labels collapse"
+      ],
+      "legendLines": [
+        "Legend",
+        "Province ring = aggregated region shell",
+        "Warzone ring = contested corridor",
+        "Tile ring = micro interaction zone"
+      ],
+      "hoverLines": [
+        "Hover playback",
+        "Province layer should still expose the anchor city",
+        "Use this state to judge long-range readability"
+      ]
+    },
+    {
+      "id": "warzone",
+      "label": "Warzone",
+      "headline": "Map Zoom/Hover | warzone lock-on",
+      "scope": "fixture-map-zoom-hover-warzone",
+      "tick": 2052,
+      "worldVersion": 65,
+      "zoom": 0.52,
+      "hoverTileId": "city_hulao",
+      "hoverX": 5,
+      "hoverY": 3,
+      "accentColor": { "r": 0.93, "g": 0.69, "b": 0.31, "a": 1.0 },
+      "focusLines": [
+        "Focus: L2 warzone corridor",
+        "Zoom target: 0.52",
+        "Hover target: Hulao gate",
+        "Goal: readable hover and visible focus corridor"
+      ],
+      "legendLines": [
+        "Legend",
+        "Use this state to judge mid-zoom panels",
+        "Gate, ridge, and route labels should coexist",
+        "The shell must not drown the map stage"
+      ],
+      "hoverLines": [
+        "Hover playback",
+        "Warzone layer should show city details",
+        "Check that the hover card remains stable after zoom"
+      ]
+    },
+    {
+      "id": "tile",
+      "label": "Tile",
+      "headline": "Map Zoom/Hover | tile detail lock",
+      "scope": "fixture-map-zoom-hover-tile",
+      "tick": 2057,
+      "worldVersion": 66,
+      "zoom": 0.74,
+      "hoverTileId": "res_iron_02",
+      "hoverX": 7,
+      "hoverY": 2,
+      "accentColor": { "r": 0.88, "g": 0.42, "b": 0.46, "a": 1.0 },
+      "focusLines": [
+        "Focus: L3 tile detail",
+        "Zoom target: 0.74",
+        "Hover target: iron node",
+        "Goal: per-tile hover data without losing perf context"
+      ],
+      "legendLines": [
+        "Legend",
+        "Tile layer is where micro actions begin",
+        "Hover must remain usable after zoom shifts",
+        "Perf label must survive the denser draw window"
+      ],
+      "hoverLines": [
+        "Hover playback",
+        "Tile layer should expose resource level and district",
+        "Use this state to judge the bottom-out zoom shell"
+      ]
+    }
+  ]
+}

@@ -2,6 +2,12 @@ extends Node
 
 const BackendApiClientScript = preload("res://scripts/infra/http/backend_api_client.gd")
 const ObservabilityBridgeScript = preload("res://scripts/infra/observability/observability_bridge.gd")
+const UiThemeTokensScript = preload("res://scripts/ui/ui_theme_tokens.gd")
+const ADVANCE_TICK_SOFT_TIMEOUT_SECONDS := 15.0
+const ADVANCE_TICK_TIMEOUT_NOTICE := "请求已超时，可能仍在后台执行，请稍后 Refresh Snapshot"
+const HUD_TOP_LEFT_PATH := NodePath("HoverLayer/HudRoot/TopLeftInfoCard")
+const HUD_BOTTOM_BAR_PATH := NodePath("HoverLayer/HudRoot/BottomBar")
+const HUD_EXPORT_BUTTON_PATH := NodePath("HoverLayer/HudRoot/BottomBar/BottomMargin/BottomRow/OpsSection/OpsContent/OpsButtons/ExportPerfButton")
 
 @export var runtime_label_path: NodePath = NodePath("HoverLayer/RuntimeInfo")
 @export var observability_panel_path: NodePath = NodePath("ObservabilityPanel")
@@ -13,9 +19,17 @@ var _runtime_label: Label
 var _observability_panel: Node
 var _refresh_button: Button
 var _advance_tick_button: Button
+var _export_button: Button
+var _top_left_info_card: PanelContainer
+var _bottom_bar: PanelContainer
 var _observability_bridge
+var _ui_theme_tokens
 var _active_map_scope: String = "bootstrap"
 var _request_in_flight: bool = false
+var _advance_tick_request_seq: int = 0
+var _advance_tick_active_seq: int = -1
+var _advance_tick_timeout_warning_visible: bool = false
+var _advance_tick_button_default_text: String = "Advance Tick"
 var _target_faction_id: String = ""
 var _runtime_autonomy_level: String = "unknown"
 var _runtime_control_mode: String = "unknown"
@@ -33,10 +47,16 @@ func _ready() -> void:
 	add_child(_api_client)
 	_api_client.configure(AppConfig.backend_base_url)
 	_active_map_scope = AppConfig.map_layout_scope
+	_ui_theme_tokens = UiThemeTokensScript.new()
 	_runtime_label = get_node_or_null(runtime_label_path) as Label
 	_observability_panel = get_node_or_null(observability_panel_path)
 	_refresh_button = get_node_or_null(refresh_button_path) as Button
 	_advance_tick_button = get_node_or_null(advance_tick_button_path) as Button
+	_export_button = get_node_or_null(HUD_EXPORT_BUTTON_PATH) as Button
+	_top_left_info_card = get_node_or_null(HUD_TOP_LEFT_PATH) as PanelContainer
+	_bottom_bar = get_node_or_null(HUD_BOTTOM_BAR_PATH) as PanelContainer
+	if _advance_tick_button != null and _advance_tick_button.text.strip_edges() != "":
+		_advance_tick_button_default_text = _advance_tick_button.text
 	_observability_bridge = ObservabilityBridgeScript.new()
 	add_child(_observability_bridge)
 	_observability_bridge.configure(_api_client, AppConfig.backend_base_url)
@@ -44,6 +64,7 @@ func _ready() -> void:
 	if _observability_bridge.has_signal("snapshot_updated") and not _observability_bridge.snapshot_updated.is_connected(snapshot_callback):
 		_observability_bridge.snapshot_updated.connect(snapshot_callback)
 
+	_apply_hud_v1_styles()
 	_connect_ui_actions()
 	_update_runtime_label("bootstrap starting")
 	_update_observability_panel({
@@ -218,6 +239,16 @@ func _connect_ui_actions() -> void:
 	if _advance_tick_button != null and not _advance_tick_button.pressed.is_connected(advance_callback):
 		_advance_tick_button.pressed.connect(advance_callback)
 
+
+func _apply_hud_v1_styles() -> void:
+	if _ui_theme_tokens == null:
+		return
+	_ui_theme_tokens.apply_panel_style(_top_left_info_card, "panel", "hud_top_left")
+	_ui_theme_tokens.apply_panel_style(_bottom_bar, "panel", "hud_bottom_bar")
+	_ui_theme_tokens.apply_button_style(_refresh_button, "refresh")
+	_ui_theme_tokens.apply_button_style(_advance_tick_button, "advance_tick")
+	_ui_theme_tokens.apply_button_style(_export_button, "export")
+
 func _on_refresh_world_pressed() -> void:
 	if _request_in_flight:
 		return
@@ -239,19 +270,22 @@ func _execute_refresh_world(source: String) -> void:
 		_set_request_state(false, "refresh %s failed" % source)
 
 func _execute_advance_tick(source: String) -> void:
-	_set_request_state(true, "advanceTick %s..." % source)
+	var request_seq: int = _begin_advance_tick_request(source)
 	var advance_result: Dictionary = await _api_client.advance_tick(true)
+	var after_timeout_notice: bool = _advance_tick_timeout_warning_visible
 	if not bool(advance_result.get("ok", false)):
 		push_warning("[godot-runtime] advanceTick request failed: %s" % str(advance_result))
 		_record_last_action("advanceTick", "request_failed")
-		_set_request_state(false, "advanceTick failed")
+		_end_advance_tick_request(request_seq)
+		_set_request_state(false, "advanceTick failed%s" % _format_after_timeout_suffix(after_timeout_notice))
 		return
 
 	var action_payload: Dictionary = advance_result.get("data", {}) as Dictionary
 	if not bool(action_payload.get("ok", false)):
 		push_warning("[godot-runtime] advanceTick action returned ok=false: %s" % str(action_payload))
 		_record_last_action("advanceTick", "rejected")
-		_set_request_state(false, "advanceTick rejected")
+		_end_advance_tick_request(request_seq)
+		_set_request_state(false, "advanceTick rejected%s" % _format_after_timeout_suffix(after_timeout_notice))
 		return
 
 	var action_world: Variant = action_payload.get("world", null)
@@ -262,12 +296,44 @@ func _execute_advance_tick(source: String) -> void:
 		var refresh_ok: bool = await _refresh_world_and_map(false)
 		if not refresh_ok:
 			_record_last_action("advanceTick", "ok_refresh_failed")
-			_set_request_state(false, "advanceTick ok, refresh failed")
+			_end_advance_tick_request(request_seq)
+			_set_request_state(false, "advanceTick ok, refresh failed%s" % _format_after_timeout_suffix(after_timeout_notice))
 			return
 		_update_runtime_label("advanceTick ok + refresh")
 
 	_record_last_action("advanceTick", "ok")
-	_set_request_state(false, "advanceTick %s ok" % source)
+	_end_advance_tick_request(request_seq)
+	_set_request_state(false, "advanceTick %s ok%s" % [source, _format_after_timeout_suffix(after_timeout_notice)])
+
+func _begin_advance_tick_request(source: String) -> int:
+	_advance_tick_request_seq += 1
+	_advance_tick_active_seq = _advance_tick_request_seq
+	_advance_tick_timeout_warning_visible = false
+	_set_request_state(true, "advanceTick %s in progress..." % source)
+	if _advance_tick_button != null:
+		_advance_tick_button.text = "%s (Running...)" % _advance_tick_button_default_text
+	call_deferred("_watch_advance_tick_soft_timeout", _advance_tick_active_seq)
+	return _advance_tick_active_seq
+
+func _end_advance_tick_request(request_seq: int) -> void:
+	if request_seq == _advance_tick_active_seq:
+		_advance_tick_active_seq = -1
+	_advance_tick_timeout_warning_visible = false
+	if _advance_tick_button != null:
+		_advance_tick_button.text = _advance_tick_button_default_text
+
+func _watch_advance_tick_soft_timeout(request_seq: int) -> void:
+	await get_tree().create_timer(ADVANCE_TICK_SOFT_TIMEOUT_SECONDS).timeout
+	if request_seq != _advance_tick_active_seq:
+		return
+	if not _request_in_flight:
+		return
+	_advance_tick_timeout_warning_visible = true
+	_record_last_action("advanceTick", "timeout_waiting")
+	_update_runtime_label(ADVANCE_TICK_TIMEOUT_NOTICE)
+
+func _format_after_timeout_suffix(after_timeout_notice: bool) -> String:
+	return " (after timeout notice)" if after_timeout_notice else ""
 
 func _resolve_runtime_world_action_template(template_id: String) -> Dictionary:
 	if template_id == "clear_plan_execution":

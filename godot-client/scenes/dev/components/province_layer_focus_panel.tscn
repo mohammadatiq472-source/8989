@@ -1,0 +1,203 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/components/province_layer_focus_panel.gd" id="1_focus"]
+
+[node name="ProvinceLayerFocusPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+clip_contents = false
+script = ExtResource("1_focus")
+
+[node name="FocusShell" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+clip_contents = false
+
+[node name="FocusMargin" type="MarginContainer" parent="FocusShell"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FocusVBox" type="VBoxContainer" parent="FocusShell/FocusMargin"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderPanel" type="PanelContainer" parent="FocusShell/FocusMargin/FocusVBox"]
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="HeaderMargin" type="MarginContainer" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HeaderVBox" type="VBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TitleRow" type="HBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin/HeaderVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TitleStack" type="VBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin/HeaderVBox/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="HeaderTitle" type="Label" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin/HeaderVBox/TitleRow/TitleStack"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "州层流程页"
+
+[node name="HeaderSubtitle" type="Label" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin/HeaderVBox/TitleRow/TitleStack"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "先读州界，再读州府与关口，最后进入战区。"
+
+[node name="HeaderChipRow" type="HBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin/HeaderVBox/TitleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+clip_contents = false
+
+[node name="AccentBar" type="ColorRect" parent="FocusShell/FocusMargin/FocusVBox/HeaderPanel/HeaderMargin/HeaderVBox"]
+layout_mode = 2
+color = Color(0.86, 0.84, 0.52, 0.88)
+
+[node name="BodyRow" type="HBoxContainer" parent="FocusShell/FocusMargin/FocusVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+
+[node name="SummaryPanel" type="PanelContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+
+[node name="SummaryMargin" type="MarginContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/SummaryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SummaryVBox" type="VBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/SummaryPanel/SummaryMargin"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="SummaryTitle" type="Label" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/SummaryPanel/SummaryMargin/SummaryVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "州府 / 城池态势"
+
+[node name="SummarySubtitle" type="Label" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/SummaryPanel/SummaryMargin/SummaryVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "州府、关口、归属、坐标与镜头同屏压缩。"
+
+[node name="SummaryGrid" type="GridContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/SummaryPanel/SummaryMargin/SummaryVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+columns = 1
+
+[node name="FocusPanel" type="PanelContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+
+[node name="FocusMargin" type="MarginContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/FocusPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FocusVBox" type="VBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/FocusPanel/FocusMargin"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FocusTitle" type="Label" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/FocusPanel/FocusMargin/FocusVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "州层产品焦点板"
+
+[node name="FocusSubtitle" type="Label" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/FocusPanel/FocusMargin/FocusVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "先读焦点州府，再读压强与跳转入口。"
+
+[node name="FocusRows" type="GridContainer" parent="FocusShell/FocusMargin/FocusVBox/BodyRow/FocusPanel/FocusMargin/FocusVBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+columns = 1
+
+[node name="EntryPanel" type="PanelContainer" parent="FocusShell/FocusMargin/FocusVBox"]
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="EntryMargin" type="MarginContainer" parent="FocusShell/FocusMargin/FocusVBox/EntryPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="EntryRow" type="HBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/EntryPanel/EntryMargin"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+
+[node name="EntryButton" type="Button" parent="FocusShell/FocusMargin/FocusVBox/EntryPanel/EntryMargin/EntryRow"]
+layout_mode = 2
+text = "进入战区流程"
+
+[node name="EntryMeta" type="VBoxContainer" parent="FocusShell/FocusMargin/FocusVBox/EntryPanel/EntryMargin/EntryRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="EntryTarget" type="Label" parent="FocusShell/FocusMargin/FocusVBox/EntryPanel/EntryMargin/EntryRow/EntryMeta"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "战区流程页"
+
+[node name="EntryHint" type="Label" parent="FocusShell/FocusMargin/FocusVBox/EntryPanel/EntryMargin/EntryRow/EntryMeta"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "从州层切到战区总览页。"

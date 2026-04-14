@@ -13,6 +13,9 @@ AppConfig="*res://autoload/app_config.gd"
 SessionStore="*res://autoload/session_store.gd"
 WorldStore="*res://autoload/world_store.gd"
 
+[editor_plugins]
+enabled=PackedStringArray("res://addons/ui_preview_sandbox/plugin.cfg")
+
 [display]
 window/size/viewport_width=1600
 window/size/viewport_height=900

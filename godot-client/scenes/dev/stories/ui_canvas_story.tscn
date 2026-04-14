@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/stories/ui_canvas_story.gd" id="1_canvas"]
+
+[node name="UICanvasStory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+story_id = "ui_canvas"
+story_title = "UI Canvas Story"
+story_description = "Canvas-style drag-and-drop UI component composition story."
+script = ExtResource("1_canvas")

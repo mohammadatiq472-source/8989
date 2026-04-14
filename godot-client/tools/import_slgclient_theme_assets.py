@@ -25,17 +25,23 @@ from PIL import Image
 REPO_ROOT = Path(__file__).resolve().parents[2]
 THIRD_PARTY_ROOT = REPO_ROOT / "tmp" / "third_party" / "slgclient"
 SOURCE_WORLD_ROOT = THIRD_PARTY_ROOT / "assets" / "resources" / "world"
+SOURCE_GENERALPIC_ROOT = THIRD_PARTY_ROOT / "assets" / "resources" / "generalpic"
 SOURCE_ANIM_ROOT = THIRD_PARTY_ROOT / "assets" / "animations"
+SOURCE_UI_ROOT = THIRD_PARTY_ROOT / "assets" / "texure" / "ui"
 
 THEME_ROOT = REPO_ROOT / "godot-client" / "assets" / "themes" / "slgclient"
 CURRENT_WORLD_ROOT = THEME_ROOT / "current" / "world"
+CURRENT_GENERALPIC_ROOT = THEME_ROOT / "current" / "generalpic"
 CURRENT_UNITS_ROOT = THEME_ROOT / "current" / "units"
 CURRENT_UNIT_FRAMES_ROOT = CURRENT_UNITS_ROOT / "qibing_frames"
 CURRENT_OVERLAYS_ROOT = THEME_ROOT / "current" / "overlays"
 CURRENT_OVERLAY_FRAMES_ROOT = CURRENT_OVERLAYS_ROOT / "frames"
+CURRENT_UI_ROOT = THEME_ROOT / "current" / "ui"
 REPLACEMENTS_ROOT = THEME_ROOT / "replacements"
 EXCHANGE_BUNDLE_ROOT = REPLACEMENTS_ROOT / "exchange_bundle"
 MANIFESTS_ROOT = THEME_ROOT / "manifests"
+GENERALPIC_MANIFEST_PATH = MANIFESTS_ROOT / "generalpic_manifest.json"
+UI_MANIFEST_PATH = MANIFESTS_ROOT / "ui_manifest.json"
 
 SOURCE_REPO_URL = "https://github.com/llr104/slgclient"
 
@@ -168,6 +174,110 @@ def _copy_world_assets() -> list[dict[str, Any]]:
             }
         )
     return copied
+
+
+def _collect_generalpic_selected_ids() -> list[int]:
+    if not SOURCE_GENERALPIC_ROOT.exists():
+        raise FileNotFoundError(f"missing generalpic source root: {SOURCE_GENERALPIC_ROOT}")
+
+    selected_ids: list[int] = []
+    for src in SOURCE_GENERALPIC_ROOT.glob("card_*.png"):
+        match = re.fullmatch(r"card_(\d+)\.png", src.name)
+        if not match:
+            continue
+        selected_ids.append(int(match.group(1)))
+    selected_ids.sort()
+    return selected_ids
+
+
+def _copy_generalpic_assets(selected_ids: list[int]) -> tuple[list[dict[str, Any]], list[str]]:
+    if not SOURCE_GENERALPIC_ROOT.exists():
+        raise FileNotFoundError(f"missing generalpic source root: {SOURCE_GENERALPIC_ROOT}")
+
+    _reset_output_dir(CURRENT_GENERALPIC_ROOT)
+
+    copied: list[dict[str, Any]] = []
+    for cfg_id in selected_ids:
+        src = SOURCE_GENERALPIC_ROOT / f"card_{cfg_id}.png"
+        if not src.exists():
+            raise FileNotFoundError(f"missing curated generalpic asset: {src}")
+        dst = CURRENT_GENERALPIC_ROOT / src.name
+        shutil.copy2(src, dst)
+        copied.append(
+            {
+                "cfgId": cfg_id,
+                "name": src.name,
+                "path": str(dst.relative_to(REPO_ROOT)).replace("\\", "/"),
+                "sourcePath": str(src.relative_to(REPO_ROOT)).replace("\\", "/"),
+                "bytes": dst.stat().st_size,
+                "sha256": _sha256(dst),
+            }
+        )
+
+    special_files: list[str] = []
+    head_wrap_src = SOURCE_GENERALPIC_ROOT / "head_wrap.png"
+    if head_wrap_src.exists():
+        head_wrap_dst = CURRENT_GENERALPIC_ROOT / head_wrap_src.name
+        shutil.copy2(head_wrap_src, head_wrap_dst)
+        special_files.append(head_wrap_src.name)
+        copied.append(
+            {
+                "name": head_wrap_src.name,
+                "path": str(head_wrap_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
+                "sourcePath": str(head_wrap_src.relative_to(REPO_ROOT)).replace("\\", "/"),
+                "bytes": head_wrap_dst.stat().st_size,
+                "sha256": _sha256(head_wrap_dst),
+                "special": True,
+            }
+        )
+
+    return copied, special_files
+
+
+def _prune_managed_ui_root() -> None:
+    CURRENT_UI_ROOT.mkdir(parents=True, exist_ok=True)
+    for child in CURRENT_UI_ROOT.iterdir():
+        if child.name == "hud_v1":
+            continue
+        if child.is_dir():
+            shutil.rmtree(child)
+        else:
+            child.unlink()
+
+
+def _copy_ui_assets() -> tuple[list[dict[str, Any]], dict[str, int], dict[str, int]]:
+    if not SOURCE_UI_ROOT.exists():
+        raise FileNotFoundError(f"missing ui source root: {SOURCE_UI_ROOT}")
+
+    _prune_managed_ui_root()
+
+    copied: list[dict[str, Any]] = []
+    folder_counts: dict[str, int] = {"root": 0}
+    extension_counts: dict[str, int] = {}
+
+    for src in sorted(path for path in SOURCE_UI_ROOT.rglob("*") if path.is_file()):
+        rel = src.relative_to(SOURCE_UI_ROOT)
+        dst = CURRENT_UI_ROOT / rel
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+
+        top_level = rel.parts[0] if len(rel.parts) > 1 else "root"
+        folder_counts[top_level] = folder_counts.get(top_level, 0) + 1
+        extension = src.suffix.lower() or "<no_ext>"
+        extension_counts[extension] = extension_counts.get(extension, 0) + 1
+        copied.append(
+            {
+                "name": rel.name,
+                "relativePath": rel.as_posix(),
+                "targetPath": str(dst.relative_to(REPO_ROOT)).replace("\\", "/"),
+                "topLevelFolder": top_level,
+                "extension": extension,
+                "bytes": dst.stat().st_size,
+                "sha256": _sha256(dst),
+            }
+        )
+
+    return copied, folder_counts, extension_counts
 
 
 def _load_plist_frame_table() -> dict[str, dict[str, Any]]:
@@ -474,12 +584,16 @@ def _sync_exchange_bundle(imported_at: str, source_commit: str) -> dict[str, Any
     EXCHANGE_BUNDLE_ROOT.mkdir(parents=True, exist_ok=True)
 
     world_dst = EXCHANGE_BUNDLE_ROOT / "world"
+    generalpic_dst = EXCHANGE_BUNDLE_ROOT / "generalpic"
     units_dst = EXCHANGE_BUNDLE_ROOT / "units"
     overlays_dst = EXCHANGE_BUNDLE_ROOT / "overlays"
+    ui_dst = EXCHANGE_BUNDLE_ROOT / "ui"
     manifests_dst = EXCHANGE_BUNDLE_ROOT / "manifests"
     shutil.copytree(CURRENT_WORLD_ROOT, world_dst)
+    shutil.copytree(CURRENT_GENERALPIC_ROOT, generalpic_dst)
     shutil.copytree(CURRENT_UNITS_ROOT, units_dst)
     shutil.copytree(CURRENT_OVERLAYS_ROOT, overlays_dst)
+    shutil.copytree(CURRENT_UI_ROOT, ui_dst)
     shutil.copytree(MANIFESTS_ROOT, manifests_dst)
 
     bundle_manifest = {
@@ -493,14 +607,18 @@ def _sync_exchange_bundle(imported_at: str, source_commit: str) -> dict[str, Any
         "bundleRoot": str(EXCHANGE_BUNDLE_ROOT.relative_to(REPO_ROOT)).replace("\\", "/"),
         "segments": {
             "world": str(world_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
+            "generalpic": str(generalpic_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
             "units": str(units_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
             "overlays": str(overlays_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
+            "ui": str(ui_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
             "manifests": str(manifests_dst.relative_to(REPO_ROOT)).replace("\\", "/"),
         },
         "stats": {
             "world": _count_files_and_bytes(world_dst),
+            "generalpic": _count_files_and_bytes(generalpic_dst),
             "units": _count_files_and_bytes(units_dst),
             "overlays": _count_files_and_bytes(overlays_dst),
+            "ui": _count_files_and_bytes(ui_dst),
             "manifests": _count_files_and_bytes(manifests_dst),
         },
     }
@@ -534,15 +652,20 @@ def _detect_source_commit() -> str:
 
 def main() -> int:
     REPLACEMENTS_ROOT.mkdir(parents=True, exist_ok=True)
+    CURRENT_GENERALPIC_ROOT.mkdir(parents=True, exist_ok=True)
     CURRENT_UNITS_ROOT.mkdir(parents=True, exist_ok=True)
+    CURRENT_UI_ROOT.mkdir(parents=True, exist_ok=True)
     MANIFESTS_ROOT.mkdir(parents=True, exist_ok=True)
 
     copied_world = _copy_world_assets()
+    generalpic_selected_ids = _collect_generalpic_selected_ids()
+    generalpic_files, generalpic_special_files = _copy_generalpic_assets(generalpic_selected_ids)
     frame_table = _load_plist_frame_table()
     submeta_index = _load_cocos_submeta_name_index()
     direction_to_names = _read_anim_frame_names(submeta_index)
     unit_frames, direction_frames = _extract_unit_frames(frame_table, direction_to_names)
     overlay_frames, overlay_atlases, overlay_groups = _extract_overlay_frames()
+    ui_files, ui_folder_counts, ui_extension_counts = _copy_ui_assets()
 
     imported_at = _now_iso()
     source_commit = _detect_source_commit()
@@ -560,10 +683,24 @@ def main() -> int:
             "current": "godot-client/assets/themes/slgclient/current",
             "replacements": "godot-client/assets/themes/slgclient/replacements",
             "manifests": "godot-client/assets/themes/slgclient/manifests",
+            "generalpic": "godot-client/assets/themes/slgclient/current/generalpic",
+            "generalpicManifest": "godot-client/assets/themes/slgclient/manifests/generalpic_manifest.json",
+            "ui": "godot-client/assets/themes/slgclient/current/ui",
+            "uiManifest": "godot-client/assets/themes/slgclient/manifests/ui_manifest.json",
         },
         "world": {
             "tmxPath": "res://assets/themes/slgclient/current/world/map.tmx",
             "files": copied_world,
+        },
+        "generalpic": {
+            "sourceRepo": SOURCE_REPO_URL,
+            "sourceRoot": "tmp/third_party/slgclient/assets/resources/generalpic",
+            "targetRoot": "godot-client/assets/themes/slgclient/current/generalpic",
+            "selectedIds": generalpic_selected_ids,
+            "selectedIdCount": len(generalpic_selected_ids),
+            "specialFiles": generalpic_special_files,
+            "fileCount": len(generalpic_files),
+            "files": generalpic_files,
         },
         "units": {
             "framesRoot": "res://assets/themes/slgclient/current/units/qibing_frames",
@@ -576,6 +713,15 @@ def main() -> int:
             "frameCount": len(overlay_frames),
             "groups": {key: len(value) for key, value in overlay_groups.items()},
             "atlases": overlay_atlases,
+        },
+        "ui": {
+            "manifestPath": "godot-client/assets/themes/slgclient/manifests/ui_manifest.json",
+            "sourceRoot": "tmp/third_party/slgclient/assets/texure/ui",
+            "targetRoot": "godot-client/assets/themes/slgclient/current/ui",
+            "preservedRoots": ["hud_v1"],
+            "fileCount": len(ui_files),
+            "folderCounts": ui_folder_counts,
+            "extensionCounts": ui_extension_counts,
         },
     }
 
@@ -601,12 +747,50 @@ def main() -> int:
         "frames": overlay_frames,
     }
 
+    ui_manifest = {
+        "schemaVersion": 1,
+        "theme": "slgclient",
+        "importedAt": imported_at,
+        "source": {
+            "repo": SOURCE_REPO_URL,
+            "commit": source_commit,
+            "root": "tmp/third_party/slgclient/assets/texure/ui",
+        },
+        "target": {
+            "root": "godot-client/assets/themes/slgclient/current/ui",
+            "preservedRoots": ["hud_v1"],
+        },
+        "fileCount": len(ui_files),
+        "folderCounts": ui_folder_counts,
+        "extensionCounts": ui_extension_counts,
+        "files": ui_files,
+    }
+
     asset_manifest_path = MANIFESTS_ROOT / "slgclient_asset_manifest.json"
+    generalpic_manifest_path = GENERALPIC_MANIFEST_PATH
     unit_manifest_path = MANIFESTS_ROOT / "unit_frames_manifest.json"
     overlay_manifest_path = MANIFESTS_ROOT / "overlay_frames_manifest.json"
+    ui_manifest_path = UI_MANIFEST_PATH
     asset_manifest_path.write_text(json.dumps(asset_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    generalpic_manifest = {
+        "schemaVersion": 1,
+        "theme": "slgclient",
+        "packId": "map_surface_generalpic",
+        "importedAt": imported_at,
+        "sourceRepo": SOURCE_REPO_URL,
+        "sourceRoot": "tmp/third_party/slgclient/assets/resources/generalpic",
+        "targetRoot": "godot-client/assets/themes/slgclient/current/generalpic",
+        "selectedIds": generalpic_selected_ids,
+        "selectedIdCount": len(generalpic_selected_ids),
+        "specialFiles": generalpic_special_files,
+        "fileCount": len(generalpic_files),
+        "sourceFileCount": len(list(SOURCE_GENERALPIC_ROOT.glob("*.png"))),
+        "files": generalpic_files,
+    }
+    generalpic_manifest_path.write_text(json.dumps(generalpic_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     unit_manifest_path.write_text(json.dumps(unit_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     overlay_manifest_path.write_text(json.dumps(overlay_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+    ui_manifest_path.write_text(json.dumps(ui_manifest, ensure_ascii=False, indent=2), encoding="utf-8")
     exchange_bundle = _sync_exchange_bundle(imported_at, source_commit)
     asset_manifest["paths"]["exchangeBundle"] = exchange_bundle.get("bundleRoot")
     asset_manifest["exchangeBundle"] = exchange_bundle
@@ -617,9 +801,12 @@ def main() -> int:
     print(f"[slgclient-assets] worldFiles={len(copied_world)}")
     print(f"[slgclient-assets] unitFrames={len(unit_frames)}")
     print(f"[slgclient-assets] overlayFrames={len(overlay_frames)}")
+    print(f"[slgclient-assets] uiFiles={len(ui_files)}")
+    print(f"[slgclient-assets] uiFolders={ui_folder_counts}")
     print(f"[slgclient-assets] manifest={asset_manifest_path}")
     print(f"[slgclient-assets] unitManifest={unit_manifest_path}")
     print(f"[slgclient-assets] overlayManifest={overlay_manifest_path}")
+    print(f"[slgclient-assets] uiManifest={ui_manifest_path}")
     print(f"[slgclient-assets] exchangeBundle={exchange_bundle.get('bundleRoot')}")
     return 0
 

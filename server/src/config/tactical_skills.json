@@ -53,11 +53,11 @@
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.699999793814838,
-    "tickRecorded": 2,
+    "outcomeScore": 0.6999999934300167,
+    "tickRecorded": 12,
     "factionId": "alliance",
     "id": "643d4c93-abee-44a2-9cdc-8d31edf04681",
-    "uses": 12705
+    "uses": 12713
   },
   {
     "situationTags": [

@@ -1,10 +1,21 @@
 extends Node2D
 
 const UnitMarkerScript = preload("res://scripts/map/unit_marker.gd")
+const FactionVisualsScript = preload("res://scripts/map/faction_visuals.gd")
 const ENGAGE_KIND_BATTLE: String = "battle"
 const ENGAGE_KIND_TILE_CONTROL: String = "tile_control"
 const ENGAGE_KIND_LOGISTICS: String = "logistics"
 const ENGAGE_KIND_FALLBACK: String = ENGAGE_KIND_TILE_CONTROL
+const IDENTITY_KIND_HUMAN: String = "human"
+const IDENTITY_KIND_AI: String = "ai"
+const IDENTITY_KIND_NEUTRAL: String = "neutral"
+const NEUTRAL_FACTION_HINTS: Array[String] = [
+	"",
+	"neutral",
+	"npc",
+	"world",
+	"environment",
+]
 const KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS: Array[String] = [
 	"enemy_turn",
 	"alliance_turn",
@@ -171,8 +182,30 @@ func _ensure_marker(unit_id: String, unit: Dictionary) -> Node2D:
 func _update_marker_style(marker: Node2D, unit: Dictionary) -> void:
 	if marker == null:
 		return
+	var faction_id: String = _resolve_unit_faction_id(unit)
 	marker.set("radius", marker_radius)
-	marker.call("set_faction_color", _resolve_faction_color(str(unit.get("faction", ""))))
+	marker.call("set_faction_color", _resolve_faction_color(faction_id))
+	if marker.has_method("set_identity_kind"):
+		marker.call("set_identity_kind", _resolve_identity_kind(faction_id))
+
+func _resolve_unit_faction_id(unit: Dictionary) -> String:
+	var faction_id: String = str(unit.get("faction", unit.get("factionId", ""))).strip_edges()
+	return faction_id
+
+func _resolve_identity_kind(faction_id: String) -> String:
+	var normalized_faction: String = faction_id.strip_edges().to_lower()
+	if normalized_faction in NEUTRAL_FACTION_HINTS:
+		return IDENTITY_KIND_NEUTRAL
+	var human_faction_id: String = _resolve_human_faction_id()
+	if human_faction_id != "" and normalized_faction == human_faction_id:
+		return IDENTITY_KIND_HUMAN
+	return IDENTITY_KIND_AI
+
+func _resolve_human_faction_id() -> String:
+	var session_faction_id: String = SessionStore.faction_id.strip_edges().to_lower()
+	if session_faction_id != "":
+		return session_faction_id
+	return "player"
 
 func _resolve_unit_position(unit: Dictionary, fallback: Vector2) -> Vector2:
 	var tile_id: String = str(unit.get("tileId", "")).strip_edges()
@@ -254,21 +287,7 @@ func _on_marker_move_finished(marker: Node2D) -> void:
 		marker.call("set_moving", false, Vector2.ZERO)
 
 func _resolve_faction_color(faction_id: String) -> Color:
-	var palette: Array[Color] = [
-		Color(0.36, 0.78, 0.98, 0.96),
-		Color(0.56, 0.86, 0.42, 0.96),
-		Color(0.98, 0.74, 0.30, 0.96),
-		Color(0.94, 0.46, 0.48, 0.96),
-		Color(0.72, 0.60, 0.95, 0.96),
-		Color(0.34, 0.86, 0.80, 0.96),
-	]
-	if faction_id == "":
-		return palette[0]
-
-	var hash_value: int = 0
-	for index in faction_id.length():
-		hash_value = int((hash_value * 33 + faction_id.unicode_at(index)) % 2147483647)
-	return palette[abs(hash_value) % palette.size()]
+	return FactionVisualsScript.resolve_marker_color(faction_id, _resolve_human_faction_id())
 
 func _trigger_engage_from_replay_frames(world_payload: Dictionary, next_units_by_id: Dictionary) -> void:
 	var history_payload: Dictionary = world_payload.get("history", {}) as Dictionary

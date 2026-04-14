@@ -6,6 +6,9 @@ const DIRECTION_ORDER: Array[String] = ["r", "ru", "u", "lu", "l", "ld", "d", "r
 const ENGAGE_KIND_BATTLE: String = "battle"
 const ENGAGE_KIND_TILE_CONTROL: String = "tile_control"
 const ENGAGE_KIND_LOGISTICS: String = "logistics"
+const IDENTITY_KIND_HUMAN: String = "human"
+const IDENTITY_KIND_AI: String = "ai"
+const IDENTITY_KIND_NEUTRAL: String = "neutral"
 
 @export var radius: float = 4.0
 @export var visual_scale: float = 0.52
@@ -21,6 +24,7 @@ var _engaged: bool = false
 var _is_moving: bool = false
 var _direction_key: String = "d"
 var _engage_kind: String = ENGAGE_KIND_BATTLE
+var _identity_kind: String = IDENTITY_KIND_NEUTRAL
 var _frame_timer: float = 0.0
 var _frame_index: int = 0
 
@@ -54,6 +58,15 @@ func _process(delta: float) -> void:
 
 func set_faction_color(next_color: Color) -> void:
 	_base_color = next_color
+	_apply_sprite_modulate()
+	queue_redraw()
+
+
+func set_identity_kind(next_identity_kind: String) -> void:
+	var normalized_kind: String = _normalize_identity_kind(next_identity_kind)
+	if _identity_kind == normalized_kind:
+		return
+	_identity_kind = normalized_kind
 	_apply_sprite_modulate()
 	queue_redraw()
 
@@ -132,13 +145,20 @@ func _kill_engage_tween() -> void:
 
 
 func _draw() -> void:
+	var identity_color: Color = _resolve_identity_color(_identity_kind)
+	var ring_color: Color = identity_color
+	if _engaged:
+		ring_color = ring_color.lerp(_resolve_engage_accent_color(_engage_kind), 0.58)
+
 	if _sprite != null and _sprite.texture != null:
-		var ring_color: Color = _resolve_engage_accent_color(_engage_kind) if _engaged else Color(0.05, 0.06, 0.08, 0.74)
-		draw_arc(Vector2.ZERO, radius + 2.0, 0.0, TAU, 24, ring_color, 1.15)
+		_draw_identity_ring(ring_color, radius + 2.0, 1.15)
+		_draw_identity_badge(ring_color, radius + 2.0)
 		return
+
 	var draw_color: Color = _resolve_engage_accent_color(_engage_kind) if _engaged else _base_color
 	draw_circle(Vector2.ZERO, radius, draw_color)
-	draw_arc(Vector2.ZERO, radius + 1.5, 0.0, TAU, 16, Color(0.08, 0.08, 0.10, 0.75), 1.0)
+	_draw_identity_ring(ring_color, radius + 1.5, 1.0)
+	_draw_identity_badge(ring_color, radius + 1.5)
 
 
 func _resolve_direction_key(direction: Vector2) -> String:
@@ -186,9 +206,94 @@ func _apply_sprite_modulate() -> void:
 	if _sprite == null:
 		return
 	var tint := Color(1.0, 1.0, 1.0, 0.96).lerp(_base_color, 0.22)
+	tint = tint.lerp(_resolve_identity_color(_identity_kind), 0.16)
 	if _engaged:
 		tint = tint.lerp(_resolve_engage_accent_color(_engage_kind), 0.34)
 	_sprite.modulate = tint
+
+
+func _draw_identity_ring(color: Color, ring_radius: float, width: float) -> void:
+	match _identity_kind:
+		IDENTITY_KIND_HUMAN:
+			draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 28, color, width + 0.25)
+			var accent_color := Color(color.r, color.g, color.b, clampf(color.a * 0.78, 0.0, 1.0))
+			draw_arc(
+				Vector2.ZERO,
+				ring_radius + 1.4,
+				deg_to_rad(-116.0),
+				deg_to_rad(-64.0),
+				10,
+				accent_color,
+				width,
+			)
+		IDENTITY_KIND_AI:
+			draw_arc(Vector2.ZERO, ring_radius, 0.20, PI - 0.20, 14, color, width + 0.25)
+			draw_arc(Vector2.ZERO, ring_radius, PI + 0.20, TAU - 0.20, 14, color, width + 0.25)
+			draw_line(
+				Vector2(ring_radius + 0.9, 0.0),
+				Vector2(ring_radius + 3.0, 0.0),
+				color,
+				width,
+			)
+			draw_line(
+				Vector2(-ring_radius - 0.9, 0.0),
+				Vector2(-ring_radius - 3.0, 0.0),
+				color,
+				width,
+			)
+		_:
+			var neutral_color := Color(color.r, color.g, color.b, clampf(color.a * 0.74, 0.0, 1.0))
+			draw_arc(Vector2.ZERO, ring_radius, 0.0, TAU, 20, neutral_color, width)
+			draw_circle(Vector2(0.0, -ring_radius), 0.9, color)
+			draw_circle(Vector2(ring_radius, 0.0), 0.9, color)
+			draw_circle(Vector2(0.0, ring_radius), 0.9, color)
+			draw_circle(Vector2(-ring_radius, 0.0), 0.9, color)
+
+
+func _draw_identity_badge(color: Color, ring_radius: float) -> void:
+	match _identity_kind:
+		IDENTITY_KIND_HUMAN:
+			var tip: Vector2 = Vector2(0.0, -ring_radius - 2.8)
+			var left: Vector2 = Vector2(-2.2, -ring_radius + 0.2)
+			var right: Vector2 = Vector2(2.2, -ring_radius + 0.2)
+			draw_colored_polygon(PackedVector2Array([tip, right, left]), color)
+		IDENTITY_KIND_AI:
+			var center: Vector2 = Vector2(ring_radius + 2.4, 0.0)
+			draw_colored_polygon(
+				PackedVector2Array(
+					[
+						center + Vector2(0.0, -1.8),
+						center + Vector2(1.8, 0.0),
+						center + Vector2(0.0, 1.8),
+						center + Vector2(-1.8, 0.0),
+					]
+				),
+				color,
+			)
+		_:
+			draw_circle(Vector2(0.0, -ring_radius - 1.7), 1.2, color)
+
+
+func _normalize_identity_kind(kind: String) -> String:
+	match kind.strip_edges().to_lower():
+		IDENTITY_KIND_HUMAN:
+			return IDENTITY_KIND_HUMAN
+		IDENTITY_KIND_AI:
+			return IDENTITY_KIND_AI
+		IDENTITY_KIND_NEUTRAL:
+			return IDENTITY_KIND_NEUTRAL
+		_:
+			return IDENTITY_KIND_NEUTRAL
+
+
+func _resolve_identity_color(kind: String) -> Color:
+	match _normalize_identity_kind(kind):
+		IDENTITY_KIND_HUMAN:
+			return Color(0.28, 0.82, 1.0, 0.95)
+		IDENTITY_KIND_AI:
+			return Color(1.0, 0.48, 0.34, 0.95)
+		_:
+			return Color(0.74, 0.78, 0.86, 0.90)
 
 
 func _normalize_engage_kind(kind: String) -> String:

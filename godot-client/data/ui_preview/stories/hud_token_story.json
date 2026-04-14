@@ -1,0 +1,77 @@
+{
+  "schemaVersion": 1,
+  "storyId": "hud_token",
+  "title": "HUD Token Story",
+  "description": "Reusable preview payload for the token-driven HUD card layout.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": ["fixture", "backend"]
+  },
+  "captureTargets": [
+    "Shell",
+    "Shell/TopCard",
+    "Shell/BottomBar",
+    "Shell/BottomBar/VBox/ActionRow/RefreshButton",
+    "Shell/BottomBar/VBox/ActionRow/AdvanceButton",
+    "Shell/BottomBar/VBox/ActionRow/ExportButton"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "Shell",
+      "Shell/TopCard",
+      "Shell/BottomBar",
+      "Shell/BottomBar/VBox/ActionRow/RefreshButton",
+      "Shell/BottomBar/VBox/ActionRow/AdvanceButton",
+      "Shell/BottomBar/VBox/ActionRow/ExportButton"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "idle",
+      "label": "Idle",
+      "headline": "SLG HUD | token story",
+      "cardTitle": "Top-left info card",
+      "hoverInfo": "Hover | waiting for a map hit-test payload.",
+      "perfInfo": "Perf(5s) | 0.0ms avg, 0 redraw spikes, 0 warnings.",
+      "runtimeInfo": "Runtime | tick=1024 worldVersion=48 controlMode=player-led",
+      "summary": "Preview the HUD tokens without loading battle or backend logic.",
+      "refreshLabel": "Refresh Snapshot",
+      "advanceLabel": "Advance Tick",
+      "exportLabel": "Export Baseline",
+      "accentColor": { "r": 0.34, "g": 0.81, "b": 0.68, "a": 1.0 }
+    },
+    {
+      "id": "command",
+      "label": "Command",
+      "headline": "SLG HUD | command cycle",
+      "cardTitle": "Command overlay",
+      "hoverInfo": "Hover | army path tiles=36883, uniqueRatio=0.4048.",
+      "perfInfo": "Perf(5s) | 14.2ms avg, 1 spike, 0 redraw warnings.",
+      "runtimeInfo": "Runtime | tick=1025 worldVersion=48 controlMode=command-overlay",
+      "summary": "Same layout, different payload, same token mapping.",
+      "refreshLabel": "Requery Snapshot",
+      "advanceLabel": "Advance to Next Tick",
+      "exportLabel": "Export Visual Baseline",
+      "accentColor": { "r": 0.25, "g": 0.58, "b": 0.94, "a": 1.0 }
+    },
+    {
+      "id": "battle",
+      "label": "Battle",
+      "headline": "SLG HUD | battle-ready",
+      "cardTitle": "Battle status",
+      "hoverInfo": "Hover | map tags active, route overlay visible.",
+      "perfInfo": "Perf(5s) | 11.4ms avg, 0 spikes, 1 layout reflow.",
+      "runtimeInfo": "Runtime | tick=1026 worldVersion=49 controlMode=tactical",
+      "summary": "Use this state to check whether button tokens and HUD cards still read well under pressure.",
+      "refreshLabel": "Refresh Tactical View",
+      "advanceLabel": "Advance Tactical Tick",
+      "exportLabel": "Export Tactical Baseline",
+      "accentColor": { "r": 0.88, "g": 0.35, "b": 0.44, "a": 1.0 }
+    }
+  ]
+}

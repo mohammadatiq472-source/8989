@@ -1,0 +1,194 @@
+{
+  "schemaVersion": 1,
+  "storyId": "panel_stack",
+  "title": "Panel Stack Story",
+  "description": "Reusable MainHUD -> L2 -> L3 -> L4 popup preview built from the shell component.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": ["fixture"]
+  },
+  "captureTargets": [
+    "Shell",
+    "Shell/MainHUD",
+    "Shell/ShellHost/L2Panel",
+    "Shell/ShellHost/L3Panel",
+    "Shell/ShellHost/L4Panel",
+    "Shell/MainHUD/MainMargin/MainVBox/MainActions/OpenL2Button"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "Shell",
+      "Shell/MainHUD",
+      "Shell/ShellHost/L2Panel",
+      "Shell/ShellHost/L3Panel",
+      "Shell/ShellHost/L4Panel",
+      "Shell/MainHUD/MainMargin/MainVBox/MainActions/OpenL2Button"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "main",
+      "label": "Main HUD only",
+      "stackPath": "main",
+      "mainTitle": "MainHUD",
+      "mainSummary": "Open L2 to push deeper layers, then use Back or Close to collapse the stack.",
+      "openLabel": "Open L2",
+      "resetLabel": "Reset to Main",
+      "shells": {
+        "l2": {
+          "panelTitle": "L2: Command Deck",
+          "panelDepthLabel": "L2",
+          "panelBody": "Layer 2 is the first drill-down. It keeps the parent alive behind it.",
+          "primaryButtonLabel": "Open L3",
+          "secondaryButtonLabel": "Back to Main",
+          "backButtonLabel": "Close L2",
+          "closeButtonLabel": "Close L2",
+          "primaryTargetId": "l3",
+          "secondaryTargetId": "main",
+          "backTargetId": "main",
+          "closeTargetId": "main",
+          "accentColor": { "r": 0.25, "g": 0.58, "b": 0.94, "a": 1.0 }
+        },
+        "l3": {
+          "panelTitle": "L3: Branch Sheet",
+          "panelDepthLabel": "L3",
+          "panelBody": "Layer 3 sits above Layer 2. Backing out should restore the previous sheet.",
+          "primaryButtonLabel": "Open L4 Popup",
+          "secondaryButtonLabel": "Back to L2",
+          "backButtonLabel": "Close L3",
+          "closeButtonLabel": "Close L3",
+          "primaryTargetId": "l4",
+          "secondaryTargetId": "l2",
+          "backTargetId": "l2",
+          "closeTargetId": "l2",
+          "accentColor": { "r": 0.82, "g": 0.57, "b": 0.22, "a": 1.0 }
+        },
+        "l4": {
+          "panelTitle": "L4: Popup",
+          "panelDepthLabel": "POPUP",
+          "panelBody": "Layer 4 is the popup tier. Both back and close dismiss it without disturbing lower layers.",
+          "primaryButtonLabel": "Close Popup",
+          "secondaryButtonLabel": "Back to L3",
+          "backButtonLabel": "Close Popup",
+          "closeButtonLabel": "Close Popup",
+          "primaryTargetId": "l3",
+          "secondaryTargetId": "l3",
+          "backTargetId": "l3",
+          "closeTargetId": "l3",
+          "accentColor": { "r": 0.88, "g": 0.35, "b": 0.44, "a": 1.0 }
+        }
+      }
+    },
+    {
+      "id": "l2",
+      "label": "L2 open",
+      "stackPath": "main > l2",
+      "mainTitle": "MainHUD",
+      "mainSummary": "Layer 2 should stay above the HUD and preserve stack order.",
+      "openLabel": "Open L2",
+      "resetLabel": "Reset to Main",
+      "shells": {
+        "l2": {
+          "panelTitle": "L2: Command Deck",
+          "panelDepthLabel": "L2",
+          "panelBody": "Layer 2 is active. The main HUD remains behind the preview shell.",
+          "primaryButtonLabel": "Open L3",
+          "secondaryButtonLabel": "Back to Main",
+          "backButtonLabel": "Close L2",
+          "closeButtonLabel": "Close L2",
+          "primaryTargetId": "l3",
+          "secondaryTargetId": "main",
+          "backTargetId": "main",
+          "closeTargetId": "main",
+          "accentColor": { "r": 0.25, "g": 0.58, "b": 0.94, "a": 1.0 }
+        },
+        "l3": {
+          "panelTitle": "L3: Branch Sheet",
+          "panelDepthLabel": "L3",
+          "panelBody": "Layer 3 is available and can be opened from L2.",
+          "primaryButtonLabel": "Open L4 Popup",
+          "secondaryButtonLabel": "Back to L2",
+          "backButtonLabel": "Close L3",
+          "closeButtonLabel": "Close L3",
+          "primaryTargetId": "l4",
+          "secondaryTargetId": "l2",
+          "backTargetId": "l2",
+          "closeTargetId": "l2",
+          "accentColor": { "r": 0.82, "g": 0.57, "b": 0.22, "a": 1.0 }
+        },
+        "l4": {
+          "panelTitle": "L4: Popup",
+          "panelDepthLabel": "POPUP",
+          "panelBody": "Popup preview exists but remains closed in this state.",
+          "primaryButtonLabel": "Close Popup",
+          "secondaryButtonLabel": "Back to L3",
+          "backButtonLabel": "Close Popup",
+          "closeButtonLabel": "Close Popup",
+          "primaryTargetId": "l3",
+          "secondaryTargetId": "l3",
+          "backTargetId": "l3",
+          "closeTargetId": "l3",
+          "accentColor": { "r": 0.88, "g": 0.35, "b": 0.44, "a": 1.0 }
+        }
+      }
+    },
+    {
+      "id": "l4",
+      "label": "L4 popup",
+      "stackPath": "main > l2 > l3 > l4",
+      "mainTitle": "MainHUD",
+      "mainSummary": "Popup stack state. Back and close should both unwind to lower layers.",
+      "openLabel": "Open L2",
+      "resetLabel": "Reset to Main",
+      "shells": {
+        "l2": {
+          "panelTitle": "L2: Command Deck",
+          "panelDepthLabel": "L2",
+          "panelBody": "Layer 2 remains active beneath the popup.",
+          "primaryButtonLabel": "Open L3",
+          "secondaryButtonLabel": "Back to Main",
+          "backButtonLabel": "Close L2",
+          "closeButtonLabel": "Close L2",
+          "primaryTargetId": "l3",
+          "secondaryTargetId": "main",
+          "backTargetId": "main",
+          "closeTargetId": "main",
+          "accentColor": { "r": 0.25, "g": 0.58, "b": 0.94, "a": 1.0 }
+        },
+        "l3": {
+          "panelTitle": "L3: Branch Sheet",
+          "panelDepthLabel": "L3",
+          "panelBody": "Layer 3 remains active beneath the popup.",
+          "primaryButtonLabel": "Open L4 Popup",
+          "secondaryButtonLabel": "Back to L2",
+          "backButtonLabel": "Close L3",
+          "closeButtonLabel": "Close L3",
+          "primaryTargetId": "l4",
+          "secondaryTargetId": "l2",
+          "backTargetId": "l2",
+          "closeTargetId": "l2",
+          "accentColor": { "r": 0.82, "g": 0.57, "b": 0.22, "a": 1.0 }
+        },
+        "l4": {
+          "panelTitle": "L4: Popup",
+          "panelDepthLabel": "POPUP",
+          "panelBody": "Popup is topmost. Close should collapse the preview down to L3.",
+          "primaryButtonLabel": "Close Popup",
+          "secondaryButtonLabel": "Back to L3",
+          "backButtonLabel": "Close Popup",
+          "closeButtonLabel": "Close Popup",
+          "primaryTargetId": "l3",
+          "secondaryTargetId": "l3",
+          "backTargetId": "l3",
+          "closeTargetId": "l3",
+          "accentColor": { "r": 0.88, "g": 0.35, "b": 0.44, "a": 1.0 }
+        }
+      }
+    }
+  ]
+}

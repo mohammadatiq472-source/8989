@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/stories/province_layer_story.gd" id="1_province"]
+
+[node name="ProvinceLayerStory" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+story_id = "province_layer"
+story_title = "Province Layer Story"
+story_description = "Province-scale UI preview for thirteen prefectures, capital cities, and chokepoint gates."
+payload_path = "res://data/ui_preview/stories/province_layer_story.json"
+script = ExtResource("1_province")

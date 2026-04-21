@@ -8,6 +8,8 @@ const allianceStanceSchema = z.enum(['hold', 'support', 'harass', 'expand'])
 const executionEnqueueModeSchema = z.enum(['replace', 'append', 'reject_if_active'])
 const tacticalTemplateIdSchema = z.enum(['rally', 'harass', 'withdraw', 'breakthrough', 'sweep', 'garrison'])
 const cityTechTrackIdSchema = z.enum(['governance', 'logistics', 'defense', 'recruitment'])
+const generalTacticIdSchema = z.enum(['assault', 'guard', 'logistics'])
+const aiAgendaActionIdSchema = z.enum(['agenda_expand', 'agenda_support', 'agenda_stabilize', 'agenda_recover', 'agenda_redeploy'])
 
 const generalDirectiveSchema = z.object({
   generalId: z.string().min(1),
@@ -94,7 +96,38 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
       type: civilMemoryEventTypeSchema.optional(),
       tickFrom: z.number().int().nonnegative().optional(),
       tickTo: z.number().int().nonnegative().optional(),
+      factionId: factionIdSchema.optional(),
+      relatedId: z.string().min(1).max(128).optional(),
     }).optional(),
+  }),
+  z.object({
+    action: z.literal('setGeneralTactic'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      heroId: z.string().min(1).max(128),
+      tacticId: generalTacticIdSchema,
+    }),
+  }),
+  z.object({
+    action: z.literal('setGeneralActiveHero'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      heroId: z.string().min(1).max(128),
+    }),
+  }),
+  z.object({
+    action: z.literal('queueAiAgendaAction'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      agendaActionId: aiAgendaActionIdSchema,
+    }),
+  }),
+  z.object({
+    action: z.literal('setAiContextFocus'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      contextFocusId: z.enum(['focus_city', 'focus_troop', 'focus_alliance']),
+    }),
   }),
   z.object({ action: z.literal('advanceTick') }),
   z.object({ action: z.literal('clearPlanExecution'), payload: z.object({ factionId: factionIdSchema.optional() }).optional() }),
@@ -130,6 +163,15 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
     }),
   }),
   z.object({
+    action: z.literal('promoteCityBuilding'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      cityId: z.string().min(1),
+      groupId: z.string().min(1),
+      buildingId: z.string().min(1),
+    }),
+  }),
+  z.object({
     action: z.literal('queueTacticalOverride'),
     payload: z.object({
       factionId: factionIdSchema.optional(),
@@ -144,6 +186,52 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
     payload: z.object({
       regionId: z.string().min(1),
       stance: allianceStanceSchema,
+    }),
+  }),
+  z.object({
+    action: z.literal('allianceHelp'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      regionId: z.string().min(1),
+    }),
+  }),
+  z.object({
+    action: z.literal('claimReward'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      rewardId: z.string().min(1).max(128).optional(),
+    }).optional(),
+  }),
+  z.object({
+    action: z.literal('promoteTroopFacilityBuilding'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      unitId: z.string().min(1),
+      facilityId: z.string().min(1),
+      buildingId: z.string().min(1),
+    }),
+  }),
+  z.object({
+    action: z.literal('setRecruitSelectedPool'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      poolId: z.string().min(1).max(64),
+    }),
+  }),
+  z.object({
+    action: z.literal('recruitProspectHero'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      count: z.number().int().min(1).max(10).optional(),
+      poolId: z.string().min(1).max(64).optional(),
+    }),
+  }),
+  z.object({
+    action: z.literal('enqueueAffair'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      cityId: z.string().min(1),
+      affairId: z.string().min(1),
     }),
   }),
 ])

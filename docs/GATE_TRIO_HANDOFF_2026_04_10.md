@@ -6,7 +6,7 @@
 
 ---
 
-## 1. 一条命令执行三件套
+## 1. 一条命令执行前置守门 + 三件套
 
 ```powershell
 npm run gate:ai:trio
@@ -14,16 +14,18 @@ npm run gate:ai:trio
 
 等价于依次执行：
 
-1. `npm run gate:session:security`
-2. `npm run gate:ai:mainline:stability`
-3. `npm run gate:ai:nightly:acceptance`
+1. `npm run gate:ai:preflight`
+2. `npm run gate:session:security`
+3. `npm run gate:ai:mainline:stability`
+4. `npm run gate:ai:nightly:acceptance`
 
 说明：
 
-1. `gate:ai:trio` 在 nightly 阶段默认启用 `reuse_latest_reports` 模式（复用刚跑完的 session/mainline 报告）。
-2. 若要强制 nightly 全量独立执行（不复用），直接运行：
+1. `gate:ai:preflight` 会先跑 `build + governance-guard`，把 AI 玩家治理线的静态/合同回归前置拦截掉。
+2. `gate:ai:trio` 在 nightly 阶段默认启用 `reuse_latest_reports` 模式（复用刚跑完的 session/mainline 报告）。
+3. 若要强制 nightly 全量独立执行（不复用），直接运行：
    - `npm run gate:ai:nightly:acceptance`
-3. 若要生成 CI/PR 可复制失败摘要模板，运行：
+4. 若要生成 CI/PR 可复制失败摘要模板，运行：
    - `npm run gate:ai:trio:failure-summary -- --summary-path tmp/gates/gate-trio/gate_trio_summary_latest.json --output tmp/gates/gate-trio/gate_trio_failure_summary.md`
 
 ---
@@ -41,9 +43,10 @@ npm run gate:ai:trio
 
 ## 3. 最小通过标准
 
-1. `gate:session:security` 退出码 `0`
-2. `gate:ai:mainline:stability` 退出码 `0`
-3. `gate:ai:nightly:acceptance` 退出码 `0`
+1. `gate:ai:preflight` 退出码 `0`
+2. `gate:session:security` 退出码 `0`
+3. `gate:ai:mainline:stability` 退出码 `0`
+4. `gate:ai:nightly:acceptance` 退出码 `0`
 4. nightly 报告内以下检查为 `true`：
    - `template_replay_report_parsed`
    - `template_replay_passed`

@@ -3,6 +3,8 @@ import { join } from 'node:path'
 import {
   advanceTickAction,
   clearPlanExecutionAction,
+  deployReserveHeroAction,
+  enqueueAffairAction,
   getNarrativeEvents,
   getWorldEvents,
   getWorldStateReadonly,
@@ -10,10 +12,12 @@ import {
   moveUnitAction,
   previewCourtSessionAction,
   previewNationalAgendaAction,
+  promoteCityBuildingAction,
   primeReplayFixtureSlot,
   queuePlanExecutionAction,
   queueTacticalOverrideAction,
   saveWorldSlot,
+  upgradeCityTechAction,
 } from '../application/world/WorldService'
 
 type GateCheck = {
@@ -122,6 +126,38 @@ function resolveMoveTargetTileId(currentTileId: string): string | null {
   return null
 }
 
+function resolveOwnedCityTileId(factionId: string): string | null {
+  const world = getWorldStateReadonly()
+  const matchingCluster = world.map.overlays.cityClusters.find((cluster) => cluster.owner === factionId)
+  if (matchingCluster) {
+    return matchingCluster.cityHallTileId
+  }
+  for (const tile of world.map.tiles) {
+    if (tile.owner !== factionId) {
+      continue
+    }
+    if (typeof tile.cityLevel === 'number') {
+      return tile.id
+    }
+  }
+  return null
+}
+
+function resolveReserveHeroTarget(factionId: string): { heroId: string; tileId: string } | null {
+  const world = getWorldStateReadonly()
+  const faction = world.factions[factionId]
+  if (!faction) {
+    return null
+  }
+
+  const heroId = faction.heroCommand.reserveHeroIds[0]
+  const tileId = faction.heroCommand.homeTileId || resolveOwnedCityTileId(factionId)
+  if (!heroId || !tileId) {
+    return null
+  }
+  return { heroId, tileId }
+}
+
 function collectIds(items: Array<{ id?: string }>): Set<string> {
   const output = new Set<string>()
   for (const item of items) {
@@ -208,18 +244,31 @@ async function runTemplateReplayScenario(factionId: string): Promise<TemplateRep
 
   const unit = resolveFirstFactionUnit(factionId)
   const targetTileId = unit ? resolveMoveTargetTileId(unit.tileId) : null
+  const cityTileId = resolveOwnedCityTileId(factionId)
+  const reserveHeroTarget = resolveReserveHeroTarget(factionId)
+  const researchTechId = 'governance'
+  const buildingGroupId = 'market'
+  const buildingId = 'market_plaza'
+  const affairId = 'queue_tax_upgrade'
   checks.push({
     name: 'resolve_template_targets',
-    passed: Boolean(unit && targetTileId),
+    passed: Boolean(unit && targetTileId && cityTileId),
     details: {
       factionId,
       unitId: unit?.id ?? null,
       unitTileId: unit?.tileId ?? null,
       targetTileId: targetTileId ?? null,
+      cityTileId: cityTileId ?? null,
+      reserveHeroId: reserveHeroTarget?.heroId ?? null,
+      reserveTileId: reserveHeroTarget?.tileId ?? null,
+      researchTechId,
+      buildingGroupId,
+      buildingId,
+      affairId,
     },
   })
 
-  if (unit && targetTileId) {
+  if (unit && targetTileId && cityTileId) {
     const templateSteps: Array<{
       templateId: string
       eventAction: string
@@ -245,6 +294,57 @@ async function runTemplateReplayScenario(factionId: string): Promise<TemplateRep
         run: async () => previewCourtSessionAction({ maxProposals: 5, maxOptions: 5 }, false),
       },
       {
+        templateId: 'move_first_unit',
+        eventAction: 'move_unit',
+        required: true,
+        run: async () => moveUnitAction(unit.id, targetTileId, false, factionId),
+      },
+      {
+        templateId: 'enqueue_first_city_affair',
+        eventAction: 'enqueue_affair',
+        required: true,
+        run: async () => enqueueAffairAction(cityTileId, affairId, false, factionId),
+      },
+      {
+        templateId: 'upgrade_first_city_building',
+        eventAction: 'promote_city_building',
+        required: true,
+        run: async () => promoteCityBuildingAction(cityTileId, buildingGroupId, buildingId, false, factionId),
+      },
+      {
+        templateId: 'advance_tick_recharge',
+        eventAction: 'advance_tick',
+        required: true,
+        run: async () => advanceTickAction(false),
+      },
+      {
+        templateId: 'upgrade_first_city_tech',
+        eventAction: 'upgrade_city_tech',
+        required: true,
+        run: async () => upgradeCityTechAction(cityTileId, researchTechId, false, factionId),
+      },
+      {
+        templateId: 'advance_tick_recharge_deploy',
+        eventAction: 'advance_tick',
+        required: true,
+        run: async () => advanceTickAction(false),
+      },
+      {
+        templateId: 'deploy_first_reserve_hero',
+        eventAction: 'deploy_reserve_hero',
+        required: true,
+        run: async () => {
+          const target = resolveReserveHeroTarget(factionId)
+          if (!target) {
+            return {
+              ok: false,
+              message: `no reserve hero target resolved for faction ${factionId}`,
+            }
+          }
+          return deployReserveHeroAction(factionId, target.heroId, target.tileId, false)
+        },
+      },
+      {
         templateId: 'tactical_override_first_unit',
         eventAction: 'queue_tactical_override',
         required: true,
@@ -257,12 +357,6 @@ async function runTemplateReplayScenario(factionId: string): Promise<TemplateRep
             false,
             factionId,
           ),
-      },
-      {
-        templateId: 'move_first_unit',
-        eventAction: 'move_unit',
-        required: true,
-        run: async () => moveUnitAction(unit.id, targetTileId, false, factionId),
       },
       {
         templateId: 'advance_tick',
@@ -471,6 +565,24 @@ async function main() {
     name: 'queue_plan_execution_ok',
     passed: queueResult.ok,
     details: { message: queueResult.message ?? null },
+  })
+
+  checks.push({
+    name: 'queue_response_request_id_echoed',
+    passed: queueResult.requestId === requestId,
+    details: {
+      requestId: queueResult.requestId ?? null,
+    },
+  })
+
+  checks.push({
+    name: 'queue_response_execution_snapshot',
+    passed: Boolean(queueResult.execution && queueResult.execution.requestId === requestId),
+    details: {
+      status: queueResult.execution?.status ?? null,
+      executionRequestId: queueResult.execution?.requestId ?? null,
+      activeOrderCount: queueResult.execution?.activeOrderCount ?? null,
+    },
   })
 
   const advanceResult = await advanceTickAction(false)

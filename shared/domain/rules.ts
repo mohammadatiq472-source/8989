@@ -1,3 +1,4 @@
+import { performance } from 'node:perf_hooks'
 import { getHeroPoolEntryById, buildHeroProfileFromPoolId } from './heroPool'
 import { findPath as hpaStarFindPath } from './hpaStar'
 import { runAllianceDirector } from './allianceDirector'
@@ -18,6 +19,8 @@ import { computeResourceIncome } from './resources'
 import { actionLabel, allianceStanceLabel, ownerLabel, templateLabel } from './ruleLabels'
 import type {
   ActionType,
+  AiRuntimeAdvanceTickSubphaseTiming,
+  AllianceActionSummary,
   BattleOutcomeRecord,
   CityTechLevels,
   CityTechTrackId,
@@ -33,6 +36,7 @@ import type {
   ExecutionEnqueueMode,
   ReplayHighlight,
   ReplayOrderSnapshot,
+  SlgGeneralDirectivePreviewState,
   StrategicPlan,
   TacticalOverride,
   TacticalTemplateId,
@@ -42,6 +46,10 @@ import type {
   UnitStatus,
   WorldState,
 } from '../contracts/game'
+
+export type AdvanceTickDiagnostics = {
+  subphases: AiRuntimeAdvanceTickSubphaseTiming[]
+}
 
 type MoveResult =
   | { ok: true; world: WorldState; message: string; unitId: string }
@@ -92,6 +100,112 @@ type UpgradeCityTechResult =
   | { ok: true; world: WorldState; message: string; cityHallTileId: string; techId: CityTechTrackId; nextLevel: number }
   | { ok: false; message: string }
 
+type PromoteCityBuildingResult =
+  | { ok: true; world: WorldState; message: string; cityId: string; groupId: string; buildingId: string; nextLevel: number }
+  | { ok: false; message: string }
+
+type PromoteTroopFacilityBuildingResult =
+  | { ok: true; world: WorldState; message: string; unitId: string; facilityId: string; buildingId: string; nextLevel: number }
+  | { ok: false; message: string }
+
+type RecruitProspectHeroResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      heroId?: string
+      heroIds: string[]
+      heroNames: string[]
+      poolId: string
+    }
+  | { ok: false; message: string }
+
+type SetRecruitSelectedPoolResult =
+  | { ok: true; world: WorldState; message: string; factionId: string; poolId: string }
+  | { ok: false; message: string }
+
+type EnqueueAffairResult =
+  | { ok: true; world: WorldState; message: string; cityId: string; affairId: string }
+  | { ok: false; message: string }
+
+type SetGeneralActiveHeroResult =
+  | { ok: true; world: WorldState; message: string; factionId: string; heroId: string }
+  | { ok: false; message: string }
+
+type SetGeneralTacticResult =
+  | { ok: true; world: WorldState; message: string; factionId: string; heroId: string; tacticId: 'assault' | 'guard' | 'logistics' }
+  | { ok: false; message: string }
+
+type SetAiContextFocusResult =
+  | { ok: true; world: WorldState; message: string; factionId: string; contextFocusId: string }
+  | { ok: false; message: string }
+
+type QueueAiAgendaActionResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      factionId: string
+      agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'
+      requestId: string
+    }
+  | {
+      ok: false
+      message: string
+      failureCode:
+        | QueuePlanFailureCode
+        | 'invalid_ai_agenda_action'
+        | 'unknown_faction'
+        | 'no_primary_unit'
+        | 'missing_target_tile'
+    }
+
+export type AllianceHelpFailureCode =
+  | 'unknown_faction'
+  | 'missing_alliance_region'
+  | 'missing_alliance_directive'
+  | 'missing_alliance_commander'
+  | 'missing_target_tile'
+  | 'insufficient_action_points'
+
+export type RewardClaimFailureCode =
+  | 'unknown_faction'
+  | 'missing_claimable_reward'
+
+type AllianceHelpResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      factionId: string
+      regionId: string
+      commanderId: string
+      supportLevel: number
+      commanderReadiness: number
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: AllianceHelpFailureCode
+    }
+
+type RewardClaimResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      rewardId: string
+      foodReward: number
+      actionPointReward: number
+      pendingRewardCount: number
+      source: string
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: RewardClaimFailureCode
+    }
+
 type CityTechUpgradeRule = {
   maxLevel: number
   actionPoints: number
@@ -118,6 +232,49 @@ const EMPTY_CITY_TECH_LEVELS: CityTechLevels = {
   logistics: 0,
   defense: 0,
   recruitment: 0,
+}
+
+function resolveCityBuildingTechId(groupId: string, buildingId: string): CityTechTrackId | null {
+  switch (buildingId) {
+    case 'market_plaza':
+    case 'tax_office':
+    case 'policy_hall':
+      return 'governance'
+    case 'granary':
+    case 'storage_bureau':
+    case 'workshop':
+      return 'logistics'
+    case 'relay_station':
+    case 'defense_board':
+      return 'defense'
+    case 'recruit_policy_board':
+      return 'recruitment'
+    default:
+      break
+  }
+  switch (groupId) {
+    case 'market':
+      return 'governance'
+    case 'tax':
+      return 'logistics'
+    case 'policy':
+      return 'governance'
+    default:
+      return null
+  }
+}
+
+function resolveCityBuildingAffairId(groupId: string): string | null {
+  switch (groupId) {
+    case 'market':
+      return 'queue_market_upgrade'
+    case 'tax':
+      return 'queue_tax_upgrade'
+    case 'policy':
+      return 'queue_policy_review'
+    default:
+      return null
+  }
 }
 
 export function getTileById(world: WorldState, tileId: string) {
@@ -168,6 +325,10 @@ function shallowCloneWorld(world: WorldState): WorldState {
     factions: Object.fromEntries(
       Object.entries(world.factions).map(([k, v]) => [k, {
         ...v,
+        claimableRewards: v.claimableRewards?.map((reward) => ({
+          ...reward,
+          reward: { ...reward.reward },
+        })),
         heroCommand: {
           ...v.heroCommand,
           rosterHeroIds: [...v.heroCommand.rosterHeroIds],
@@ -210,9 +371,145 @@ function shallowCloneWorld(world: WorldState): WorldState {
       planningJobs: world.history.planningJobs.map(j => ({ ...j })),
       executionReplays: [...world.history.executionReplays],
     },
+    slgDomainState: cloneSlgDomainState(world.slgDomainState),
     pveNodes: world.pveNodes?.map(n => ({ ...n })),
     luoyangSiegeProgress: world.luoyangSiegeProgress ? { ...world.luoyangSiegeProgress } : undefined,
     citySiegeProgress: world.citySiegeProgress ? { ...world.citySiegeProgress } : undefined,
+  }
+}
+
+function cloneSlgDomainState(
+  slgDomainState: WorldState['slgDomainState'] | undefined,
+): WorldState['slgDomainState'] | undefined {
+  if (!slgDomainState) {
+    return undefined
+  }
+
+  return {
+    troopFacilitiesByUnit: slgDomainState.troopFacilitiesByUnit
+      ? Object.fromEntries(
+          Object.entries(slgDomainState.troopFacilitiesByUnit).map(([unitId, facilityState]) => [
+            unitId,
+            Object.fromEntries(
+              Object.entries(facilityState).map(([facilityId, facilityEntries]) => [
+                facilityId,
+                Object.fromEntries(
+                  Object.entries(facilityEntries).map(([buildingId, buildingState]) => [
+                    buildingId,
+                    { ...buildingState },
+                  ]),
+                ),
+              ]),
+            ),
+          ]),
+        )
+      : undefined,
+    cityBuildingGroupsByCity: slgDomainState.cityBuildingGroupsByCity
+      ? Object.fromEntries(
+          Object.entries(slgDomainState.cityBuildingGroupsByCity).map(([cityId, groupState]) => [
+            cityId,
+            Object.fromEntries(
+              Object.entries(groupState).map(([groupId, buildingState]) => [
+                groupId,
+                Object.fromEntries(
+                  Object.entries(buildingState).map(([buildingId, cityBuildingState]) => [
+                    buildingId,
+                    { ...cityBuildingState },
+                  ]),
+                ),
+              ]),
+            ),
+          ]),
+        )
+      : undefined,
+    affairsQueueByCity: slgDomainState.affairsQueueByCity
+      ? Object.fromEntries(
+          Object.entries(slgDomainState.affairsQueueByCity).map(([cityId, entries]) => [
+            cityId,
+            entries.map((entry) => ({ ...entry })),
+          ]),
+        )
+      : undefined,
+    recruitStateByFaction: slgDomainState.recruitStateByFaction
+      ? Object.fromEntries(
+          Object.entries(slgDomainState.recruitStateByFaction).map(([factionId, recruitState]) => [
+            factionId,
+            {
+              ...recruitState,
+              lastResults: recruitState.lastResults?.map((entry) => ({ ...entry })),
+            },
+          ]),
+        )
+      : undefined,
+    generalStateByFaction: slgDomainState.generalStateByFaction
+      ? Object.fromEntries(
+          Object.entries(slgDomainState.generalStateByFaction).map(([factionId, generalState]) => [
+            factionId,
+              {
+                ...generalState,
+                tacticByHeroId: generalState.tacticByHeroId ? { ...generalState.tacticByHeroId } : undefined,
+                directivePreviewHeroId: generalState.directivePreviewHeroId,
+                directivePreview: generalState.directivePreview
+                  ? {
+                      ...generalState.directivePreview,
+                    warnings: generalState.directivePreview.warnings ? [...generalState.directivePreview.warnings] : undefined,
+                    effectLines: generalState.directivePreview.effectLines ? [...generalState.directivePreview.effectLines] : undefined,
+                    nextSteps: generalState.directivePreview.nextSteps ? [...generalState.directivePreview.nextSteps] : undefined,
+                    affectedUnitIds: generalState.directivePreview.affectedUnitIds ? [...generalState.directivePreview.affectedUnitIds] : undefined,
+                  }
+                : undefined,
+              directivePreviewByHeroId: generalState.directivePreviewByHeroId
+                ? Object.fromEntries(
+                    Object.entries(generalState.directivePreviewByHeroId).map(([heroId, preview]) => [
+                      heroId,
+                      {
+                        ...preview,
+                        warnings: preview.warnings ? [...preview.warnings] : undefined,
+                        effectLines: preview.effectLines ? [...preview.effectLines] : undefined,
+                        nextSteps: preview.nextSteps ? [...preview.nextSteps] : undefined,
+                        affectedUnitIds: preview.affectedUnitIds ? [...preview.affectedUnitIds] : undefined,
+                      },
+                    ]),
+                  )
+                : undefined,
+            },
+          ]),
+        )
+      : undefined,
+    aiStateByFaction: slgDomainState.aiStateByFaction
+      ? Object.fromEntries(
+          Object.entries(slgDomainState.aiStateByFaction).map(([factionId, aiState]) => [
+            factionId,
+            {
+              ...aiState,
+              agenda: aiState.agenda
+                ? {
+                    ...aiState.agenda,
+                    options: aiState.agenda.options
+                      ? aiState.agenda.options.map((option) => ({
+                          ...option,
+                          targetUnitIds: option.targetUnitIds ? [...option.targetUnitIds] : undefined,
+                          recommendedFollowups: option.recommendedFollowups ? [...option.recommendedFollowups] : undefined,
+                        }))
+                      : undefined,
+                    optionActionIds: aiState.agenda.optionActionIds ? [...aiState.agenda.optionActionIds] : undefined,
+                    optionLabels: aiState.agenda.optionLabels ? [...aiState.agenda.optionLabels] : undefined,
+                    optionTargetTileIds: aiState.agenda.optionTargetTileIds ? [...aiState.agenda.optionTargetTileIds] : undefined,
+                    optionSupportCounts: aiState.agenda.optionSupportCounts ? [...aiState.agenda.optionSupportCounts] : undefined,
+                    targetUnitIds: aiState.agenda.targetUnitIds ? [...aiState.agenda.targetUnitIds] : undefined,
+                    recommendedFollowups: aiState.agenda.recommendedFollowups ? [...aiState.agenda.recommendedFollowups] : undefined,
+                  }
+                : undefined,
+              contextMemorySummary: aiState.contextMemorySummary
+                ? {
+                    ...aiState.contextMemorySummary,
+                    lines: aiState.contextMemorySummary.lines ? [...aiState.contextMemorySummary.lines] : undefined,
+                  }
+                : undefined,
+            },
+          ]),
+        )
+      : undefined,
   }
 }
 
@@ -280,6 +577,7 @@ export function appendPlanningJobHistory(
 ): WorldState {
   const nextWorld = shallowCloneWorld(world)
   upsertPlanningJobHistory(nextWorld, entry)
+
   return nextWorld
 }
 
@@ -303,6 +601,166 @@ export function updateAllianceDirective(world: WorldState, regionId: string, sta
   )
   bumpWorldVersion(nextWorld)
   return nextWorld
+}
+
+export function allianceHelp(
+  world: WorldState,
+  regionId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): AllianceHelpResult {
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}`, failureCode: 'unknown_faction' }
+  }
+
+  const region = nextWorld.map.regions.find((candidate) => candidate.id === regionId)
+  if (!region) {
+    return { ok: false, message: `Alliance region not found: ${regionId}`, failureCode: 'missing_alliance_region' }
+  }
+
+  const directive = nextWorld.alliance.directives[regionId]
+  if (!directive) {
+    return { ok: false, message: `Alliance directive not found: ${regionId}`, failureCode: 'missing_alliance_directive' }
+  }
+
+  const commander = nextWorld.alliance.commanders.find((candidate) => candidate.id === directive.assignedCommanderId)
+  if (!commander) {
+    return {
+      ok: false,
+      message: `Alliance commander not found for ${regionId}: ${directive.assignedCommanderId}`,
+      failureCode: 'missing_alliance_commander',
+    }
+  }
+
+  if (faction.actionPoints < 1) {
+    return {
+      ok: false,
+      message: '行动点不足，至少需要 1 点行动点才能发起同盟协助。',
+      failureCode: 'insufficient_action_points',
+    }
+  }
+
+  const regionTiles = region.tileIds
+    .map((tileId) => getTileById(nextWorld, tileId))
+    .filter((tile): tile is Tile => Boolean(tile))
+  const targetTile =
+    regionTiles
+      .slice()
+      .sort((left, right) => {
+        const leftFriendly = left.owner === factionId ? 1 : 0
+        const rightFriendly = right.owner === factionId ? 1 : 0
+        if (leftFriendly !== rightFriendly) {
+          return rightFriendly - leftFriendly
+        }
+        if (left.enemyPressure !== right.enemyPressure) {
+          return right.enemyPressure - left.enemyPressure
+        }
+        return left.id.localeCompare(right.id)
+      })[0] ?? getTileById(nextWorld, region.centerTileId)
+
+  if (!targetTile) {
+    return { ok: false, message: `Alliance target tile not found for ${regionId}`, failureCode: 'missing_target_tile' }
+  }
+
+  faction.actionPoints = Math.max(0, faction.actionPoints - 1)
+  directive.supportLevel = Math.round(clampValue(directive.supportLevel + 6, 35, 92))
+  directive.summary = `同盟已接受增援请求，当前对 ${region.name} 的协同强度 ${directive.supportLevel}。`
+  commander.readiness = Math.min(100, commander.readiness + 8)
+  targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
+
+  for (const unit of nextWorld.units) {
+    if (unit.faction === factionId && region.tileIds.includes(unit.tileId)) {
+      unit.supply = Math.min(9, unit.supply + 1)
+    }
+  }
+
+  const action: AllianceActionSummary = {
+    id: `${nextWorld.tick}-${regionId}-alliance-help`,
+    tick: nextWorld.tick,
+    regionId,
+    title: `我方增援 ${region.name}`,
+    detail: `${resolveFactionDisplayLabel(factionId)} 向 ${region.name} 发起同盟协助，${commander.name} 协同强度提升至 ${directive.supportLevel}，${targetTile.name} 敌压下降。`,
+    severity: 'medium',
+    factionId,
+    tileId: targetTile.id,
+    toTileId: targetTile.id,
+  }
+  nextWorld.feedback.allianceActions = [action, ...nextWorld.feedback.allianceActions].slice(0, 8)
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    '同盟协助',
+    `${resolveFactionDisplayLabel(factionId)} 已向 ${region.name} 发起增援，${commander.name} 战备提升至 ${commander.readiness}，${targetTile.name} 压力有所缓解。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `${resolveFactionDisplayLabel(factionId)} 已完成对 ${region.name} 的同盟协助。`,
+    factionId,
+    regionId,
+    commanderId: commander.id,
+    supportLevel: directive.supportLevel,
+    commanderReadiness: commander.readiness,
+  }
+}
+
+export function claimReward(
+  world: WorldState,
+  rewardId?: string,
+  factionId: string = resolveFallbackFactionId(world),
+): RewardClaimResult {
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}`, failureCode: 'unknown_faction' }
+  }
+
+  const pendingRewards = faction.claimableRewards ?? []
+  const normalizedRewardId = rewardId?.trim()
+  const rewardIndex =
+    normalizedRewardId && normalizedRewardId.length > 0
+      ? pendingRewards.findIndex((candidate) => candidate.id === normalizedRewardId)
+      : pendingRewards.length > 0
+        ? 0
+        : -1
+
+  if (rewardIndex < 0) {
+    return {
+      ok: false,
+      message: normalizedRewardId
+        ? `Claimable reward not found: ${normalizedRewardId}`
+        : 'No claimable rewards available for this faction.',
+      failureCode: 'missing_claimable_reward',
+    }
+  }
+
+  const [claimedReward] = pendingRewards.splice(rewardIndex, 1)
+  faction.claimableRewards = pendingRewards
+  faction.food += claimedReward.reward.food
+  faction.actionPoints = Math.min(8, faction.actionPoints + claimedReward.reward.ap)
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    '奖励领取',
+    `${resolveFactionDisplayLabel(factionId)} 领取了 ${claimedReward.label}，获得 ${claimedReward.reward.food} 粮草和 ${claimedReward.reward.ap} 行动点。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `${resolveFactionDisplayLabel(factionId)} 已领取 ${claimedReward.label}。`,
+    rewardId: claimedReward.id,
+    foodReward: claimedReward.reward.food,
+    actionPointReward: claimedReward.reward.ap,
+    pendingRewardCount: pendingRewards.length,
+    source: claimedReward.source,
+  }
 }
 
 export function queueTacticalOverride(
@@ -629,6 +1087,734 @@ export function upgradeCityTech(
     nextLevel,
     message: `${cluster.name} upgraded ${CITY_TECH_LABELS[techId]} to Lv.${nextLevel}.`,
   }
+}
+
+export function promoteCityBuilding(
+  world: WorldState,
+  cityId: string,
+  groupId: string,
+  buildingId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): PromoteCityBuildingResult {
+  const techId = resolveCityBuildingTechId(groupId, buildingId)
+  if (!techId) {
+    return { ok: false, message: 'Unsupported city building group or building id.' }
+  }
+
+  const upgraded = upgradeCityTech(world, cityId, techId, factionId)
+  if (!upgraded.ok) {
+    return upgraded
+  }
+
+  const nextWorld = upgraded.world
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.cityBuildingGroupsByCity ??= {}
+  nextWorld.slgDomainState.cityBuildingGroupsByCity[cityId] ??= {}
+  nextWorld.slgDomainState.cityBuildingGroupsByCity[cityId][groupId] ??= {}
+  nextWorld.slgDomainState.cityBuildingGroupsByCity[cityId][groupId][buildingId] = {
+    level: upgraded.nextLevel,
+    statusText: '已同步升级',
+    updatedTick: nextWorld.tick,
+    description: `${CITY_TECH_LABELS[techId]} 已提升至 Lv.${upgraded.nextLevel}，当前为建筑树权威状态。`,
+  }
+
+  const affairId = resolveCityBuildingAffairId(groupId)
+  if (affairId) {
+    nextWorld.slgDomainState.affairsQueueByCity ??= {}
+    const queue = [...(nextWorld.slgDomainState.affairsQueueByCity[cityId] ?? [])]
+    const existingIndex = queue.findIndex((entry) => entry.id === affairId)
+    const syncedEntry = {
+      id: affairId,
+      statusText: '已同步入队',
+      updatedTick: nextWorld.tick,
+      description: `${CITY_TECH_LABELS[techId]} 已同步写回建筑树，并进入当前政务序列。`,
+    }
+    if (existingIndex >= 0) {
+      queue[existingIndex] = syncedEntry
+    } else {
+      queue.push(syncedEntry)
+    }
+    nextWorld.slgDomainState.affairsQueueByCity[cityId] = queue
+  }
+
+  return {
+    ok: true,
+    world: nextWorld,
+    cityId,
+    groupId,
+    buildingId,
+    nextLevel: upgraded.nextLevel,
+    message: upgraded.message,
+  }
+}
+
+export function promoteTroopFacilityBuilding(
+  world: WorldState,
+  unitId: string,
+  facilityId: string,
+  buildingId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): PromoteTroopFacilityBuildingResult {
+  const nextWorld = shallowCloneWorld(world)
+  const unit = getUnitById(nextWorld, unitId)
+  if (!unit || unit.faction !== factionId) {
+    return { ok: false, message: `Only ${resolveFactionDisplayLabel(factionId)} troop facilities can be upgraded.` }
+  }
+
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: 'Target faction is missing.' }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.troopFacilitiesByUnit ??= {}
+  nextWorld.slgDomainState.troopFacilitiesByUnit[unitId] ??= {}
+  nextWorld.slgDomainState.troopFacilitiesByUnit[unitId][facilityId] ??= {}
+
+  const currentState = nextWorld.slgDomainState.troopFacilitiesByUnit[unitId][facilityId][buildingId]
+  const currentLevel = typeof currentState?.level === 'number' ? Math.max(1, Math.round(currentState.level)) : 1
+  const nextLevel = currentLevel + 1
+  nextWorld.slgDomainState.troopFacilitiesByUnit[unitId][facilityId][buildingId] = {
+    level: nextLevel,
+    statusText: '已同步升级',
+    updatedTick: nextWorld.tick,
+    description: `${unit.name} 的 ${facilityId}/${buildingId} 已写回后端权威状态，当前等级 Lv.${nextLevel}。`,
+  }
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    '部队设施升级',
+    `${unit.name} 已将 ${facilityId}/${buildingId} 升级到 Lv.${nextLevel}。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    unitId,
+    facilityId,
+    buildingId,
+    nextLevel,
+    message: `${unit.name} 已推进 ${facilityId}/${buildingId}，当前 Lv.${nextLevel}。`,
+  }
+}
+
+export function enqueueAffair(
+  world: WorldState,
+  cityId: string,
+  affairId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): EnqueueAffairResult {
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: 'Target faction is missing.' }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.affairsQueueByCity ??= {}
+  const queue = [...(nextWorld.slgDomainState.affairsQueueByCity[cityId] ?? [])]
+  const existingIndex = queue.findIndex((entry) => entry.id === affairId)
+  if (existingIndex >= 0 && queue[existingIndex]?.statusText === '已入队') {
+    return { ok: false, message: `${affairId} is already queued.` }
+  }
+
+  const nextEntry = {
+    id: affairId,
+    statusText: '已入队',
+    updatedTick: nextWorld.tick,
+    description: `${cityId} 的 ${affairId} 已进入后端权威政务队列。`,
+  }
+  if (existingIndex >= 0) {
+    queue[existingIndex] = nextEntry
+  } else {
+    queue.push(nextEntry)
+  }
+  nextWorld.slgDomainState.affairsQueueByCity[cityId] = queue
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    '政务入队',
+    `${cityId} 已将 ${affairId} 写入政务队列。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    cityId,
+    affairId,
+    message: `${cityId} 已将 ${affairId} 加入政务队列。`,
+  }
+}
+
+export function recruitProspectHero(
+  world: WorldState,
+  factionId: string = resolveFallbackFactionId(world),
+  count = 1,
+  poolId = 'pool_standard',
+): RecruitProspectHeroResult {
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}` }
+  }
+
+  const heroCommand = faction.heroCommand
+  const requestedCount = Math.max(1, Math.min(10, Math.floor(count)))
+  const drawMode: 'single' | 'multi' = requestedCount > 1 ? 'multi' : 'single'
+  const results: {
+    id: string
+    heroId: string
+    heroName: string
+    poolId: string
+    drawMode: 'single' | 'multi'
+    updatedTick: number
+  }[] = []
+
+  while (
+    heroCommand.prospectHeroIds.length > 0 &&
+    heroCommand.developmentPoints >= heroCommand.acquisitionThreshold &&
+    results.length < requestedCount
+  ) {
+    heroCommand.developmentPoints -= heroCommand.acquisitionThreshold
+    heroCommand.acquisitionThreshold = Math.min(36, heroCommand.acquisitionThreshold + 2)
+
+    const recruitedHeroId = pickNextProspectHeroId(heroCommand)
+    if (!recruitedHeroId) {
+      break
+    }
+
+    heroCommand.rosterHeroIds.push(recruitedHeroId)
+    if (!heroCommand.reserveHeroIds.includes(recruitedHeroId)) {
+      heroCommand.reserveHeroIds.push(recruitedHeroId)
+    }
+    heroCommand.recentHeroId = recruitedHeroId
+    const heroEntry = getHeroPoolEntryById(recruitedHeroId)
+    results.push({
+      id: `recruit_${nextWorld.tick}_${results.length}_${recruitedHeroId}`,
+      heroId: recruitedHeroId,
+      heroName: heroEntry.name,
+      poolId,
+      drawMode,
+      updatedTick: nextWorld.tick,
+    })
+  }
+
+  if (results.length == 0) {
+    if (heroCommand.prospectHeroIds.length == 0) {
+      return { ok: false, message: 'No prospect heroes remain in the current pool.' }
+    }
+    return { ok: false, message: 'Development points are insufficient for the requested recruit draw.' }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.recruitStateByFaction ??= {}
+  nextWorld.slgDomainState.recruitStateByFaction[factionId] = {
+    selectedPoolId: poolId,
+    drawCount: results.length,
+    lastDrawMode: drawMode,
+    lastResults: results,
+    updatedTick: nextWorld.tick,
+  }
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    `${resolveFactionDisplayLabel(factionId)} 招募完成`,
+    `${results.map((entry) => entry.heroName).join('、')} 已加入 roster 并进入 reserve。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    heroId: results.length === 1 ? results[0].heroId : undefined,
+    heroIds: results.map((entry) => entry.heroId),
+    heroNames: results.map((entry) => entry.heroName),
+    poolId,
+    message: `${resolveFactionDisplayLabel(factionId)} 完成 ${results.length} 次招募。`,
+  }
+}
+
+export function setRecruitSelectedPool(
+  world: WorldState,
+  poolId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): SetRecruitSelectedPoolResult {
+  const normalizedPoolId = poolId.trim()
+  if (!normalizedPoolId) {
+    return { ok: false, message: '招募卡池不能为空。' }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}` }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.recruitStateByFaction ??= {}
+  const currentState = nextWorld.slgDomainState.recruitStateByFaction[factionId] ?? {}
+  nextWorld.slgDomainState.recruitStateByFaction[factionId] = {
+    ...currentState,
+    selectedPoolId: normalizedPoolId,
+    updatedTick: nextWorld.tick,
+  }
+
+  if (currentState.selectedPoolId !== normalizedPoolId) {
+    bumpWorldVersion(nextWorld)
+  }
+
+  return {
+    ok: true,
+    world: nextWorld,
+    factionId,
+    poolId: normalizedPoolId,
+    message:
+      currentState.selectedPoolId === normalizedPoolId
+        ? `${resolveFactionDisplayLabel(factionId)} 当前已停留在 ${normalizedPoolId}。`
+        : `${resolveFactionDisplayLabel(factionId)} 已切换招募卡池到 ${normalizedPoolId}。`,
+  }
+}
+
+export function setGeneralActiveHero(
+  world: WorldState,
+  heroId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): SetGeneralActiveHeroResult {
+  const normalizedHeroId = heroId.trim()
+  if (!normalizedHeroId) {
+    return { ok: false, message: '目标武将不能为空。' }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}` }
+  }
+
+  const heroCommand = faction.heroCommand
+  if (!heroCommand.rosterHeroIds.includes(normalizedHeroId)) {
+    return { ok: false, message: '目标武将当前不在 roster 中。' }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.generalStateByFaction ??= {}
+  const currentState = nextWorld.slgDomainState.generalStateByFaction[factionId] ?? {}
+  const directivePreviewByHeroId = { ...(currentState.directivePreviewByHeroId ?? {}) }
+  nextWorld.slgDomainState.generalStateByFaction[factionId] = {
+    ...currentState,
+    activeHeroId: normalizedHeroId,
+    directivePreviewHeroId: normalizedHeroId,
+    directivePreview: mirrorGeneralDirectivePreview(normalizedHeroId, directivePreviewByHeroId),
+    directivePreviewByHeroId,
+    updatedTick: nextWorld.tick,
+  }
+
+  bumpWorldVersion(nextWorld)
+  return {
+    ok: true,
+    world: nextWorld,
+    factionId,
+    heroId: normalizedHeroId,
+    message: `${resolveFactionDisplayLabel(factionId)} 已将焦点切换到武将 ${normalizedHeroId}。`,
+  }
+}
+
+export function setGeneralTactic(
+  world: WorldState,
+  heroId: string,
+  tacticId: 'assault' | 'guard' | 'logistics',
+  factionId: string = resolveFallbackFactionId(world),
+): SetGeneralTacticResult {
+  const normalizedHeroId = heroId.trim()
+  if (!normalizedHeroId) {
+    return { ok: false, message: '目标武将不能为空。' }
+  }
+
+  if (!['assault', 'guard', 'logistics'].includes(tacticId)) {
+    return { ok: false, message: '无效的武将战法。' }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}` }
+  }
+
+  const heroCommand = faction.heroCommand
+  if (!heroCommand.rosterHeroIds.includes(normalizedHeroId)) {
+    return { ok: false, message: '目标武将当前不在 roster 中。' }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.generalStateByFaction ??= {}
+  const currentState = nextWorld.slgDomainState.generalStateByFaction[factionId] ?? {}
+  const nextTacticMap = { ...(currentState.tacticByHeroId ?? {}) }
+  nextTacticMap[normalizedHeroId] = tacticId
+  const currentHeroPreview = (currentState.directivePreviewByHeroId ?? {})[normalizedHeroId] ?? {}
+  const directivePreview = {
+    ...currentHeroPreview,
+    heroId: normalizedHeroId,
+    tacticId,
+    source: 'hero_authority',
+    sourceActionId: 'set_general_tactic',
+    accepted: 1,
+    rejected: 0,
+    status: 'recorded',
+    executionState: 'recorded',
+    summary: resolveGeneralTacticSummary(normalizedHeroId, tacticId),
+    warnings: [],
+    effectLines: buildGeneralTacticEffectLines(normalizedHeroId, tacticId),
+    nextSteps: buildGeneralTacticNextSteps(false),
+    templateId: resolveGeneralTacticTemplateId(tacticId),
+    affectedUnitIds: [],
+    updatedTick: nextWorld.tick,
+    updatedWorldVersion: nextWorld.worldVersion + 1,
+  }
+  const directivePreviewByHeroId = {
+    ...(currentState.directivePreviewByHeroId ?? {}),
+    [normalizedHeroId]: directivePreview,
+  }
+  nextWorld.slgDomainState.generalStateByFaction[factionId] = {
+    ...currentState,
+    activeHeroId: normalizedHeroId,
+    tacticByHeroId: nextTacticMap,
+    directivePreviewHeroId: normalizedHeroId,
+    directivePreview: mirrorGeneralDirectivePreview(normalizedHeroId, directivePreviewByHeroId),
+    directivePreviewByHeroId,
+    updatedTick: nextWorld.tick,
+  }
+
+  bumpWorldVersion(nextWorld)
+  return {
+    ok: true,
+    world: nextWorld,
+    factionId,
+    heroId: normalizedHeroId,
+    tacticId,
+    message: `${resolveFactionDisplayLabel(factionId)} 已将武将 ${normalizedHeroId} 的战法切换为 ${resolveGeneralTacticLabel(tacticId)}。`,
+  }
+}
+
+export function setAiContextFocus(
+  world: WorldState,
+  contextFocusId: string,
+  factionId: string = resolveFallbackFactionId(world),
+): SetAiContextFocusResult {
+  const normalizedFocusId = contextFocusId.trim()
+  if (!['focus_city', 'focus_troop', 'focus_alliance'].includes(normalizedFocusId)) {
+    return { ok: false, message: '无效的 AI 上下文焦点。' }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}` }
+  }
+
+  nextWorld.slgDomainState ??= {}
+  nextWorld.slgDomainState.aiStateByFaction ??= {}
+  const currentState = nextWorld.slgDomainState.aiStateByFaction[factionId] ?? {}
+  nextWorld.slgDomainState.aiStateByFaction[factionId] = {
+    ...currentState,
+    contextFocusId: normalizedFocusId,
+    updatedTick: nextWorld.tick,
+  }
+
+  bumpWorldVersion(nextWorld)
+  return {
+    ok: true,
+    world: nextWorld,
+    factionId,
+    contextFocusId: normalizedFocusId,
+    message: `${resolveFactionDisplayLabel(factionId)} 已切换 AI 上下文焦点到 ${normalizedFocusId}。`,
+  }
+}
+
+export function queueAiAgendaAction(
+  world: WorldState,
+  agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy',
+  factionId: string = resolveFallbackFactionId(world),
+): QueueAiAgendaActionResult {
+  const normalizedAgendaActionId = agendaActionId.trim() as 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'
+  if (!['agenda_expand', 'agenda_support', 'agenda_stabilize', 'agenda_recover', 'agenda_redeploy'].includes(normalizedAgendaActionId)) {
+    return { ok: false, message: '无效的 AI 议程动作。', failureCode: 'invalid_ai_agenda_action' }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}`, failureCode: 'unknown_faction' }
+  }
+
+  const primaryUnit = nextWorld.units.find((unit) => unit.faction === factionId)
+  if (!primaryUnit) {
+    return { ok: false, message: '当前没有可用于议程执行的部队。', failureCode: 'no_primary_unit' }
+  }
+
+  const targetTileId = resolveAiAgendaTargetTile(nextWorld, primaryUnit.id, normalizedAgendaActionId).trim()
+  if (!targetTileId) {
+    return { ok: false, message: '当前主力部队未定位地块。', failureCode: 'missing_target_tile' }
+  }
+
+  const requestId = `ui_ai_${normalizedAgendaActionId}_${nextWorld.tick}`
+  const strategicCommand = resolveAiAgendaStrategicCommand(normalizedAgendaActionId)
+  const plan = buildAiAgendaPlan(primaryUnit.id, targetTileId, normalizedAgendaActionId)
+  const queueResult = queuePlanExecution(
+    nextWorld,
+    plan,
+    'local',
+    factionId,
+    strategicCommand,
+    requestId,
+    nextWorld.worldVersion,
+  )
+  if (!queueResult.ok) {
+    return { ok: false, message: queueResult.message, failureCode: queueResult.failureCode }
+  }
+
+  queueResult.world.slgDomainState ??= {}
+  queueResult.world.slgDomainState.aiStateByFaction ??= {}
+  const currentState = queueResult.world.slgDomainState.aiStateByFaction[factionId] ?? {}
+  const orderedActionIds = [
+    normalizedAgendaActionId,
+    ...['agenda_expand', 'agenda_support', 'agenda_stabilize', 'agenda_recover', 'agenda_redeploy']
+      .filter((candidate) => candidate !== normalizedAgendaActionId),
+  ]
+  const orderedOptionLabels = [
+    ...orderedActionIds.map((candidate) =>
+      resolveAiAgendaStrategicCommand(candidate as 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'),
+    ),
+  ]
+  const recommendedFollowups = buildAiAgendaRecommendedFollowups(normalizedAgendaActionId)
+  const orderedOptions = orderedActionIds.map((candidate, index) => ({
+    actionId: candidate,
+    label: orderedOptionLabels[index] ?? resolveAiAgendaStrategicCommand(candidate as 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'),
+    targetTileId,
+    targetUnitIds: [primaryUnit.id],
+    supportCount: index == 0 ? 1 : 0,
+    recommendedFollowups: candidate == normalizedAgendaActionId ? recommendedFollowups : buildAiAgendaRecommendedFollowups(candidate as 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'),
+  }))
+  queueResult.world.slgDomainState.aiStateByFaction[factionId] = {
+    ...currentState,
+    agenda: {
+      source: 'authoritative_action',
+      summary: `${resolveAiAgendaStrategicCommand(normalizedAgendaActionId)} 已进入执行队列。`,
+      options: orderedOptions,
+      optionActionIds: orderedActionIds,
+      optionLabels: orderedOptionLabels,
+      optionTargetTileIds: orderedOptions.map((option) => option.targetTileId ?? ''),
+      optionSupportCounts: orderedOptions.map((option) => option.supportCount),
+      targetTileId,
+      targetUnitIds: [primaryUnit.id],
+      executionRequestId: requestId,
+      recommendedFollowups,
+      updatedTick: queueResult.world.tick,
+      updatedWorldVersion: queueResult.world.worldVersion,
+    },
+    lastAgendaActionId: normalizedAgendaActionId,
+    updatedTick: queueResult.world.tick,
+    updatedWorldVersion: queueResult.world.worldVersion,
+  }
+
+  return {
+    ok: true,
+    world: queueResult.world,
+    factionId,
+    agendaActionId: normalizedAgendaActionId,
+    requestId,
+    message: `${resolveFactionDisplayLabel(factionId)} 已提交 ${resolveAiAgendaStrategicCommand(normalizedAgendaActionId)}。`,
+  }
+}
+
+function mirrorGeneralDirectivePreview(
+  activeHeroId: string,
+  directivePreviewByHeroId: Record<string, SlgGeneralDirectivePreviewState>,
+): SlgGeneralDirectivePreviewState | undefined {
+  if (!activeHeroId) {
+    return undefined
+  }
+  const heroPreview = directivePreviewByHeroId[activeHeroId]
+  if (!heroPreview) {
+    return undefined
+  }
+  return cloneGeneralDirectivePreviewMirror(heroPreview)
+}
+
+export function cloneGeneralDirectivePreviewMirror(
+  directivePreview: SlgGeneralDirectivePreviewState | undefined,
+): SlgGeneralDirectivePreviewState | undefined {
+  if (!directivePreview) {
+    return undefined
+  }
+  return {
+    heroId: directivePreview.heroId,
+    tacticId: directivePreview.tacticId,
+    source: directivePreview.source,
+    sourceActionId: directivePreview.sourceActionId,
+    accepted: directivePreview.accepted,
+    rejected: directivePreview.rejected,
+    status: directivePreview.status,
+    executionState: directivePreview.executionState,
+    summary: directivePreview.summary,
+    templateId: directivePreview.templateId,
+    targetUnitId: directivePreview.targetUnitId,
+    targetTileId: directivePreview.targetTileId,
+    updatedTick: directivePreview.updatedTick,
+    updatedWorldVersion: directivePreview.updatedWorldVersion,
+  }
+}
+
+function resolveGeneralTacticLabel(tacticId: 'assault' | 'guard' | 'logistics'): string {
+  switch (tacticId) {
+    case 'guard':
+      return '驻守'
+    case 'logistics':
+      return '后勤'
+    default:
+      return '先锋'
+  }
+}
+
+function resolveGeneralTacticSummary(heroId: string, tacticId: 'assault' | 'guard' | 'logistics'): string {
+  switch (tacticId) {
+    case 'guard':
+      return `武将 ${heroId} 已切换为驻守态势。`
+    case 'logistics':
+      return `武将 ${heroId} 已切换为后勤支援态势。`
+    default:
+      return `武将 ${heroId} 已切换为先锋推进态势。`
+  }
+}
+
+function buildGeneralTacticEffectLines(heroId: string, tacticId: 'assault' | 'guard' | 'logistics'): string[] {
+  switch (tacticId) {
+    case 'guard':
+      return [`武将 ${heroId} 会优先承担驻守与稳态任务。`, '后续若已编组，会自动向当前部队同步驻守指令。']
+    case 'logistics':
+      return [`武将 ${heroId} 会优先承担补给、恢复与后勤支援。`, '后续若已编组，会自动向当前部队同步后勤支援指令。']
+    default:
+      return [`武将 ${heroId} 会优先承担推进、攻击与前锋任务。`, '后续若已编组，会自动向当前部队同步先锋推进指令。']
+  }
+}
+
+function buildGeneralTacticNextSteps(hasAssignedUnit: boolean): string[] {
+  if (hasAssignedUnit) {
+    return ['当前部队已收到新的权威战法模板。', '后续调度会沿当前模板继续执行。']
+  }
+  return ['如后续完成编组，权威模板会自动继承到目标部队。', '再次切换战法会覆盖当前待生效说明链。']
+}
+
+function resolveGeneralTacticTemplateId(tacticId: 'assault' | 'guard' | 'logistics'): string {
+  switch (tacticId) {
+    case 'guard':
+      return 'guard'
+    case 'logistics':
+      return 'rally'
+    default:
+      return 'shock'
+  }
+}
+
+function resolveAiAgendaStrategicCommand(agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'): string {
+  switch (agendaActionId) {
+    case 'agenda_support':
+      return '执行支援议程'
+    case 'agenda_stabilize':
+      return '执行稳态议程'
+    case 'agenda_recover':
+      return '执行整补议程'
+    case 'agenda_redeploy':
+      return '执行调动议程'
+    default:
+      return '执行扩张议程'
+  }
+}
+
+function buildAiAgendaRecommendedFollowups(
+  agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy',
+): string[] {
+  switch (agendaActionId) {
+    case 'agenda_support':
+      return ['agenda_stabilize', 'agenda_recover']
+    case 'agenda_stabilize':
+      return ['agenda_recover', 'agenda_support']
+    case 'agenda_recover':
+      return ['agenda_redeploy', 'agenda_stabilize']
+    case 'agenda_redeploy':
+      return ['agenda_expand', 'agenda_support']
+    default:
+      return ['agenda_support', 'agenda_stabilize']
+  }
+}
+
+function buildAiAgendaPlan(
+  unitId: string,
+  targetTileId: string,
+  agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy',
+): StrategicPlan {
+  switch (agendaActionId) {
+    case 'agenda_support':
+      return {
+        intent: 'ai_support_line',
+        priority: 'medium',
+        orders: [{ unitId, action: 'support', target: targetTileId }],
+        constraints: ['ai_panel_agenda_support_v1'],
+        reviewAfterTicks: 3,
+      }
+    case 'agenda_stabilize':
+      return {
+        intent: 'ai_stabilize_core',
+        priority: 'medium',
+        orders: [{ unitId, action: 'garrison', target: targetTileId }],
+        constraints: ['ai_panel_agenda_stabilize_v1'],
+        reviewAfterTicks: 2,
+      }
+    case 'agenda_recover':
+      return {
+        intent: 'ai_recover_line',
+        priority: 'medium',
+        orders: [{ unitId, action: 'support', target: targetTileId }],
+        constraints: ['ai_panel_agenda_recover_v1'],
+        reviewAfterTicks: 2,
+      }
+    case 'agenda_redeploy':
+      return {
+        intent: 'ai_redeploy_front',
+        priority: 'medium',
+        orders: [{ unitId, action: 'march', target: targetTileId }],
+        constraints: ['ai_panel_agenda_redeploy_v1'],
+        reviewAfterTicks: 2,
+      }
+    default:
+      return {
+        intent: 'ai_expand_frontier',
+        priority: 'high',
+        orders: [{ unitId, action: 'capture', target: targetTileId }],
+        constraints: ['ai_panel_agenda_expand_v1'],
+        reviewAfterTicks: 3,
+      }
+  }
+}
+
+function resolveAiAgendaTargetTile(
+  world: WorldState,
+  unitId: string,
+  agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy',
+): string {
+  const unit = getUnitById(world, unitId)
+  if (!unit) {
+    return ''
+  }
+  if (agendaActionId !== 'agenda_redeploy') {
+    return unit.tileId
+  }
+  const neighbors = world.map.connections[unit.tileId] ?? []
+  return neighbors[0] ?? unit.tileId
 }
 
 
@@ -1401,24 +2587,46 @@ function hasCeasefireOrAlliance(world: WorldState, factionA: string, factionB: s
   )
 }
 
-export function advanceTick(world: WorldState): WorldState {
+function measureAdvanceTickDiagnosticSubphase<T>(
+  diagnostics: AdvanceTickDiagnostics | undefined,
+  subphase: string,
+  work: () => T,
+): T {
+  const startedAtMs = performance.now()
+  try {
+    return work()
+  } finally {
+    diagnostics?.subphases.push({
+      subphase,
+      durationMs: Number((performance.now() - startedAtMs).toFixed(2)),
+    })
+  }
+}
+
+export function advanceTick(world: WorldState, diagnostics?: AdvanceTickDiagnostics): WorldState {
   const nextWorld = shallowCloneWorld(world)
   const tickHighlights: ReplayHighlight[] = []
   nextWorld.tick += 1
 
   // Phase 1B 性能优化：一次扫描完成食物收入计算 + 单位分组（O(n+u) 替换 O(n×f + u×f)）
-  const factionFoodIncomes = computeAllFactionFoodIncomes(nextWorld.map.tiles)
-  const unitsByFaction = buildUnitsByFaction(nextWorld.units)
+  let factionFoodIncomes!: ReturnType<typeof computeAllFactionFoodIncomes>
+  let unitsByFaction!: ReturnType<typeof buildUnitsByFaction>
   // Phase 2 优化：一次扫描按 owner 分组地块，避免 calculateFactionDevelopmentGain 的 O(2n)
-  const tilePartition = partitionTiles(nextWorld.map.tiles)
+  let tilePartition!: ReturnType<typeof partitionTiles>
   // Phase 2 优化：一次扫描预计算全图高压对立地块数，避免 resolveNeededArchetype 的 O(n)
   let globalHostilePressureCount = 0
-  for (const tile of nextWorld.map.tiles) {
-    if (tile.enemyPressure >= 3) globalHostilePressureCount++
-  }
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.precompute_shared_index', () => {
+    factionFoodIncomes = computeAllFactionFoodIncomes(nextWorld.map.tiles)
+    unitsByFaction = buildUnitsByFaction(nextWorld.units)
+    tilePartition = partitionTiles(nextWorld.map.tiles)
+    for (const tile of nextWorld.map.tiles) {
+      if (tile.enemyPressure >= 3) globalHostilePressureCount += 1
+    }
+  })
 
   // Per-faction: food income, AP recovery, unit supply, development
-  for (const [factionId, faction] of Object.entries(nextWorld.factions)) {
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.economy_upkeep', () => {
+    for (const [factionId, faction] of Object.entries(nextWorld.factions)) {
     const incomeFood = factionFoodIncomes.get(factionId) ?? 0
     faction.actionPoints = Math.min(8, faction.actionPoints + 3)
     faction.food += incomeFood
@@ -1448,10 +2656,20 @@ export function advanceTick(world: WorldState): WorldState {
       }
     }
 
-    processFactionHeroDevelopment(nextWorld, factionId, tickHighlights, tilePartition, unitsByFaction, globalHostilePressureCount)
-  }
+    }
+  })
 
-  const quotaSyncResults = syncAllFactionAiQuota(nextWorld)
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.faction_growth_quota', () => {
+    for (const factionId of Object.keys(nextWorld.factions)) {
+      processFactionHeroDevelopment(nextWorld, factionId, tickHighlights, tilePartition, unitsByFaction, globalHostilePressureCount)
+    }
+  })
+
+  const quotaSyncResults = measureAdvanceTickDiagnosticSubphase(
+    diagnostics,
+    'advance_world_state.ai_quota_sync',
+    () => syncAllFactionAiQuota(nextWorld),
+  )
   for (const result of quotaSyncResults) {
     if (result.currentQuota <= result.previousQuota) {
       continue
@@ -1480,23 +2698,26 @@ export function advanceTick(world: WorldState): WorldState {
   }
 
   // Phase 2: 自动领土扩张（全势力飞地共享边界BFS，30格铺路+15格开荒/单位）
-  processAutoExpansion(nextWorld, unitsByFaction, tickHighlights)
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.territory_recruit_levelup', () => {
+    processAutoExpansion(nextWorld, unitsByFaction, tickHighlights)
 
   // Phase 2.5: 自动征兵（滚雪球核心：领地→粮食→征兵→更快扩张→更快接触）
-  processRecruitment(nextWorld, unitsByFaction)
+    processRecruitment(nextWorld, unitsByFaction)
 
   // Phase 3: 自动武将升级 — 每势力 1 队 +5 级
-  processAutoLevelUp(nextWorld, unitsByFaction, tickHighlights)
+    processAutoLevelUp(nextWorld, unitsByFaction, tickHighlights)
+  })
 
   // Phase 4: 外交协议倒计时
-  processDiplomacyAgreements(nextWorld)
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.execution_and_orders', () => {
+    processDiplomacyAgreements(nextWorld)
 
-  applyTacticalOverrides(nextWorld, tickHighlights)
+    applyTacticalOverrides(nextWorld, tickHighlights)
 
   // Process executions for ALL factions
-  for (const factionId of Object.keys(nextWorld.factions)) {
-    processExecutionForFaction(nextWorld, factionId, tickHighlights)
-  }
+    for (const factionId of Object.keys(nextWorld.factions)) {
+      processExecutionForFaction(nextWorld, factionId, tickHighlights)
+    }
 
   // Post-execution status normalization: completeOrder sets transient statuses
   // ('占领中','行军中' etc.) during execution — reset them so units are available
@@ -1507,92 +2728,134 @@ export function advanceTick(world: WorldState): WorldState {
     }
   }
 
+  })
+
   const primaryFactionId = resolveFallbackFactionId(nextWorld)
   const primaryOpposingFactionId = resolvePrimaryOpposingFactionId(nextWorld, primaryFactionId)
-  const allianceActions = runAllianceDirector(nextWorld, primaryFactionId)
-  if (allianceActions.length > 0) {
-    prependReport(
-      nextWorld,
-      nextWorld.tick,
-      '同盟独立行动',
-      allianceActions.map((action) => action.detail).join('；'),
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.directors_and_theater', () => {
+    const allianceActions = measureAdvanceTickDiagnosticSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.alliance_director',
+      () => runAllianceDirector(nextWorld, primaryFactionId, diagnostics),
     )
-    tickHighlights.push(
-      createReplayHighlight(
-        nextWorld.tick,
-        'alliance_turn',
-        'medium',
-        '同盟行动摘要',
-        allianceActions.map((action) => action.detail).join('；'),
-        {
-          unitId: allianceActions[0]?.unitId,
-          tileId: allianceActions[0]?.tileId
-            ?? nextWorld.map.regions.find((region) => region.id === allianceActions[0]?.regionId)?.centerTileId,
-          fromTileId: allianceActions[0]?.fromTileId,
-          toTileId: allianceActions[0]?.toTileId ?? allianceActions[0]?.tileId,
-          factionId: allianceActions[0]?.factionId ?? primaryFactionId,
+    if (allianceActions.length > 0) {
+      measureAdvanceTickDiagnosticSubphase(
+        diagnostics,
+        'advance_world_state.directors_and_theater.alliance_report_and_highlight',
+        () => {
+          prependReport(
+            nextWorld,
+            nextWorld.tick,
+            '同盟独立行动',
+            allianceActions.map((action) => action.detail).join('；'),
+          )
+          tickHighlights.push(
+            createReplayHighlight(
+              nextWorld.tick,
+              'alliance_turn',
+              'medium',
+              '同盟行动摘要',
+              allianceActions.map((action) => action.detail).join('；'),
+              {
+                unitId: allianceActions[0]?.unitId,
+                tileId: allianceActions[0]?.tileId
+                  ?? nextWorld.map.regions.find((region) => region.id === allianceActions[0]?.regionId)?.centerTileId,
+                fromTileId: allianceActions[0]?.fromTileId,
+                toTileId: allianceActions[0]?.toTileId ?? allianceActions[0]?.tileId,
+                factionId: allianceActions[0]?.factionId ?? primaryFactionId,
+              },
+            ),
+          )
         },
-      ),
-    )
-  }
+      )
+    }
 
-  const opposingResult = runOpposingDirectorDetailed(nextWorld, {
-    defenderFactionId: primaryOpposingFactionId,
-    targetFactionId: primaryFactionId,
-  })
-  const opposingActions = opposingResult.actions
-  if (opposingActions.length > 0) {
-    prependReport(
-      nextWorld,
-      nextWorld.tick,
-      '对立势力规则 AI 行动',
-      opposingActions.join('；'),
+    const opposingResult = measureAdvanceTickDiagnosticSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.opposing_director',
+      () => runOpposingDirectorDetailed(nextWorld, {
+        defenderFactionId: primaryOpposingFactionId,
+        targetFactionId: primaryFactionId,
+        diagnostics,
+      }),
     )
-    tickHighlights.push(
-      createReplayHighlight(
-        nextWorld.tick,
-        'enemy_turn',
-        'high',
-        '对立势力回合摘要',
-        opposingActions.join('；'),
-        {
-          unitId: opposingResult.traces[0]?.unitId
-            ?? nextWorld.units.find((unit) => unit.faction === primaryOpposingFactionId)?.id,
-          tileId: opposingResult.traces[0]?.tileId
-            ?? nextWorld.units.find((unit) => unit.faction === primaryOpposingFactionId)?.tileId,
-          fromTileId: opposingResult.traces[0]?.fromTileId,
-          toTileId: opposingResult.traces[0]?.toTileId ?? opposingResult.traces[0]?.tileId,
-          factionId: primaryOpposingFactionId,
+    const opposingActions = opposingResult.actions
+    if (opposingActions.length > 0) {
+      measureAdvanceTickDiagnosticSubphase(
+        diagnostics,
+        'advance_world_state.directors_and_theater.opposing_report_and_highlight',
+        () => {
+          prependReport(
+            nextWorld,
+            nextWorld.tick,
+            '对立势力规则 AI 行动',
+            opposingActions.join('；'),
+          )
+          tickHighlights.push(
+            createReplayHighlight(
+              nextWorld.tick,
+              'enemy_turn',
+              'high',
+              '对立势力回合摘要',
+              opposingActions.join('；'),
+              {
+                unitId: opposingResult.traces[0]?.unitId
+                  ?? nextWorld.units.find((unit) => unit.faction === primaryOpposingFactionId)?.id,
+                tileId: opposingResult.traces[0]?.tileId
+                  ?? nextWorld.units.find((unit) => unit.faction === primaryOpposingFactionId)?.tileId,
+                fromTileId: opposingResult.traces[0]?.fromTileId,
+                toTileId: opposingResult.traces[0]?.toTileId ?? opposingResult.traces[0]?.tileId,
+                factionId: primaryOpposingFactionId,
+              },
+            ),
+          )
         },
-      ),
+      )
+    }
+
+    const theaterSnapshot = measureAdvanceTickDiagnosticSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.theater_snapshot',
+      () =>
+        buildTheaterSnapshot(
+          nextWorld,
+          primaryFactionId,
+          diagnostics,
+          'advance_world_state.directors_and_theater.theater_snapshot',
+        ),
     )
-  }
+    const summaryFaction = nextWorld.factions[primaryFactionId]
+    const summaryFoodLabel = summaryFaction ? `${primaryFactionId} 行动点恢复至 ${summaryFaction.actionPoints}` : ''
 
-  const theaterSnapshot = buildTheaterSnapshot(nextWorld)
-  const summaryFaction = nextWorld.factions[primaryFactionId]
-  const summaryFoodLabel = summaryFaction ? `${primaryFactionId} 行动点恢复至 ${summaryFaction.actionPoints}` : ''
-
-  prependReport(
-    nextWorld,
-    nextWorld.tick,
-    '时间推进完成',
-    `后勤线回补完成，${summaryFoodLabel}，补给线健康度 ${theaterSnapshot.supplyLineHealth}，同盟协同 ${theaterSnapshot.allianceCoordination}，战斗风险 ${theaterSnapshot.battleRisk}。`,
-  )
-  tickHighlights.push(
-    createEngageReplayHighlight(
-      nextWorld.tick,
-      'logistics',
-      'low',
-      '后勤回补',
-      `补给线健康度 ${theaterSnapshot.supplyLineHealth}，发展能力 ${theaterSnapshot.developmentCapacity}，同盟协同 ${theaterSnapshot.allianceCoordination}，战斗风险 ${theaterSnapshot.battleRisk}。`,
-      {
-        unitId: nextWorld.units.find((unit) => unit.faction === primaryFactionId)?.id,
-        tileId: nextWorld.units.find((unit) => unit.faction === primaryFactionId)?.tileId,
-        factionId: primaryFactionId,
+    measureAdvanceTickDiagnosticSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.summary_report_and_highlight',
+      () => {
+        prependReport(
+          nextWorld,
+          nextWorld.tick,
+          '时间推进完成',
+          `后勤线回补完成，${summaryFoodLabel}，补给线健康度 ${theaterSnapshot.supplyLineHealth}，同盟协同 ${theaterSnapshot.allianceCoordination}，战斗风险 ${theaterSnapshot.battleRisk}。`,
+        )
+        tickHighlights.push(
+          createEngageReplayHighlight(
+            nextWorld.tick,
+            'logistics',
+            'low',
+            '后勤回补',
+            `补给线健康度 ${theaterSnapshot.supplyLineHealth}，发展能力 ${theaterSnapshot.developmentCapacity}，同盟协同 ${theaterSnapshot.allianceCoordination}，战斗风险 ${theaterSnapshot.battleRisk}。`,
+            {
+              unitId: nextWorld.units.find((unit) => unit.faction === primaryFactionId)?.id,
+              tileId: nextWorld.units.find((unit) => unit.faction === primaryFactionId)?.tileId,
+              factionId: primaryFactionId,
+            },
+          ),
+        )
       },
-    ),
-  )
+    )
+  })
 
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.endgame_and_decay', () => {
   updateLuoyangHoldCounters(nextWorld)
   processProvincePve(nextWorld, tickHighlights)
   processSiegeDecay(nextWorld, tickHighlights)
@@ -1636,13 +2899,16 @@ export function advanceTick(world: WorldState): WorldState {
       reason: victoryResult.reason,
     }
   }
+  })
 
   bumpWorldVersion(nextWorld)
 
   // Sync replay for all factions
-  for (const factionId of Object.keys(nextWorld.factions)) {
-    syncExecutionReplay(nextWorld, factionId, 'Tick 推进', undefined, false, tickHighlights)
-  }
+  measureAdvanceTickDiagnosticSubphase(diagnostics, 'advance_world_state.replay_sync', () => {
+    for (const factionId of Object.keys(nextWorld.factions)) {
+      syncExecutionReplay(nextWorld, factionId, 'Tick 推进', undefined, false, tickHighlights)
+    }
+  })
 
   return nextWorld
 }

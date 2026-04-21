@@ -5,6 +5,7 @@ import { handlePlanningRoute } from './routes/planning'
 import { handleMapOverviewRoute } from './routes/map'
 import { handleAiConfigGetRoute, handleAiConfigSaveRoute, handleAiLogsRoute, handleAiModelsRoute } from './routes/ai'
 import {
+  handleAiRuntimeObservabilityRoute,
   handleNarrativeEventsRoute,
   handleNationalAgendaRoute,
   handleCourtSessionRoute,
@@ -28,12 +29,14 @@ import {
 import { handleNationFoundRoute, handleNationProfilesRoute } from './routes/nation'
 import { dispatchGeneralChatRoutes } from './routes/generalChat'
 import { dispatchDiplomacyRoutes } from './routes/diplomacy'
+import { dispatchAiPlayerRoutes } from './routes/aiPlayer'
 import { dispatchSessionRoutes } from './routes/session'
 import { dispatchV2Routes } from './routes/v2game'
 import { isHttpBodyError, writeJson } from './routes/http'
 import { dispatchFactionConfigRoutes } from './routes/factionConfigRoutes'
 import { handleWorldActionRoute, handleWorldMapLayoutRoute, handleWorldSummaryRoute } from './routes/world'
 import { flushAiHubConfigPersist, getAiHubConfigPersistHealth } from './application/ai/AiConfigService'
+import { flushAiPlayerGovernancePersist, getAiPlayerGovernancePersistHealth } from './application/ai/AIPlayerGovernanceService'
 import { flushFactionConfigPersist, getFactionConfigPersistHealth } from './application/faction/FactionConfigStore'
 import { flushV2GamePersist, getV2GamePersistHealth } from './application/v2/V2GameService'
 import {
@@ -41,6 +44,7 @@ import {
   flushNarrativePersist,
   flushGovernancePersist,
   flushSaveSlotsPersist,
+  createWorldDeltaSnapshot,
   getSaveSlotsPersistHealth,
   getWorldStateReadonly,
 } from './application/world/WorldService'
@@ -62,7 +66,7 @@ type PersistenceSeverity = 'high' | 'medium' | 'low'
 
 type PersistenceAlert = {
   severity: PersistenceSeverity
-  source: 'factionConfig' | 'aiConfig' | 'v2Game' | 'session' | 'saveSlots'
+  source: 'factionConfig' | 'aiConfig' | 'aiPlayerGovernance' | 'v2Game' | 'session' | 'saveSlots'
   code: string
   message: string
 }
@@ -70,12 +74,14 @@ type PersistenceAlert = {
 function buildPersistenceSnapshot() {
   const factionConfig = getFactionConfigPersistHealth()
   const aiConfig = getAiHubConfigPersistHealth()
+  const aiPlayerGovernance = getAiPlayerGovernancePersistHealth()
   const v2Game = getV2GamePersistHealth()
   const session = getSessionPersistHealth()
   const saveSlots = getSaveSlotsPersistHealth()
   const alerts = buildPersistenceAlerts({
     factionConfig,
     aiConfig,
+    aiPlayerGovernance,
     v2Game,
     session,
     saveSlots,
@@ -84,6 +90,7 @@ function buildPersistenceSnapshot() {
   return {
     factionConfig,
     aiConfig,
+    aiPlayerGovernance,
     v2Game,
     session,
     saveSlots,
@@ -94,6 +101,7 @@ function buildPersistenceSnapshot() {
 function buildPersistenceAlerts(input: {
   factionConfig: ReturnType<typeof getFactionConfigPersistHealth>
   aiConfig: ReturnType<typeof getAiHubConfigPersistHealth>
+  aiPlayerGovernance: ReturnType<typeof getAiPlayerGovernancePersistHealth>
   v2Game: ReturnType<typeof getV2GamePersistHealth>
   session: ReturnType<typeof getSessionPersistHealth>
   saveSlots: ReturnType<typeof getSaveSlotsPersistHealth>
@@ -125,6 +133,7 @@ function buildPersistenceAlerts(input: {
   }> = [
     { source: 'factionConfig', failureCount: input.factionConfig.persistFailureCount },
     { source: 'aiConfig', failureCount: input.aiConfig.persistFailureCount },
+    { source: 'aiPlayerGovernance', failureCount: input.aiPlayerGovernance.persistFailureCount },
     { source: 'v2Game', failureCount: input.v2Game.persistFailureCount },
     { source: 'session', failureCount: input.session.persistFailureCount },
     { source: 'saveSlots', failureCount: input.saveSlots.persistFailureCount },
@@ -149,6 +158,7 @@ function buildPersistenceAlerts(input: {
   }> = [
     { source: 'factionConfig', quarantineCount: input.factionConfig.corruptQuarantineCount },
     { source: 'aiConfig', quarantineCount: input.aiConfig.corruptQuarantineCount },
+    { source: 'aiPlayerGovernance', quarantineCount: input.aiPlayerGovernance.corruptQuarantineCount },
     { source: 'v2Game', quarantineCount: input.v2Game.corruptQuarantineCount },
     { source: 'session', quarantineCount: input.session.corruptQuarantineCount },
     { source: 'saveSlots', quarantineCount: input.saveSlots.corruptQuarantineCount },
@@ -401,6 +411,16 @@ const server = createServer(async (req, res) => {
     return
   }
 
+  if (
+    requestUrl.pathname === '/api/ai/player-actions/catalog' ||
+    requestUrl.pathname === '/api/ai/knowledge-graph' ||
+    requestUrl.pathname === '/api/ai/players' ||
+    requestUrl.pathname.startsWith('/api/ai/players/')
+  ) {
+    await dispatchAiPlayerRoutes(req, res, requestUrl.pathname, requestUrl)
+    return
+  }
+
   if (req.method === 'GET' && requestUrl.pathname === '/api/ai/logs') {
     const parsedLimit = Number(requestUrl.searchParams.get('limit') ?? '20')
     const limit = Number.isFinite(parsedLimit)
@@ -465,6 +485,11 @@ const server = createServer(async (req, res) => {
 
   if (req.method === 'GET' && requestUrl.pathname === '/api/events') {
     handleWorldEventsRoute(req, res)
+    return
+  }
+
+  if (req.method === 'GET' && requestUrl.pathname === '/api/observability/ai-runtime') {
+    handleAiRuntimeObservabilityRoute(req, res)
     return
   }
 
@@ -540,9 +565,9 @@ const server = createServer(async (req, res) => {
 
   if (req.method === 'POST' && requestUrl.pathname === '/api/world/diagnostic/emit-ai-quota-delta') {
     const factionId = requestUrl.searchParams.get('factionId')?.trim() || 'player'
-    const world = structuredClone(getWorldStateReadonly())
-    const previous = structuredClone(world)
-    const syntheticCurrent = structuredClone(world)
+    const world = getWorldStateReadonly()
+    const previous = createWorldDeltaSnapshot(world)
+    const syntheticCurrent = createWorldDeltaSnapshot(world)
     const targetFaction = previous.factions[factionId]
     const quota = targetFaction?.aiQuota
     if (!targetFaction || !quota) {
@@ -652,6 +677,7 @@ async function gracefulShutdown(signal: string) {
       flushNegotiationInboxPersist(),
       flushFactionConfigPersist(),
       flushAiHubConfigPersist(),
+      flushAiPlayerGovernancePersist(),
       flushV2GamePersist(),
       flushSessionPersist(),
       flushSaveSlotsPersist(),

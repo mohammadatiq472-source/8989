@@ -494,6 +494,7 @@ export function createInitialWorldState(): WorldState {
         id: 'player',
         food: 20,
         actionPoints: 6,
+        claimableRewards: [],
         aiQuota: {
           initialQuota: 4,
           currentQuota: 4,
@@ -507,7 +508,7 @@ export function createInitialWorldState(): WorldState {
           homeTileId: 'tile_08',
           commandLimit: 10,
           heroLuck: 74,
-          developmentPoints: 8,
+          developmentPoints: 18,
           acquisitionThreshold: 18,
           rosterHeroIds: [...playerStartingHeroIds, ...playerReserveHeroIds],
           reserveHeroIds: [...playerReserveHeroIds],
@@ -519,6 +520,7 @@ export function createInitialWorldState(): WorldState {
         id: 'enemy',
         food: 18,
         actionPoints: 6,
+        claimableRewards: [],
         aiQuota: {
           initialQuota: 3,
           currentQuota: 3,

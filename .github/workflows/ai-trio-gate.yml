@@ -28,10 +28,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build
-
-      - name: Run gate trio
+      - name: Run gate trio (includes AI preflight)
         id: gate_trio
         continue-on-error: true
         run: npm run gate:ai:trio

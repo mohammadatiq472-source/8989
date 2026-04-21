@@ -11,6 +11,7 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
 import { z } from 'zod';
+import { registerAiPlayerTools } from './registerAiPlayerTools';
 
 const BACKEND_URL = process.env.SLG_BACKEND_URL || 'http://localhost:8787';
 
@@ -240,9 +241,17 @@ const WORLD_ACTION_TEMPLATE_IDS = [
   'preview_court_session',
   'move_first_unit',
   'upgrade_first_city',
+  'upgrade_first_city_building',
+  'enqueue_first_city_affair',
+  'upgrade_first_city_tech',
+  'recruit_first_commander',
+  'deploy_first_reserve_hero',
   'tactical_override_first_unit',
 ] as const;
 
+const CITY_TECH_TRACK_IDS = ['governance', 'logistics', 'defense', 'recruitment'] as const;
+const CITY_BUILDING_GROUP_IDS = ['market', 'tax', 'policy'] as const;
+const CITY_BUILDING_IDS = ['market_plaza', 'tax_office', 'policy_hall', 'recruit_policy_board'] as const;
 const TACTICAL_OVERRIDE_TEMPLATE_IDS = [
   'rally',
   'harass',
@@ -253,13 +262,23 @@ const TACTICAL_OVERRIDE_TEMPLATE_IDS = [
 ] as const;
 
 type WorldActionTemplateId = (typeof WORLD_ACTION_TEMPLATE_IDS)[number];
+type CityTechTrackId = (typeof CITY_TECH_TRACK_IDS)[number];
+type CityBuildingGroupId = (typeof CITY_BUILDING_GROUP_IDS)[number];
+type CityBuildingId = (typeof CITY_BUILDING_IDS)[number];
 type TacticalOverrideTemplateId = (typeof TACTICAL_OVERRIDE_TEMPLATE_IDS)[number];
 
 type WorldActionTemplateOptions = {
   factionId?: string;
+  heroId?: string;
   unitId?: string;
   targetTileId?: string;
   cityTileId?: string;
+  buildingGroupId?: CityBuildingGroupId;
+  buildingId?: CityBuildingId;
+  affairGroupId?: CityBuildingGroupId;
+  techId?: CityTechTrackId;
+  recruitPoolId?: string;
+  recruitCount?: number;
   overrideTemplateId?: TacticalOverrideTemplateId;
   summary?: string;
   includeWorld?: boolean;
@@ -311,6 +330,249 @@ function readRuntimeRows(runtimePayload: unknown): Record<string, unknown>[] {
     return [];
   }
   return asRecordArray(nested.factions);
+}
+
+function pickTopCountEntries(value: unknown, limit: number): Array<{ key: string; count: number }> {
+  const entries = Object.entries(asRecord(value) ?? {})
+    .map(([key, count]) => ({
+      key,
+      count: Number(count ?? 0),
+    }))
+    .filter((entry) => Number.isFinite(entry.count) && entry.count > 0)
+    .sort((left, right) => right.count - left.count || left.key.localeCompare(right.key));
+  return entries.slice(0, limit);
+}
+
+function pickTopNumericEntries(
+  value: unknown,
+  field: string,
+  limit: number,
+): Array<{ key: string; value: number }> {
+  const entries = Object.entries(asRecord(value) ?? {})
+    .map(([key, record]) => {
+      const row = asRecord(record) ?? {};
+      return {
+        key,
+        value: Number(row[field] ?? 0),
+      };
+    })
+    .filter((entry) => Number.isFinite(entry.value) && entry.value > 0)
+    .sort((left, right) => right.value - left.value || left.key.localeCompare(right.key));
+  return entries.slice(0, limit);
+}
+
+function pickTopAdvanceTickSubphaseEntries(
+  phaseStatsValue: unknown,
+  field: string,
+  limit: number,
+): Array<{ phase: string; subphase: string; value: number }> {
+  const entries: Array<{ phase: string; subphase: string; value: number }> = [];
+  for (const [phase, record] of Object.entries(asRecord(phaseStatsValue) ?? {})) {
+    const subphaseStats = asRecord(asRecord(record)?.subphaseStats);
+    if (!subphaseStats) {
+      continue;
+    }
+    for (const [subphase, subphaseRecord] of Object.entries(subphaseStats)) {
+      const value = Number(asRecord(subphaseRecord)?.[field] ?? 0);
+      if (!Number.isFinite(value) || value <= 0) {
+        continue;
+      }
+      entries.push({ phase, subphase, value });
+    }
+  }
+  return entries
+    .sort((left, right) => right.value - left.value || left.subphase.localeCompare(right.subphase))
+    .slice(0, limit);
+}
+
+function summarizeFailureSamples(value: unknown, limit: number): Record<string, unknown>[] {
+  return asRecordArray(value).slice(0, limit).map((sample) => ({
+    tick: sample.tick ?? null,
+    action: sample.action ?? null,
+    factionId: sample.factionId ?? null,
+    requestId: sample.requestId ?? null,
+    failureCode: sample.failureCode ?? null,
+    conflictCategory: sample.conflictCategory ?? null,
+    holder: sample.holder ?? null,
+    createdAt: sample.createdAt ?? null,
+    message: sample.message ?? null,
+  }));
+}
+
+function summarizeAdvanceTickRuns(value: unknown, limit: number): Record<string, unknown>[] {
+  return asRecordArray(value).slice(0, limit).map((run) => ({
+    outcome: run.outcome ?? null,
+    startedAt: run.startedAt ?? null,
+    completedAt: run.completedAt ?? null,
+    tickBefore: run.tickBefore ?? null,
+    tickAfter: run.tickAfter ?? null,
+    worldVersionBefore: run.worldVersionBefore ?? null,
+    worldVersionAfter: run.worldVersionAfter ?? null,
+    totalDurationMs: run.totalDurationMs ?? null,
+    slowestPhase: run.slowestPhase ?? null,
+    slowestPhaseDurationMs: run.slowestPhaseDurationMs ?? null,
+    narrativeEvents: run.narrativeEvents ?? null,
+    memoryWrites: run.memoryWrites ?? null,
+    memoryWriteFailures: run.memoryWriteFailures ?? null,
+    battleReportsBroadcast: run.battleReportsBroadcast ?? null,
+    phases: asRecordArray(run.phases).map((phase) => ({
+      phase: phase.phase ?? null,
+      durationMs: phase.durationMs ?? null,
+      subphases: asRecordArray(phase.subphases).map((subphase) => ({
+        subphase: subphase.subphase ?? null,
+        durationMs: subphase.durationMs ?? null,
+      })),
+    })),
+    errorName: run.errorName ?? null,
+    errorMessage: run.errorMessage ?? null,
+  }));
+}
+
+function summarizeRecentEvents(value: unknown, limit: number): Record<string, unknown>[] {
+  return asRecordArray(value).slice(0, limit).map((event) => {
+    const metadata = asRecord(event.metadata);
+    return {
+      tick: event.tick ?? null,
+      action: event.action ?? null,
+      category: event.category ?? null,
+      success: event.success ?? null,
+      requestId: event.requestId ?? null,
+      message: event.message ?? null,
+      failureCode: metadata?.failureCode ?? null,
+      mutationHolder: metadata?.mutationHolder ?? null,
+      advanceTickTiming: asRecord(metadata?.advanceTickTiming) ?? null,
+    };
+  });
+}
+
+function buildAiRuntimeObservabilitySummary(payload: unknown, sampleLimit?: number): Record<string, unknown> {
+  const root = asRecord(payload) ?? {};
+  const runtime = asRecord(root.runtime) ?? {};
+  const advanceTickPerformance = asRecord(runtime.advanceTickPerformance) ?? {};
+  const recentFailures = asRecord(runtime.recentFailures) ?? {};
+  const lockConflicts = asRecord(runtime.lockConflicts) ?? {};
+  const sessionMetrics = asRecord(runtime.sessionMetrics) ?? {};
+  const wsStats = asRecord(runtime.wsStats) ?? {};
+  const lock = asRecord(runtime.lock) ?? {};
+  const normalizedSampleLimit = Math.min(8, Math.max(1, Math.trunc(sampleLimit ?? 3)));
+
+  return {
+    tick: root.tick ?? null,
+    worldVersion: root.worldVersion ?? null,
+    generatedAt: root.generatedAt ?? null,
+    factionFilter: root.factionFilter ?? null,
+    factionCount: asRecordArray(root.factions).length,
+    runtime: {
+      lock: {
+        busy: Boolean(lock.busy),
+        holder: lock.holder ?? null,
+      },
+      queuePlanFailureStats: asRecord(runtime.queuePlanFailureStats) ?? {},
+      queuePlanConflictStats: asRecord(runtime.queuePlanConflictStats) ?? {},
+      advanceTickFailureStats: asRecord(runtime.advanceTickFailureStats) ?? {},
+      advanceTickPerformance: {
+        totalRuns: advanceTickPerformance.totalRuns ?? null,
+        successfulRuns: advanceTickPerformance.successfulRuns ?? null,
+        failedRuns: advanceTickPerformance.failedRuns ?? null,
+        lastOutcome: advanceTickPerformance.lastOutcome ?? null,
+        lastCompletedAt: advanceTickPerformance.lastCompletedAt ?? null,
+        lastTotalDurationMs: advanceTickPerformance.lastTotalDurationMs ?? null,
+        avgTotalDurationMs: advanceTickPerformance.avgTotalDurationMs ?? null,
+        maxTotalDurationMs: advanceTickPerformance.maxTotalDurationMs ?? null,
+        topPhasesByLast: pickTopNumericEntries(advanceTickPerformance.phaseStats, 'lastDurationMs', 5),
+        topPhasesByAverage: pickTopNumericEntries(advanceTickPerformance.phaseStats, 'avgDurationMs', 5),
+        topSubphasesByLast: pickTopAdvanceTickSubphaseEntries(advanceTickPerformance.phaseStats, 'lastDurationMs', 8),
+        topSubphasesByAverage: pickTopAdvanceTickSubphaseEntries(advanceTickPerformance.phaseStats, 'avgDurationMs', 8),
+        recentRuns: summarizeAdvanceTickRuns(advanceTickPerformance.recentRuns, normalizedSampleLimit),
+      },
+      recentFailures: {
+        totalRecentFailures: Number(recentFailures.totalRecentFailures ?? 0),
+        topActions: pickTopCountEntries(recentFailures.byAction, 5),
+        topFailureCodes: pickTopCountEntries(recentFailures.byFailureCode, 5),
+        topFactions: pickTopCountEntries(recentFailures.byFaction, 5),
+        samples: summarizeFailureSamples(recentFailures.samples, normalizedSampleLimit),
+      },
+      lockConflicts: {
+        totalRecentConflicts: Number(lockConflicts.totalRecentConflicts ?? 0),
+        topActions: pickTopCountEntries(lockConflicts.byAction, 5),
+        topHolders: pickTopCountEntries(lockConflicts.byHolder, 5),
+        samples: summarizeFailureSamples(lockConflicts.samples, normalizedSampleLimit),
+      },
+      sessionMetrics: {
+        activeSessions: sessionMetrics.activeSessions ?? null,
+        onlineSessions: sessionMetrics.onlineSessions ?? null,
+        delegatedSessions: sessionMetrics.delegatedSessions ?? null,
+        claimedFactions: sessionMetrics.claimedFactions ?? null,
+        maxActiveSessions: sessionMetrics.maxActiveSessions ?? null,
+        maxSeatsPerFaction: sessionMetrics.maxSeatsPerFaction ?? null,
+      },
+      wsStats: {
+        totalConnections: wsStats.totalConnections ?? null,
+        subscribedConnections: wsStats.subscribedConnections ?? null,
+        rejectedConnections: wsStats.rejectedConnections ?? null,
+        rejectedSubscriptions: wsStats.rejectedSubscriptions ?? null,
+        truncatedTickDeltaMessages: wsStats.truncatedTickDeltaMessages ?? null,
+        maxConnections: wsStats.maxConnections ?? null,
+        maxSubscriptionsPerFaction: wsStats.maxSubscriptionsPerFaction ?? null,
+      },
+    },
+    factions: asRecordArray(root.factions).map((faction) => {
+      const agenda = asRecord(faction.agenda);
+      const execution = asRecord(faction.execution);
+      const budget = asRecord(faction.budget) ?? {};
+      const aiQuota = asRecord(budget.aiQuota);
+      const lastFailure = asRecord(faction.lastFailure);
+      return {
+        factionId: faction.factionId ?? null,
+        autonomyLevel: faction.autonomyLevel ?? null,
+        controlMode: faction.controlMode ?? null,
+        online: Boolean(faction.online),
+        seatCount: faction.seatCount ?? null,
+        onlineSeatCount: faction.onlineSeatCount ?? null,
+        contextFocusId: faction.contextFocusId ?? null,
+        agenda: agenda
+          ? {
+              phase: agenda.phase ?? null,
+              selectedActionId: agenda.selectedActionId ?? null,
+              updatedTick: agenda.updatedTick ?? null,
+              updatedWorldVersion: agenda.updatedWorldVersion ?? null,
+            }
+          : null,
+        execution: execution
+          ? {
+              status: execution.status ?? null,
+              activeOrderCount: execution.activeOrderCount ?? null,
+              queuedOrderCount: execution.queuedOrderCount ?? null,
+              runningOrderCount: execution.runningOrderCount ?? null,
+              requestId: execution.requestId ?? null,
+              source: execution.source ?? null,
+              updatedTick: execution.updatedTick ?? null,
+              updatedWorldVersion: execution.updatedWorldVersion ?? null,
+            }
+          : null,
+        budget: {
+          actionPointsRemaining: budget.actionPointsRemaining ?? null,
+          foodRemaining: budget.foodRemaining ?? null,
+          aiQuota: aiQuota
+            ? {
+                currentQuota: aiQuota.currentQuota ?? null,
+                maxQuota: aiQuota.maxQuota ?? null,
+                nextUnlockScore: aiQuota.nextUnlockScore ?? null,
+              }
+            : null,
+        },
+        lastFailure: lastFailure
+          ? {
+              action: lastFailure.action ?? null,
+              requestId: lastFailure.requestId ?? null,
+              failureCode: lastFailure.failureCode ?? null,
+              createdAt: lastFailure.createdAt ?? null,
+            }
+          : null,
+      };
+    }),
+    recentEvents: summarizeRecentEvents(root.recentEvents, normalizedSampleLimit),
+  };
 }
 
 async function resolveTemplateFactionId(preferredFactionId?: string): Promise<string | null> {
@@ -413,6 +675,46 @@ function selectFactionUnit(
   return units.find((unit) => String(unit.faction ?? '') === factionId) ?? null;
 }
 
+function selectReserveHeroId(
+  world: Record<string, unknown>,
+  factionId: string,
+  preferredHeroId?: string,
+): string | null {
+  const factions = asRecord(world.factions);
+  const faction = factions ? asRecord(factions[factionId]) : null;
+  const heroCommand = faction ? asRecord(faction.heroCommand) : null;
+  const reserveHeroIds = asStringArray(heroCommand?.reserveHeroIds);
+  const normalizedPreferred = preferredHeroId?.trim();
+  if (normalizedPreferred && reserveHeroIds.includes(normalizedPreferred)) {
+    return normalizedPreferred;
+  }
+  return reserveHeroIds[0] ?? null;
+}
+
+function selectReserveDeployTileId(
+  world: Record<string, unknown>,
+  factionId: string,
+  preferredTileId?: string,
+): string | null {
+  const normalizedPreferred = preferredTileId?.trim();
+  const map = asRecord(world.map);
+  const tiles = map ? asRecordArray(map.tiles) : [];
+  if (normalizedPreferred) {
+    const preferredTile = tiles.find((tile) => String(tile.id ?? '') === normalizedPreferred);
+    return preferredTile ? normalizedPreferred : null;
+  }
+
+  const factions = asRecord(world.factions);
+  const faction = factions ? asRecord(factions[factionId]) : null;
+  const heroCommand = faction ? asRecord(faction.heroCommand) : null;
+  const homeTileId = typeof heroCommand?.homeTileId === 'string' ? heroCommand.homeTileId.trim() : '';
+  if (homeTileId && tiles.some((tile) => String(tile.id ?? '') === homeTileId)) {
+    return homeTileId;
+  }
+
+  return selectOwnedCityTileId(world, factionId);
+}
+
 function selectAdjacentTargetTileId(
   world: Record<string, unknown>,
   unit: Record<string, unknown>,
@@ -444,12 +746,38 @@ function selectOwnedCityTileId(
   preferredCityTileId?: string,
 ): string | null {
   const normalizedPreferred = preferredCityTileId?.trim();
+  const map = asRecord(world.map);
+  const overlays = asRecord(map?.overlays);
+  const cityClusters = overlays ? asRecordArray(overlays.cityClusters) : [];
+
   if (normalizedPreferred) {
-    return normalizedPreferred;
+    const matchingCluster = cityClusters.find((cluster) => {
+      const cityHallTileId = typeof cluster.cityHallTileId === 'string' ? cluster.cityHallTileId.trim() : '';
+      const tileIds = asStringArray(cluster.tileIds);
+      return cityHallTileId === normalizedPreferred || tileIds.includes(normalizedPreferred);
+    });
+    if (matchingCluster) {
+      return typeof matchingCluster.cityHallTileId === 'string' ? matchingCluster.cityHallTileId.trim() : null;
+    }
   }
 
-  const map = asRecord(world.map);
+  const ownedCluster = cityClusters.find((cluster) => String(cluster.owner ?? '') === factionId);
+  if (ownedCluster && typeof ownedCluster.cityHallTileId === 'string' && ownedCluster.cityHallTileId.trim()) {
+    return ownedCluster.cityHallTileId.trim();
+  }
+
   const tiles = map ? asRecordArray(map.tiles) : [];
+  if (normalizedPreferred) {
+    const preferredTile = tiles.find((tile) =>
+      String(tile.id ?? '') === normalizedPreferred &&
+      String(tile.owner ?? '') === factionId &&
+      (tile.type === 'city' || typeof tile.cityLevel === 'number'),
+    );
+    if (preferredTile) {
+      return normalizedPreferred;
+    }
+    return null;
+  }
   if (tiles.length === 0) {
     return null;
   }
@@ -473,6 +801,45 @@ function selectOwnedCityTileId(
   }
 
   return null;
+}
+
+function resolveCityBuildingTemplateTarget(
+  preferredGroupId?: CityBuildingGroupId,
+  preferredBuildingId?: CityBuildingId,
+): { groupId: CityBuildingGroupId; buildingId: CityBuildingId } {
+  if (preferredBuildingId === 'market_plaza') {
+    return { groupId: 'market', buildingId: preferredBuildingId };
+  }
+  if (preferredBuildingId === 'tax_office') {
+    return { groupId: 'tax', buildingId: preferredBuildingId };
+  }
+  if (preferredBuildingId === 'policy_hall' || preferredBuildingId === 'recruit_policy_board') {
+    return { groupId: 'policy', buildingId: preferredBuildingId };
+  }
+  switch (preferredGroupId) {
+    case 'tax':
+      return { groupId: 'tax', buildingId: 'tax_office' };
+    case 'policy':
+      return { groupId: 'policy', buildingId: 'policy_hall' };
+    case 'market':
+    default:
+      return { groupId: 'market', buildingId: 'market_plaza' };
+  }
+}
+
+function resolveAffairTemplateGroup(preferredGroupId?: CityBuildingGroupId): {
+  groupId: CityBuildingGroupId;
+  affairId: string;
+} {
+  switch (preferredGroupId) {
+    case 'market':
+      return { groupId: 'market', affairId: 'queue_market_upgrade' };
+    case 'policy':
+      return { groupId: 'policy', affairId: 'queue_policy_review' };
+    case 'tax':
+    default:
+      return { groupId: 'tax', affairId: 'queue_tax_upgrade' };
+  }
 }
 
 async function resolveWorldActionTemplate(
@@ -553,6 +920,110 @@ async function resolveWorldActionTemplate(
       resolved: {
         templateId,
         factionId,
+        tileId,
+      },
+    };
+  }
+
+  if (templateId === 'upgrade_first_city_building') {
+    const cityId = selectOwnedCityTileId(world, factionId, options.cityTileId);
+    if (!cityId) {
+      throw new Error(`no city/capital tile found for faction ${factionId}`);
+    }
+    const target = resolveCityBuildingTemplateTarget(options.buildingGroupId, options.buildingId);
+    return {
+      action: 'promoteCityBuilding',
+      payload: { factionId, cityId, groupId: target.groupId, buildingId: target.buildingId },
+      includeWorld: includeWorldOverride ?? true,
+      resolved: {
+        templateId,
+        factionId,
+        cityId,
+        groupId: target.groupId,
+        buildingId: target.buildingId,
+      },
+    };
+  }
+
+  if (templateId === 'enqueue_first_city_affair') {
+    const cityId = selectOwnedCityTileId(world, factionId, options.cityTileId);
+    if (!cityId) {
+      throw new Error(`no city/capital tile found for faction ${factionId}`);
+    }
+    const target = resolveAffairTemplateGroup(options.affairGroupId);
+    return {
+      action: 'enqueueAffair',
+      payload: { factionId, cityId, affairId: target.affairId },
+      includeWorld: includeWorldOverride ?? true,
+      resolved: {
+        templateId,
+        factionId,
+        cityId,
+        groupId: target.groupId,
+        affairId: target.affairId,
+      },
+    };
+  }
+
+  if (templateId === 'upgrade_first_city_tech') {
+    const tileId = selectOwnedCityTileId(world, factionId, options.cityTileId);
+    if (!tileId) {
+      throw new Error(`no city/capital tile found for faction ${factionId}`);
+    }
+
+    const techId = options.techId ?? 'governance';
+    return {
+      action: 'upgradeCityTech',
+      payload: { factionId, tileId, techId },
+      includeWorld: includeWorldOverride ?? true,
+      resolved: {
+        templateId,
+        factionId,
+        tileId,
+        techId,
+      },
+    };
+  }
+
+  if (templateId === 'recruit_first_commander') {
+    const slgDomainState = asRecord(world.slgDomainState);
+    const recruitStateByFaction = asRecord(slgDomainState?.recruitStateByFaction);
+    const recruitState = asRecord(recruitStateByFaction?.[factionId]);
+    const poolId =
+      options.recruitPoolId?.trim() ||
+      (typeof recruitState?.selectedPoolId === 'string' ? recruitState.selectedPoolId.trim() : '') ||
+      'pool_standard';
+    const count = Math.max(1, Math.min(10, Math.trunc(options.recruitCount ?? 1)));
+    return {
+      action: 'recruitProspectHero',
+      payload: { factionId, poolId, count },
+      includeWorld: includeWorldOverride ?? true,
+      resolved: {
+        templateId,
+        factionId,
+        poolId,
+        count,
+      },
+    };
+  }
+
+  if (templateId === 'deploy_first_reserve_hero') {
+    const heroId = selectReserveHeroId(world, factionId, options.heroId);
+    if (!heroId) {
+      throw new Error(`no reserve hero found for faction ${factionId}`);
+    }
+    const tileId = selectReserveDeployTileId(world, factionId, options.targetTileId);
+    if (!tileId) {
+      throw new Error(`no deploy tile resolved for faction ${factionId}`);
+    }
+    return {
+      action: 'deployReserveHero',
+      payload: { factionId, heroId, tileId },
+      includeWorld: includeWorldOverride ?? true,
+      resolved: {
+        templateId,
+        factionId,
+        heroId,
         tileId,
       },
     };
@@ -642,6 +1113,36 @@ function buildWorldActionTemplateCatalog() {
       defaultIncludeWorld: true,
     },
     {
+      templateId: 'upgrade_first_city_building',
+      action: 'promoteCityBuilding',
+      autoResolves: ['factionId', 'cityId', 'groupId', 'buildingId'],
+      defaultIncludeWorld: true,
+    },
+    {
+      templateId: 'enqueue_first_city_affair',
+      action: 'enqueueAffair',
+      autoResolves: ['factionId', 'cityId', 'groupId', 'affairId'],
+      defaultIncludeWorld: true,
+    },
+    {
+      templateId: 'upgrade_first_city_tech',
+      action: 'upgradeCityTech',
+      autoResolves: ['factionId', 'tileId', 'techId'],
+      defaultIncludeWorld: true,
+    },
+    {
+      templateId: 'recruit_first_commander',
+      action: 'recruitProspectHero',
+      autoResolves: ['factionId', 'poolId', 'count'],
+      defaultIncludeWorld: true,
+    },
+    {
+      templateId: 'deploy_first_reserve_hero',
+      action: 'deployReserveHero',
+      autoResolves: ['factionId', 'heroId', 'tileId'],
+      defaultIncludeWorld: true,
+    },
+    {
       templateId: 'tactical_override_first_unit',
       action: 'queueTacticalOverride',
       autoResolves: ['factionId', 'unitId', 'targetTileId', 'templateId', 'summary'],
@@ -653,6 +1154,12 @@ function buildWorldActionTemplateCatalog() {
 const server = new McpServer({
   name: 'slg-game-api',
   version: '1.0.0',
+});
+
+// AI-player governance and knowledge-graph tools live in a dedicated module to keep this file searchable.
+registerAiPlayerTools(server, {
+  backendFetch,
+  formatToolOutput,
 });
 
 // Tool 1: world summary
@@ -843,7 +1350,88 @@ server.tool(
   },
 );
 
-// Tool 10: join session
+// Tool 10: ai runtime observability
+server.tool(
+  'get_ai_runtime_observability',
+  'Get AI runtime observability snapshot (authority, execution, budget, lock, failure stats, ws/session metrics).',
+  {
+    factionId: z.string().min(1).optional().describe('Optional faction filter, e.g. player/enemy/wei'),
+    eventLimit: z.number().int().min(1).max(80).optional().describe('Max recent AI runtime events to include'),
+    view: z.enum(['full', 'summary']).optional().describe('Return the full payload or an agent-friendly summary'),
+    sampleLimit: z.number().int().min(1).max(8).optional().describe('Summary mode only: cap failure/conflict samples'),
+  },
+  async ({ factionId, eventLimit, view, sampleLimit }) => {
+    try {
+      const params = new URLSearchParams();
+      if (factionId) {
+        params.set('factionId', factionId);
+      }
+      if (typeof eventLimit === 'number') {
+        params.set('eventLimit', String(eventLimit));
+      }
+      const suffix = params.size > 0 ? `?${params.toString()}` : '';
+      const data = await backendFetch(`/api/observability/ai-runtime${suffix}`);
+      const output = view === 'summary' ? buildAiRuntimeObservabilitySummary(data, sampleLimit) : data;
+      return {
+        content: [{ type: 'text' as const, text: formatToolOutput(output) }],
+      };
+    } catch (err) {
+      return {
+        content: [{ type: 'text' as const, text: `Error: ${err instanceof Error ? err.message : String(err)}` }],
+        isError: true,
+      };
+    }
+  },
+);
+
+// Tool 11: civil memory
+server.tool(
+  'get_civil_memory_entries',
+  'Get civil-memory entries with optional type/faction/related filters for ops and agent debugging.',
+  {
+    limit: z.number().int().min(1).max(120).optional().describe('Max number of entries to return'),
+    type: z.enum(['agenda_compiled', 'court_session_closed', 'court_resolution', 'execution_outcome']).optional().describe('Optional civil-memory event type filter'),
+    factionId: z.string().min(1).optional().describe('Optional faction filter'),
+    relatedId: z.string().min(1).optional().describe('Optional related entity filter'),
+    tickFrom: z.number().int().nonnegative().optional().describe('Optional lower tick bound'),
+    tickTo: z.number().int().nonnegative().optional().describe('Optional upper tick bound'),
+  },
+  async ({ limit, type, factionId, relatedId, tickFrom, tickTo }) => {
+    try {
+      const params = new URLSearchParams();
+      if (typeof limit === 'number') {
+        params.set('limit', String(limit));
+      }
+      if (type) {
+        params.set('type', type);
+      }
+      if (factionId) {
+        params.set('factionId', factionId);
+      }
+      if (relatedId) {
+        params.set('relatedId', relatedId);
+      }
+      if (typeof tickFrom === 'number') {
+        params.set('tickFrom', String(tickFrom));
+      }
+      if (typeof tickTo === 'number') {
+        params.set('tickTo', String(tickTo));
+      }
+      const suffix = params.size > 0 ? `?${params.toString()}` : '';
+      const data = await backendFetch(`/api/civil-memory${suffix}`);
+      return {
+        content: [{ type: 'text' as const, text: formatToolOutput(data) }],
+      };
+    } catch (err) {
+      return {
+        content: [{ type: 'text' as const, text: `Error: ${err instanceof Error ? err.message : String(err)}` }],
+        isError: true,
+      };
+    }
+  },
+);
+
+// Tool 23: join session
 server.tool(
   'join_session',
   'Join one faction seat and receive token/session context.',
@@ -869,7 +1457,7 @@ server.tool(
   },
 );
 
-// Tool 11: set session autonomy
+// Tool 13: set session autonomy
 server.tool(
   'set_session_autonomy',
   'Set session autonomy level (L1/L2/L3) for a joined token.',
@@ -895,7 +1483,7 @@ server.tool(
   },
 );
 
-// Tool 12: leave session
+// Tool 14: leave session
 server.tool(
   'leave_session',
   'Leave a session seat by token.',
@@ -919,7 +1507,7 @@ server.tool(
   },
 );
 
-// Tool 13: map layout
+// Tool 15: map layout
 server.tool(
   'get_map_layout',
   'Get world map layout for Godot/viewport rendering.',
@@ -942,7 +1530,7 @@ server.tool(
   },
 );
 
-// Tool 14: generic world action
+// Tool 16: generic world action
 server.tool(
   'run_world_action',
   'Run world action through authoritative backend route /api/world/action.',
@@ -972,7 +1560,7 @@ server.tool(
   },
 );
 
-// Tool 15: list world action templates
+// Tool 17: list world action templates
 server.tool(
   'list_world_action_templates',
   'List predefined world action templates for fast AI execution and replayable ops.',
@@ -998,20 +1586,50 @@ server.tool(
   {
     templateId: z.enum(WORLD_ACTION_TEMPLATE_IDS).describe('Template ID to execute'),
     factionId: z.string().optional().describe('Optional faction override'),
+    heroId: z.string().optional().describe('Optional reserve hero override (for deploy template)'),
     unitId: z.string().optional().describe('Optional unit override (for move/override templates)'),
-    targetTileId: z.string().optional().describe('Optional target tile override (for move/override templates)'),
+    targetTileId: z.string().optional().describe('Optional target tile override (for move/deploy/override templates)'),
     cityTileId: z.string().optional().describe('Optional city tile override (for upgrade template)'),
+    buildingGroupId: z.enum(CITY_BUILDING_GROUP_IDS).optional().describe('Optional building group override (for city-building/affair templates)'),
+    buildingId: z.enum(CITY_BUILDING_IDS).optional().describe('Optional building id override (for city-building template)'),
+    affairGroupId: z.enum(CITY_BUILDING_GROUP_IDS).optional().describe('Optional affair group override (for city-affair template)'),
+    techId: z.enum(CITY_TECH_TRACK_IDS).optional().describe('Optional tech override (for city-tech upgrade template)'),
+    recruitPoolId: z.string().optional().describe('Optional recruit pool override (for recruit template)'),
+    recruitCount: z.number().int().min(1).max(10).optional().describe('Optional recruit count override (for recruit template)'),
     overrideTemplateId: z.enum(TACTICAL_OVERRIDE_TEMPLATE_IDS).optional().describe('Tactical template for override template'),
     summary: z.string().optional().describe('Optional tactical override summary'),
     includeWorld: z.boolean().optional().describe('Optional includeWorld override'),
   },
-  async ({ templateId, factionId, unitId, targetTileId, cityTileId, overrideTemplateId, summary, includeWorld }) => {
+  async ({
+    templateId,
+    factionId,
+    heroId,
+    unitId,
+    targetTileId,
+    cityTileId,
+    buildingGroupId,
+    buildingId,
+    affairGroupId,
+    techId,
+    recruitPoolId,
+    recruitCount,
+    overrideTemplateId,
+    summary,
+    includeWorld,
+  }) => {
     try {
       const resolved = await resolveWorldActionTemplate(templateId, {
         factionId,
+        heroId,
         unitId,
         targetTileId,
         cityTileId,
+        buildingGroupId,
+        buildingId,
+        affairGroupId,
+        techId,
+        recruitPoolId,
+        recruitCount,
         overrideTemplateId,
         summary,
         includeWorld,

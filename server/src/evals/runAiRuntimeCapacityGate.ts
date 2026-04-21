@@ -45,6 +45,7 @@ function runNpmScript(script: string): GateCheck {
 function run() {
   const checks = [
     runNpmScript('test:world:mutation-lock'),
+    runNpmScript('test:world:reward-claim-http-contract'),
     runNpmScript('test:session:manager'),
     runNpmScript('test:websocket:quota'),
     runNpmScript('gate:ai:runtime-load'),

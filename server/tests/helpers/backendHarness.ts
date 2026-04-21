@@ -52,7 +52,6 @@ export function spawnBackend(
   tail: TailState,
   envOverrides: NodeJS.ProcessEnv = {},
 ): ChildProcess {
-  const npmExecPath = process.env.npm_execpath?.trim()
   const worldPersistRoot =
     envOverrides.WORLD_PERSIST_ROOT?.trim() || join(process.cwd(), 'tmp', `backend_world_${port}_${process.pid}_${Date.now()}`)
   const inheritedNodeOptions = process.env.NODE_OPTIONS?.trim() ?? ''
@@ -70,17 +69,11 @@ export function spawnBackend(
     ...envOverrides,
   }
 
-  const child = npmExecPath
-    ? spawn(process.execPath, [npmExecPath, 'run', 'start'], {
-        cwd: process.cwd(),
-        env,
-        stdio: ['ignore', 'pipe', 'pipe'],
-      })
-    : spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'start'], {
-        cwd: process.cwd(),
-        env,
-        stdio: ['ignore', 'pipe', 'pipe'],
-      })
+  const child = spawn(process.execPath, ['--import', 'tsx', 'server/src/app.ts'], {
+    cwd: process.cwd(),
+    env,
+    stdio: ['ignore', 'pipe', 'pipe'],
+  })
 
   child.stdout?.on('data', (chunk) => appendTail(tail.stdout, String(chunk)))
   child.stderr?.on('data', (chunk) => appendTail(tail.stderr, String(chunk)))
@@ -142,6 +135,7 @@ export async function shutdownChild(child: ChildProcess | null) {
     return
   }
 
+  const pid = child.pid
   const waitForExit = (timeoutMs: number) =>
     new Promise<boolean>((resolve) => {
       if (child.exitCode !== null) {
@@ -159,9 +153,9 @@ export async function shutdownChild(child: ChildProcess | null) {
   child.kill('SIGINT')
   const exited = await waitForExit(8_000)
 
-  if (!exited && child.pid) {
+  if (!exited && pid) {
     if (process.platform === 'win32') {
-      spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { stdio: 'ignore' })
+      spawnSync('taskkill', ['/PID', String(pid), '/T', '/F'], { stdio: 'ignore' })
     } else {
       child.kill('SIGKILL')
     }

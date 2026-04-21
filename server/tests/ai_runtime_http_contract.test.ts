@@ -1,172 +1,23 @@
 import assert from 'node:assert/strict'
-import { spawn, spawnSync, type ChildProcess } from 'node:child_process'
-import { createServer } from 'node:net'
-
-type HttpJsonResult = {
-  ok: boolean
-  status: number
-  data: unknown
-}
-
-type TailState = {
-  stdout: string[]
-  stderr: string[]
-}
-
-async function getAvailablePort(start = 8890, end = 8999): Promise<number> {
-  for (let port = start; port <= end; port += 1) {
-    const available = await new Promise<boolean>((resolve) => {
-      const server = createServer()
-      server.once('error', () => resolve(false))
-      server.listen(port, '127.0.0.1', () => {
-        server.close(() => resolve(true))
-      })
-    })
-
-    if (available) {
-      return port
-    }
-  }
-
-  throw new Error(`No available port in range ${start}-${end}`)
-}
-
-function appendTail(target: string[], chunk: string, max = 40) {
-  const lines = chunk.split(/\r?\n/).filter((line) => line.trim().length > 0)
-  target.push(...lines)
-  if (target.length > max) {
-    target.splice(0, target.length - max)
-  }
-}
-
-function spawnBackend(port: number, tail: TailState): ChildProcess {
-  const npmExecPath = process.env.npm_execpath?.trim()
-  const env = {
-    ...process.env,
-    HOST: '127.0.0.1',
-    PORT: String(port),
-    GAME_CLOCK_ENABLED: '0',
-    NODE_ENV: 'test',
-  }
-
-  const child = npmExecPath
-    ? spawn(process.execPath, [npmExecPath, 'run', 'start'], {
-        cwd: process.cwd(),
-        env,
-        stdio: ['ignore', 'pipe', 'pipe'],
-      })
-    : spawn(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['run', 'start'], {
-        cwd: process.cwd(),
-        env,
-        stdio: ['ignore', 'pipe', 'pipe'],
-      })
-
-  child.stdout?.on('data', (chunk) => appendTail(tail.stdout, String(chunk)))
-  child.stderr?.on('data', (chunk) => appendTail(tail.stderr, String(chunk)))
-  return child
-}
-
-async function requestJson(
-  baseUrl: string,
-  path: string,
-  method: 'GET' | 'POST',
-  body?: Record<string, unknown>,
-  timeoutMs = 15_000,
-): Promise<HttpJsonResult> {
-  const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), timeoutMs)
-
-  try {
-    const response = await fetch(new URL(path, baseUrl), {
-      method,
-      headers: body ? { 'Content-Type': 'application/json' } : undefined,
-      body: body ? JSON.stringify(body) : undefined,
-      signal: controller.signal,
-    })
-
-    const raw = await response.text()
-    let data: unknown = null
-    if (raw.trim().length > 0) {
-      try {
-        data = JSON.parse(raw)
-      } catch {
-        data = { raw }
-      }
-    }
-
-    return {
-      ok: response.ok,
-      status: response.status,
-      data,
-    }
-  } finally {
-    clearTimeout(timer)
-  }
-}
-
-async function waitForHealth(baseUrl: string, timeoutMs = 35_000) {
-  const startedAt = Date.now()
-  while (Date.now() - startedAt < timeoutMs) {
-    const result = await requestJson(baseUrl, '/api/health', 'GET', undefined, 5_000).catch(() => null)
-    if (result?.status === 200 && result.ok) {
-      return result
-    }
-    await new Promise((resolve) => setTimeout(resolve, 500))
-  }
-  return null
-}
-
-async function shutdownChild(child: ChildProcess | null) {
-  if (!child || child.exitCode !== null) {
-    return
-  }
-
-  const waitForExit = (timeoutMs: number) =>
-    new Promise<boolean>((resolve) => {
-      if (child.exitCode !== null) {
-        resolve(true)
-        return
-      }
-
-      const timer = setTimeout(() => resolve(false), timeoutMs)
-      child.once('exit', () => {
-        clearTimeout(timer)
-        resolve(true)
-      })
-    })
-
-  child.kill('SIGINT')
-  const exited = await waitForExit(8_000)
-
-  if (!exited && child.pid) {
-    if (process.platform === 'win32') {
-      spawnSync('taskkill', ['/PID', String(child.pid), '/T', '/F'], { stdio: 'ignore' })
-    } else {
-      child.kill('SIGKILL')
-    }
-
-    await waitForExit(8_000)
-  }
-
-  child.stdout?.destroy()
-  child.stderr?.destroy()
-}
-
-function readObject(value: unknown): Record<string, unknown> {
-  assert.ok(value && typeof value === 'object' && !Array.isArray(value), 'expected object payload')
-  return value as Record<string, unknown>
-}
-
-function readArray(value: unknown): unknown[] {
-  assert.ok(Array.isArray(value), 'expected array payload')
-  return value
-}
+import {
+  buildSessionPersistPath,
+  getAvailablePort,
+  readArray,
+  readObject,
+  requestJson,
+  shutdownChild,
+  spawnBackend,
+  type TailState,
+  waitForHealth,
+} from './helpers/backendHarness'
 
 async function run() {
   const port = await getAvailablePort()
   const baseUrl = `http://127.0.0.1:${port}`
   const tail: TailState = { stdout: [], stderr: [] }
-  const child = spawnBackend(port, tail)
+  const child = spawnBackend(port, tail, {
+    SESSION_STATE_PERSIST_PATH: buildSessionPersistPath('ai_runtime_http_contract_session'),
+  })
   let sessionToken = ''
 
   try {

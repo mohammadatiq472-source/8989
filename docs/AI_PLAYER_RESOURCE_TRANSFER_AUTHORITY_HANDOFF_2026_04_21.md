@@ -12,6 +12,13 @@
   - `worldAction`: `transferFactionResourcesToGovernor`
   - `aiAction`: `resource_transfer_to_governor`
   - `recommendation`: `promoted`
+- 已新增配套 authority：
+  - `worldAction`: `claimGovernorResourceInbox`
+  - 语义：总督领取 pending transfer 后，资源结算到总督所属 `FactionState.food/wood/stone/iron`
+- 已新增 AI 资源来源 authority：
+  - `worldAction`: `gatherAiResourceTile`
+  - `aiAction`: `resource_gather`
+  - 语义：AI 指派单位驻扎己方资源地后，按 `resourceKind/resourceLevel` 一次性入账 AI 子账户
 - 这条链只写后端世界状态，不做 UI 本地结算。
 
 ## 2. 已确认的代码事实
@@ -29,6 +36,8 @@
   - `FactionState.aiResourceAccounts[aiPlayerId]`
 - 新增总督待领取收件箱落点：
   - `FactionState.governorResourceInboxes[governorPlayerId]`
+- 新增一次性资源地采集记录：
+  - `FactionState.aiResourceGatherClaims[tileId]`
 - `shared/contracts/game/v2.ts` 中 `AIPlayerV2.resources` 存在，但这不是当前 AI 玩家治理正式写链的结算 authority。
 - 当前没有做跨势力交易，也没有直接写真人玩家钱包。
 
@@ -64,6 +73,8 @@
 - AI 子账户 `governorPlayerId` 必须匹配目标总督。
 - 扣 AI 子账户资源，写入 `governorResourceInboxes` pending transfer。
 - 保留 reserve floor 和单次总量 cap。
+- 总督领取时走 `claimGovernorResourceInbox`，把 pending transfer 结算到当前代码真实存在的 faction resources。
+- AI 自己赚钱走 `gatherAiResourceTile`，要求 AI 指派单位驻扎在己方资源地，收益为 `resourceLevel * 10`，一次性入账 AI 子账户，不加每日额度。
 
 ## 3.1 需要用户确认的阻塞点
 
@@ -76,7 +87,7 @@
 | `transfer-scope` | 允许同总督、同盟内、还是跨势力转资源？ | 已确认：v1 只允许同总督；跨势力贸易延期。 |
 | `approval-and-limits` | 是否强制真人审批、保留最低库存、单次/每日上限、冷却？ | 已确认：全部 high-risk，强制审批；保留 reserve floor 和 per-action cap。 |
 
-建议 rules 层失败码：
+资源转移 rules 层失败码：
 
 - `unknown_source_faction`
 - `missing_ai_resource_account`
@@ -86,6 +97,26 @@
 - `reserve_floor_violation`
 - `transfer_limit_exceeded`
 - `approval_required`
+
+总督领取 rules 层失败码：
+
+- `unknown_faction`
+- `missing_governor_inbox`
+- `missing_governor_transfer`
+
+AI 资源地采集 rules 层失败码：
+
+- `unknown_faction`
+- `missing_ai_resource_account`
+- `governor_mismatch`
+- `unknown_unit`
+- `unit_faction_mismatch`
+- `unit_not_assigned_to_ai_player`
+- `unknown_resource_tile`
+- `tile_not_resource`
+- `tile_not_controlled`
+- `unit_not_on_tile`
+- `resource_tile_already_gathered`
 
 ## 4. AI 玩家合同接入条件
 
@@ -106,6 +137,9 @@
 正式验证入口：
 
 - `npm run test:world:resource-transfer-http-contract`
+- `npm run test:world:governor-resource-inbox-http-contract`
+- `npm run test:world:ai-resource-gather-http-contract`
+- `npm run test:ai:player-http-resource-gather-contract`
 - `npm run test:ai:player-http-resource-transfer-contract`
 - `npm run test:ai:player-http-contract`
 - `npm run gate:ai:preflight`

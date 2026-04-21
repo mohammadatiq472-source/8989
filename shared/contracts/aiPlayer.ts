@@ -112,6 +112,7 @@ export type AiPlayerExecutableV1ActionType =
   | 'world_scout'
   | 'march_move'
   | 'garrison_set'
+  | 'resource_gather'
   | 'general_focus_set'
   | 'formation_assign'
   | 'threat_escape'
@@ -228,6 +229,11 @@ export type AiPlayerAllianceHelpArgs = {
   regionId?: string
 }
 
+export type AiPlayerResourceGatherArgs = {
+  unitId: string
+  tileId: string
+}
+
 export type AiPlayerResourceTransferToGovernorArgs = {
   resources: Partial<ResourceTransferBundle>
 }
@@ -248,6 +254,7 @@ type AiPlayerActionArgsByType = {
   world_scout: AiPlayerWorldScoutArgs
   march_move: AiPlayerMarchMoveArgs
   garrison_set: AiPlayerGarrisonSetArgs
+  resource_gather: AiPlayerResourceGatherArgs
   general_focus_set: AiPlayerGeneralFocusSetArgs
   formation_assign: AiPlayerFormationAssignArgs
   threat_escape: AiPlayerThreatEscapeArgs

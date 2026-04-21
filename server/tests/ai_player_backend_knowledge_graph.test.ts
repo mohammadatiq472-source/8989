@@ -89,6 +89,24 @@ function testDeferredAuthorityDecisionRemainsExplicit() {
     promotedResourceTransfer?.blockers?.every((item) => item.question.length >= 24 && item.unblocks.length >= 16),
     'resource transfer decision records must be actionable instead of terse notes',
   )
+
+  const promotedResourceGather = AI_PLAYER_AUTHORITY_DECISIONS.find(
+    (item) => item.worldAction === 'gatherAiResourceTile',
+  )
+  assert.ok(promotedResourceGather, 'knowledge graph must keep an explicit decision for AI resource gathering')
+  assert.equal(promotedResourceGather?.recommendation, 'promoted')
+  assert.equal(promotedResourceGather?.suggestedAiAction, 'resource_gather')
+  assert.ok(
+    (promotedResourceGather?.rationale.length ?? 0) >= 80,
+    'promoted resource gather should keep the confirmed one-time AI subaccount semantics',
+  )
+
+  const governorInboxClaim = AI_PLAYER_AUTHORITY_DECISIONS.find(
+    (item) => item.worldAction === 'claimGovernorResourceInbox',
+  )
+  assert.ok(governorInboxClaim, 'knowledge graph must keep the governor inbox claim decision')
+  assert.equal(governorInboxClaim?.recommendation, 'defer')
+  assert.equal(governorInboxClaim?.suggestedAiAction, null)
 }
 
 function testBackendVersionControlScopeIsConcrete() {

@@ -4,8 +4,10 @@ import {
   allianceHelpAction,
   appendPlanningJobHistoryAction,
   advanceTickAction,
+  claimGovernorResourceInboxAction,
   clearPlanExecutionAction,
   deployReserveHeroAction,
+  gatherAiResourceTileAction,
   getWorldMapLayout,
   getWorldSummary,
   moveUnitAction,
@@ -222,6 +224,12 @@ export async function handleWorldActionRoute(
         return
       case 'transferFactionResourcesToGovernor':
         writeJson(res, 200, transferFactionResourcesToGovernorAction(request.payload, includeWorld))
+        return
+      case 'claimGovernorResourceInbox':
+        writeJson(res, 200, claimGovernorResourceInboxAction(request.payload, includeWorld))
+        return
+      case 'gatherAiResourceTile':
+        writeJson(res, 200, gatherAiResourceTileAction(request.payload, includeWorld))
         return
       case 'promoteTroopFacilityBuilding':
         writeJson(

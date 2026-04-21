@@ -220,6 +220,11 @@ export const aiPlayerAllianceHelpArgsSchema = z.object({
   regionId: z.string().trim().min(1).max(64).optional(),
 }).strict()
 
+export const aiPlayerResourceGatherArgsSchema = z.object({
+  unitId: z.string().trim().min(1).max(120),
+  tileId: z.string().trim().min(1).max(120),
+}).strict()
+
 export const aiPlayerResourceTransferToGovernorArgsSchema = z.object({
   resources: resourceTransferBundleSchema,
 }).strict()
@@ -244,6 +249,7 @@ const aiPlayerActionArgsSchemaByAction = {
   formation_assign: aiPlayerFormationAssignArgsSchema,
   threat_escape: aiPlayerThreatEscapeArgsSchema,
   alliance_help: aiPlayerAllianceHelpArgsSchema,
+  resource_gather: aiPlayerResourceGatherArgsSchema,
   resource_transfer_to_governor: aiPlayerResourceTransferToGovernorArgsSchema,
   reward_claim: aiPlayerRewardClaimArgsSchema,
 } as const
@@ -280,6 +286,8 @@ function resolveAiPlayerActionArgsSchema(action: AiPlayerActionType) {
       return aiPlayerActionArgsSchemaByAction.threat_escape
     case 'alliance_help':
       return aiPlayerActionArgsSchemaByAction.alliance_help
+    case 'resource_gather':
+      return aiPlayerActionArgsSchemaByAction.resource_gather
     case 'resource_transfer_to_governor':
       return aiPlayerActionArgsSchemaByAction.resource_transfer_to_governor
     case 'reward_claim':

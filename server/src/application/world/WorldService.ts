@@ -64,8 +64,10 @@ import {
   allianceHelp,
   appendPlanningJobHistory,
   claimReward,
+  claimGovernorResourceInbox,
   clearPlanExecution,
   deployReserveHero,
+  gatherAiResourceTile,
   moveUnit,
   promoteCityBuilding,
   promoteTroopFacilityBuilding,
@@ -87,6 +89,8 @@ import {
 import type {
   AdvanceTickDiagnostics,
   AllianceHelpFailureCode,
+  AiResourceGatherFailureCode,
+  GovernorResourceInboxClaimFailureCode,
   QueuePlanFailureCode,
   ResourceTransferFailureCode,
   RewardClaimFailureCode,
@@ -198,6 +202,8 @@ type WorldActionFailureCode =
   | AllianceHelpFailureCode
   | RewardClaimFailureCode
   | ResourceTransferFailureCode
+  | GovernorResourceInboxClaimFailureCode
+  | AiResourceGatherFailureCode
   | 'invalid_ai_agenda_action'
   | 'unknown_faction'
   | 'no_primary_unit'
@@ -4862,6 +4868,197 @@ export function transferFactionResourcesToGovernorAction(
         sourceAiPlayerId: result.sourceAiPlayerId,
         governorPlayerId: result.governorPlayerId,
         transferId: result.transferId,
+        resources: result.resources,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
+export function claimGovernorResourceInboxAction(
+  params: {
+    factionId?: FactionId
+    governorPlayerId: string
+    transferId?: string
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+  const mutationLock = tryAcquireWorldMutationLock('claim_governor_resource_inbox')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, targetFactionId, requestId)
+  }
+
+  try {
+    const result = claimGovernorResourceInbox(worldState, {
+      factionId: targetFactionId,
+      governorPlayerId: params.governorPlayerId,
+      transferId: params.transferId,
+    })
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: params.transferId ?? params.governorPlayerId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'claim_governor_resource_inbox',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          factionId: targetFactionId,
+          governorPlayerId: params.governorPlayerId,
+          transferId: params.transferId,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.claimedTransferIds[0] ?? result.governorPlayerId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'claim_governor_resource_inbox',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        factionId: targetFactionId,
+        governorPlayerId: result.governorPlayerId,
+        claimedTransferIds: result.claimedTransferIds,
+        claimedResources: result.claimedResources,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
+export function gatherAiResourceTileAction(
+  params: {
+    factionId?: FactionId
+    aiPlayerId: string
+    unitId: string
+    tileId: string
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+  const mutationLock = tryAcquireWorldMutationLock('gather_ai_resource_tile')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, targetFactionId, requestId)
+  }
+
+  try {
+    const result = gatherAiResourceTile(worldState, {
+      factionId: targetFactionId,
+      aiPlayerId: params.aiPlayerId,
+      unitId: params.unitId,
+      tileId: params.tileId,
+    })
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: params.tileId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'gather_ai_resource_tile',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          factionId: targetFactionId,
+          aiPlayerId: params.aiPlayerId,
+          unitId: params.unitId,
+          tileId: params.tileId,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.claimId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'gather_ai_resource_tile',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        factionId: targetFactionId,
+        aiPlayerId: result.aiPlayerId,
+        unitId: result.unitId,
+        tileId: result.tileId,
+        claimId: result.claimId,
         resources: result.resources,
         executionStatus: execution?.status,
         activeOrderCount: execution?.activeOrderCount,

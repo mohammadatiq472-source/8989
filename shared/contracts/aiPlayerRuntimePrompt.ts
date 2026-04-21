@@ -46,6 +46,7 @@ export const AI_PLAYER_RUNTIME_ALLOWED_ACTIONS = [
   'world_scout',
   'march_move',
   'garrison_set',
+  'resource_gather',
   'general_focus_set',
   'formation_assign',
   'threat_escape',

@@ -22,6 +22,7 @@ const EXECUTABLE_ACTIONS: Record<string, string> = {
   world_scout: 'queuePlanExecution',
   march_move: 'moveUnit',
   garrison_set: 'queueTacticalOverride',
+  resource_gather: 'gatherAiResourceTile',
   troop_facility_upgrade: 'promoteTroopFacilityBuilding',
   general_focus_set: 'setGeneralActiveHero',
   formation_assign: 'setGeneralTactic',
@@ -43,6 +44,7 @@ const INVALID_PROPOSAL_CASES: Array<{
   { action: 'queue_fill_idle_slot', args: { groupId: 'invalid_group' }, message: 'queue_fill_idle_slot rejects unsupported groupId' },
   { action: 'march_move', args: { unitId: 123, targetTileId: 'tile_01' }, message: 'march_move rejects non-string unitId' },
   { action: 'world_scout', args: { targetTileId: 123 }, message: 'world_scout rejects non-string targetTileId' },
+  { action: 'resource_gather', args: { unitId: 123, tileId: 'tile_01' }, message: 'resource_gather rejects non-string unitId' },
   { action: 'troop_train', args: { heroId: 123 }, message: 'troop_train rejects non-string heroId' },
   {
     action: 'troop_facility_upgrade',

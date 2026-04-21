@@ -100,6 +100,7 @@ const CITY_UPGRADE_RULES: Record<1 | 4, CityUpgradeRule> = {
 const RESOURCE_TRANSFER_KINDS = ['food', 'wood', 'stone', 'iron'] as const
 const AI_RESOURCE_TRANSFER_RESERVE_FLOOR = 10
 const AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION = 10_000
+const AI_RESOURCE_GATHER_AMOUNT_PER_LEVEL = 10
 
 type UpgradeCityTechResult =
   | { ok: true; world: WorldState; message: string; cityHallTileId: string; techId: CityTechTrackId; nextLevel: number }
@@ -123,6 +124,24 @@ export type ResourceTransferFailureCode =
   | 'reserve_floor_violation'
   | 'transfer_limit_exceeded'
 
+export type GovernorResourceInboxClaimFailureCode =
+  | 'unknown_faction'
+  | 'missing_governor_inbox'
+  | 'missing_governor_transfer'
+
+export type AiResourceGatherFailureCode =
+  | 'unknown_faction'
+  | 'missing_ai_resource_account'
+  | 'governor_mismatch'
+  | 'unknown_unit'
+  | 'unit_faction_mismatch'
+  | 'unit_not_assigned_to_ai_player'
+  | 'unknown_resource_tile'
+  | 'tile_not_resource'
+  | 'tile_not_controlled'
+  | 'unit_not_on_tile'
+  | 'resource_tile_already_gathered'
+
 type TransferFactionResourcesToGovernorResult =
   | {
       ok: true
@@ -137,6 +156,38 @@ type TransferFactionResourcesToGovernorResult =
       ok: false
       message: string
       failureCode: ResourceTransferFailureCode
+    }
+
+type ClaimGovernorResourceInboxResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      governorPlayerId: string
+      claimedTransferIds: string[]
+      claimedResources: ResourceTransferBundle
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: GovernorResourceInboxClaimFailureCode
+    }
+
+type GatherAiResourceTileResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      claimId: string
+      aiPlayerId: string
+      unitId: string
+      tileId: string
+      resources: ResourceTransferBundle
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: AiResourceGatherFailureCode
     }
 
 type RecruitProspectHeroResult =
@@ -367,6 +418,17 @@ function shallowCloneWorld(world: WorldState): WorldState {
                 {
                   ...account,
                   resources: { ...account.resources },
+                },
+              ]),
+            )
+          : undefined,
+        aiResourceGatherClaims: v.aiResourceGatherClaims
+          ? Object.fromEntries(
+              Object.entries(v.aiResourceGatherClaims).map(([tileId, claim]) => [
+                tileId,
+                {
+                  ...claim,
+                  resources: { ...claim.resources },
                 },
               ]),
             )
@@ -892,6 +954,34 @@ function subtractResourceBundles(
   }
 }
 
+function resourceBundleForKind(
+  resourceKind: NonNullable<Tile['resourceKind']>,
+  amount: number,
+): ResourceTransferBundle {
+  const resources = createEmptyResourceTransferBundle()
+  resources[resourceKind] = amount
+  return resources
+}
+
+function addResourceBundleToFaction(
+  faction: WorldState['factions'][string],
+  resources: ResourceTransferBundle,
+) {
+  faction.food += resources.food
+  faction.wood = (faction.wood ?? 0) + resources.wood
+  faction.stone = (faction.stone ?? 0) + resources.stone
+  faction.iron = (faction.iron ?? 0) + resources.iron
+}
+
+function isUnitAssignedToAiPlayer(
+  faction: WorldState['factions'][string],
+  aiPlayerId: string,
+  unitId: string,
+) {
+  const aiPlayer = faction.aiPlayers?.find((candidate) => candidate.id === aiPlayerId)
+  return aiPlayer?.unitIds.includes(unitId) ?? false
+}
+
 function normalizeTransferLabel(input: string, fallback: string) {
   const normalized = input.trim()
   return normalized.length > 0 ? normalized : fallback
@@ -1030,6 +1120,222 @@ export function transferFactionResourcesToGovernor(
     transferId,
     sourceAiPlayerId,
     governorPlayerId,
+    resources,
+  }
+}
+
+export function claimGovernorResourceInbox(
+  world: WorldState,
+  params: {
+    factionId: string
+    governorPlayerId: string
+    transferId?: string
+  },
+): ClaimGovernorResourceInboxResult {
+  const factionId = normalizeTransferLabel(params.factionId, '')
+  const governorPlayerId = normalizeTransferLabel(params.governorPlayerId, '')
+  const transferId = params.transferId?.trim()
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return {
+      ok: false,
+      message: `Unknown faction: ${factionId}`,
+      failureCode: 'unknown_faction',
+    }
+  }
+
+  const inbox = faction.governorResourceInboxes?.[governorPlayerId]
+  if (!inbox || inbox.pendingTransfers.length === 0) {
+    return {
+      ok: false,
+      message: `Governor resource inbox has no pending transfers: ${governorPlayerId}`,
+      failureCode: 'missing_governor_inbox',
+    }
+  }
+
+  const selectedTransfers = transferId
+    ? inbox.pendingTransfers.filter((transfer) => transfer.id === transferId)
+    : inbox.pendingTransfers
+  if (selectedTransfers.length === 0) {
+    return {
+      ok: false,
+      message: `Governor resource transfer not found: ${transferId}`,
+      failureCode: 'missing_governor_transfer',
+    }
+  }
+
+  const claimedResources = selectedTransfers.reduce(
+    (total, transfer) => addResourceBundles(total, transfer.resources),
+    createEmptyResourceTransferBundle(),
+  )
+  const selectedTransferIds = new Set(selectedTransfers.map((transfer) => transfer.id))
+  inbox.pendingTransfers = inbox.pendingTransfers.filter((transfer) => !selectedTransferIds.has(transfer.id))
+  inbox.totalPendingResources = subtractResourceBundles(inbox.totalPendingResources, claimedResources)
+  addResourceBundleToFaction(faction, claimedResources)
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    '总督资源领取',
+    `总督 ${governorPlayerId} 已领取 AI 输送资源并结算到 ${resolveFactionDisplayLabel(factionId)} 资源存量。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `Governor ${governorPlayerId} claimed ${selectedTransfers.length} pending resource transfer(s).`,
+    governorPlayerId,
+    claimedTransferIds: [...selectedTransferIds],
+    claimedResources,
+  }
+}
+
+export function gatherAiResourceTile(
+  world: WorldState,
+  params: {
+    factionId: string
+    aiPlayerId: string
+    unitId: string
+    tileId: string
+  },
+): GatherAiResourceTileResult {
+  const factionId = normalizeTransferLabel(params.factionId, '')
+  const aiPlayerId = normalizeTransferLabel(params.aiPlayerId, '')
+  const unitId = normalizeTransferLabel(params.unitId, '')
+  const tileId = normalizeTransferLabel(params.tileId, '')
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return {
+      ok: false,
+      message: `Unknown faction: ${factionId}`,
+      failureCode: 'unknown_faction',
+    }
+  }
+
+  const account = faction.aiResourceAccounts?.[aiPlayerId]
+  if (!account) {
+    return {
+      ok: false,
+      message: `AI resource account not found: ${aiPlayerId}`,
+      failureCode: 'missing_ai_resource_account',
+    }
+  }
+
+  if (account.factionId !== factionId) {
+    return {
+      ok: false,
+      message: 'AI resource account faction does not match the gathering faction.',
+      failureCode: 'governor_mismatch',
+    }
+  }
+
+  const unit = getUnitById(nextWorld, unitId)
+  if (!unit) {
+    return {
+      ok: false,
+      message: `Unit not found: ${unitId}`,
+      failureCode: 'unknown_unit',
+    }
+  }
+
+  if (unit.faction !== factionId) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} does not belong to faction ${factionId}.`,
+      failureCode: 'unit_faction_mismatch',
+    }
+  }
+
+  if (!isUnitAssignedToAiPlayer(faction, aiPlayerId, unitId)) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} is not assigned to AI player ${aiPlayerId}.`,
+      failureCode: 'unit_not_assigned_to_ai_player',
+    }
+  }
+
+  const tile = getTileById(nextWorld, tileId)
+  if (!tile) {
+    return {
+      ok: false,
+      message: `Resource tile not found: ${tileId}`,
+      failureCode: 'unknown_resource_tile',
+    }
+  }
+
+  if (tile.type !== 'resource' || !tile.resourceKind) {
+    return {
+      ok: false,
+      message: `Tile ${tileId} is not a resource tile.`,
+      failureCode: 'tile_not_resource',
+    }
+  }
+
+  if (tile.owner !== factionId) {
+    return {
+      ok: false,
+      message: `Resource tile ${tileId} is not controlled by faction ${factionId}.`,
+      failureCode: 'tile_not_controlled',
+    }
+  }
+
+  if (unit.tileId !== tileId) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} is not stationed on resource tile ${tileId}.`,
+      failureCode: 'unit_not_on_tile',
+    }
+  }
+
+  const existingClaims = faction.aiResourceGatherClaims ?? {}
+  if (existingClaims[tileId]) {
+    return {
+      ok: false,
+      message: `Resource tile ${tileId} has already been gathered for AI resources.`,
+      failureCode: 'resource_tile_already_gathered',
+    }
+  }
+
+  const resourceLevel = Math.max(1, Math.round(tile.resourceLevel ?? 1))
+  const resources = resourceBundleForKind(tile.resourceKind, resourceLevel * AI_RESOURCE_GATHER_AMOUNT_PER_LEVEL)
+  account.resources = addResourceBundles(account.resources, resources)
+  account.updatedTick = nextWorld.tick
+
+  const claimId = `ai_resource_gather_${nextWorld.tick}_${aiPlayerId}_${tileId}`
+  faction.aiResourceGatherClaims = {
+    ...existingClaims,
+    [tileId]: {
+      id: claimId,
+      aiPlayerId,
+      unitId,
+      tileId,
+      factionId,
+      resourceKind: tile.resourceKind,
+      resourceLevel,
+      resources,
+      createdTick: nextWorld.tick,
+    },
+  }
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    'AI资源采集',
+    `${aiPlayerId} 已在 ${tile.name} 完成一次性采集，资源入账 AI 子账户。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `AI resource account ${aiPlayerId} gathered ${tile.resourceKind} from ${tileId}.`,
+    claimId,
+    aiPlayerId,
+    unitId,
+    tileId,
     resources,
   }
 }

@@ -176,6 +176,17 @@ export const AI_PLAYER_PROMOTED_V1_ACTION_KNOWLEDGE: readonly AiPlayerPromotedAc
     criticalNotes: ['Current authority is a minimal backend support action, not a full alliance mailbox system.'],
   },
   {
+    aiAction: 'resource_gather',
+    worldAction: 'gatherAiResourceTile',
+    semanticSummary: 'Gather once from an AI-controlled resource tile into the governed AI resource subaccount.',
+    verificationCommands: ['npm run build', 'npm run test:ai:player-http-resource-gather-contract', 'npm run test:world:ai-resource-gather-http-contract'],
+    criticalNotes: [
+      'V1 requires an assigned AI unit stationed on a controlled resource tile.',
+      'The gathered amount is resourceLevel * 10 and is one-time per faction tile.',
+      'This credits aiResourceAccounts, not faction resources or UI-local wallets.',
+    ],
+  },
+  {
     aiAction: 'resource_transfer_to_governor',
     worldAction: 'transferFactionResourcesToGovernor',
     semanticSummary: 'Move resources from an AI player subaccount into the same-governor pending resource inbox.',
@@ -249,6 +260,18 @@ export const AI_PLAYER_AUTHORITY_DECISIONS: readonly AiPlayerAuthorityDecision[]
         unblocks: 'UI handoff without touching Godot layout or local resource mutation logic.',
       },
     ],
+  },
+  {
+    worldAction: 'gatherAiResourceTile',
+    recommendation: 'promoted',
+    suggestedAiAction: 'resource_gather',
+    rationale: 'User confirmed v1 semantics: an AI assigned unit must control and stand on a resource tile, then gather once by resourceKind/resourceLevel into the governed AI resource subaccount. No daily limit is added in v1.',
+  },
+  {
+    worldAction: 'claimGovernorResourceInbox',
+    recommendation: 'defer',
+    suggestedAiAction: null,
+    rationale: 'This is a human/governor settlement authority for pending AI transfers. It claims governor inbox resources into faction resources and should not be exposed as an AI player atomic action.',
   },
 ] as const
 

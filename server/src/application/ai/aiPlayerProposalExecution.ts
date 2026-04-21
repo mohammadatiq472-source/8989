@@ -17,6 +17,7 @@ import {
   allianceHelpAction,
   deployReserveHeroAction,
   enqueueAffairAction,
+  gatherAiResourceTileAction,
   getWorldStateReadonly,
   moveUnitAction,
   promoteCityBuildingAction,
@@ -1077,6 +1078,26 @@ export async function executeSupportedAiPlayerProposal(
         regionId,
       }
       response = allianceHelpAction(regionId, includeWorld, typedProposal.factionId as never)
+      break
+    }
+    case 'resource_gather': {
+      const typedProposal = proposal as AiPlayerActionProposalOf<'resource_gather'>
+      worldAction = 'gatherAiResourceTile'
+      worldActionPayload = {
+        factionId: typedProposal.factionId,
+        aiPlayerId: typedProposal.aiPlayerId,
+        unitId: typedProposal.args.unitId,
+        tileId: typedProposal.args.tileId,
+      }
+      response = gatherAiResourceTileAction(
+        {
+          factionId: typedProposal.factionId as never,
+          aiPlayerId: typedProposal.aiPlayerId,
+          unitId: typedProposal.args.unitId,
+          tileId: typedProposal.args.tileId,
+        },
+        includeWorld,
+      )
       break
     }
     case 'resource_transfer_to_governor': {

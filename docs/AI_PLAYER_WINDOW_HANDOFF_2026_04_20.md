@@ -106,6 +106,7 @@
   - `formation_assign -> setGeneralTactic`
   - `threat_escape -> queueAiAgendaAction`
   - `alliance_help -> allianceHelp`
+  - `resource_gather -> gatherAiResourceTile`
   - `resource_transfer_to_governor -> transferFactionResourcesToGovernor`
   - `reward_claim -> claimReward`
 - `recruit_commander` 已不再只是 failure 样本：
@@ -175,6 +176,8 @@
 - `npm run test:ai:knowledge-graph:http-contract`
 - `npm run test:ai:knowledge-graph:mcp`
 - `npm run test:ai:player-http-contract`
+- `npm run test:world:ai-resource-gather-http-contract`
+- `npm run test:world:governor-resource-inbox-http-contract`
 - `npm run gate:ai:runtime-capacity`
 - 隔离环境下的 `npm run gate:ai:mainline:stability`
 
@@ -220,6 +223,8 @@ cmd /c "set GAME_CLOCK_ENABLED=1&& npx tsx server/src/app.ts"
 - `setAiContextFocus` 已经有显式 `defer` 结论；没有新的业务语义前，不要再重复把它包装成 AI 原子动作
 - `transferFactionResourcesToGovernor` 已从资源输送 deferred candidate 提升为 promoted authority
 - `resource_transfer_to_governor` 已接入 AI 玩家 v1；语义是同总督、AI 子账户扣款、总督待领取收件箱、high-risk 强制审批
+- `gatherAiResourceTile` 已接入 AI 玩家 v1：`resource_gather` 要求 AI 指派单位驻扎己方资源地，按 `resourceKind/resourceLevel` 一次性入账 AI 子账户，不加每日限额
+- `claimGovernorResourceInbox` 是总督/真人领取结算 authority：pending inbox 领取后落到 `FactionState.food/wood/stone/iron`，不是 AI 玩家动作
 - 这条 authority 仍保留 `blockers` 决策记录，但 `requiresUserConfirmation=false`，防止后续窗口重复询问
 - 资源输送 UI 交接只看 `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`，不要先改 Godot UI 结算逻辑
 - `godot:week1` 仍依赖外部后端进程，不是自举 gate

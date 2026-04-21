@@ -26,6 +26,7 @@ export const AI_PLAYER_ACTION_WHITELIST = [
   'world_scout',
   'march_move',
   'garrison_set',
+  'resource_gather',
   'troop_facility_upgrade',
   'general_focus_set',
   'formation_assign',

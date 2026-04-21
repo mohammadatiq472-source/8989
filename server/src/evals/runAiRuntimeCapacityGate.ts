@@ -46,6 +46,8 @@ function run() {
   const checks = [
     runNpmScript('test:world:mutation-lock'),
     runNpmScript('test:world:reward-claim-http-contract'),
+    runNpmScript('test:world:ai-resource-gather-http-contract'),
+    runNpmScript('test:world:governor-resource-inbox-http-contract'),
     runNpmScript('test:world:resource-transfer-http-contract'),
     runNpmScript('test:session:manager'),
     runNpmScript('test:websocket:quota'),

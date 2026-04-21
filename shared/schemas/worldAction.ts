@@ -223,6 +223,23 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
     }).strict(),
   }),
   z.object({
+    action: z.literal('claimGovernorResourceInbox'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      governorPlayerId: z.string().min(1).max(80),
+      transferId: z.string().min(1).max(160).optional(),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('gatherAiResourceTile'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      aiPlayerId: z.string().min(1).max(80),
+      unitId: z.string().min(1).max(120),
+      tileId: z.string().min(1).max(120),
+    }).strict(),
+  }),
+  z.object({
     action: z.literal('promoteTroopFacilityBuilding'),
     payload: z.object({
       factionId: factionIdSchema.optional(),

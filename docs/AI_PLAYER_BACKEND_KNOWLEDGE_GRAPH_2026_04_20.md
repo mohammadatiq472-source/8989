@@ -88,6 +88,7 @@ flowchart LR
 | `formation_assign` | `setGeneralTactic` | 写权威战法，并同步 directive preview | 同上 |
 | `threat_escape` | `queueAiAgendaAction` | 走 `agenda_recover / agenda_redeploy`，不是直接 move | 同上 |
 | `alliance_help` | `allianceHelp` | 对联盟战区做一次正式协助 | 同上 |
+| `resource_gather` | `gatherAiResourceTile` | AI 指派单位驻扎己方资源地后，一次性按 resourceKind/resourceLevel 入账 AI 子账户 | 同上 |
 | `resource_transfer_to_governor` | `transferFactionResourcesToGovernor` | 从 AI 子账户转入同总督待领取收件箱，high-risk 强制审批 | 同上 |
 | `reward_claim` | `claimReward` | 领取 `FactionState.claimableRewards` 中的待领奖励 | 同上 |
 
@@ -106,6 +107,14 @@ flowchart LR
   - 状态面：`FactionState.aiResourceAccounts` -> `FactionState.governorResourceInboxes`
   - v1 语义：同总督限定、跨势力贸易延期、AI 子账户扣款、总督待领取收件箱、high-risk 强制审批
   - 正式验证：`npm run test:world:resource-transfer-http-contract`
+- `gatherAiResourceTile`
+  - 状态面：`Tile(type=resource, resourceKind, resourceLevel)` -> `FactionState.aiResourceAccounts`
+  - v1 语义：AI 指派单位必须驻扎在己方控制的资源地；收益为 `resourceLevel * 10`，一次性入账 AI 子账户；不加每日限额
+  - 正式验证：`npm run test:world:ai-resource-gather-http-contract`
+- `claimGovernorResourceInbox`
+  - 状态面：`FactionState.governorResourceInboxes` -> `FactionState.food/wood/stone/iron`
+  - v1 语义：总督领取 pending transfer 后，结算到总督所属 faction resources；不是 AI 玩家动作
+  - 正式验证：`npm run test:world:governor-resource-inbox-http-contract`
 
 ### 4.2 已增强的既有 authority
 
@@ -179,13 +188,14 @@ flowchart LR
 ### 6.7 AI 玩家向真人/总督输送资源
 
 - 当前已接 world authority：
-  `transferFactionResourcesToGovernor`。
+  `transferFactionResourcesToGovernor`、`claimGovernorResourceInbox`。
 - 当前已接 AI 玩家动作：
-  `resource_transfer_to_governor`。
-- 不能把 `resource_item_use / resource_gather / alliance_donate` 误当成资源输送动作；它们当前都不是 executable v1，也不是“AI 资源转给真人”的结算链。
+  `resource_gather`、`resource_transfer_to_governor`。
+- `resource_gather` 是 AI 自己赚钱：从 AI 控制/驻扎的资源地入账 AI 子账户；它不是“AI 资源转给真人”的结算链。
+- `resource_item_use / alliance_donate` 当前仍不是 executable v1，也不是“AI 资源转给真人”的结算链。
 - 代码事实：
   `FactionState` 是势力级资源，`AIPlayer` 当前是部队分组；本轮新增 `FactionState.aiResourceAccounts` 作为 AI 子账户，避免把部队分组和经济钱包混在一起。
-- 目标落点是 `FactionState.governorResourceInboxes`；UI 不直接改资源。
+- 转移第一落点是 `FactionState.governorResourceInboxes`；总督领取后落到 `FactionState.food/wood/stone/iron`。
 - v1 限定同总督，跨势力贸易延期。
 - UI 侧交接见：
   `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`。
@@ -202,6 +212,8 @@ flowchart LR
 - `npm run gate:ai:preflight`
 - `npm run test:world:alliance-help-http-contract`
 - `npm run test:world:reward-claim-http-contract`
+- `npm run test:world:ai-resource-gather-http-contract`
+- `npm run test:world:governor-resource-inbox-http-contract`
 - `npm run test:world:resource-transfer-http-contract`
 - `npm run gate:ai:runtime-capacity`
 
@@ -240,7 +252,9 @@ cmd /c "set GAME_CLOCK_ENABLED=1&& npx tsx server/src/app.ts"
 - `setAiContextFocus` 现在已经有显式 `defer` 结论；它更像运行时上下文 authority，不天然等于玩家操作。
 - 没有新的业务语义前，不要再重复尝试把 `setAiContextFocus` 包装成新 AI 玩家动作。
 - `transferFactionResourcesToGovernor` 已从显式 `defer` 提升为 `promoted`。
-- 资源输送用户已确认真人资源落点、AI 子账户扣款语义、审批和跨势力延期规则。
+- `gatherAiResourceTile` 已提升为 `resource_gather` 的 promoted authority。
+- `claimGovernorResourceInbox` 是人类/总督领取结算 authority，保持 `defer`，不要包装成 AI 玩家动作。
+- 资源输送用户已确认真人资源落点、AI 子账户扣款语义、审批和跨势力延期规则；资源地采集用户已确认一次性入账 AI 子账户、不加每日限额。
 - 这条 promoted authority 现在在机器可读图谱里保留 `blockers` 决策记录：
   - `target-wallet-semantics`
   - `source-account-semantics`

@@ -231,6 +231,18 @@ export type AiResourceAccount = {
   updatedTick: number
 }
 
+export type AiResourceGatherClaim = {
+  id: string
+  aiPlayerId: string
+  unitId: string
+  tileId: string
+  factionId: FactionId
+  resourceKind: ResourceKind
+  resourceLevel: number
+  resources: ResourceTransferBundle
+  createdTick: number
+}
+
 export type GovernorResourceTransfer = {
   id: string
   sourceAiPlayerId: string
@@ -442,6 +454,8 @@ export type FactionState = {
   claimableRewards?: ClaimableReward[]
   /** AI 玩家独立资源子账户（用于后续资源地/建筑树产出与受治理资源输送） */
   aiResourceAccounts?: Record<string, AiResourceAccount>
+  /** AI 资源地一次性采集记录；key = tileId，防止同一资源地重复入账 */
+  aiResourceGatherClaims?: Record<string, AiResourceGatherClaim>
   /** 总督待领取资源收件箱；只由后端 authority 写入，UI 不直接结算 */
   governorResourceInboxes?: Record<string, GovernorResourceInbox>
   /** 势力内 AI 玩家分组（每玩家管辖3支部队，支持飞地协作） */
@@ -715,6 +729,23 @@ export type WorldActionRequest =
         resources: Partial<ResourceTransferBundle>
         reason: string
         approvedBy: string
+      }
+    }
+  | {
+      action: 'claimGovernorResourceInbox'
+      payload: {
+        factionId?: FactionId
+        governorPlayerId: string
+        transferId?: string
+      }
+    }
+  | {
+      action: 'gatherAiResourceTile'
+      payload: {
+        factionId?: FactionId
+        aiPlayerId: string
+        unitId: string
+        tileId: string
       }
     }
   | {

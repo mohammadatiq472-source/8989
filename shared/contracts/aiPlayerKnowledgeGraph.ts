@@ -195,6 +195,16 @@ export const AI_PLAYER_BACKEND_VERSION_CONTROL_SCOPE: readonly AiPlayerBackendVe
     reviewExpectation: 'Bad args must fail before execution, normally through HTTP 422 contract coverage.',
   },
   {
+    path: 'shared/contracts/aiPlayerRuntimePrompt.ts',
+    role: 'Runtime LLM system-context contract for proposal-only AI player decisions.',
+    reviewExpectation: 'Prompt boundaries must stay aligned with executable v1 actions and authority-chain rules.',
+  },
+  {
+    path: 'shared/schemas/aiPlayerRuntimePrompt.ts',
+    role: 'Schema guard for the runtime AI player system-context contract.',
+    reviewExpectation: 'Schema must reject loose prompt contracts and preserve JSON-output requirements.',
+  },
+  {
     path: 'shared/contracts/aiPlayerKnowledgeGraph.ts',
     role: 'Machine-readable source of truth for promoted/deferred authority decisions and backend review scope.',
     reviewExpectation: 'Keep this file aligned with static catalog and backend split modules.',

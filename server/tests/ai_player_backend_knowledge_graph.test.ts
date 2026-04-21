@@ -65,6 +65,14 @@ function testBackendVersionControlScopeIsConcrete() {
     'review scope must include proposal lifecycle split',
   )
   assert.ok(
+    paths.includes('shared/contracts/aiPlayerRuntimePrompt.ts'),
+    'review scope must include runtime prompt contract',
+  )
+  assert.ok(
+    paths.includes('shared/schemas/aiPlayerRuntimePrompt.ts'),
+    'review scope must include runtime prompt schema',
+  )
+  assert.ok(
     paths.includes('server/src/application/ai/aiPlayerGovernancePersist.ts'),
     'review scope must include persistence split',
   )

@@ -96,4 +96,3 @@ commits:
 - 真人个人钱包延期；当前没有该字段。
 - 每日额度/冷却延期；v1 仅保留 reserve floor 和 per-action cap。
 - UI 只消费 proposal、receipt、world snapshot；不能做本地资源补偿。
-

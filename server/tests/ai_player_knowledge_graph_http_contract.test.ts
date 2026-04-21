@@ -73,8 +73,25 @@ async function run() {
     assert.equal(deferOnlyResult.status, 200, `defer filter failed: ${JSON.stringify(deferOnlyResult.data)}`)
     const deferOnlySnapshot = readSnapshot(deferOnlyResult.data)
     assert.equal(deferOnlySnapshot.promotedActions.length, 0)
-    assert.equal(deferOnlySnapshot.authorityDecisions.length, 1)
+    assert.ok(deferOnlySnapshot.authorityDecisions.length >= 2)
     assert.equal(deferOnlySnapshot.executableCatalog.length, 0)
+
+    const resourceTransferResult = await requestJson(
+      baseUrl,
+      '/api/ai/knowledge-graph?worldAction=transferFactionResourcesToGovernor&recommendation=defer&includeCatalog=false',
+      'GET',
+    )
+    assert.equal(
+      resourceTransferResult.status,
+      200,
+      `resource transfer defer filter failed: ${JSON.stringify(resourceTransferResult.data)}`,
+    )
+    const resourceTransferSnapshot = readSnapshot(resourceTransferResult.data)
+    assert.equal(resourceTransferSnapshot.promotedActions.length, 0)
+    assert.equal(resourceTransferSnapshot.authorityDecisions.length, 1)
+    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.worldAction, 'transferFactionResourcesToGovernor')
+    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.recommendation, 'defer')
+    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.suggestedAiAction, null)
 
     const obsidianResult = await requestJson(baseUrl, '/api/ai/knowledge-graph?format=obsidian&aiAction=recruit_pool_select', 'GET')
     assert.equal(obsidianResult.status, 200, `obsidian export failed: ${JSON.stringify(obsidianResult.data)}`)

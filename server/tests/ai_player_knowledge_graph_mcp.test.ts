@@ -221,6 +221,18 @@ async function run() {
     assert.ok(obsidianText.includes('### setAiContextFocus'))
     assert.ok(obsidianText.includes('Recommendation: `defer`'))
 
+    const resourceTransferText = readTextContent(await client.request('tools/call', {
+      name: 'get_ai_player_knowledge_graph',
+      arguments: {
+        format: 'obsidian',
+        worldAction: 'transferFactionResourcesToGovernor',
+        recommendation: 'defer',
+        includeCatalog: false,
+      },
+    }))
+    assert.ok(resourceTransferText.includes('### transferFactionResourcesToGovernor'))
+    assert.ok(resourceTransferText.includes('Recommendation: `defer`'))
+
     const jsonText = readTextContent(await client.request('tools/call', {
       name: 'get_ai_player_knowledge_graph',
       arguments: {

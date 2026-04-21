@@ -51,6 +51,28 @@ function testDeferredAuthorityDecisionRemainsExplicit() {
     (deferredContextFocus?.rationale.length ?? 0) >= 24,
     'deferred context-focus authority should keep an explicit rationale to prevent repeat work',
   )
+
+  const deferredResourceTransfer = AI_PLAYER_AUTHORITY_DECISIONS.find(
+    (item) => item.worldAction === 'transferFactionResourcesToGovernor',
+  )
+  assert.ok(
+    deferredResourceTransfer,
+    'knowledge graph must keep an explicit deferred decision for AI-to-governor resource transfer',
+  )
+  assert.equal(
+    deferredResourceTransfer?.recommendation,
+    'defer',
+    'resource transfer must remain deferred until backend authority and settlement semantics exist',
+  )
+  assert.equal(
+    deferredResourceTransfer?.suggestedAiAction,
+    null,
+    'deferred resource transfer must not invent an AI player action id',
+  )
+  assert.ok(
+    (deferredResourceTransfer?.rationale.length ?? 0) >= 80,
+    'deferred resource transfer should keep an explicit rationale to prevent repeat work',
+  )
 }
 
 function testBackendVersionControlScopeIsConcrete() {

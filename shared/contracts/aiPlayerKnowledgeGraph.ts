@@ -181,6 +181,12 @@ export const AI_PLAYER_AUTHORITY_DECISIONS: readonly AiPlayerAuthorityDecision[]
     suggestedAiAction: null,
     rationale: 'This is runtime-context authority, not a stable player atomic action. Keep it explicit as a deferred candidate instead of forcing a weak AI action name.',
   },
+  {
+    worldAction: 'transferFactionResourcesToGovernor',
+    recommendation: 'defer',
+    suggestedAiAction: null,
+    rationale: 'No authoritative WorldActionRequest, WorldService route, or rules.ts settlement path exists yet for AI-to-governor resource transfer. Current world resources are faction-scoped, AIPlayer is a unit grouping, and the human target wallet/settlement surface must be defined before any AI player action is added.',
+  },
 ] as const
 
 export const AI_PLAYER_BACKEND_VERSION_CONTROL_SCOPE: readonly AiPlayerBackendVersionControlScopeItem[] = [

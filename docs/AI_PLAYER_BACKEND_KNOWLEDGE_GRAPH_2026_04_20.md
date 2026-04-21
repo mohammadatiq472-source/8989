@@ -30,6 +30,9 @@
   - MCP: `get_ai_player_knowledge_graph`
   - MCP 注册模块：`server/src/mcp/registerAiPlayerTools.ts`
   - `format=obsidian` 只做 Obsidian/Markdown 镜像导出，不替代 repo 内 typed source of truth。
+- 资源输送交接文档：
+  - `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`
+  - 该文档只记录后端 authority 阻塞与 UI 消费要求，不代表已经新增 AI 玩家白名单动作。
 - 正式校验入口：
   - `npm run test:ai:knowledge-graph`
   - `npm run test:ai:knowledge-graph:http-contract`
@@ -168,6 +171,18 @@ flowchart LR
   - `support_structures / supply_camp`
 - `rules.ts` 当前会对 troop facility state 做 lazy init，所以 baseline 不需要先手动造设施状态。
 
+### 6.7 AI 玩家向真人/总督输送资源
+
+- 当前没有可直接接入的 world authority。
+- 已在 `shared/contracts/aiPlayerKnowledgeGraph.ts` 登记 deferred candidate：
+  `transferFactionResourcesToGovernor`。
+- 不能把 `resource_item_use / resource_gather / alliance_donate` 误当成资源输送动作；它们当前都不是 executable v1，也不是“AI 资源转给真人”的结算链。
+- 代码事实：
+  `FactionState` 是势力级资源，`AIPlayer` 当前是部队分组；V2 `AIPlayerV2.resources` 不属于当前 AI 玩家治理正式写链。
+- 必须先定义后端 authority 和目标钱包/收件箱，再谈 AI 玩家 shared contract/schema。
+- UI 侧交接见：
+  `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`。
+
 ## 7. 正式验证入口
 
 ### 7.1 常规正式链
@@ -216,6 +231,8 @@ cmd /c "set GAME_CLOCK_ENABLED=1&& npx tsx server/src/app.ts"
 - 而是“剩余 authority 还没有收口成清晰的玩家原子动作语义”。
 - `setAiContextFocus` 现在已经有显式 `defer` 结论；它更像运行时上下文 authority，不天然等于玩家操作。
 - 没有新的业务语义前，不要再重复尝试把 `setAiContextFocus` 包装成新 AI 玩家动作。
+- `transferFactionResourcesToGovernor` 现在也是显式 `defer` 结论；它是资源输送 authority candidate，不是已经存在的 world action。
+- 资源输送必须先决定真人资源落点、AI 子账户/势力账户扣款语义、审批/预算/冷却规则，再接 AI 玩家合同。
 - 继续推进时必须按这个顺序：
   1. 全文搜索代码事实
   2. 收口动作语义

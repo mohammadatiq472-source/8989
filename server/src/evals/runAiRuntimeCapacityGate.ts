@@ -49,6 +49,7 @@ function run() {
     runNpmScript('test:websocket:quota'),
     runNpmScript('gate:ai:runtime-load'),
     runNpmScript('test:ai:governance-guard'),
+    runNpmScript('test:ai:player-http-contract'),
     runNpmScript('test:ai:runtime-observability'),
     runNpmScript('test:ai:runtime-http-contract'),
     runNpmScript('test:ai:quota'),

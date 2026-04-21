@@ -32,13 +32,11 @@ export function buildAiPlayerKnowledgeGraphSnapshot(query: AiPlayerKnowledgeGrap
   const worldAction = normalizeOptionalString(query.worldAction)
   const includeCatalog = query.includeCatalog !== false
   const includePromotedActions = query.recommendation !== 'defer'
-  const includeAuthorityDecisions = query.recommendation !== 'promoted'
 
   const promotedActions = includePromotedActions
     ? AI_PLAYER_PROMOTED_V1_ACTION_KNOWLEDGE.filter((item) => matchesPromotedAction(item.aiAction, item.worldAction, { aiAction, worldAction }))
     : []
-  const authorityDecisions = includeAuthorityDecisions
-    ? AI_PLAYER_AUTHORITY_DECISIONS.filter((item) => {
+  const authorityDecisions = AI_PLAYER_AUTHORITY_DECISIONS.filter((item) => {
       if (worldAction && item.worldAction !== worldAction) {
         return false
       }
@@ -50,7 +48,6 @@ export function buildAiPlayerKnowledgeGraphSnapshot(query: AiPlayerKnowledgeGrap
       }
       return true
     })
-    : []
   const executableCatalog = includeCatalog && includePromotedActions
     ? listStaticAiPlayerActionCatalog().filter((item) => !aiAction || item.action === aiAction)
     : []

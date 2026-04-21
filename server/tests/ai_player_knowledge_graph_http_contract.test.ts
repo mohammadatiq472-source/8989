@@ -73,35 +73,37 @@ async function run() {
     assert.equal(deferOnlyResult.status, 200, `defer filter failed: ${JSON.stringify(deferOnlyResult.data)}`)
     const deferOnlySnapshot = readSnapshot(deferOnlyResult.data)
     assert.equal(deferOnlySnapshot.promotedActions.length, 0)
-    assert.ok(deferOnlySnapshot.authorityDecisions.length >= 2)
+    assert.ok(deferOnlySnapshot.authorityDecisions.length >= 1)
     assert.equal(deferOnlySnapshot.executableCatalog.length, 0)
 
     const resourceTransferResult = await requestJson(
       baseUrl,
-      '/api/ai/knowledge-graph?worldAction=transferFactionResourcesToGovernor&recommendation=defer&includeCatalog=false',
+      '/api/ai/knowledge-graph?worldAction=transferFactionResourcesToGovernor&recommendation=promoted&includeCatalog=false',
       'GET',
     )
     assert.equal(
       resourceTransferResult.status,
       200,
-      `resource transfer defer filter failed: ${JSON.stringify(resourceTransferResult.data)}`,
+      `resource transfer promoted filter failed: ${JSON.stringify(resourceTransferResult.data)}`,
     )
     const resourceTransferSnapshot = readSnapshot(resourceTransferResult.data)
-    assert.equal(resourceTransferSnapshot.promotedActions.length, 0)
+    assert.equal(resourceTransferSnapshot.promotedActions.length, 1)
+    assert.equal(resourceTransferSnapshot.promotedActions[0]?.aiAction, 'resource_transfer_to_governor')
+    assert.equal(resourceTransferSnapshot.promotedActions[0]?.worldAction, 'transferFactionResourcesToGovernor')
     assert.equal(resourceTransferSnapshot.authorityDecisions.length, 1)
     assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.worldAction, 'transferFactionResourcesToGovernor')
-    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.recommendation, 'defer')
-    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.suggestedAiAction, null)
+    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.recommendation, 'promoted')
+    assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.suggestedAiAction, 'resource_transfer_to_governor')
     const resourceTransferBlockers = readArray(
       readObject(resourceTransferSnapshot.authorityDecisions[0]).blockers,
     )
-    assert.ok(resourceTransferBlockers.length >= 4, 'resource transfer defer node should expose blockers')
+    assert.ok(resourceTransferBlockers.length >= 4, 'resource transfer promoted node should expose confirmed decisions')
     assert.ok(
       resourceTransferBlockers.some((item) => {
         const blocker = readObject(item)
-        return blocker.id === 'target-wallet-semantics' && blocker.requiresUserConfirmation === true
+        return blocker.id === 'target-wallet-semantics' && blocker.requiresUserConfirmation === false
       }),
-      'resource transfer blockers should include target-wallet-semantics requiring user confirmation',
+      'resource transfer decisions should include confirmed target-wallet-semantics',
     )
 
     const obsidianResult = await requestJson(baseUrl, '/api/ai/knowledge-graph?format=obsidian&aiAction=recruit_pool_select', 'GET')

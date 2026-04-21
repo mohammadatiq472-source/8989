@@ -23,6 +23,7 @@ export const aiPlayerActionCategorySchema = z.enum([
   'city',
   'world',
   'alliance',
+  'economy',
   'activity',
   'intel',
 ])
@@ -85,6 +86,7 @@ export const aiPlayerActionTypeSchema = z.enum([
   'formation_assign',
   'threat_escape',
   'alliance_help',
+  'resource_transfer_to_governor',
   'alliance_donate',
   'rally_join',
   'rally_launch',
@@ -133,6 +135,15 @@ const aiPlayerTroopFacilityBuildingIdSchema = z.enum([
 const aiPlayerRecruitPoolIdSchema = z.enum(['pool_standard', 'pool_season', 'pool_limited'])
 const aiPlayerGeneralTacticIdSchema = z.enum(['assault', 'guard', 'logistics'])
 const aiPlayerThreatEscapeModeSchema = z.enum(['recover', 'redeploy'])
+const resourceTransferBundleSchema = z.object({
+  food: z.number().int().positive().optional(),
+  wood: z.number().int().positive().optional(),
+  stone: z.number().int().positive().optional(),
+  iron: z.number().int().positive().optional(),
+}).strict().refine(
+  (value) => Object.values(value).some((amount) => typeof amount === 'number' && amount > 0),
+  { message: 'at least one positive resource amount is required' },
+)
 
 export const aiPlayerEmptyArgsSchema = z.object({}).strict()
 
@@ -209,6 +220,10 @@ export const aiPlayerAllianceHelpArgsSchema = z.object({
   regionId: z.string().trim().min(1).max(64).optional(),
 }).strict()
 
+export const aiPlayerResourceTransferToGovernorArgsSchema = z.object({
+  resources: resourceTransferBundleSchema,
+}).strict()
+
 export const aiPlayerRewardClaimArgsSchema = z.object({
   rewardId: z.string().trim().min(1).max(120).optional(),
 }).strict()
@@ -229,6 +244,7 @@ const aiPlayerActionArgsSchemaByAction = {
   formation_assign: aiPlayerFormationAssignArgsSchema,
   threat_escape: aiPlayerThreatEscapeArgsSchema,
   alliance_help: aiPlayerAllianceHelpArgsSchema,
+  resource_transfer_to_governor: aiPlayerResourceTransferToGovernorArgsSchema,
   reward_claim: aiPlayerRewardClaimArgsSchema,
 } as const
 
@@ -264,6 +280,8 @@ function resolveAiPlayerActionArgsSchema(action: AiPlayerActionType) {
       return aiPlayerActionArgsSchemaByAction.threat_escape
     case 'alliance_help':
       return aiPlayerActionArgsSchemaByAction.alliance_help
+    case 'resource_transfer_to_governor':
+      return aiPlayerActionArgsSchemaByAction.resource_transfer_to_governor
     case 'reward_claim':
       return aiPlayerActionArgsSchemaByAction.reward_claim
     default:

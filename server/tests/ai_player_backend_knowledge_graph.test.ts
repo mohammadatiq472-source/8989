@@ -52,42 +52,42 @@ function testDeferredAuthorityDecisionRemainsExplicit() {
     'deferred context-focus authority should keep an explicit rationale to prevent repeat work',
   )
 
-  const deferredResourceTransfer = AI_PLAYER_AUTHORITY_DECISIONS.find(
+  const promotedResourceTransfer = AI_PLAYER_AUTHORITY_DECISIONS.find(
     (item) => item.worldAction === 'transferFactionResourcesToGovernor',
   )
   assert.ok(
-    deferredResourceTransfer,
-    'knowledge graph must keep an explicit deferred decision for AI-to-governor resource transfer',
+    promotedResourceTransfer,
+    'knowledge graph must keep an explicit decision for AI-to-governor resource transfer',
   )
   assert.equal(
-    deferredResourceTransfer?.recommendation,
-    'defer',
-    'resource transfer must remain deferred until backend authority and settlement semantics exist',
+    promotedResourceTransfer?.recommendation,
+    'promoted',
+    'resource transfer should be promoted after backend authority and user-confirmed semantics exist',
   )
   assert.equal(
-    deferredResourceTransfer?.suggestedAiAction,
-    null,
-    'deferred resource transfer must not invent an AI player action id',
+    promotedResourceTransfer?.suggestedAiAction,
+    'resource_transfer_to_governor',
+    'promoted resource transfer should map to the AI player action id',
   )
   assert.ok(
-    (deferredResourceTransfer?.rationale.length ?? 0) >= 80,
-    'deferred resource transfer should keep an explicit rationale to prevent repeat work',
+    (promotedResourceTransfer?.rationale.length ?? 0) >= 80,
+    'promoted resource transfer should keep an explicit rationale to prevent repeat work',
   )
   assert.ok(
-    (deferredResourceTransfer?.blockers?.length ?? 0) >= 4,
-    'deferred resource transfer must expose the blocking product/backend decisions',
+    (promotedResourceTransfer?.blockers?.length ?? 0) >= 4,
+    'promoted resource transfer must preserve the confirmed product/backend decisions',
   )
   assert.ok(
-    deferredResourceTransfer?.blockers?.some((item) => item.id === 'target-wallet-semantics' && item.requiresUserConfirmation),
-    'resource transfer must ask the user to confirm the target wallet semantics',
+    promotedResourceTransfer?.blockers?.some((item) => item.id === 'target-wallet-semantics' && !item.requiresUserConfirmation),
+    'resource transfer target wallet semantics should be marked confirmed',
   )
   assert.ok(
-    deferredResourceTransfer?.blockers?.some((item) => item.id === 'source-account-semantics' && item.requiresUserConfirmation),
-    'resource transfer must ask the user to confirm the AI source account semantics',
+    promotedResourceTransfer?.blockers?.some((item) => item.id === 'source-account-semantics' && !item.requiresUserConfirmation),
+    'resource transfer AI source account semantics should be marked confirmed',
   )
   assert.ok(
-    deferredResourceTransfer?.blockers?.every((item) => item.question.length >= 24 && item.unblocks.length >= 16),
-    'resource transfer blockers must be actionable instead of terse notes',
+    promotedResourceTransfer?.blockers?.every((item) => item.question.length >= 24 && item.unblocks.length >= 16),
+    'resource transfer decision records must be actionable instead of terse notes',
   )
 }
 
@@ -127,7 +127,7 @@ function testBackendVersionControlScopeIsConcrete() {
 }
 
 function run() {
-  assert.equal(AI_PLAYER_KNOWLEDGE_GRAPH_VERSION, '2026-04-20')
+  assert.equal(AI_PLAYER_KNOWLEDGE_GRAPH_VERSION, '2026-04-21')
   testPromotedKnowledgeMatchesExecutableCatalog()
   testKnowledgeGraphCoversAllClosedV1Actions()
   testDeferredAuthorityDecisionRemainsExplicit()

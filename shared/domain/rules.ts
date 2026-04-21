@@ -36,6 +36,7 @@ import type {
   ExecutionEnqueueMode,
   ReplayHighlight,
   ReplayOrderSnapshot,
+  ResourceTransferBundle,
   SlgGeneralDirectivePreviewState,
   StrategicPlan,
   TacticalOverride,
@@ -96,6 +97,10 @@ const CITY_UPGRADE_RULES: Record<1 | 4, CityUpgradeRule> = {
   },
 }
 
+const RESOURCE_TRANSFER_KINDS = ['food', 'wood', 'stone', 'iron'] as const
+const AI_RESOURCE_TRANSFER_RESERVE_FLOOR = 10
+const AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION = 10_000
+
 type UpgradeCityTechResult =
   | { ok: true; world: WorldState; message: string; cityHallTileId: string; techId: CityTechTrackId; nextLevel: number }
   | { ok: false; message: string }
@@ -107,6 +112,32 @@ type PromoteCityBuildingResult =
 type PromoteTroopFacilityBuildingResult =
   | { ok: true; world: WorldState; message: string; unitId: string; facilityId: string; buildingId: string; nextLevel: number }
   | { ok: false; message: string }
+
+export type ResourceTransferFailureCode =
+  | 'unknown_source_faction'
+  | 'missing_ai_resource_account'
+  | 'governor_mismatch'
+  | 'approval_required'
+  | 'invalid_resource_amount'
+  | 'insufficient_resources'
+  | 'reserve_floor_violation'
+  | 'transfer_limit_exceeded'
+
+type TransferFactionResourcesToGovernorResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      transferId: string
+      sourceAiPlayerId: string
+      governorPlayerId: string
+      resources: ResourceTransferBundle
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: ResourceTransferFailureCode
+    }
 
 type RecruitProspectHeroResult =
   | {
@@ -329,6 +360,32 @@ function shallowCloneWorld(world: WorldState): WorldState {
           ...reward,
           reward: { ...reward.reward },
         })),
+        aiResourceAccounts: v.aiResourceAccounts
+          ? Object.fromEntries(
+              Object.entries(v.aiResourceAccounts).map(([accountId, account]) => [
+                accountId,
+                {
+                  ...account,
+                  resources: { ...account.resources },
+                },
+              ]),
+            )
+          : undefined,
+        governorResourceInboxes: v.governorResourceInboxes
+          ? Object.fromEntries(
+              Object.entries(v.governorResourceInboxes).map(([governorPlayerId, inbox]) => [
+                governorPlayerId,
+                {
+                  ...inbox,
+                  totalPendingResources: { ...inbox.totalPendingResources },
+                  pendingTransfers: inbox.pendingTransfers.map((transfer) => ({
+                    ...transfer,
+                    resources: { ...transfer.resources },
+                  })),
+                },
+              ]),
+            )
+          : undefined,
         heroCommand: {
           ...v.heroCommand,
           rosterHeroIds: [...v.heroCommand.rosterHeroIds],
@@ -760,6 +817,220 @@ export function claimReward(
     actionPointReward: claimedReward.reward.ap,
     pendingRewardCount: pendingRewards.length,
     source: claimedReward.source,
+  }
+}
+
+function createEmptyResourceTransferBundle(): ResourceTransferBundle {
+  return { food: 0, wood: 0, stone: 0, iron: 0 }
+}
+
+function normalizeResourceTransferBundle(
+  input: Partial<ResourceTransferBundle> | undefined,
+): ResourceTransferBundle | null {
+  const normalized = createEmptyResourceTransferBundle()
+  let total = 0
+
+  for (const kind of RESOURCE_TRANSFER_KINDS) {
+    const value = input?.[kind]
+    if (value === undefined) {
+      continue
+    }
+    if (!Number.isInteger(value) || value <= 0) {
+      return null
+    }
+    normalized[kind] = value
+    total += value
+  }
+
+  return total > 0 ? normalized : null
+}
+
+function totalResourceTransferAmount(resources: ResourceTransferBundle) {
+  return RESOURCE_TRANSFER_KINDS.reduce((total, kind) => total + resources[kind], 0)
+}
+
+function hasSufficientAiResources(
+  current: ResourceTransferBundle,
+  requested: ResourceTransferBundle,
+) {
+  return RESOURCE_TRANSFER_KINDS.every((kind) => current[kind] >= requested[kind])
+}
+
+function satisfiesAiResourceReserveFloor(
+  current: ResourceTransferBundle,
+  requested: ResourceTransferBundle,
+) {
+  return RESOURCE_TRANSFER_KINDS.every((kind) => {
+    if (requested[kind] <= 0) {
+      return true
+    }
+    return current[kind] - requested[kind] >= AI_RESOURCE_TRANSFER_RESERVE_FLOOR
+  })
+}
+
+function addResourceBundles(
+  left: ResourceTransferBundle,
+  right: ResourceTransferBundle,
+): ResourceTransferBundle {
+  return {
+    food: left.food + right.food,
+    wood: left.wood + right.wood,
+    stone: left.stone + right.stone,
+    iron: left.iron + right.iron,
+  }
+}
+
+function subtractResourceBundles(
+  left: ResourceTransferBundle,
+  right: ResourceTransferBundle,
+): ResourceTransferBundle {
+  return {
+    food: left.food - right.food,
+    wood: left.wood - right.wood,
+    stone: left.stone - right.stone,
+    iron: left.iron - right.iron,
+  }
+}
+
+function normalizeTransferLabel(input: string, fallback: string) {
+  const normalized = input.trim()
+  return normalized.length > 0 ? normalized : fallback
+}
+
+export function transferFactionResourcesToGovernor(
+  world: WorldState,
+  params: {
+    sourceFactionId: string
+    sourceAiPlayerId: string
+    governorPlayerId: string
+    resources: Partial<ResourceTransferBundle>
+    reason: string
+    approvedBy: string
+  },
+): TransferFactionResourcesToGovernorResult {
+  const sourceFactionId = normalizeTransferLabel(params.sourceFactionId, '')
+  const sourceAiPlayerId = normalizeTransferLabel(params.sourceAiPlayerId, '')
+  const governorPlayerId = normalizeTransferLabel(params.governorPlayerId, '')
+  const approvedBy = normalizeTransferLabel(params.approvedBy, '')
+  const reason = normalizeTransferLabel(params.reason, 'AI resource transfer')
+  const resources = normalizeResourceTransferBundle(params.resources)
+
+  if (!resources) {
+    return {
+      ok: false,
+      message: 'Invalid resource transfer amount.',
+      failureCode: 'invalid_resource_amount',
+    }
+  }
+
+  if (totalResourceTransferAmount(resources) > AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION) {
+    return {
+      ok: false,
+      message: `Resource transfer exceeds per-action cap ${AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION}.`,
+      failureCode: 'transfer_limit_exceeded',
+    }
+  }
+
+  if (!governorPlayerId || approvedBy !== governorPlayerId) {
+    return {
+      ok: false,
+      message: 'Resource transfers require explicit approval by the target governor.',
+      failureCode: 'approval_required',
+    }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[sourceFactionId]
+  if (!faction) {
+    return {
+      ok: false,
+      message: `Unknown source faction: ${sourceFactionId}`,
+      failureCode: 'unknown_source_faction',
+    }
+  }
+
+  const account = faction.aiResourceAccounts?.[sourceAiPlayerId]
+  if (!account) {
+    return {
+      ok: false,
+      message: `AI resource account not found: ${sourceAiPlayerId}`,
+      failureCode: 'missing_ai_resource_account',
+    }
+  }
+
+  if (account.governorPlayerId !== governorPlayerId || account.factionId !== sourceFactionId) {
+    return {
+      ok: false,
+      message: 'AI resource transfer is limited to the same governor and source faction in v1.',
+      failureCode: 'governor_mismatch',
+    }
+  }
+
+  if (!hasSufficientAiResources(account.resources, resources)) {
+    return {
+      ok: false,
+      message: 'AI resource account has insufficient resources for this transfer.',
+      failureCode: 'insufficient_resources',
+    }
+  }
+
+  if (!satisfiesAiResourceReserveFloor(account.resources, resources)) {
+    return {
+      ok: false,
+      message: `AI resource account must keep at least ${AI_RESOURCE_TRANSFER_RESERVE_FLOOR} of each transferred resource.`,
+      failureCode: 'reserve_floor_violation',
+    }
+  }
+
+  account.resources = subtractResourceBundles(account.resources, resources)
+  account.updatedTick = nextWorld.tick
+
+  const existingInboxes = faction.governorResourceInboxes ?? {}
+  const existingInbox = existingInboxes[governorPlayerId]
+  const transferId = `resource_transfer_${nextWorld.tick}_${sourceAiPlayerId}_${governorPlayerId}_${existingInbox?.pendingTransfers.length ?? 0}`
+  const pendingTransfer = {
+    id: transferId,
+    sourceAiPlayerId,
+    sourceFactionId,
+    governorPlayerId,
+    resources,
+    reason,
+    approvedBy,
+    status: 'pending' as const,
+    createdTick: nextWorld.tick,
+  }
+  const inbox = existingInbox
+    ? {
+        ...existingInbox,
+        pendingTransfers: [...existingInbox.pendingTransfers, pendingTransfer],
+        totalPendingResources: addResourceBundles(existingInbox.totalPendingResources, resources),
+      }
+    : {
+        governorPlayerId,
+        pendingTransfers: [pendingTransfer],
+        totalPendingResources: { ...resources },
+      }
+  faction.governorResourceInboxes = {
+    ...existingInboxes,
+    [governorPlayerId]: inbox,
+  }
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    'AI资源输送',
+    `${sourceAiPlayerId} 已向总督 ${governorPlayerId} 的待领取收件箱转入资源，等待后续领取结算。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `AI resource transfer queued for governor ${governorPlayerId}.`,
+    transferId,
+    sourceAiPlayerId,
+    governorPlayerId,
+    resources,
   }
 }
 

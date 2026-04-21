@@ -10,6 +10,15 @@ const tacticalTemplateIdSchema = z.enum(['rally', 'harass', 'withdraw', 'breakth
 const cityTechTrackIdSchema = z.enum(['governance', 'logistics', 'defense', 'recruitment'])
 const generalTacticIdSchema = z.enum(['assault', 'guard', 'logistics'])
 const aiAgendaActionIdSchema = z.enum(['agenda_expand', 'agenda_support', 'agenda_stabilize', 'agenda_recover', 'agenda_redeploy'])
+const resourceTransferBundleSchema = z.object({
+  food: z.number().int().positive().optional(),
+  wood: z.number().int().positive().optional(),
+  stone: z.number().int().positive().optional(),
+  iron: z.number().int().positive().optional(),
+}).strict().refine(
+  (value) => Object.values(value).some((amount) => typeof amount === 'number' && amount > 0),
+  { message: 'at least one positive resource amount is required' },
+)
 
 const generalDirectiveSchema = z.object({
   generalId: z.string().min(1),
@@ -201,6 +210,17 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
       factionId: factionIdSchema.optional(),
       rewardId: z.string().min(1).max(128).optional(),
     }).optional(),
+  }),
+  z.object({
+    action: z.literal('transferFactionResourcesToGovernor'),
+    payload: z.object({
+      sourceFactionId: factionIdSchema,
+      sourceAiPlayerId: z.string().min(1).max(80),
+      governorPlayerId: z.string().min(1).max(80),
+      resources: resourceTransferBundleSchema,
+      reason: z.string().min(1).max(400),
+      approvedBy: z.string().min(1).max(80),
+    }).strict(),
   }),
   z.object({
     action: z.literal('promoteTroopFacilityBuilding'),

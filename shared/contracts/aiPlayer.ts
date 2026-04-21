@@ -1,4 +1,4 @@
-import type { FactionAiQuota } from './game/world'
+import type { FactionAiQuota, ResourceTransferBundle } from './game/world'
 import type {
   AiRuntimeFailureAggregation,
   AiRuntimeFailureRecord,
@@ -13,6 +13,7 @@ export type AiPlayerActionCategory =
   | 'city'
   | 'world'
   | 'alliance'
+  | 'economy'
   | 'activity'
   | 'intel'
 
@@ -68,6 +69,7 @@ export type AiPlayerActionType =
   | 'formation_assign'
   | 'threat_escape'
   | 'alliance_help'
+  | 'resource_transfer_to_governor'
   | 'alliance_donate'
   | 'rally_join'
   | 'rally_launch'
@@ -114,6 +116,7 @@ export type AiPlayerExecutableV1ActionType =
   | 'formation_assign'
   | 'threat_escape'
   | 'alliance_help'
+  | 'resource_transfer_to_governor'
   | 'reward_claim'
 
 export type AiPlayerEmptyArgs = Record<string, never>
@@ -225,6 +228,10 @@ export type AiPlayerAllianceHelpArgs = {
   regionId?: string
 }
 
+export type AiPlayerResourceTransferToGovernorArgs = {
+  resources: Partial<ResourceTransferBundle>
+}
+
 export type AiPlayerRewardClaimArgs = {
   rewardId?: string
 }
@@ -245,6 +252,7 @@ type AiPlayerActionArgsByType = {
   formation_assign: AiPlayerFormationAssignArgs
   threat_escape: AiPlayerThreatEscapeArgs
   alliance_help: AiPlayerAllianceHelpArgs
+  resource_transfer_to_governor: AiPlayerResourceTransferToGovernorArgs
   reward_claim: AiPlayerRewardClaimArgs
 } & {
   [K in Exclude<AiPlayerActionType, AiPlayerExecutableV1ActionType>]: AiPlayerEmptyArgs

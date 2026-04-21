@@ -81,9 +81,16 @@ import {
   queuePlanExecution,
   queueTacticalOverride,
   enqueueAffair,
+  transferFactionResourcesToGovernor,
   updateAllianceDirective,
 } from '../../../../shared/domain/rules'
-import type { AdvanceTickDiagnostics, AllianceHelpFailureCode, QueuePlanFailureCode, RewardClaimFailureCode } from '../../../../shared/domain/rules'
+import type {
+  AdvanceTickDiagnostics,
+  AllianceHelpFailureCode,
+  QueuePlanFailureCode,
+  ResourceTransferFailureCode,
+  RewardClaimFailureCode,
+} from '../../../../shared/domain/rules'
 import type {
   ActionType,
   AiRuntimeAdvanceTickPerformance,
@@ -190,6 +197,7 @@ type WorldActionFailureCode =
   | QueuePlanFailureCode
   | AllianceHelpFailureCode
   | RewardClaimFailureCode
+  | ResourceTransferFailureCode
   | 'invalid_ai_agenda_action'
   | 'unknown_faction'
   | 'no_primary_unit'
@@ -4758,6 +4766,103 @@ export function rewardClaimAction(
         foodReward: result.foodReward,
         actionPointReward: result.actionPointReward,
         pendingRewardCount: result.pendingRewardCount,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
+export function transferFactionResourcesToGovernorAction(
+  params: {
+    sourceFactionId: string
+    sourceAiPlayerId: string
+    governorPlayerId: string
+    resources: {
+      food?: number
+      wood?: number
+      stone?: number
+      iron?: number
+    }
+    reason: string
+    approvedBy: string
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const mutationLock = tryAcquireWorldMutationLock('transfer_faction_resources_to_governor')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, params.sourceFactionId, requestId)
+  }
+
+  try {
+    const result = transferFactionResourcesToGovernor(worldState, params)
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, params.sourceFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: params.sourceAiPlayerId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'transfer_faction_resources_to_governor',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          sourceFactionId: params.sourceFactionId,
+          sourceAiPlayerId: params.sourceAiPlayerId,
+          governorPlayerId: params.governorPlayerId,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, params.sourceFactionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.transferId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'transfer_faction_resources_to_governor',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        sourceFactionId: params.sourceFactionId,
+        sourceAiPlayerId: result.sourceAiPlayerId,
+        governorPlayerId: result.governorPlayerId,
+        transferId: result.transferId,
+        resources: result.resources,
         executionStatus: execution?.status,
         activeOrderCount: execution?.activeOrderCount,
         actionPointsRemaining: execution?.actionPointsRemaining,

@@ -29,6 +29,7 @@ import {
   setGeneralActiveHeroAction,
   setRecruitSelectedPoolAction,
   setGeneralTacticAction,
+  transferFactionResourcesToGovernorAction,
   upgradeCityAction,
   upgradeCityTechAction,
 } from '../world/WorldService'
@@ -1076,6 +1077,30 @@ export async function executeSupportedAiPlayerProposal(
         regionId,
       }
       response = allianceHelpAction(regionId, includeWorld, typedProposal.factionId as never)
+      break
+    }
+    case 'resource_transfer_to_governor': {
+      const typedProposal = proposal as AiPlayerActionProposalOf<'resource_transfer_to_governor'>
+      worldAction = 'transferFactionResourcesToGovernor'
+      worldActionPayload = {
+        sourceFactionId: typedProposal.factionId,
+        sourceAiPlayerId: typedProposal.aiPlayerId,
+        governorPlayerId: typedProposal.governorPlayerId,
+        resources: typedProposal.args.resources,
+        reason: typedProposal.reason,
+        approvedBy: typedProposal.approvedBy ?? '',
+      }
+      response = transferFactionResourcesToGovernorAction(
+        {
+          sourceFactionId: typedProposal.factionId,
+          sourceAiPlayerId: typedProposal.aiPlayerId,
+          governorPlayerId: typedProposal.governorPlayerId,
+          resources: typedProposal.args.resources,
+          reason: typedProposal.reason,
+          approvedBy: typedProposal.approvedBy ?? '',
+        },
+        includeWorld,
+      )
       break
     }
     case 'reward_claim': {

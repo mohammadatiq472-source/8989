@@ -4,7 +4,7 @@ import type {
   AiPlayerExecutableV1ActionType,
 } from './aiPlayer'
 
-export const AI_PLAYER_KNOWLEDGE_GRAPH_VERSION = '2026-04-20'
+export const AI_PLAYER_KNOWLEDGE_GRAPH_VERSION = '2026-04-21'
 export const AI_PLAYER_KNOWLEDGE_GRAPH_FORMATS = ['json', 'obsidian'] as const
 export const AI_PLAYER_AUTHORITY_RECOMMENDATIONS = ['promoted', 'defer'] as const
 
@@ -176,6 +176,17 @@ export const AI_PLAYER_PROMOTED_V1_ACTION_KNOWLEDGE: readonly AiPlayerPromotedAc
     criticalNotes: ['Current authority is a minimal backend support action, not a full alliance mailbox system.'],
   },
   {
+    aiAction: 'resource_transfer_to_governor',
+    worldAction: 'transferFactionResourcesToGovernor',
+    semanticSummary: 'Move resources from an AI player subaccount into the same-governor pending resource inbox.',
+    verificationCommands: ['npm run build', 'npm run test:ai:player-http-contract', 'npm run test:world:resource-transfer-http-contract'],
+    criticalNotes: [
+      'V1 is same-governor only; cross-faction trade remains deferred.',
+      'This action is high-risk and requires explicit governor approval.',
+      'Settlement writes a pending governor inbox entry, not UI-local resources.',
+    ],
+  },
+  {
     aiAction: 'reward_claim',
     worldAction: 'claimReward',
     semanticSummary: 'Claim the next authoritative pending faction reward from claimableRewards.',
@@ -193,39 +204,39 @@ export const AI_PLAYER_AUTHORITY_DECISIONS: readonly AiPlayerAuthorityDecision[]
   },
   {
     worldAction: 'transferFactionResourcesToGovernor',
-    recommendation: 'defer',
-    suggestedAiAction: null,
-    rationale: 'No authoritative WorldActionRequest, WorldService route, or rules.ts settlement path exists yet for AI-to-governor resource transfer. Current world resources are faction-scoped, AIPlayer is a unit grouping, and the human target wallet/settlement surface must be defined before any AI player action is added.',
+    recommendation: 'promoted',
+    suggestedAiAction: 'resource_transfer_to_governor',
+    rationale: 'User confirmed v1 semantics: same-governor only, cross-faction trade deferred, target settlement is a governor pending inbox, source is an AI resource subaccount, and all transfers are high-risk with mandatory approval.',
     blockers: [
       {
         id: 'target-wallet-semantics',
-        requiresUserConfirmation: true,
+        requiresUserConfirmation: false,
         question: 'When a human receives resources from an AI player, where should the resources settle: the human account wallet, a governor inbox that must be claimed, or the target faction resource pool?',
-        recommendedDefault: 'For v1, use an explicit governor pending-transfer inbox and require a follow-up claim/settle authority; do not silently mutate UI-local player resources.',
-        rationale: 'HumanPlayer currently has no resource fields, while FactionState resources are faction-scoped. A pending inbox keeps the transfer observable and prevents accidental same-faction self-transfer semantics.',
+        recommendedDefault: 'Confirmed for v1: use an explicit governor pending-transfer inbox; do not silently mutate UI-local player resources.',
+        rationale: 'HumanPlayer currently has no resource fields, while FactionState resources are faction-scoped. A pending inbox keeps the transfer observable.',
         unblocks: 'WorldState target settlement surface and reward/receipt display semantics.',
       },
       {
         id: 'source-account-semantics',
-        requiresUserConfirmation: true,
+        requiresUserConfirmation: false,
         question: 'What is the source account for AI-owned resources: the governed AI player subaccount, V2 AIPlayerV2.resources, or the source faction resource pool?',
-        recommendedDefault: 'Do not debit FactionState directly for same-faction AI-to-human transfer. First define an AI subaccount or classify the feature as a governed faction spending order instead of a transfer.',
-        rationale: 'Current AIPlayer in WorldState is a unit grouping with no wallet. V2 AIPlayerV2.resources exists, but it is not the current AI governance authority chain.',
+        recommendedDefault: 'Confirmed for v1: debit an AI resource subaccount keyed by governed aiPlayerId.',
+        rationale: 'The AI player should appear player-like and accumulate resources through future resource-field and building-tree authorities.',
         unblocks: 'rules.ts debit logic, insufficient-resource failure codes, and budget accounting.',
       },
       {
         id: 'transfer-scope',
-        requiresUserConfirmation: true,
+        requiresUserConfirmation: false,
         question: 'Should AI resource transfer be same-governor only, same-alliance only, or allow cross-faction diplomacy/trade?',
-        recommendedDefault: 'Keep v1 same-governor or same-alliance only, with cross-faction trade deferred until diplomacy/trade rules exist.',
+        recommendedDefault: 'Confirmed for v1: same-governor only; cross-faction trade remains deferred.',
         rationale: 'Cross-faction resource transfer changes diplomacy and economy balance; there is no trade tax, cooldown, or alliance permission model yet.',
         unblocks: 'route validation, alliance permission checks, and abuse-prevention policy.',
       },
       {
         id: 'approval-and-limits',
-        requiresUserConfirmation: true,
+        requiresUserConfirmation: false,
         question: 'What approval and limits should apply: mandatory human approval, reserve floor, per-tick cap, per-day cap, and cooldown?',
-        recommendedDefault: 'Make every resource transfer high-risk and approval-required in v1; enforce a reserve floor plus per-action cap before enabling any auto-approval.',
+        recommendedDefault: 'Confirmed for v1: high-risk and approval-required, with reserve floor and per-action cap.',
         rationale: 'This action can permanently move economic value. It must not inherit low-risk proposal defaults from reward_claim or alliance_help.',
         unblocks: 'AI action risk level, budget policy, failureCode set, and HTTP contract tests.',
       },

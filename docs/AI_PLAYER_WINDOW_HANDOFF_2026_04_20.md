@@ -106,6 +106,7 @@
   - `formation_assign -> setGeneralTactic`
   - `threat_escape -> queueAiAgendaAction`
   - `alliance_help -> allianceHelp`
+  - `resource_transfer_to_governor -> transferFactionResourcesToGovernor`
   - `reward_claim -> claimReward`
 - `recruit_commander` 已不再只是 failure 样本：
   - `recruit_commander -> recruitProspectHero`
@@ -132,6 +133,7 @@
   - `formation_assign`
   - `threat_escape`
   - `alliance_help`
+  - `resource_transfer_to_governor`
   - `reward_claim`
 - 坏参数现在在 proposal 创建期就会 `422`，而不是拖到执行期才炸
 
@@ -216,8 +218,9 @@ cmd /c "set GAME_CLOCK_ENABLED=1&& npx tsx server/src/app.ts"
 
 - 单进程 `WorldService + SessionManager + GameWebSocket` 仍是系统硬瓶颈
 - `setAiContextFocus` 已经有显式 `defer` 结论；没有新的业务语义前，不要再重复把它包装成 AI 原子动作
-- `transferFactionResourcesToGovernor` 已登记为资源输送 deferred candidate；当前不是已有 world action，不能直接新增 AI 玩家白名单动作
-- 这条 candidate 已带 `blockers`，最需要用户确认：真人资源落点、AI 资源来源
+- `transferFactionResourcesToGovernor` 已从资源输送 deferred candidate 提升为 promoted authority
+- `resource_transfer_to_governor` 已接入 AI 玩家 v1；语义是同总督、AI 子账户扣款、总督待领取收件箱、high-risk 强制审批
+- 这条 authority 仍保留 `blockers` 决策记录，但 `requiresUserConfirmation=false`，防止后续窗口重复询问
 - 资源输送 UI 交接只看 `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`，不要先改 Godot UI 结算逻辑
 - `godot:week1` 仍依赖外部后端进程，不是自举 gate
 - `cross-env` 缺失仍未修

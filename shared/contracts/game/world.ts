@@ -192,6 +192,13 @@ export type RewardBundle = {
   ap: number
 }
 
+export type ResourceTransferBundle = {
+  food: number
+  wood: number
+  stone: number
+  iron: number
+}
+
 export type PveNode = {
   id: string
   name: string
@@ -214,6 +221,32 @@ export type ClaimableReward = {
   createdTick: number
   nodeId?: string
   tileId?: string
+}
+
+export type AiResourceAccount = {
+  aiPlayerId: string
+  governorPlayerId: string
+  factionId: FactionId
+  resources: ResourceTransferBundle
+  updatedTick: number
+}
+
+export type GovernorResourceTransfer = {
+  id: string
+  sourceAiPlayerId: string
+  sourceFactionId: FactionId
+  governorPlayerId: string
+  resources: ResourceTransferBundle
+  reason: string
+  approvedBy: string
+  status: 'pending'
+  createdTick: number
+}
+
+export type GovernorResourceInbox = {
+  governorPlayerId: string
+  pendingTransfers: GovernorResourceTransfer[]
+  totalPendingResources: ResourceTransferBundle
 }
 
 /** AI 玩家分组：势力内的指挥官角色，管辖最多 3 支部队（实现同势力飞地协作） */
@@ -407,6 +440,10 @@ export type FactionState = {
   recruitedTotal?: number
   /** 待领取奖励（当前先承载开荒 PVE 等明确后端 authority 的奖励来源） */
   claimableRewards?: ClaimableReward[]
+  /** AI 玩家独立资源子账户（用于后续资源地/建筑树产出与受治理资源输送） */
+  aiResourceAccounts?: Record<string, AiResourceAccount>
+  /** 总督待领取资源收件箱；只由后端 authority 写入，UI 不直接结算 */
+  governorResourceInboxes?: Record<string, GovernorResourceInbox>
   /** 势力内 AI 玩家分组（每玩家管辖3支部队，支持飞地协作） */
   aiPlayers?: AIPlayer[]
   /** 势力内 AI 玩家配额（服务端权威计算：初始配额 + 扩容进度 + 上限） */
@@ -667,6 +704,17 @@ export type WorldActionRequest =
       payload?: {
         factionId?: FactionId
         rewardId?: string
+      }
+    }
+  | {
+      action: 'transferFactionResourcesToGovernor'
+      payload: {
+        sourceFactionId: FactionId
+        sourceAiPlayerId: string
+        governorPlayerId: string
+        resources: Partial<ResourceTransferBundle>
+        reason: string
+        approvedBy: string
       }
     }
   | {

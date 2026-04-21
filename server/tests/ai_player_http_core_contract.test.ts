@@ -27,6 +27,7 @@ const EXECUTABLE_ACTIONS: Record<string, string> = {
   formation_assign: 'setGeneralTactic',
   threat_escape: 'queueAiAgendaAction',
   alliance_help: 'allianceHelp',
+  resource_transfer_to_governor: 'transferFactionResourcesToGovernor',
   reward_claim: 'claimReward',
 }
 
@@ -59,6 +60,11 @@ const INVALID_PROPOSAL_CASES: Array<{
   { action: 'formation_assign', args: { tacticId: 'invalid_tactic' }, message: 'formation_assign rejects tacticId' },
   { action: 'threat_escape', args: { mode: 'invalid_mode' }, message: 'threat_escape rejects unsupported mode' },
   { action: 'alliance_help', args: { regionId: 123 }, message: 'alliance_help rejects non-string regionId' },
+  {
+    action: 'resource_transfer_to_governor',
+    args: { resources: { food: 0 } },
+    message: 'resource_transfer_to_governor rejects non-positive resources',
+  },
   { action: 'reward_claim', args: { rewardId: 123 }, message: 'reward_claim rejects non-string rewardId' },
   { action: 'battle_report_read', args: { unexpected: 'field' }, message: 'empty-args actions reject stray args' },
 ]

@@ -50,6 +50,7 @@ export const AI_PLAYER_RUNTIME_ALLOWED_ACTIONS = [
   'formation_assign',
   'threat_escape',
   'alliance_help',
+  'resource_transfer_to_governor',
   'reward_claim',
 ] as const satisfies readonly AiPlayerExecutableV1ActionType[]
 

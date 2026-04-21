@@ -88,6 +88,7 @@ flowchart LR
 | `formation_assign` | `setGeneralTactic` | 写权威战法，并同步 directive preview | 同上 |
 | `threat_escape` | `queueAiAgendaAction` | 走 `agenda_recover / agenda_redeploy`，不是直接 move | 同上 |
 | `alliance_help` | `allianceHelp` | 对联盟战区做一次正式协助 | 同上 |
+| `resource_transfer_to_governor` | `transferFactionResourcesToGovernor` | 从 AI 子账户转入同总督待领取收件箱，high-risk 强制审批 | 同上 |
 | `reward_claim` | `claimReward` | 领取 `FactionState.claimableRewards` 中的待领奖励 | 同上 |
 
 ## 4. 已补的后端 authority
@@ -101,6 +102,10 @@ flowchart LR
   - 状态面：`FactionState.claimableRewards`
   - 奖励来源：当前已接 `provincePve` 清剿后挂起奖励
   - 正式验证：`npm run test:world:reward-claim-http-contract`
+- `transferFactionResourcesToGovernor`
+  - 状态面：`FactionState.aiResourceAccounts` -> `FactionState.governorResourceInboxes`
+  - v1 语义：同总督限定、跨势力贸易延期、AI 子账户扣款、总督待领取收件箱、high-risk 强制审批
+  - 正式验证：`npm run test:world:resource-transfer-http-contract`
 
 ### 4.2 已增强的既有 authority
 
@@ -173,13 +178,15 @@ flowchart LR
 
 ### 6.7 AI 玩家向真人/总督输送资源
 
-- 当前没有可直接接入的 world authority。
-- 已在 `shared/contracts/aiPlayerKnowledgeGraph.ts` 登记 deferred candidate：
+- 当前已接 world authority：
   `transferFactionResourcesToGovernor`。
+- 当前已接 AI 玩家动作：
+  `resource_transfer_to_governor`。
 - 不能把 `resource_item_use / resource_gather / alliance_donate` 误当成资源输送动作；它们当前都不是 executable v1，也不是“AI 资源转给真人”的结算链。
 - 代码事实：
-  `FactionState` 是势力级资源，`AIPlayer` 当前是部队分组；V2 `AIPlayerV2.resources` 不属于当前 AI 玩家治理正式写链。
-- 必须先定义后端 authority 和目标钱包/收件箱，再谈 AI 玩家 shared contract/schema。
+  `FactionState` 是势力级资源，`AIPlayer` 当前是部队分组；本轮新增 `FactionState.aiResourceAccounts` 作为 AI 子账户，避免把部队分组和经济钱包混在一起。
+- 目标落点是 `FactionState.governorResourceInboxes`；UI 不直接改资源。
+- v1 限定同总督，跨势力贸易延期。
 - UI 侧交接见：
   `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`。
 
@@ -195,6 +202,7 @@ flowchart LR
 - `npm run gate:ai:preflight`
 - `npm run test:world:alliance-help-http-contract`
 - `npm run test:world:reward-claim-http-contract`
+- `npm run test:world:resource-transfer-http-contract`
 - `npm run gate:ai:runtime-capacity`
 
 说明：
@@ -231,15 +239,15 @@ cmd /c "set GAME_CLOCK_ENABLED=1&& npx tsx server/src/app.ts"
 - 而是“剩余 authority 还没有收口成清晰的玩家原子动作语义”。
 - `setAiContextFocus` 现在已经有显式 `defer` 结论；它更像运行时上下文 authority，不天然等于玩家操作。
 - 没有新的业务语义前，不要再重复尝试把 `setAiContextFocus` 包装成新 AI 玩家动作。
-- `transferFactionResourcesToGovernor` 现在也是显式 `defer` 结论；它是资源输送 authority candidate，不是已经存在的 world action。
-- 资源输送必须先决定真人资源落点、AI 子账户/势力账户扣款语义、审批/预算/冷却规则，再接 AI 玩家合同。
-- 这条 deferred candidate 现在在机器可读图谱里带 `blockers`：
+- `transferFactionResourcesToGovernor` 已从显式 `defer` 提升为 `promoted`。
+- 资源输送用户已确认真人资源落点、AI 子账户扣款语义、审批和跨势力延期规则。
+- 这条 promoted authority 现在在机器可读图谱里保留 `blockers` 决策记录：
   - `target-wallet-semantics`
   - `source-account-semantics`
   - `transfer-scope`
   - `approval-and-limits`
   - `ui-consumption-contract`
-- 其中最需要用户拍板的是 `target-wallet-semantics` 和 `source-account-semantics`；否则后端无法判断该扣谁、该加给谁。
+- 这些 blockers 现在作为“已确认决策记录”保留，`requiresUserConfirmation=false`，防止后续窗口重复询问。
 - 继续推进时必须按这个顺序：
   1. 全文搜索代码事实
   2. 收口动作语义

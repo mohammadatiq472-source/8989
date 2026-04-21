@@ -16,6 +16,7 @@ import {
   setAiContextFocusAction,
   setGeneralActiveHeroAction,
   setGeneralTacticAction,
+  transferFactionResourcesToGovernorAction,
   upgradeCityAction,
   upgradeCityTechAction,
   queuePlanExecutionAction,
@@ -218,6 +219,9 @@ export async function handleWorldActionRoute(
           200,
           rewardClaimAction(request.payload?.rewardId, includeWorld, request.payload?.factionId),
         )
+        return
+      case 'transferFactionResourcesToGovernor':
+        writeJson(res, 200, transferFactionResourcesToGovernorAction(request.payload, includeWorld))
         return
       case 'promoteTroopFacilityBuilding':
         writeJson(

@@ -226,15 +226,15 @@ async function run() {
       arguments: {
         format: 'obsidian',
         worldAction: 'transferFactionResourcesToGovernor',
-        recommendation: 'defer',
+        recommendation: 'promoted',
         includeCatalog: false,
       },
     }))
     assert.ok(resourceTransferText.includes('### transferFactionResourcesToGovernor'))
-    assert.ok(resourceTransferText.includes('Recommendation: `defer`'))
+    assert.ok(resourceTransferText.includes('Recommendation: `promoted`'))
     assert.ok(resourceTransferText.includes('Blocking decisions'))
     assert.ok(resourceTransferText.includes('target-wallet-semantics'))
-    assert.ok(resourceTransferText.includes('User confirmation: `true`'))
+    assert.ok(resourceTransferText.includes('User confirmation: `false`'))
 
     const jsonText = readTextContent(await client.request('tools/call', {
       name: 'get_ai_player_knowledge_graph',

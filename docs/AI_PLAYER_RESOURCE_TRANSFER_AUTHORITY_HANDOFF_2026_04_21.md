@@ -2,40 +2,45 @@
 
 ## 1. 结论
 
-- 当前不能直接新增 AI 玩家白名单动作。
-- 原因不是 UI，而是后端 authority 不完整：仓库里没有 `WorldActionRequest -> routes/world.ts -> WorldService -> shared/domain/rules.ts -> commitWorldState` 的“AI 势力向真人/总督输送资源”结算链。
-- 已在机器可读知识图谱登记 deferred candidate：
+- 用户已确认 v1 语义：
+  - 只允许同总督转移。
+  - 跨势力贸易延期。
+  - 目标落点是“总督待领取收件箱”。
+  - 资源来源是 AI 玩家独立资源子账户。
+  - 全部 high-risk，强制审批。
+- 已新增后端 authority：
   - `worldAction`: `transferFactionResourcesToGovernor`
-  - `recommendation`: `defer`
-  - `suggestedAiAction`: `null`
+  - `aiAction`: `resource_transfer_to_governor`
+  - `recommendation`: `promoted`
+- 这条链只写后端世界状态，不做 UI 本地结算。
 
 ## 2. 已确认的代码事实
 
 - AI 玩家治理链只应该产生 proposal，真正写世界仍必须走：
   `AI proposal -> governance executor -> WorldService -> shared/domain/rules.ts -> commitWorldState -> receipt`
-- `shared/contracts/aiPlayer.ts` 里已有候选动作：
-  - `resource_item_use`
-  - `resource_gather`
-  - `alliance_donate`
-- 这些候选动作当前在 catalog 中不是可执行 v1；它们不是“把 AI 资源送给真人”的 authority。
+- `resource_item_use / resource_gather / alliance_donate` 仍不是“AI 给总督转资源”的 authority。
 - `shared/contracts/game/world.ts` 中的 `FactionState` 资源是势力级字段：
   - `food`
   - `wood`
   - `stone`
   - `iron`
-- `FactionState.aiPlayers` 里的 `AIPlayer` 当前是势力内部的部队分组/指挥官角色，不是独立资源钱包。
+- `FactionState.aiPlayers` 里的 `AIPlayer` 当前是势力内部的部队分组/指挥官角色，不是资源钱包。
+- 新增资源子账户落点：
+  - `FactionState.aiResourceAccounts[aiPlayerId]`
+- 新增总督待领取收件箱落点：
+  - `FactionState.governorResourceInboxes[governorPlayerId]`
 - `shared/contracts/game/v2.ts` 中 `AIPlayerV2.resources` 存在，但这不是当前 AI 玩家治理正式写链的结算 authority。
-- 当前没有明确的真人玩家资源钱包、总督资源收件箱或跨势力转账落点。
+- 当前没有做跨势力交易，也没有直接写真人玩家钱包。
 
 ## 3. 后端 authority 语义建议
 
-如果后续要做，先补后端 authority，不要先补 AI 白名单。
+后端 authority 已按用户确认语义落地。
 
 建议 authority 名称先用：
 
 - `transferFactionResourcesToGovernor`
 
-建议最小 payload：
+当前 payload：
 
 ```ts
 {
@@ -52,12 +57,13 @@
 }
 ```
 
-必须先明确的问题：
+当前规则：
 
-- 真人玩家资源落点是“玩家钱包”、"总督收件箱"、还是“真人控制势力的 faction resources”。
-- AI 玩家自身资源是从 `FactionState` 扣，还是先引入 AI 子账户。
-- 同势力内部转移是否只是预算授权，不应真实增减资源。
-- 跨势力输送是否允许；如果允许，是否需要同盟关系、冷却、税损或交易限制。
+- `approvedBy` 必须等于 `governorPlayerId`。
+- `sourceAiPlayerId` 必须存在于 `FactionState.aiResourceAccounts`。
+- AI 子账户 `governorPlayerId` 必须匹配目标总督。
+- 扣 AI 子账户资源，写入 `governorResourceInboxes` pending transfer。
+- 保留 reserve floor 和单次总量 cap。
 
 ## 3.1 需要用户确认的阻塞点
 
@@ -65,27 +71,25 @@
 
 | 阻塞点 | 需要确认的问题 | 建议默认口径 |
 | --- | --- | --- |
-| `target-wallet-semantics` | 真人收到资源后落在哪里：真人钱包、总督待领取收件箱、还是目标 faction resources？ | v1 先用“总督待领取收件箱”，再走后端 claim/settle authority；不要让 UI 本地改资源。 |
-| `source-account-semantics` | AI 的资源从哪里扣：AI 子账户、V2 `AIPlayerV2.resources`、还是源 faction resources？ | 不要同势力直接扣 `FactionState` 做“AI 给真人”；先定义 AI 子账户，或把功能改名为“受治理的 faction 支出”。 |
-| `transfer-scope` | 允许同总督、同盟内、还是跨势力转资源？ | v1 只做同总督/同盟内；跨势力贸易延期。 |
-| `approval-and-limits` | 是否强制真人审批、保留最低库存、单次/每日上限、冷却？ | v1 全部按 high-risk，强制审批，先加 reserve floor 和 per-action cap。 |
-
-我这里能先按上述建议默认口径继续推进；如果你要改方向，最需要你拍板的是前两个：目标资源落点、AI 资源来源。
+| `target-wallet-semantics` | 真人收到资源后落在哪里：真人钱包、总督待领取收件箱、还是目标 faction resources？ | 已确认：v1 使用“总督待领取收件箱”。 |
+| `source-account-semantics` | AI 的资源从哪里扣：AI 子账户、V2 `AIPlayerV2.resources`、还是源 faction resources？ | 已确认：v1 使用 AI 子账户。 |
+| `transfer-scope` | 允许同总督、同盟内、还是跨势力转资源？ | 已确认：v1 只允许同总督；跨势力贸易延期。 |
+| `approval-and-limits` | 是否强制真人审批、保留最低库存、单次/每日上限、冷却？ | 已确认：全部 high-risk，强制审批；保留 reserve floor 和 per-action cap。 |
 
 建议 rules 层失败码：
 
 - `unknown_source_faction`
-- `unknown_governor`
+- `missing_ai_resource_account`
+- `governor_mismatch`
 - `invalid_resource_amount`
 - `insufficient_resources`
 - `reserve_floor_violation`
 - `transfer_limit_exceeded`
 - `approval_required`
-- `target_wallet_unresolved`
 
 ## 4. AI 玩家合同接入条件
 
-只有当以下链路都存在并通过正式测试后，才允许新增 AI 玩家动作：
+当前已完成：
 
 - `shared/contracts/game/world.ts` 新增 world action request 类型。
 - `shared/schemas/worldAction.ts` 新增创建期 schema。
@@ -93,14 +97,18 @@
 - `server/src/application/world/WorldService.ts` 新增带 mutation lock 的 action wrapper。
 - `server/src/routes/world.ts` 接入 `/api/world/action` switch。
 - `server/tests/**` 有 world authority HTTP 合同测试。
-
-之后才考虑 AI 玩家层：
-
 - `shared/contracts/aiPlayer.ts` 新增 action-specific args。
 - `shared/schemas/aiPlayer.ts` 新增 proposal 创建期校验。
 - `server/src/application/ai/aiPlayerActionCatalog.ts` 标为 executable v1。
 - `server/src/application/ai/aiPlayerProposalExecution.ts` 只调用 WorldService，不直接改世界。
 - receipt 必须带 `worldAction / worldActionPayload / failureCode / execution`。
+
+正式验证入口：
+
+- `npm run test:world:resource-transfer-http-contract`
+- `npm run test:ai:player-http-resource-transfer-contract`
+- `npm run test:ai:player-http-contract`
+- `npm run gate:ai:preflight`
 
 ## 5. 给 UI / AI 窗口侧的交接项
 
@@ -118,7 +126,7 @@ UI 侧不要先做结算逻辑，只需要为后端 authority 预留消费面。
   - 后端返回的 failureCode
 - 审批按钮只调用治理 proposal approve/execute 路由，不绕过后端 world action。
 - UI 不直接改资源显示；结算后只消费 world snapshot/runtime receipt。
-- 如果后端返回 `approval_required`、`reserve_floor_violation`、`target_wallet_unresolved`，UI 只展示失败原因和下一步，不做本地补偿。
+- 如果后端返回 `approval_required`、`governor_mismatch`、`missing_ai_resource_account`、`insufficient_resources` 或 `reserve_floor_violation`，UI 只展示失败原因和下一步，不做本地补偿。
 
 ## 6. 本轮没有触碰的边界
 

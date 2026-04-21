@@ -6,6 +6,7 @@ const SHARDS = [
   'ai_player_http_movement_contract.test.ts',
   'ai_player_http_recruit_contract.test.ts',
   'ai_player_http_command_support_contract.test.ts',
+  'ai_player_http_resource_transfer_contract.test.ts',
   'ai_player_http_reward_persistence_contract.test.ts',
 ] as const
 

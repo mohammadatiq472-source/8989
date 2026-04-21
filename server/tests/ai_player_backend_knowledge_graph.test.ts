@@ -73,6 +73,22 @@ function testDeferredAuthorityDecisionRemainsExplicit() {
     (deferredResourceTransfer?.rationale.length ?? 0) >= 80,
     'deferred resource transfer should keep an explicit rationale to prevent repeat work',
   )
+  assert.ok(
+    (deferredResourceTransfer?.blockers?.length ?? 0) >= 4,
+    'deferred resource transfer must expose the blocking product/backend decisions',
+  )
+  assert.ok(
+    deferredResourceTransfer?.blockers?.some((item) => item.id === 'target-wallet-semantics' && item.requiresUserConfirmation),
+    'resource transfer must ask the user to confirm the target wallet semantics',
+  )
+  assert.ok(
+    deferredResourceTransfer?.blockers?.some((item) => item.id === 'source-account-semantics' && item.requiresUserConfirmation),
+    'resource transfer must ask the user to confirm the AI source account semantics',
+  )
+  assert.ok(
+    deferredResourceTransfer?.blockers?.every((item) => item.question.length >= 24 && item.unblocks.length >= 16),
+    'resource transfer blockers must be actionable instead of terse notes',
+  )
 }
 
 function testBackendVersionControlScopeIsConcrete() {

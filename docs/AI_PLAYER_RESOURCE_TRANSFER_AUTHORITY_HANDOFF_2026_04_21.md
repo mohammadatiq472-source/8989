@@ -59,6 +59,19 @@
 - 同势力内部转移是否只是预算授权，不应真实增减资源。
 - 跨势力输送是否允许；如果允许，是否需要同盟关系、冷却、税损或交易限制。
 
+## 3.1 需要用户确认的阻塞点
+
+这些问题已同步写入 `shared/contracts/aiPlayerKnowledgeGraph.ts`，HTTP/MCP/Obsidian 读面都能读到。
+
+| 阻塞点 | 需要确认的问题 | 建议默认口径 |
+| --- | --- | --- |
+| `target-wallet-semantics` | 真人收到资源后落在哪里：真人钱包、总督待领取收件箱、还是目标 faction resources？ | v1 先用“总督待领取收件箱”，再走后端 claim/settle authority；不要让 UI 本地改资源。 |
+| `source-account-semantics` | AI 的资源从哪里扣：AI 子账户、V2 `AIPlayerV2.resources`、还是源 faction resources？ | 不要同势力直接扣 `FactionState` 做“AI 给真人”；先定义 AI 子账户，或把功能改名为“受治理的 faction 支出”。 |
+| `transfer-scope` | 允许同总督、同盟内、还是跨势力转资源？ | v1 只做同总督/同盟内；跨势力贸易延期。 |
+| `approval-and-limits` | 是否强制真人审批、保留最低库存、单次/每日上限、冷却？ | v1 全部按 high-risk，强制审批，先加 reserve floor 和 per-action cap。 |
+
+我这里能先按上述建议默认口径继续推进；如果你要改方向，最需要你拍板的是前两个：目标资源落点、AI 资源来源。
+
 建议 rules 层失败码：
 
 - `unknown_source_faction`

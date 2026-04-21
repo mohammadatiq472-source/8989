@@ -233,6 +233,13 @@ cmd /c "set GAME_CLOCK_ENABLED=1&& npx tsx server/src/app.ts"
 - 没有新的业务语义前，不要再重复尝试把 `setAiContextFocus` 包装成新 AI 玩家动作。
 - `transferFactionResourcesToGovernor` 现在也是显式 `defer` 结论；它是资源输送 authority candidate，不是已经存在的 world action。
 - 资源输送必须先决定真人资源落点、AI 子账户/势力账户扣款语义、审批/预算/冷却规则，再接 AI 玩家合同。
+- 这条 deferred candidate 现在在机器可读图谱里带 `blockers`：
+  - `target-wallet-semantics`
+  - `source-account-semantics`
+  - `transfer-scope`
+  - `approval-and-limits`
+  - `ui-consumption-contract`
+- 其中最需要用户拍板的是 `target-wallet-semantics` 和 `source-account-semantics`；否则后端无法判断该扣谁、该加给谁。
 - 继续推进时必须按这个顺序：
   1. 全文搜索代码事实
   2. 收口动作语义

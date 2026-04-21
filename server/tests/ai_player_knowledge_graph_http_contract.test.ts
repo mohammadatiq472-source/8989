@@ -92,6 +92,17 @@ async function run() {
     assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.worldAction, 'transferFactionResourcesToGovernor')
     assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.recommendation, 'defer')
     assert.equal(resourceTransferSnapshot.authorityDecisions[0]?.suggestedAiAction, null)
+    const resourceTransferBlockers = readArray(
+      readObject(resourceTransferSnapshot.authorityDecisions[0]).blockers,
+    )
+    assert.ok(resourceTransferBlockers.length >= 4, 'resource transfer defer node should expose blockers')
+    assert.ok(
+      resourceTransferBlockers.some((item) => {
+        const blocker = readObject(item)
+        return blocker.id === 'target-wallet-semantics' && blocker.requiresUserConfirmation === true
+      }),
+      'resource transfer blockers should include target-wallet-semantics requiring user confirmation',
+    )
 
     const obsidianResult = await requestJson(baseUrl, '/api/ai/knowledge-graph?format=obsidian&aiAction=recruit_pool_select', 'GET')
     assert.equal(obsidianResult.status, 200, `obsidian export failed: ${JSON.stringify(obsidianResult.data)}`)

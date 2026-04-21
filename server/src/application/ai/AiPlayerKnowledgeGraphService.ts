@@ -134,6 +134,15 @@ export function renderAiPlayerKnowledgeGraphObsidian(snapshot: AiPlayerKnowledge
       lines.push(`- Recommendation: \`${item.recommendation}\``)
       lines.push(`- Suggested AI action: ${item.suggestedAiAction ? `\`${item.suggestedAiAction}\`` : '`null`'}`)
       lines.push(`- Rationale: ${item.rationale}`)
+      if (item.blockers && item.blockers.length > 0) {
+        lines.push('- Blocking decisions:')
+        for (const blocker of item.blockers) {
+          lines.push(`  - \`${blocker.id}\`: ${blocker.question}`)
+          lines.push(`    - User confirmation: ${blocker.requiresUserConfirmation ? '`true`' : '`false`'}`)
+          lines.push(`    - Recommended default: ${blocker.recommendedDefault}`)
+          lines.push(`    - Unblocks: ${blocker.unblocks}`)
+        }
+      }
       lines.push('')
     }
     if (lines[lines.length - 1] === '') {

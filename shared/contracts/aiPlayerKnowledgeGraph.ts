@@ -16,11 +16,21 @@ export type AiPlayerPromotedActionKnowledge = {
   criticalNotes: readonly string[]
 }
 
+export type AiPlayerAuthorityBlocker = {
+  id: string
+  requiresUserConfirmation: boolean
+  question: string
+  recommendedDefault: string
+  rationale: string
+  unblocks: string
+}
+
 export type AiPlayerAuthorityDecision = {
   worldAction: string
   recommendation: (typeof AI_PLAYER_AUTHORITY_RECOMMENDATIONS)[number]
   suggestedAiAction: AiPlayerActionType | null
   rationale: string
+  blockers?: readonly AiPlayerAuthorityBlocker[]
 }
 
 export type AiPlayerBackendVersionControlScopeItem = {
@@ -186,6 +196,48 @@ export const AI_PLAYER_AUTHORITY_DECISIONS: readonly AiPlayerAuthorityDecision[]
     recommendation: 'defer',
     suggestedAiAction: null,
     rationale: 'No authoritative WorldActionRequest, WorldService route, or rules.ts settlement path exists yet for AI-to-governor resource transfer. Current world resources are faction-scoped, AIPlayer is a unit grouping, and the human target wallet/settlement surface must be defined before any AI player action is added.',
+    blockers: [
+      {
+        id: 'target-wallet-semantics',
+        requiresUserConfirmation: true,
+        question: 'When a human receives resources from an AI player, where should the resources settle: the human account wallet, a governor inbox that must be claimed, or the target faction resource pool?',
+        recommendedDefault: 'For v1, use an explicit governor pending-transfer inbox and require a follow-up claim/settle authority; do not silently mutate UI-local player resources.',
+        rationale: 'HumanPlayer currently has no resource fields, while FactionState resources are faction-scoped. A pending inbox keeps the transfer observable and prevents accidental same-faction self-transfer semantics.',
+        unblocks: 'WorldState target settlement surface and reward/receipt display semantics.',
+      },
+      {
+        id: 'source-account-semantics',
+        requiresUserConfirmation: true,
+        question: 'What is the source account for AI-owned resources: the governed AI player subaccount, V2 AIPlayerV2.resources, or the source faction resource pool?',
+        recommendedDefault: 'Do not debit FactionState directly for same-faction AI-to-human transfer. First define an AI subaccount or classify the feature as a governed faction spending order instead of a transfer.',
+        rationale: 'Current AIPlayer in WorldState is a unit grouping with no wallet. V2 AIPlayerV2.resources exists, but it is not the current AI governance authority chain.',
+        unblocks: 'rules.ts debit logic, insufficient-resource failure codes, and budget accounting.',
+      },
+      {
+        id: 'transfer-scope',
+        requiresUserConfirmation: true,
+        question: 'Should AI resource transfer be same-governor only, same-alliance only, or allow cross-faction diplomacy/trade?',
+        recommendedDefault: 'Keep v1 same-governor or same-alliance only, with cross-faction trade deferred until diplomacy/trade rules exist.',
+        rationale: 'Cross-faction resource transfer changes diplomacy and economy balance; there is no trade tax, cooldown, or alliance permission model yet.',
+        unblocks: 'route validation, alliance permission checks, and abuse-prevention policy.',
+      },
+      {
+        id: 'approval-and-limits',
+        requiresUserConfirmation: true,
+        question: 'What approval and limits should apply: mandatory human approval, reserve floor, per-tick cap, per-day cap, and cooldown?',
+        recommendedDefault: 'Make every resource transfer high-risk and approval-required in v1; enforce a reserve floor plus per-action cap before enabling any auto-approval.',
+        rationale: 'This action can permanently move economic value. It must not inherit low-risk proposal defaults from reward_claim or alliance_help.',
+        unblocks: 'AI action risk level, budget policy, failureCode set, and HTTP contract tests.',
+      },
+      {
+        id: 'ui-consumption-contract',
+        requiresUserConfirmation: false,
+        question: 'What should UI consume once backend authority exists?',
+        recommendedDefault: 'UI should render a proposal/receipt card from governance APIs and world snapshots only; it should never apply local resource deltas.',
+        rationale: 'The AI panel can request approval and display failureCode/execution, but settlement must remain in WorldService/rules.',
+        unblocks: 'UI handoff without touching Godot layout or local resource mutation logic.',
+      },
+    ],
   },
 ] as const
 

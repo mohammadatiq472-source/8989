@@ -232,6 +232,9 @@ async function run() {
     }))
     assert.ok(resourceTransferText.includes('### transferFactionResourcesToGovernor'))
     assert.ok(resourceTransferText.includes('Recommendation: `defer`'))
+    assert.ok(resourceTransferText.includes('Blocking decisions'))
+    assert.ok(resourceTransferText.includes('target-wallet-semantics'))
+    assert.ok(resourceTransferText.includes('User confirmation: `true`'))
 
     const jsonText = readTextContent(await client.request('tools/call', {
       name: 'get_ai_player_knowledge_graph',

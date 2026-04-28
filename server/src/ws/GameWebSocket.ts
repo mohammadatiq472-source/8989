@@ -23,9 +23,11 @@
  *   - 战争迷雾: 按 factionId 过滤，只推送己方单位变化 + 涉及己方的事件
  */
 
+import { performance } from 'node:perf_hooks'
 import { WebSocketServer, WebSocket } from 'ws'
 import type { Server, IncomingMessage } from 'node:http'
 import type {
+  AiRuntimeAdvanceTickSubphaseTiming,
   WorldState,
   NarrativeEvent,
   BattleOutcomeRecord,
@@ -45,10 +47,42 @@ type ClientSession = {
   subscribedAt: number
 }
 
+type WebSocketRuntimeConfig = {
+  maxConnections: number
+  maxSubscriptionsPerFaction: number
+  maxVisibleEventsPerTick: number
+  maxVisibleUnitChangesPerTick: number
+  maxVisibleTileChangesPerTick: number
+}
+
+export type BroadcastTickDeltaSummary = {
+  subphases: AiRuntimeAdvanceTickSubphaseTiming[]
+  deliveredMessages: number
+}
+
 const clients = new Set<ClientSession>()
 let wss: WebSocketServer | null = null
 const MAX_RECENT_WS_ERRORS = 12
 const recentWsErrors: WebSocketObservabilityError[] = []
+const DEFAULT_WS_MAX_CONNECTIONS = 256
+const DEFAULT_WS_MAX_SUBSCRIPTIONS_PER_FACTION = 32
+const DEFAULT_WS_MAX_VISIBLE_EVENTS_PER_TICK = 24
+const DEFAULT_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK = 96
+const DEFAULT_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK = 96
+const MIN_WS_MAX_CONNECTIONS = 1
+const MAX_WS_MAX_CONNECTIONS = 20_000
+const MIN_WS_MAX_SUBSCRIPTIONS_PER_FACTION = 1
+const MAX_WS_MAX_SUBSCRIPTIONS_PER_FACTION = 512
+const MIN_WS_MAX_VISIBLE_EVENTS_PER_TICK = 1
+const MAX_WS_MAX_VISIBLE_EVENTS_PER_TICK = 256
+const MIN_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK = 1
+const MAX_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK = 1_024
+const MIN_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK = 1
+const MAX_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK = 1_024
+let runtimeConfig = loadWebSocketRuntimeConfigFromEnv()
+let rejectedConnectionCount = 0
+let rejectedSubscriptionCount = 0
+let truncatedTickDeltaMessageCount = 0
 
 // ─── 初始化 ───────────────────────────────────────────
 
@@ -68,8 +102,10 @@ export function attachWebSocket(server: Server): void {
   })
 
   wss.on('connection', (ws: WebSocket) => {
-    const session: ClientSession = { ws, factionId: null, subscribedAt: Date.now() }
-    clients.add(session)
+    const session = registerClientSession(ws)
+    if (!session) {
+      return
+    }
 
     ws.on('message', (raw) => {
       try {
@@ -119,6 +155,21 @@ function handleClientMessage(session: ClientSession, msg: unknown): void {
       const world = getWorldStateReadonly()
       if (!world.factions[normalizedFactionId]) {
         sendToClient(session, { type: 'error', message: `Unknown faction: ${normalizedFactionId}` })
+        return
+      }
+
+      if (
+        session.factionId !== normalizedFactionId &&
+        countSubscribedSessionsForFaction(normalizedFactionId) >= runtimeConfig.maxSubscriptionsPerFaction
+      ) {
+        rejectedSubscriptionCount += 1
+        sendToClient(
+          session,
+          {
+            type: 'error',
+            message: `subscription quota reached for faction ${normalizedFactionId} (${runtimeConfig.maxSubscriptionsPerFaction})`,
+          },
+        )
         return
       }
 
@@ -258,6 +309,22 @@ function computeEntityDelta(
   return { unitChanges, tileChanges, factionStats, aiQuotaChanges }
 }
 
+function measureBroadcastSubphase<T>(
+  subphases: AiRuntimeAdvanceTickSubphaseTiming[],
+  subphase: string,
+  work: () => T,
+): T {
+  const startedAtMs = performance.now()
+  try {
+    return work()
+  } finally {
+    subphases.push({
+      subphase,
+      durationMs: Number((performance.now() - startedAtMs).toFixed(2)),
+    })
+  }
+}
+
 /**
  * Tick 完成后广播 delta 给所有订阅的客户端
  *
@@ -269,45 +336,64 @@ export function broadcastTickDelta(
   prevWorld: WorldState,
   world: WorldState,
   events: NarrativeEvent[],
-): void {
-  if (clients.size === 0) return
-
-  const delta = computeEntityDelta(prevWorld, world)
-
-  for (const session of clients) {
-    if (session.ws.readyState !== WebSocket.OPEN || !session.factionId) continue
-
-    // 战争迷雾：过滤事件，只推送涉及己方的
-    const visibleEvents = events.filter(e =>
-      e.actors.includes(session.factionId!) ||
-      e.significance === 'epic',
-    )
-
-    // 战争迷雾：过滤 unit 变化，只推送己方单位 + 交战中的敌方单位
-    const visibleUnitChanges = delta.unitChanges.filter(uc =>
-      uc.data?.faction === session.factionId || uc.op === 'delete',
-    )
-    const sessionAiQuotaChanges = delta.aiQuotaChanges.filter((item) => item.factionId === session.factionId)
-
-    sendToClient(session, {
-      type: 'tick_delta',
-      tick: world.tick,
-      worldVersion: world.worldVersion,
-      factionStats: delta.factionStats,
-      unitChanges: visibleUnitChanges,
-      tileChanges: delta.tileChanges,
-      aiQuotaChanges: sessionAiQuotaChanges,
-      events: visibleEvents,
-    })
-
-    if (sessionAiQuotaChanges.length > 0) {
-      console.info(
-        `[WebSocket] tick_delta faction=${session.factionId} tick=${world.tick} worldVersion=${world.worldVersion} ` +
-        `unitChanges=${visibleUnitChanges.length} tileChanges=${delta.tileChanges.length} ` +
-        `aiQuotaChanges=${sessionAiQuotaChanges.length} events=${visibleEvents.length}`,
-      )
-    }
+): BroadcastTickDeltaSummary {
+  const summary: BroadcastTickDeltaSummary = {
+    subphases: [],
+    deliveredMessages: 0,
   }
+  if (clients.size === 0) return summary
+
+  const delta = measureBroadcastSubphase(summary.subphases, 'broadcast_runtime.compute_delta', () =>
+    computeEntityDelta(prevWorld, world),
+  )
+
+  measureBroadcastSubphase(summary.subphases, 'broadcast_runtime.tick_delta_fanout', () => {
+    for (const session of clients) {
+      if (session.ws.readyState !== WebSocket.OPEN || !session.factionId) continue
+
+      const totalVisibleEvents = events.filter(e =>
+        e.actors.includes(session.factionId!) ||
+        e.significance === 'epic',
+      )
+      const visibleEvents = totalVisibleEvents.slice(0, runtimeConfig.maxVisibleEventsPerTick)
+
+      const totalVisibleUnitChanges = delta.unitChanges.filter(uc =>
+        uc.data?.faction === session.factionId || uc.op === 'delete',
+      )
+      const visibleUnitChanges = totalVisibleUnitChanges.slice(0, runtimeConfig.maxVisibleUnitChangesPerTick)
+      const visibleTileChanges = delta.tileChanges.slice(0, runtimeConfig.maxVisibleTileChangesPerTick)
+      const sessionAiQuotaChanges = delta.aiQuotaChanges.filter((item) => item.factionId === session.factionId)
+      if (
+        visibleEvents.length < totalVisibleEvents.length ||
+        visibleUnitChanges.length < totalVisibleUnitChanges.length ||
+        visibleTileChanges.length < delta.tileChanges.length
+      ) {
+        truncatedTickDeltaMessageCount += 1
+      }
+
+      sendToClient(session, {
+        type: 'tick_delta',
+        tick: world.tick,
+        worldVersion: world.worldVersion,
+        factionStats: delta.factionStats,
+        unitChanges: visibleUnitChanges,
+        tileChanges: visibleTileChanges,
+        aiQuotaChanges: sessionAiQuotaChanges,
+        events: visibleEvents,
+      })
+      summary.deliveredMessages += 1
+
+      if (sessionAiQuotaChanges.length > 0) {
+        console.info(
+          `[WebSocket] tick_delta faction=${session.factionId} tick=${world.tick} worldVersion=${world.worldVersion} ` +
+          `unitChanges=${visibleUnitChanges.length} tileChanges=${visibleTileChanges.length} ` +
+          `aiQuotaChanges=${sessionAiQuotaChanges.length} events=${visibleEvents.length}`,
+        )
+      }
+    }
+  })
+
+  return summary
 }
 
 /**
@@ -399,10 +485,150 @@ export function getWebSocketStats(): WebSocketObservabilityStats {
     subscribedConnections: subscribed,
     factionDistribution: distribution,
     recentErrors: recentWsErrors.map((item) => ({ ...item })),
+    maxConnections: runtimeConfig.maxConnections,
+    maxSubscriptionsPerFaction: runtimeConfig.maxSubscriptionsPerFaction,
+    maxVisibleEventsPerTick: runtimeConfig.maxVisibleEventsPerTick,
+    maxVisibleUnitChangesPerTick: runtimeConfig.maxVisibleUnitChangesPerTick,
+    maxVisibleTileChangesPerTick: runtimeConfig.maxVisibleTileChangesPerTick,
+    rejectedConnections: rejectedConnectionCount,
+    rejectedSubscriptions: rejectedSubscriptionCount,
+    truncatedTickDeltaMessages: truncatedTickDeltaMessageCount,
   }
 }
 
+export function __resetWebSocketStateForTests(): void {
+  for (const session of clients) {
+    if (session.ws.readyState === WebSocket.OPEN) {
+      try {
+        session.ws.close()
+      } catch {
+        // ignore test cleanup close failures
+      }
+    }
+  }
+  clients.clear()
+  recentWsErrors.length = 0
+  rejectedConnectionCount = 0
+  rejectedSubscriptionCount = 0
+  truncatedTickDeltaMessageCount = 0
+  runtimeConfig = loadWebSocketRuntimeConfigFromEnv()
+}
+
+export function __setWebSocketRuntimeConfigForTests(partial: Partial<WebSocketRuntimeConfig>): void {
+  runtimeConfig = normalizeWebSocketRuntimeConfig(partial, runtimeConfig)
+}
+
+export function __registerTestClient(ws: WebSocket): ClientSession | null {
+  return registerClientSession(ws)
+}
+
+export function __handleClientMessageForTests(session: ClientSession, msg: unknown): void {
+  handleClientMessage(session, msg)
+}
+
 // ─── 工具函数 ─────────────────────────────────────────
+
+function registerClientSession(ws: WebSocket): ClientSession | null {
+  if (clients.size >= runtimeConfig.maxConnections) {
+    rejectedConnectionCount += 1
+    recordWebSocketError(null, 'capacity', `connection quota reached (${runtimeConfig.maxConnections})`)
+    if (typeof ws.close === 'function') {
+      ws.close(1013, 'server at capacity')
+    }
+    return null
+  }
+  const session: ClientSession = { ws, factionId: null, subscribedAt: Date.now() }
+  clients.add(session)
+  return session
+}
+
+function countSubscribedSessionsForFaction(factionId: string): number {
+  let count = 0
+  for (const session of clients) {
+    if (session.ws.readyState !== WebSocket.OPEN) {
+      continue
+    }
+    if (session.factionId === factionId) {
+      count += 1
+    }
+  }
+  return count
+}
+
+function loadWebSocketRuntimeConfigFromEnv(): WebSocketRuntimeConfig {
+  return {
+    maxConnections: readIntFromEnv('WS_MAX_CONNECTIONS', DEFAULT_WS_MAX_CONNECTIONS, MIN_WS_MAX_CONNECTIONS, MAX_WS_MAX_CONNECTIONS),
+    maxSubscriptionsPerFaction: readIntFromEnv(
+      'WS_MAX_SUBSCRIPTIONS_PER_FACTION',
+      DEFAULT_WS_MAX_SUBSCRIPTIONS_PER_FACTION,
+      MIN_WS_MAX_SUBSCRIPTIONS_PER_FACTION,
+      MAX_WS_MAX_SUBSCRIPTIONS_PER_FACTION,
+    ),
+    maxVisibleEventsPerTick: readIntFromEnv(
+      'WS_MAX_VISIBLE_EVENTS_PER_TICK',
+      DEFAULT_WS_MAX_VISIBLE_EVENTS_PER_TICK,
+      MIN_WS_MAX_VISIBLE_EVENTS_PER_TICK,
+      MAX_WS_MAX_VISIBLE_EVENTS_PER_TICK,
+    ),
+    maxVisibleUnitChangesPerTick: readIntFromEnv(
+      'WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK',
+      DEFAULT_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK,
+      MIN_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK,
+      MAX_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK,
+    ),
+    maxVisibleTileChangesPerTick: readIntFromEnv(
+      'WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK',
+      DEFAULT_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK,
+      MIN_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK,
+      MAX_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK,
+    ),
+  }
+}
+
+function normalizeWebSocketRuntimeConfig(
+  partial: Partial<WebSocketRuntimeConfig>,
+  base: WebSocketRuntimeConfig,
+): WebSocketRuntimeConfig {
+  return {
+    maxConnections: clampInt(partial.maxConnections ?? base.maxConnections, MIN_WS_MAX_CONNECTIONS, MAX_WS_MAX_CONNECTIONS),
+    maxSubscriptionsPerFaction: clampInt(
+      partial.maxSubscriptionsPerFaction ?? base.maxSubscriptionsPerFaction,
+      MIN_WS_MAX_SUBSCRIPTIONS_PER_FACTION,
+      MAX_WS_MAX_SUBSCRIPTIONS_PER_FACTION,
+    ),
+    maxVisibleEventsPerTick: clampInt(
+      partial.maxVisibleEventsPerTick ?? base.maxVisibleEventsPerTick,
+      MIN_WS_MAX_VISIBLE_EVENTS_PER_TICK,
+      MAX_WS_MAX_VISIBLE_EVENTS_PER_TICK,
+    ),
+    maxVisibleUnitChangesPerTick: clampInt(
+      partial.maxVisibleUnitChangesPerTick ?? base.maxVisibleUnitChangesPerTick,
+      MIN_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK,
+      MAX_WS_MAX_VISIBLE_UNIT_CHANGES_PER_TICK,
+    ),
+    maxVisibleTileChangesPerTick: clampInt(
+      partial.maxVisibleTileChangesPerTick ?? base.maxVisibleTileChangesPerTick,
+      MIN_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK,
+      MAX_WS_MAX_VISIBLE_TILE_CHANGES_PER_TICK,
+    ),
+  }
+}
+
+function readIntFromEnv(name: string, fallback: number, min: number, max: number): number {
+  const raw = process.env[name]
+  if (!raw) {
+    return fallback
+  }
+  const parsed = Number.parseInt(raw, 10)
+  if (!Number.isFinite(parsed)) {
+    return fallback
+  }
+  return clampInt(parsed, min, max)
+}
+
+function clampInt(value: number, min: number, max: number): number {
+  return Math.min(max, Math.max(min, Math.trunc(value)))
+}
 
 function recordWebSocketError(session: ClientSession | null, stage: string, message: string): void {
   const normalizedMessage = message.trim() || 'unknown'

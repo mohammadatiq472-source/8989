@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto'
+import { performance } from 'node:perf_hooks'
 import type {
   AllianceActionSummary,
   BattleOutcomeRecord,
@@ -41,6 +42,25 @@ type OrderOutcome = {
   failed: number
 }
 
+type SearchEntry<T> = {
+  item: T
+  idLower: string
+  nameLower: string
+  idLength: number
+  nameLength: number
+  idLeadChar: string
+  nameLeadChar: string
+}
+
+type PreparedReportDraft = {
+  report: Report
+  combined: string
+  combinedLength: number
+  combinedCharIndex: Set<string>
+  unit?: WorldState['units'][number]
+  tile?: WorldState['map']['tiles'][number]
+}
+
 type ReflectContext = {
   tick: number
   after: WorldState
@@ -51,6 +71,17 @@ type ReflectContext = {
   unitDeltas: Map<string, UnitDelta>
   orderOutcomes: Map<string, OrderOutcome>
   tileToRegion: Map<string, string>
+  unitSearchEntries: Array<SearchEntry<WorldState['units'][number]>>
+  tileSearchEntries: Array<SearchEntry<WorldState['map']['tiles'][number]>>
+}
+
+export type ReflectSubphaseTiming = {
+  subphase: string
+  durationMs: number
+}
+
+export type ReflectPerformanceSummary = {
+  subphases: ReflectSubphaseTiming[]
 }
 
 export type ReflectResult = {
@@ -60,6 +91,39 @@ export type ReflectResult = {
   profileUpdates: number
   causalLinks: number
   consequenceLinks: number
+  performance: ReflectPerformanceSummary
+}
+
+async function measureReflectSubphase<T>(
+  subphases: ReflectSubphaseTiming[],
+  subphase: string,
+  work: () => Promise<T> | T,
+): Promise<T> {
+  const startedAtMs = performance.now()
+  try {
+    return await work()
+  } finally {
+    subphases.push({
+      subphase,
+      durationMs: Number((performance.now() - startedAtMs).toFixed(2)),
+    })
+  }
+}
+
+function measureSyncReflectSubphase<T>(
+  subphases: ReflectSubphaseTiming[] | undefined,
+  subphase: string,
+  work: () => T,
+): T {
+  const startedAtMs = performance.now()
+  try {
+    return work()
+  } finally {
+    subphases?.push({
+      subphase,
+      durationMs: Number((performance.now() - startedAtMs).toFixed(2)),
+    })
+  }
 }
 
 export async function reflectWorldTick(params: {
@@ -67,115 +131,144 @@ export async function reflectWorldTick(params: {
   after: WorldState
   commanderId: string
 }): Promise<ReflectResult> {
-  const context = buildReflectContext(params.before, params.after)
-  const drafts = buildNarrativeDrafts(context)
-  finalizeNarrativeDrafts(drafts, context)
+  const subphases: ReflectSubphaseTiming[] = []
+  let context!: ReflectContext
+  let drafts!: ReflectDraft[]
+  await measureReflectSubphase(subphases, 'reflect_world_tick.collect_context', async () => {
+    await measureReflectSubphase(subphases, 'reflect_world_tick.collect_context.build_context', () => {
+      context = buildReflectContext(params.before, params.after, subphases)
+    })
+    await measureReflectSubphase(subphases, 'reflect_world_tick.collect_context.build_drafts', () => {
+      drafts = buildNarrativeDrafts(context, subphases)
+    })
+    await measureReflectSubphase(subphases, 'reflect_world_tick.collect_context.finalize_drafts', () => {
+      finalizeNarrativeDrafts(drafts, context)
+    })
+  })
 
-  const memory = await getMemoryProvider()
-  const generals = getOrCreateGeneralProfiles(params.after)
-  const generalIdSet = new Set(generals.map((item) => item.id))
-  const generalByUnitId = new Map(generals.map((item) => [item.unitId, item.id]))
+  let memory!: Awaited<ReturnType<typeof getMemoryProvider>>
+  let generals!: ReturnType<typeof getOrCreateGeneralProfiles>
+  let generalIdSet!: Set<string>
+  let generalByUnitId!: Map<string, string>
+  await measureReflectSubphase(subphases, 'reflect_world_tick.prepare_memory_and_generals', async () => {
+    memory = await getMemoryProvider()
+    generals = getOrCreateGeneralProfiles(params.after)
+    generalIdSet = new Set(generals.map((item) => item.id))
+    generalByUnitId = new Map(
+      generals.flatMap((item) =>
+        typeof item.unitId === 'string' && item.unitId.length > 0
+          ? [[item.unitId, item.id] as const]
+          : [],
+      ),
+    )
+  })
 
   let memoryWrites = 0
   let memoryWriteFailures = 0
   let profileUpdates = 0
   const touchedGenerals = new Set<string>()
 
-  for (const draft of drafts) {
-    const entry = formatMemoryEntry(draft.event)
-    const sharedMeta = buildReflectMemoryMetadata({
-      source: draft.source,
-      event: draft.event,
-    })
+  await measureReflectSubphase(subphases, 'reflect_world_tick.write_memory_and_feedback', async () => {
+    for (const draft of drafts) {
+      const entry = formatMemoryEntry(draft.event)
+      const sharedMeta = buildReflectMemoryMetadata({
+        source: draft.source,
+        event: draft.event,
+      })
 
-    // P1-5: 收集所有 memory write promise 并行执行
-    const writePromises: Array<Promise<{ written: boolean; generalId?: string }>> = []
+      // P1-5: 收集所有 memory write promise 并行执行
+      const writePromises: Array<Promise<{ written: boolean; generalId?: string }>> = []
 
-    // Commander 写入
-    writePromises.push(
-      writeMemory(memory, params.commanderId, entry, sharedMeta)
-        .then(written => ({ written, generalId: undefined }))
-    )
-
-    // 将领写入
-    const eventGeneralIds = resolveGeneralActorIds(draft.event.actors, generalIdSet, generalByUnitId)
-    for (const generalId of eventGeneralIds) {
+      // Commander 写入
       writePromises.push(
-        writeMemory(memory, generalId, entry, sharedMeta)
-          .then(written => ({ written, generalId }))
+        writeMemory(memory, params.commanderId, entry, sharedMeta)
+          .then(written => ({ written, generalId: undefined }))
       )
-    }
 
-    // 并行等待所有写入完成
-    const results = await Promise.allSettled(writePromises)
-    for (const result of results) {
-      if (result.status === 'fulfilled' && result.value.written) {
-        memoryWrites += 1
-        if (result.value.generalId) {
-          recordGeneralShortTermMemory(result.value.generalId, entry)
+      // 将领写入
+      const eventGeneralIds = resolveGeneralActorIds(draft.event.actors, generalIdSet, generalByUnitId)
+      for (const generalId of eventGeneralIds) {
+        writePromises.push(
+          writeMemory(memory, generalId, entry, sharedMeta)
+            .then(written => ({ written, generalId }))
+        )
+      }
+
+      // 并行等待所有写入完成
+      const results = await Promise.allSettled(writePromises)
+      for (const result of results) {
+        if (result.status === 'fulfilled' && result.value.written) {
+          memoryWrites += 1
+          if (result.value.generalId) {
+            recordGeneralShortTermMemory(result.value.generalId, entry)
+          }
+        } else {
+          memoryWriteFailures += 1
         }
-      } else {
-        memoryWriteFailures += 1
+      }
+
+      // profile 更新保持同步（依赖 GENERAL_STORE 的一致性）
+      for (const generalId of eventGeneralIds) {
+        const outcome = deriveGeneralOutcome(draft, context, generalId)
+        if (
+          applyGeneralReflectFeedback({
+            profileId: generalId,
+            tick: draft.event.tick,
+            summary: draft.event.summary,
+            significance: draft.event.significance,
+            outcome,
+            battleOutcome: draft.battleOutcome,
+            grievance: outcome === 'failure' ? buildGrievance(draft.event.summary, draft.event.tick) : undefined,
+          })
+        ) {
+          profileUpdates += 1
+          touchedGenerals.add(generalId)
+        }
       }
     }
+  })
 
-    // profile 更新保持同步（依赖 GENERAL_STORE 的一致性）
-    for (const generalId of eventGeneralIds) {
-      const outcome = deriveGeneralOutcome(draft, context, generalId)
+  await measureReflectSubphase(subphases, 'reflect_world_tick.apply_passive_general_feedback', async () => {
+    for (const general of generals) {
+      const outcome = context.orderOutcomes.get(general.unitId)
+      if (!outcome || touchedGenerals.has(general.id)) {
+        continue
+      }
+
+      if (outcome.completed === 0 && outcome.failed === 0) {
+        continue
+      }
+
+      const result: GeneralReflectOutcome = outcome.failed > 0 && outcome.completed === 0 ? 'failure' : 'success'
+      const summary =
+        result === 'failure'
+          ? `tick ${context.tick}: order resolution degraded (failed ${outcome.failed})`
+          : `tick ${context.tick}: order resolution acknowledged (completed ${outcome.completed})`
+
       if (
         applyGeneralReflectFeedback({
-          profileId: generalId,
-          tick: draft.event.tick,
-          summary: draft.event.summary,
-          significance: draft.event.significance,
-          outcome,
-          battleOutcome: draft.battleOutcome,
-          grievance: outcome === 'failure' ? buildGrievance(draft.event.summary, draft.event.tick) : undefined,
+          profileId: general.id,
+          tick: context.tick,
+          summary,
+          significance: 'minor',
+          outcome: result,
+          grievance: result === 'failure' ? summary : undefined,
         })
       ) {
         profileUpdates += 1
-        touchedGenerals.add(generalId)
       }
     }
-  }
-
-  for (const general of generals) {
-    const outcome = context.orderOutcomes.get(general.unitId)
-    if (!outcome || touchedGenerals.has(general.id)) {
-      continue
-    }
-
-    if (outcome.completed === 0 && outcome.failed === 0) {
-      continue
-    }
-
-    const result: GeneralReflectOutcome = outcome.failed > 0 && outcome.completed === 0 ? 'failure' : 'success'
-    const summary =
-      result === 'failure'
-        ? `tick ${context.tick}: order resolution degraded (failed ${outcome.failed})`
-        : `tick ${context.tick}: order resolution acknowledged (completed ${outcome.completed})`
-
-    if (
-      applyGeneralReflectFeedback({
-        profileId: general.id,
-        tick: context.tick,
-        summary,
-        significance: 'minor',
-        outcome: result,
-        grievance: result === 'failure' ? summary : undefined,
-      })
-    ) {
-      profileUpdates += 1
-    }
-  }
+  })
 
   const events = drafts.map((item) => item.event)
 
-  // Voyager 模式：把本 tick 中有意义的事件写进战术技能库
-  recordTickSkills(context, events, params.after)
+  await measureReflectSubphase(subphases, 'reflect_world_tick.post_tick_side_effects', () => {
+    // Voyager 模式：把本 tick 中有意义的事件写进战术技能库
+    recordTickSkills(context, events, params.after)
 
-  // 将领情绪告警：grievance 积累超阈值时主动向玩家推送"将领请奏"
-  maybePushGrievanceAlerts(generals, context.tick)
+    // 将领情绪告警：grievance 积累超阈值时主动向玩家推送"将领请奏"
+    maybePushGrievanceAlerts(generals, context.tick)
+  })
 
   return {
     events,
@@ -184,14 +277,124 @@ export async function reflectWorldTick(params: {
     profileUpdates,
     causalLinks: events.reduce((sum, event) => sum + event.causalChain.length, 0),
     consequenceLinks: events.reduce((sum, event) => sum + event.consequences.length, 0),
+    performance: {
+      subphases,
+    },
   }
 }
 
-function buildReflectContext(before: WorldState, after: WorldState): ReflectContext {
+function buildReflectContext(
+  before: WorldState,
+  after: WorldState,
+  subphases?: ReflectSubphaseTiming[],
+): ReflectContext {
   const tick = after.tick
-  const battles = after.feedback.battleRecords.filter((item) => item.tick === tick)
-  const reports = after.reports.filter((item) => item.tick === tick)
-  const allianceActions = after.feedback.allianceActions.filter((item) => item.tick === tick)
+  const { battles, reports, allianceActions } = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.select_tick_artifacts',
+    () => {
+      const battleRecords: BattleOutcomeRecord[] = []
+      const reportRecords: Report[] = []
+      const allianceRecords: AllianceActionSummary[] = []
+      measureSyncReflectSubphase(
+        subphases,
+        'reflect_world_tick.collect_context.select_tick_artifacts.scan_battle_records',
+        () => {
+          for (const item of after.feedback.battleRecords) {
+            if (item.tick === tick) {
+              battleRecords.push(item)
+            }
+          }
+        },
+      )
+      measureSyncReflectSubphase(
+        subphases,
+        'reflect_world_tick.collect_context.select_tick_artifacts.scan_reports',
+        () => {
+          for (const item of after.reports) {
+            if (item.tick === tick) {
+              reportRecords.push(item)
+            }
+          }
+        },
+      )
+      measureSyncReflectSubphase(
+        subphases,
+        'reflect_world_tick.collect_context.select_tick_artifacts.scan_alliance_actions',
+        () => {
+          for (const item of after.feedback.allianceActions) {
+            if (item.tick === tick) {
+              allianceRecords.push(item)
+            }
+          }
+        },
+      )
+      return {
+        battles: battleRecords,
+        reports: reportRecords,
+        allianceActions: allianceRecords,
+      }
+    },
+  )
+
+  const ownerChanges = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_owner_changes',
+    () => collectOwnerChanges(before, after, subphases),
+  )
+  const unitDeltas = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_unit_deltas',
+    () => collectUnitDeltas(before, after, subphases),
+  )
+  const orderOutcomes = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_order_outcomes',
+    () => collectOrderOutcomes(after, subphases),
+  )
+  const tileToRegion = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_tile_to_region_map',
+    () => buildTileToRegionMap(after, subphases),
+  )
+  const { unitSearchEntries, tileSearchEntries } = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_search_indexes',
+    () => {
+      const unitSearchEntries = measureSyncReflectSubphase(
+        subphases,
+        'reflect_world_tick.collect_context.build_search_indexes.normalize_unit_entries',
+        () =>
+          after.units.map((unit) => ({
+            item: unit,
+            idLower: unit.id.toLowerCase(),
+            nameLower: unit.name.toLowerCase(),
+            idLength: unit.id.length,
+            nameLength: unit.name.length,
+            idLeadChar: unit.id.slice(0, 1).toLowerCase(),
+            nameLeadChar: unit.name.slice(0, 1).toLowerCase(),
+          })),
+      )
+      const tileSearchEntries = measureSyncReflectSubphase(
+        subphases,
+        'reflect_world_tick.collect_context.build_search_indexes.normalize_tile_entries',
+        () =>
+          after.map.tiles.map((tile) => ({
+            item: tile,
+            idLower: tile.id.toLowerCase(),
+            nameLower: tile.name.toLowerCase(),
+            idLength: tile.id.length,
+            nameLength: tile.name.length,
+            idLeadChar: tile.id.slice(0, 1).toLowerCase(),
+            nameLeadChar: tile.name.slice(0, 1).toLowerCase(),
+          })),
+      )
+      return {
+        unitSearchEntries,
+        tileSearchEntries,
+      }
+    },
+  )
 
   return {
     tick,
@@ -199,29 +402,131 @@ function buildReflectContext(before: WorldState, after: WorldState): ReflectCont
     battles,
     reports,
     allianceActions,
-    ownerChanges: collectOwnerChanges(before, after),
-    unitDeltas: collectUnitDeltas(before, after),
-    orderOutcomes: collectOrderOutcomes(after),
-    tileToRegion: buildTileToRegionMap(after),
+    ownerChanges,
+    unitDeltas,
+    orderOutcomes,
+    tileToRegion,
+    unitSearchEntries,
+    tileSearchEntries,
   }
 }
 
-function buildNarrativeDrafts(context: ReflectContext) {
+function buildNarrativeDrafts(context: ReflectContext, subphases?: ReflectSubphaseTiming[]) {
   const drafts: ReflectDraft[] = []
 
-  for (const battle of context.battles) {
-    drafts.push(buildBattleDraft(battle, context))
-  }
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_battle_drafts',
+    () => {
+      for (const battle of context.battles) {
+        drafts.push(buildBattleDraft(battle, context))
+      }
+    },
+  )
 
-  for (const allianceAction of context.allianceActions) {
-    drafts.push(buildAllianceDraft(allianceAction))
-  }
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_alliance_drafts',
+    () => {
+      for (const allianceAction of context.allianceActions) {
+        drafts.push(buildAllianceDraft(allianceAction))
+      }
+    },
+  )
 
-  for (const report of context.reports) {
-    drafts.push(buildReportDraft(report, context))
-  }
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_report_drafts',
+    () => {
+      const preparedDrafts = prepareReportDrafts(context, subphases)
+      matchPreparedReportDraftUnits(preparedDrafts, context.unitSearchEntries, subphases)
+      matchPreparedReportDraftTiles(preparedDrafts, context.tileSearchEntries, subphases)
+      appendReportDrafts(drafts, preparedDrafts, context, subphases)
+    },
+  )
 
   return drafts
+}
+
+function prepareReportDrafts(context: ReflectContext, subphases?: ReflectSubphaseTiming[]) {
+  const preparedDrafts: PreparedReportDraft[] = []
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_report_drafts.prepare_report_text',
+    () => {
+      preparedDrafts.push(
+        ...context.reports.map((report) => {
+          const combined = `${report.title} ${report.detail}`.toLowerCase()
+          return {
+            report,
+            combined,
+            combinedLength: combined.length,
+            combinedCharIndex: buildSearchCharIndex(combined),
+          }
+        }),
+      )
+    },
+  )
+  return preparedDrafts
+}
+
+function matchPreparedReportDraftUnits(
+  preparedDrafts: PreparedReportDraft[],
+  unitSearchEntries: Array<SearchEntry<WorldState['units'][number]>>,
+  subphases?: ReflectSubphaseTiming[],
+) {
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_report_drafts.match_units',
+    () => {
+      for (const preparedDraft of preparedDrafts) {
+        preparedDraft.unit = findSearchEntryMatch(
+          unitSearchEntries,
+          preparedDraft,
+          subphases,
+          'reflect_world_tick.collect_context.build_drafts.build_report_drafts.match_units',
+        )
+      }
+    },
+  )
+}
+
+function matchPreparedReportDraftTiles(
+  preparedDrafts: PreparedReportDraft[],
+  tileSearchEntries: Array<SearchEntry<WorldState['map']['tiles'][number]>>,
+  subphases?: ReflectSubphaseTiming[],
+) {
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_report_drafts.match_tiles',
+    () => {
+      for (const preparedDraft of preparedDrafts) {
+        preparedDraft.tile = findSearchEntryMatch(
+          tileSearchEntries,
+          preparedDraft,
+          subphases,
+          'reflect_world_tick.collect_context.build_drafts.build_report_drafts.match_tiles',
+        )
+      }
+    },
+  )
+}
+
+function appendReportDrafts(
+  drafts: ReflectDraft[],
+  preparedDrafts: PreparedReportDraft[],
+  context: ReflectContext,
+  subphases?: ReflectSubphaseTiming[],
+) {
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_drafts.build_report_drafts.assemble_report_events',
+    () => {
+      for (const preparedDraft of preparedDrafts) {
+        drafts.push(buildReportDraft(preparedDraft, context))
+      }
+    },
+  )
 }
 
 function finalizeNarrativeDrafts(drafts: ReflectDraft[], context: ReflectContext) {
@@ -347,16 +652,10 @@ function buildAllianceDraft(action: AllianceActionSummary): ReflectDraft {
   }
 }
 
-function buildReportDraft(report: Report, context: ReflectContext): ReflectDraft {
-  const combined = `${report.title} ${report.detail}`.toLowerCase()
+function buildReportDraft(preparedDraft: PreparedReportDraft, context: ReflectContext): ReflectDraft {
+  const { report, combined, tile, unit } = preparedDraft
   const isFailure = /(失利|失守|溩退|失败|fail|loss|collapse)/i.test(combined)
   const type: NarrativeEvent['type'] = isFailure ? 'failure' : 'achievement'
-
-  const unit = context.after.units.find((item) => combined.includes(item.id.toLowerCase()) || combined.includes(item.name.toLowerCase()))
-
-  const tile = context.after.map.tiles.find(
-    (item) => combined.includes(item.id.toLowerCase()) || combined.includes(item.name.toLowerCase()),
-  )
 
   const tileId = tile?.id
   const regionId = tileId ? context.tileToRegion.get(tileId) : undefined
@@ -380,83 +679,198 @@ function buildReportDraft(report: Report, context: ReflectContext): ReflectDraft
   }
 }
 
-function collectOwnerChanges(before: WorldState, after: WorldState) {
-  const beforeByTile = new Map(before.map.tiles.map((tile) => [tile.id, tile.owner] as const))
+function findSearchEntryMatch<T>(
+  entries: Array<SearchEntry<T>>,
+  preparedDraft: PreparedReportDraft,
+  subphases?: ReflectSubphaseTiming[],
+  subphasePrefix?: string,
+) {
+  const scanEntries = (
+    suffix: 'scan_id_entries' | 'scan_name_entries',
+    key: 'idLower' | 'nameLower',
+    lengthKey: 'idLength' | 'nameLength',
+    leadKey: 'idLeadChar' | 'nameLeadChar',
+  ) => {
+    if (!subphases || !subphasePrefix) {
+      for (const entry of entries) {
+        if (!canSearchEntryPossiblyMatch(entry, preparedDraft, lengthKey, leadKey)) {
+          continue
+        }
+        if (preparedDraft.combined.includes(entry[key])) {
+          return entry.item
+        }
+      }
+      return undefined
+    }
+
+    return measureSyncReflectSubphase(subphases, `${subphasePrefix}.${suffix}`, () => {
+      for (const entry of entries) {
+        if (!canSearchEntryPossiblyMatch(entry, preparedDraft, lengthKey, leadKey)) {
+          continue
+        }
+        if (preparedDraft.combined.includes(entry[key])) {
+          return entry.item
+        }
+      }
+      return undefined
+    })
+  }
+
+  return (
+    scanEntries('scan_id_entries', 'idLower', 'idLength', 'idLeadChar') ??
+    scanEntries('scan_name_entries', 'nameLower', 'nameLength', 'nameLeadChar')
+  )
+}
+
+function canSearchEntryPossiblyMatch<T>(
+  entry: SearchEntry<T>,
+  preparedDraft: PreparedReportDraft,
+  lengthKey: 'idLength' | 'nameLength',
+  leadKey: 'idLeadChar' | 'nameLeadChar',
+) {
+  if (entry[lengthKey] === 0 || entry[lengthKey] > preparedDraft.combinedLength) {
+    return false
+  }
+
+  const leadChar = entry[leadKey]
+  if (!leadChar) {
+    return true
+  }
+  return preparedDraft.combinedCharIndex.has(leadChar)
+}
+
+function buildSearchCharIndex(value: string) {
+  return new Set(value)
+}
+
+function collectOwnerChanges(before: WorldState, after: WorldState, subphases?: ReflectSubphaseTiming[]) {
+  const beforeByTile = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_owner_changes.build_before_owner_index',
+    () => new Map(before.map.tiles.map((tile) => [tile.id, tile.owner] as const)),
+  )
   const result = new Map<string, { before: TileOwner; after: TileOwner }>()
 
-  for (const tile of after.map.tiles) {
-    const previousOwner = beforeByTile.get(tile.id)
-    if (previousOwner && previousOwner !== tile.owner) {
-      result.set(tile.id, { before: previousOwner, after: tile.owner })
-    }
-  }
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_owner_changes.scan_after_tiles',
+    () => {
+      for (const tile of after.map.tiles) {
+        const previousOwner = beforeByTile.get(tile.id)
+        if (previousOwner && previousOwner !== tile.owner) {
+          result.set(tile.id, { before: previousOwner, after: tile.owner })
+        }
+      }
+    },
+  )
 
   return result
 }
 
-function collectUnitDeltas(before: WorldState, after: WorldState) {
-  const beforeByUnit = new Map(before.units.map((unit) => [unit.id, unit] as const))
+function collectUnitDeltas(before: WorldState, after: WorldState, subphases?: ReflectSubphaseTiming[]) {
+  const beforeByUnit = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_unit_deltas.build_before_unit_index',
+    () => new Map(before.units.map((unit) => [unit.id, unit] as const)),
+  )
   const result = new Map<string, UnitDelta>()
 
-  for (const unit of after.units) {
-    const previous = beforeByUnit.get(unit.id)
-    if (!previous) {
-      continue
-    }
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_unit_deltas.scan_after_units',
+    () => {
+      for (const unit of after.units) {
+        const previous = beforeByUnit.get(unit.id)
+        if (!previous) {
+          continue
+        }
 
-    const strengthDelta = unit.strength - previous.strength
-    const supplyDelta = unit.supply - previous.supply
-    const tileChanged = unit.tileId !== previous.tileId
+        const strengthDelta = unit.strength - previous.strength
+        const supplyDelta = unit.supply - previous.supply
+        const tileChanged = unit.tileId !== previous.tileId
 
-    if (strengthDelta !== 0 || supplyDelta !== 0 || tileChanged) {
-      result.set(unit.id, {
-        strengthDelta,
-        supplyDelta,
-        tileChanged,
-      })
-    }
-  }
-
-  return result
-}
-
-function collectOrderOutcomes(world: WorldState) {
-  const result = new Map<string, OrderOutcome>()
-  // Collect orders from all faction executions
-  const allOrders = Object.values(world.executions ?? {}).flatMap(exec => exec?.orders ?? [])
-
-  for (const order of allOrders) {
-    const resolvedThisTick =
-      order.completedTick === world.tick ||
-      (order.startedTick === world.tick && (order.status === 'completed' || order.status === 'failed'))
-
-    if (!resolvedThisTick) {
-      continue
-    }
-
-    if (!order.unitId) continue
-    const bucket = result.get(order.unitId) ?? { completed: 0, failed: 0 }
-    if (order.status === 'completed') {
-      bucket.completed += 1
-    } else if (order.status === 'failed') {
-      bucket.failed += 1
-    }
-
-    result.set(order.unitId, bucket)
-  }
-
-  return result
-}
-
-function buildTileToRegionMap(world: WorldState) {
-  const result = new Map<string, string>()
-  for (const region of world.map.regions) {
-    for (const tileId of region.tileIds) {
-      if (!result.has(tileId)) {
-        result.set(tileId, region.id)
+        if (strengthDelta !== 0 || supplyDelta !== 0 || tileChanged) {
+          result.set(unit.id, {
+            strengthDelta,
+            supplyDelta,
+            tileChanged,
+          })
+        }
       }
-    }
-  }
+    },
+  )
+
+  return result
+}
+
+function collectOrderOutcomes(world: WorldState, subphases?: ReflectSubphaseTiming[]) {
+  const result = new Map<string, OrderOutcome>()
+  const allOrders = measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_order_outcomes.collect_execution_orders',
+    () => {
+      const orders: NonNullable<WorldState['executions'][string]>['orders'][number][] = []
+      measureSyncReflectSubphase(
+        subphases,
+        'reflect_world_tick.collect_context.collect_order_outcomes.collect_execution_orders.flatten_execution_buckets',
+        () => {
+          for (const execution of Object.values(world.executions ?? {})) {
+            if (!execution?.orders) {
+              continue
+            }
+            orders.push(...execution.orders)
+          }
+        },
+      )
+      return orders
+    },
+  )
+
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.collect_order_outcomes.scan_resolved_orders',
+    () => {
+      for (const order of allOrders) {
+        const resolvedThisTick =
+          order.completedTick === world.tick ||
+          (order.startedTick === world.tick && (order.status === 'completed' || order.status === 'failed'))
+
+        if (!resolvedThisTick) {
+          continue
+        }
+
+        if (!order.unitId) continue
+        const bucket = result.get(order.unitId) ?? { completed: 0, failed: 0 }
+        if (order.status === 'completed') {
+          bucket.completed += 1
+        } else if (order.status === 'failed') {
+          bucket.failed += 1
+        }
+
+        result.set(order.unitId, bucket)
+      }
+    },
+  )
+
+  return result
+}
+
+function buildTileToRegionMap(world: WorldState, subphases?: ReflectSubphaseTiming[]) {
+  const result = new Map<string, string>()
+
+  measureSyncReflectSubphase(
+    subphases,
+    'reflect_world_tick.collect_context.build_tile_to_region_map.scan_regions',
+    () => {
+      for (const region of world.map.regions) {
+        for (const tileId of region.tileIds) {
+          if (!result.has(tileId)) {
+            result.set(tileId, region.id)
+          }
+        }
+      }
+    },
+  )
   return result
 }
 

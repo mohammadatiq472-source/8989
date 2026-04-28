@@ -1,4 +1,4 @@
-export type TileType = 'plain' | 'resource' | 'pass' | 'city' | 'fog'
+export type TileType = 'plain' | 'resource' | 'pass' | 'fort' | 'dock' | 'city' | 'fog'
 export type TileTerrain =
   | 'grassland'
   | 'forest'

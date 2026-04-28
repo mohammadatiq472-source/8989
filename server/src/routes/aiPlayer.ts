@@ -1,6 +1,8 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
+import { dispatchAiPlayerChatRoutes } from './aiPlayerChatRoutes'
 import { dispatchAiPlayerKnowledgeGraphRoute } from './aiPlayerKnowledgeGraphRoute'
 import { dispatchAiPlayerProposalRoutes } from './aiPlayerProposalRoutes'
+import { dispatchAiPlayerProviderAccountRoutes } from './aiPlayerProviderAccountRoutes'
 import { dispatchAiPlayerRuntimeRoutes } from './aiPlayerRuntimeRoutes'
 import { writeJson } from './http'
 
@@ -15,6 +17,14 @@ export async function dispatchAiPlayerRoutes(
   }
 
   if (await dispatchAiPlayerProposalRoutes(req, res, pathname, url)) {
+    return
+  }
+
+  if (await dispatchAiPlayerChatRoutes(req, res, pathname, url)) {
+    return
+  }
+
+  if (await dispatchAiPlayerProviderAccountRoutes(req, res, pathname, url)) {
     return
   }
 

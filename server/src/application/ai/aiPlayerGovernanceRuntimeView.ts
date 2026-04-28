@@ -3,11 +3,13 @@ import type {
   AiPlayerAdvanceTickPhaseSummary,
   AiPlayerAdvanceTickSubphaseSummary,
   AiPlayerProposalStats,
+  AiPlayerResourceTransferRuntime,
   AiPlayerRuntimeObservabilitySummary,
   GovernedAiPlayer,
   GovernedAiPlayerRuntime,
   GovernedAiPlayerRuntimeDetail,
 } from '../../../../shared/contracts/aiPlayer'
+import { DEFAULT_AI_RESOURCE_TRANSFER_POLICY, resolveAiResourceTransferPolicy } from '../../../../shared/domain/rules'
 import { getFactionSessionSnapshot, resolveSessionControlMode } from '../../multiplayer/SessionManager'
 import {
   getAiRuntimeObservabilitySnapshot,
@@ -21,6 +23,7 @@ import {
   cloneValue,
   sortByUpdatedDesc,
 } from './aiPlayerGovernanceState'
+import { resolveAiPlayerRuntimeModelStatus } from './aiPlayerRuntimeModelTarget'
 
 function getBudgetSnapshot(factionId: string) {
   const world = getWorldStateReadonly()
@@ -29,6 +32,46 @@ function getBudgetSnapshot(factionId: string) {
     actionPointsRemaining: faction?.actionPoints ?? 0,
     foodRemaining: faction?.food ?? 0,
     aiQuota: faction?.aiQuota ? cloneValue(faction.aiQuota) : null,
+  }
+}
+
+function getResourceTransferRuntime(player: GovernedAiPlayer): AiPlayerResourceTransferRuntime {
+  const world = getWorldStateReadonly()
+  const faction = world.factions[player.factionId]
+  if (!faction) {
+    return {
+      configuredPolicy: null,
+      effectivePolicy: cloneValue(DEFAULT_AI_RESOURCE_TRANSFER_POLICY),
+      quota: null,
+      remainingQuotaTotal: DEFAULT_AI_RESOURCE_TRANSFER_POLICY.dailyQuotaTotal,
+      cooldownRemainingTicks: 0,
+      windowRemainingTicks: 0,
+      canTransferNow: true,
+      blockedBy: null,
+    }
+  }
+
+  const effectivePolicy = resolveAiResourceTransferPolicy(faction)
+  const quota = faction.aiResourceTransferQuotaByAiPlayer?.[player.aiPlayerId] ?? null
+  const remainingQuotaTotal = Math.max(0, (quota?.dailyQuotaTotal ?? effectivePolicy.dailyQuotaTotal) - (quota?.transferredTotal ?? 0))
+  const cooldownRemainingTicks = Math.max(0, (quota?.cooldownUntilTick ?? world.tick) - world.tick)
+  const windowRemainingTicks = Math.max(0, (quota?.windowEndsTick ?? world.tick) - world.tick)
+  const blockedBy =
+    cooldownRemainingTicks > 0
+      ? 'transfer_cooldown_active'
+      : remainingQuotaTotal <= 0
+        ? 'daily_quota_exceeded'
+        : null
+
+  return {
+    configuredPolicy: faction.aiResourceTransferPolicy ? cloneValue(faction.aiResourceTransferPolicy) : null,
+    effectivePolicy: cloneValue(effectivePolicy),
+    quota: quota ? cloneValue(quota) : null,
+    remainingQuotaTotal,
+    cooldownRemainingTicks,
+    windowRemainingTicks,
+    canTransferNow: blockedBy === null,
+    blockedBy,
   }
 }
 
@@ -53,6 +96,19 @@ function getLatestProposalId(aiPlayerId: string): string | undefined {
 function getLatestReceipt(aiPlayerId: string): AiPlayerActionReceipt | undefined {
   const receipts = actionReceiptsByAiPlayer.get(aiPlayerId) ?? []
   return receipts.length > 0 ? cloneValue(receipts[receipts.length - 1]) : undefined
+}
+
+function getRuntimeModelSnapshot(player: GovernedAiPlayer) {
+  const modelStatus = resolveAiPlayerRuntimeModelStatus({
+    factionId: player.factionId,
+    ownerPlayerId: player.governorPlayerId,
+    allowLlmProposals: player.runtimePolicy.allowLlmProposals,
+  })
+  return {
+    modelName: modelStatus.activeModel,
+    modelSource: modelStatus.source === 'default' ? 'default' as const : 'env' as const,
+    modelStatus,
+  }
 }
 
 function pickTopAdvanceTickPhasesByLast(
@@ -110,8 +166,10 @@ export function buildAiPlayerRuntime(player: GovernedAiPlayer): GovernedAiPlayer
   const session = getFactionSessionSnapshot(player.factionId)
   const autonomyLevel = session.autonomyLevel
   const controlMode = resolveSessionControlMode(autonomyLevel)
+  const model = getRuntimeModelSnapshot(player)
   return {
     ...cloneValue(player),
+    ...model,
     autonomyLevel,
     controlMode,
     online: session.online,
@@ -120,6 +178,7 @@ export function buildAiPlayerRuntime(player: GovernedAiPlayer): GovernedAiPlayer
     playerNames: session.playerNames.slice(),
     governorOnline: session.playerNames.includes(player.governorPlayerId),
     budget: getBudgetSnapshot(player.factionId),
+    resourceTransfer: getResourceTransferRuntime(player),
     proposalStats: getProposalStats(player.aiPlayerId),
     latestProposalId: getLatestProposalId(player.aiPlayerId),
     latestReceipt: getLatestReceipt(player.aiPlayerId),

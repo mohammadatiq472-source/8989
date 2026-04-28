@@ -39,18 +39,44 @@ export const busMessageSchema = z.object({
 
 export const domainAgendaCandidateSchema = z.object({
   intent: z.string().min(1).max(120),
+  actionId: z.string().min(1).max(120),
   priority: commPrioritySchema,
   summary: z.string().min(1).max(320),
   supportingAiPlayerIds: z.array(z.string().min(1)).max(32),
   evidenceRefs: z.array(z.string().min(1).max(120)).max(16),
+  targetTileId: z.string().min(1).max(120).optional(),
+  targetUnitIds: z.array(z.string().min(1).max(120)).max(8).optional(),
+})
+
+export const domainAgendaOptionSchema = z.object({
+  actionId: z.string().min(1).max(120),
+  intent: z.string().min(1).max(120),
+  label: z.string().min(1).max(160),
+  summary: z.string().min(1).max(320),
+  priority: commPrioritySchema,
+  targetTileId: z.string().min(1).max(120).optional(),
+  targetUnitIds: z.array(z.string().min(1).max(120)).max(8).optional(),
+  supportingAiPlayerIds: z.array(z.string().min(1)).max(32),
+  evidenceRefs: z.array(z.string().min(1).max(120)).max(16),
+  supportCount: z.number().int().nonnegative(),
+  recommendedFollowups: z.array(z.string().min(1).max(120)).max(8).optional(),
 })
 
 export const domainAgendaSchema = z.object({
   id: z.string().min(1),
   tick: z.number().int().nonnegative(),
+  generatedWorldVersion: z.number().int().nonnegative().optional(),
   domainId: z.string().min(1),
   factionId: z.string().min(1),
   candidates: z.array(domainAgendaCandidateSchema).max(5),
+  options: z.array(domainAgendaOptionSchema).max(5),
+  optionActionIds: z.array(z.string().min(1).max(120)).max(5).optional(),
+  optionLabels: z.array(z.string().min(1).max(160)).max(5).optional(),
+  optionTargetTileIds: z.array(z.string().max(120)).max(5).optional(),
+  optionSupportCounts: z.array(z.number().int().nonnegative()).max(5).optional(),
+  targetTileId: z.string().min(1).max(120).optional(),
+  targetUnitIds: z.array(z.string().min(1).max(120)).max(8).optional(),
+  recommendedFollowups: z.array(z.string().min(1).max(120)).max(8).optional(),
   summary: z.string().min(1).max(500),
   generatedAt: z.number().int().nonnegative(),
 })

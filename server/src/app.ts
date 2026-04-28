@@ -30,6 +30,7 @@ import { handleNationFoundRoute, handleNationProfilesRoute } from './routes/nati
 import { dispatchGeneralChatRoutes } from './routes/generalChat'
 import { dispatchDiplomacyRoutes } from './routes/diplomacy'
 import { dispatchAiPlayerRoutes } from './routes/aiPlayer'
+import { dispatchInboxRoutes } from './routes/inbox'
 import { dispatchSessionRoutes } from './routes/session'
 import { dispatchV2Routes } from './routes/v2game'
 import { isHttpBodyError, writeJson } from './routes/http'
@@ -37,6 +38,8 @@ import { dispatchFactionConfigRoutes } from './routes/factionConfigRoutes'
 import { handleWorldActionRoute, handleWorldMapLayoutRoute, handleWorldSummaryRoute } from './routes/world'
 import { flushAiHubConfigPersist, getAiHubConfigPersistHealth } from './application/ai/AiConfigService'
 import { flushAiPlayerGovernancePersist, getAiPlayerGovernancePersistHealth } from './application/ai/AIPlayerGovernanceService'
+import { startAiPlayerChatPatrolScheduler, stopAiPlayerChatPatrolScheduler } from './application/ai/aiPlayerChatCommandService'
+import { flushAiPlayerProviderAccountStorePersist, getAiPlayerProviderAccountStoreHealth } from './application/ai/aiPlayerProviderAccountStore'
 import { flushFactionConfigPersist, getFactionConfigPersistHealth } from './application/faction/FactionConfigStore'
 import { flushV2GamePersist, getV2GamePersistHealth } from './application/v2/V2GameService'
 import {
@@ -47,6 +50,7 @@ import {
   createWorldDeltaSnapshot,
   getSaveSlotsPersistHealth,
   getWorldStateReadonly,
+  getWorldStatePersistHealth,
 } from './application/world/WorldService'
 import { attachWebSocket, broadcastTickDelta } from './ws/GameWebSocket'
 import { createWorldStore } from './infra/store/RedisWorldStore'
@@ -56,6 +60,7 @@ import { flushNegotiationInboxPersist } from './agents/general/GeneralNegotiatio
 import { flushSessionPersist, getSessionPersistHealth } from './multiplayer/SessionManager'
 
 const { host, port, allowFullMapLayout, gameClockEnabled } = runtimeConfig
+const aiPlayerChatPatrolSchedulerEnabled = readBooleanEnv('AI_PLAYER_CHAT_PATROL_SCHEDULER_ENABLED', false)
 
 const MAX_WORLD_SUMMARY_HISTORY_LIMIT = 500
 const MAX_WORLD_REPLAY_LIMIT = 500
@@ -66,15 +71,17 @@ type PersistenceSeverity = 'high' | 'medium' | 'low'
 
 type PersistenceAlert = {
   severity: PersistenceSeverity
-  source: 'factionConfig' | 'aiConfig' | 'aiPlayerGovernance' | 'v2Game' | 'session' | 'saveSlots'
+  source: 'factionConfig' | 'aiConfig' | 'aiPlayerGovernance' | 'aiPlayerProviderAccounts' | 'v2Game' | 'session' | 'saveSlots'
   code: string
   message: string
 }
 
 function buildPersistenceSnapshot() {
+  const worldState = getWorldStatePersistHealth()
   const factionConfig = getFactionConfigPersistHealth()
   const aiConfig = getAiHubConfigPersistHealth()
   const aiPlayerGovernance = getAiPlayerGovernancePersistHealth()
+  const aiPlayerProviderAccounts = getAiPlayerProviderAccountStoreHealth()
   const v2Game = getV2GamePersistHealth()
   const session = getSessionPersistHealth()
   const saveSlots = getSaveSlotsPersistHealth()
@@ -82,15 +89,18 @@ function buildPersistenceSnapshot() {
     factionConfig,
     aiConfig,
     aiPlayerGovernance,
+    aiPlayerProviderAccounts,
     v2Game,
     session,
     saveSlots,
   })
 
   return {
+    worldState,
     factionConfig,
     aiConfig,
     aiPlayerGovernance,
+    aiPlayerProviderAccounts,
     v2Game,
     session,
     saveSlots,
@@ -102,6 +112,7 @@ function buildPersistenceAlerts(input: {
   factionConfig: ReturnType<typeof getFactionConfigPersistHealth>
   aiConfig: ReturnType<typeof getAiHubConfigPersistHealth>
   aiPlayerGovernance: ReturnType<typeof getAiPlayerGovernancePersistHealth>
+  aiPlayerProviderAccounts: ReturnType<typeof getAiPlayerProviderAccountStoreHealth>
   v2Game: ReturnType<typeof getV2GamePersistHealth>
   session: ReturnType<typeof getSessionPersistHealth>
   saveSlots: ReturnType<typeof getSaveSlotsPersistHealth>
@@ -127,6 +138,25 @@ function buildPersistenceAlerts(input: {
     })
   }
 
+  if (input.aiPlayerProviderAccounts.security.secretPersistMode === 'memory_only') {
+    alerts.push({
+      severity: 'high',
+      source: 'aiPlayerProviderAccounts',
+      code: 'missing_encryption_key',
+      message:
+        'Player-level BYOK apiKey persistence is disabled because FACTION_APIKEY_ENCRYPTION_KEY is missing and plaintext persist is off.',
+    })
+  }
+
+  if (input.aiPlayerProviderAccounts.security.allowPlaintextPersist) {
+    alerts.push({
+      severity: 'medium',
+      source: 'aiPlayerProviderAccounts',
+      code: 'plaintext_persist_enabled',
+      message: 'FACTION_APIKEY_ALLOW_PLAINTEXT_PERSIST is enabled; player-level BYOK apiKey may be persisted in plaintext.',
+    })
+  }
+
   const persistFailureRules: Array<{
     source: PersistenceAlert['source']
     failureCount: number
@@ -134,6 +164,7 @@ function buildPersistenceAlerts(input: {
     { source: 'factionConfig', failureCount: input.factionConfig.persistFailureCount },
     { source: 'aiConfig', failureCount: input.aiConfig.persistFailureCount },
     { source: 'aiPlayerGovernance', failureCount: input.aiPlayerGovernance.persistFailureCount },
+    { source: 'aiPlayerProviderAccounts', failureCount: input.aiPlayerProviderAccounts.persistFailureCount },
     { source: 'v2Game', failureCount: input.v2Game.persistFailureCount },
     { source: 'session', failureCount: input.session.persistFailureCount },
     { source: 'saveSlots', failureCount: input.saveSlots.persistFailureCount },
@@ -159,6 +190,7 @@ function buildPersistenceAlerts(input: {
     { source: 'factionConfig', quarantineCount: input.factionConfig.corruptQuarantineCount },
     { source: 'aiConfig', quarantineCount: input.aiConfig.corruptQuarantineCount },
     { source: 'aiPlayerGovernance', quarantineCount: input.aiPlayerGovernance.corruptQuarantineCount },
+    { source: 'aiPlayerProviderAccounts', quarantineCount: input.aiPlayerProviderAccounts.corruptQuarantineCount },
     { source: 'v2Game', quarantineCount: input.v2Game.corruptQuarantineCount },
     { source: 'session', quarantineCount: input.session.corruptQuarantineCount },
     { source: 'saveSlots', quarantineCount: input.saveSlots.corruptQuarantineCount },
@@ -414,10 +446,16 @@ const server = createServer(async (req, res) => {
   if (
     requestUrl.pathname === '/api/ai/player-actions/catalog' ||
     requestUrl.pathname === '/api/ai/knowledge-graph' ||
+    requestUrl.pathname === '/api/ai/chat/patrol-scheduler/run' ||
+    requestUrl.pathname.startsWith('/api/ai/provider') ||
     requestUrl.pathname === '/api/ai/players' ||
     requestUrl.pathname.startsWith('/api/ai/players/')
   ) {
     await dispatchAiPlayerRoutes(req, res, requestUrl.pathname, requestUrl)
+    return
+  }
+
+  if (await dispatchInboxRoutes(req, res, requestUrl.pathname, requestUrl)) {
     return
   }
 
@@ -650,6 +688,13 @@ server.listen(port, host, () => {
   if (gameClockEnabled) {
     gameClock.start()
   }
+  if (aiPlayerChatPatrolSchedulerEnabled) {
+    startAiPlayerChatPatrolScheduler({
+      intervalMs: readIntEnv('AI_PLAYER_CHAT_PATROL_SCHEDULER_INTERVAL_MS', 60_000, 5_000, 3_600_000),
+      cooldownTicks: readIntEnv('AI_PLAYER_CHAT_PATROL_SCHEDULER_COOLDOWN_TICKS', 6, 0, 100000),
+      limit: readIntEnv('AI_PLAYER_CHAT_PATROL_SCHEDULER_LIMIT', 10, 1, 50),
+    })
+  }
 
   const persistence = buildPersistenceSnapshot()
   logPersistenceStartupAlerts(persistence)
@@ -668,6 +713,7 @@ async function gracefulShutdown(signal: string) {
 
   console.log(`[app] received ${signal}, flushing state to disk...`)
   gameClock.stop()
+  stopAiPlayerChatPatrolScheduler()
 
   try {
     await Promise.all([
@@ -678,6 +724,7 @@ async function gracefulShutdown(signal: string) {
       flushFactionConfigPersist(),
       flushAiHubConfigPersist(),
       flushAiPlayerGovernancePersist(),
+      flushAiPlayerProviderAccountStorePersist(),
       flushV2GamePersist(),
       flushSessionPersist(),
       flushSaveSlotsPersist(),
@@ -720,8 +767,22 @@ function readIntEnv(name: string, fallback: number, min: number, max: number) {
   return Math.max(min, Math.min(max, Math.round(raw)))
 }
 
+function readBooleanEnv(name: string, fallback: boolean) {
+  const raw = process.env[name]?.trim().toLowerCase()
+  if (!raw) {
+    return fallback
+  }
+  if (['1', 'true', 'yes', 'on'].includes(raw)) {
+    return true
+  }
+  if (['0', 'false', 'no', 'off'].includes(raw)) {
+    return false
+  }
+  return fallback
+}
+
 function applyCorsHeaders(res: ServerResponse) {
   res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,OPTIONS')
+  res.setHeader('Access-Control-Allow-Methods', 'GET,POST,DELETE,OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization')
 }

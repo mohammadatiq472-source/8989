@@ -7,11 +7,19 @@ import type {
   AiPlayerGovernancePersistHealth,
   GovernedAiPlayer,
 } from '../../../../shared/contracts/aiPlayer'
+import type {
+  AiPlayerChatMessage,
+  AiPlayerChatReadCursor,
+} from '../../../../shared/contracts/aiPlayerChat'
 import {
   aiPlayerActionProposalSchema,
   aiPlayerActionReceiptSchema,
   governedAiPlayerSchema,
 } from '../../../../shared/schemas/aiPlayer'
+import {
+  aiPlayerChatMessageSchema,
+  aiPlayerChatReadCursorSchema,
+} from '../../../../shared/schemas/aiPlayerChat'
 import {
   actionProposals,
   actionReceiptsByAiPlayer,
@@ -20,7 +28,11 @@ import {
   AI_PLAYER_GOVERNANCE_PERSIST_PATH,
   AI_PLAYER_GOVERNANCE_PERSIST_VERSION,
   cloneValue,
+  chatMessagesByAiPlayer,
+  chatReadCursors,
   governedAiPlayers,
+  MAX_PERSISTED_CHAT_MESSAGES_PER_PLAYER,
+  MAX_PERSISTED_CHAT_READ_CURSORS,
   MAX_PERSISTED_AI_PLAYERS,
   MAX_PERSISTED_PROPOSALS,
   MAX_PERSISTED_RECEIPTS_PER_PLAYER,
@@ -33,9 +45,16 @@ type PersistedAiPlayerGovernanceEnvelope = {
   players?: unknown
   proposals?: unknown
   receiptsByAiPlayer?: unknown
+  chatMessagesByAiPlayer?: unknown
+  chatReadCursors?: unknown
 }
 
 type PersistedAiPlayerReceiptBucket = {
+  aiPlayerId: string
+  items: unknown
+}
+
+type PersistedAiPlayerChatMessageBucket = {
   aiPlayerId: string
   items: unknown
 }
@@ -79,6 +98,16 @@ function sanitizeProposal(input: unknown): AiPlayerActionProposal | null {
 
 function sanitizeReceipt(input: unknown): AiPlayerActionReceipt | null {
   const parsed = aiPlayerActionReceiptSchema.safeParse(input)
+  return parsed.success ? cloneValue(parsed.data) : null
+}
+
+function sanitizeChatMessage(input: unknown): AiPlayerChatMessage | null {
+  const parsed = aiPlayerChatMessageSchema.safeParse(input)
+  return parsed.success ? cloneValue(parsed.data) : null
+}
+
+function sanitizeChatReadCursor(input: unknown): AiPlayerChatReadCursor | null {
+  const parsed = aiPlayerChatReadCursorSchema.safeParse(input)
   return parsed.success ? cloneValue(parsed.data) : null
 }
 
@@ -154,6 +183,39 @@ export function loadPersistedGovernanceState() {
       }
     }
 
+    if (Array.isArray(parsed.chatMessagesByAiPlayer)) {
+      for (const item of parsed.chatMessagesByAiPlayer as PersistedAiPlayerChatMessageBucket[]) {
+        if (!isRecord(item) || typeof item.aiPlayerId !== 'string' || !Array.isArray(item.items)) {
+          continue
+        }
+
+        const messages: AiPlayerChatMessage[] = []
+        for (const candidate of item.items.slice(-MAX_PERSISTED_CHAT_MESSAGES_PER_PLAYER)) {
+          const message = sanitizeChatMessage(candidate)
+          if (!message) {
+            continue
+          }
+          messages.push(message)
+        }
+
+        if (messages.length === 0) {
+          continue
+        }
+
+        chatMessagesByAiPlayer.set(item.aiPlayerId, messages)
+      }
+    }
+
+    if (Array.isArray(parsed.chatReadCursors)) {
+      for (const item of parsed.chatReadCursors.slice(0, MAX_PERSISTED_CHAT_READ_CURSORS)) {
+        const cursor = sanitizeChatReadCursor(item)
+        if (!cursor) {
+          continue
+        }
+        chatReadCursors.set(`${cursor.aiPlayerId}:${cursor.readerId}`, cursor)
+      }
+    }
+
     aiPlayerGovernancePersistState.restoredPlayerCount = nextRestoredPlayers
     aiPlayerGovernancePersistState.restoredProposalCount = nextRestoredProposals
     aiPlayerGovernancePersistState.restoredReceiptCount = nextRestoredReceipts
@@ -162,6 +224,8 @@ export function loadPersistedGovernanceState() {
     governedAiPlayers.clear()
     actionProposals.clear()
     actionReceiptsByAiPlayer.clear()
+    chatMessagesByAiPlayer.clear()
+    chatReadCursors.clear()
     quarantineCorruptPersistFile()
   }
 }
@@ -184,6 +248,18 @@ function buildPersistedGovernanceEnvelope(): PersistedAiPlayerGovernanceEnvelope
       aiPlayerId,
       items: items.slice(-MAX_PERSISTED_RECEIPTS_PER_PLAYER),
     }))
+  const persistedChatMessagesByAiPlayer = Array.from(chatMessagesByAiPlayer.entries())
+    .sort(([left], [right]) => left.localeCompare(right))
+    .map(([aiPlayerId, items]) => ({
+      aiPlayerId,
+      items: items.slice(-MAX_PERSISTED_CHAT_MESSAGES_PER_PLAYER),
+    }))
+  const persistedChatReadCursors = Array.from(chatReadCursors.values())
+    .sort((left, right) =>
+      left.aiPlayerId.localeCompare(right.aiPlayerId) ||
+      left.readerId.localeCompare(right.readerId),
+    )
+    .slice(0, MAX_PERSISTED_CHAT_READ_CURSORS)
 
   return {
     version: AI_PLAYER_GOVERNANCE_PERSIST_VERSION,
@@ -191,6 +267,8 @@ function buildPersistedGovernanceEnvelope(): PersistedAiPlayerGovernanceEnvelope
     players,
     proposals,
     receiptsByAiPlayer,
+    chatMessagesByAiPlayer: persistedChatMessagesByAiPlayer,
+    chatReadCursors: persistedChatReadCursors,
   }
 }
 
@@ -338,6 +416,8 @@ export function resetAiPlayerGovernancePersistForTests() {
   governedAiPlayers.clear()
   actionProposals.clear()
   actionReceiptsByAiPlayer.clear()
+  chatMessagesByAiPlayer.clear()
+  chatReadCursors.clear()
   aiPlayerGovernancePersistState.loaded = true
   aiPlayerGovernancePersistState.persistDirty = false
   aiPlayerGovernancePersistState.persistInFlight = null

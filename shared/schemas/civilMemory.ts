@@ -49,6 +49,8 @@ export const civilMemoryQuerySchema = z.object({
   type: civilMemoryEventTypeSchema.optional(),
   tickFrom: z.number().int().nonnegative().optional(),
   tickTo: z.number().int().nonnegative().optional(),
+  factionId: z.string().min(1).max(64).optional(),
+  relatedId: z.string().min(1).max(128).optional(),
 })
 
 export const memoryProviderRequestedSchema = z.enum(['mem0', 'in_memory'])

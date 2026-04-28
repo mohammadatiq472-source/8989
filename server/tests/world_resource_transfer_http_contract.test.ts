@@ -34,10 +34,10 @@ function seedWorldStateWithAiResourceAccount(): string {
       governorPlayerId: GOVERNOR_PLAYER_ID,
       factionId: FACTION_ID,
       resources: {
-        food: 100,
-        wood: 80,
-        stone: 60,
-        iron: 40,
+        food: 300,
+        wood: 300,
+        stone: 300,
+        iron: 300,
       },
       updatedTick: world.tick,
     },
@@ -54,7 +54,6 @@ function seedWorldStateWithAiResourceAccount(): string {
       updatedTick: world.tick,
     },
   }
-
   const path = buildSessionPersistPath('world_resource_transfer_contract_world_state')
   writeFileSync(path, `${JSON.stringify(world)}\n`, 'utf-8')
   return path
@@ -78,6 +77,39 @@ async function run() {
   try {
     const health = await waitForHealth(baseUrl)
     assert.ok(health, `backend did not become healthy\nstdout=${tail.stdout.join('\n')}\nstderr=${tail.stderr.join('\n')}`)
+
+    const invalidPolicySchema = await requestJson(baseUrl, '/api/world/action?includeWorld=false', 'POST', {
+      action: 'setAiResourceTransferPolicy',
+      payload: {
+        factionId: FACTION_ID,
+      },
+    })
+    assert.equal(invalidPolicySchema.status, 400, 'policy update should require at least one policy field')
+
+    const setPolicy = await requestJson(baseUrl, '/api/world/action?includeWorld=true', 'POST', {
+      action: 'setAiResourceTransferPolicy',
+      payload: {
+        factionId: FACTION_ID,
+        dailyQuotaTotal: 25,
+        dailyWindowTicks: 12,
+        cooldownTicks: 2,
+      },
+    })
+    assert.equal(setPolicy.status, 200, `set policy route failed: ${JSON.stringify(setPolicy.data)}`)
+    const setPolicyPayload = readObject(setPolicy.data)
+    assert.equal(setPolicyPayload.ok, true)
+    assert.equal(setPolicyPayload.relatedId, FACTION_ID)
+    assert.ok(readObject(setPolicyPayload.execution), 'policy update should expose execution snapshot')
+    const worldAfterPolicy = readWorldStatePayload(setPolicy.data)
+    assert.deepEqual(
+      worldAfterPolicy.factions[FACTION_ID]?.aiResourceTransferPolicy,
+      {
+        dailyQuotaTotal: 25,
+        dailyWindowTicks: 12,
+        cooldownTicks: 2,
+      },
+      'policy update should persist the configured resource transfer policy',
+    )
 
     const invalidSchema = await requestJson(baseUrl, '/api/world/action?includeWorld=false', 'POST', {
       action: 'transferFactionResourcesToGovernor',
@@ -193,6 +225,76 @@ async function run() {
     assert.equal(inbox.totalPendingResources.wood, 8)
     assert.equal(inbox.totalPendingResources.stone, 0)
     assert.equal(inbox.totalPendingResources.iron, 0)
+    const quotaAfterSuccess = worldAfter.factions[FACTION_ID]?.aiResourceTransferQuotaByAiPlayer?.[AI_PLAYER_ID]
+    assert.ok(quotaAfterSuccess, 'same-governor transfer should persist AI transfer quota state')
+    assert.equal(quotaAfterSuccess.transferredTotal, 20)
+    assert.equal(quotaAfterSuccess.dailyQuotaTotal, 25)
+    assert.equal(quotaAfterSuccess.windowEndsTick, worldAfter.tick + 12)
+    assert.equal(quotaAfterSuccess.transferredResources.food, 12)
+    assert.equal(quotaAfterSuccess.transferredResources.wood, 8)
+    assert.equal(
+      quotaAfterSuccess.cooldownUntilTick,
+      worldAfter.tick + 2,
+      'successful transfer should start the configured transfer cooldown',
+    )
+
+    const cooldownActive = await requestJson(baseUrl, '/api/world/action?includeWorld=false', 'POST', {
+      action: 'transferFactionResourcesToGovernor',
+      payload: {
+        sourceFactionId: FACTION_ID,
+        sourceAiPlayerId: AI_PLAYER_ID,
+        governorPlayerId: GOVERNOR_PLAYER_ID,
+        resources: {
+          iron: 1,
+        },
+        reason: 'cooldown should block immediate follow-up transfer',
+        approvedBy: GOVERNOR_PLAYER_ID,
+      },
+    })
+    assert.equal(cooldownActive.status, 200)
+    const cooldownActivePayload = readObject(cooldownActive.data)
+    assert.equal(cooldownActivePayload.ok, false)
+    assert.equal(cooldownActivePayload.failureCode, 'transfer_cooldown_active')
+
+    for (let i = 0; i < 2; i += 1) {
+      const advance = await requestJson(
+        baseUrl,
+        '/api/world/action?includeWorld=false',
+        'POST',
+        { action: 'advanceTick' },
+        60_000,
+      )
+      assert.equal(advance.status, 200, `advance tick ${i + 1} failed: ${JSON.stringify(advance.data)}`)
+      assert.equal(readObject(advance.data).ok, true, `advance tick ${i + 1} should succeed`)
+    }
+
+    const dailyQuotaExceeded = await requestJson(baseUrl, '/api/world/action?includeWorld=false', 'POST', {
+      action: 'transferFactionResourcesToGovernor',
+      payload: {
+        sourceFactionId: FACTION_ID,
+        sourceAiPlayerId: AI_PLAYER_ID,
+        governorPlayerId: GOVERNOR_PLAYER_ID,
+        resources: {
+          stone: 6,
+        },
+        reason: 'daily quota should block transfer over the daily budget',
+        approvedBy: GOVERNOR_PLAYER_ID,
+      },
+    })
+    assert.equal(dailyQuotaExceeded.status, 200)
+    const dailyQuotaExceededPayload = readObject(dailyQuotaExceeded.data)
+    assert.equal(dailyQuotaExceededPayload.ok, false)
+    assert.equal(dailyQuotaExceededPayload.failureCode, 'daily_quota_exceeded')
+
+    const worldAfterQuotaFailure = await loadWorldState(baseUrl)
+    const accountAfterQuotaFailure = worldAfterQuotaFailure.factions[FACTION_ID]?.aiResourceAccounts?.[AI_PLAYER_ID]
+    assert.ok(accountAfterQuotaFailure, 'AI resource account should remain after quota failure')
+    assert.equal(accountAfterQuotaFailure.resources.stone, accountAfter.resources.stone)
+    assert.equal(
+      worldAfterQuotaFailure.factions[FACTION_ID]?.governorResourceInboxes?.[GOVERNOR_PLAYER_ID]?.pendingTransfers.length,
+      1,
+      'quota failure must not create a second pending transfer',
+    )
 
     const worldReloaded = await loadWorldState(baseUrl)
     assert.equal(

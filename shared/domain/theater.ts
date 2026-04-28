@@ -1,5 +1,7 @@
+import { performance } from 'node:perf_hooks'
 import type {
   AllianceDirective,
+  AiRuntimeAdvanceTickSubphaseTiming,
   FactionId,
   MapRegion,
   PlannerSnapshot,
@@ -11,6 +13,41 @@ import type {
 import { buildTileIdSet } from './worldIndex'
 import { getTileByIdFast } from './worldIndex'
 import { allianceStanceLabel } from './labels'
+
+export type TheaterDiagnostics = {
+  subphases?: AiRuntimeAdvanceTickSubphaseTiming[]
+}
+
+type RegionUnitCounts = {
+  friendlyUnits: number
+  hostileUnits: number
+}
+
+type TheaterSummaryIndexes = {
+  directiveByRegionId: Map<string, AllianceDirective>
+  commanderNameById: Map<string, string>
+  unitCountsByRegionId: Map<string, RegionUnitCounts>
+}
+
+function buildTheaterSubphaseName(prefix: string, suffix: string) {
+  return `${prefix}.${suffix}`
+}
+
+function measureTheaterSubphase<T>(
+  diagnostics: TheaterDiagnostics | undefined,
+  subphase: string,
+  work: () => T,
+): T {
+  const startedAtMs = performance.now()
+  try {
+    return work()
+  } finally {
+    diagnostics?.subphases?.push({
+      subphase,
+      durationMs: Number((performance.now() - startedAtMs).toFixed(2)),
+    })
+  }
+}
 
 export function getRegionById(world: WorldState, regionId: string) {
   return world.map.regions.find((region) => region.id === regionId)
@@ -28,53 +65,120 @@ function resolveDefaultFactionId(world: WorldState): FactionId {
 export function buildTheaterSnapshot(
   world: WorldState,
   factionId: FactionId = resolveDefaultFactionId(world),
+  diagnostics?: TheaterDiagnostics,
+  subphasePrefix = 'advance_world_state.directors_and_theater.theater_snapshot',
 ): TheaterSnapshot {
-  const tileById = Object.fromEntries(world.map.tiles.map((tile) => [tile.id, tile])) as Record<
-    string,
-    WorldState['map']['tiles'][number]
-  >
-  const macroRegions = world.map.regions.map((region) => summarizeRegion(world, region, tileById, factionId))
-  const frontlineRisk = Math.round(
-    macroRegions
-      .filter((region) => region.role === 'frontier')
-      .reduce((sum, region) => sum + region.averageEnemyPressure, 0),
+  const tileById = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'build_tile_index'),
+    () => Object.fromEntries(world.map.tiles.map((tile) => [tile.id, tile])) as Record<
+      string,
+      WorldState['map']['tiles'][number]
+    >,
   )
-  const factionResourceTiles = world.map.tiles.filter(
-    (tile) => tile.owner === factionId && tile.type === 'resource',
+  const macroRegions = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'summarize_macro_regions'),
+    () => {
+      const summaryIndexes = buildTheaterSummaryIndexes(
+        world,
+        factionId,
+        diagnostics,
+        buildTheaterSubphaseName(subphasePrefix, 'summarize_macro_regions'),
+      )
+      return (
+      world.map.regions.map((region) =>
+        summarizeRegion(
+          world,
+          region,
+          tileById,
+          factionId,
+          diagnostics,
+          buildTheaterSubphaseName(subphasePrefix, 'summarize_macro_regions'),
+          summaryIndexes,
+        ),
+      )
+      )
+    },
   )
-  const foodSecurity = Number(
-    factionResourceTiles.reduce((sum, tile) => sum + 2 - tile.enemyPressure * 0.2, 0).toFixed(1),
+  const frontlineRisk = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_frontline_risk'),
+    () => Math.round(
+      macroRegions
+        .filter((region) => region.role === 'frontier')
+        .reduce((sum, region) => sum + region.averageEnemyPressure, 0),
+    ),
   )
-  const supplyTileIds = ['tile_11', 'tile_12', 'tile_13', 'tile_08'] as const
-  const supplyTiles = supplyTileIds
-    .map((id) => getTileByIdFast(world, id))
-    .filter((tile): tile is NonNullable<typeof tile> => !!tile)
-  const averageSupplyPressure =
-    supplyTiles.reduce((sum, tile) => sum + tile.enemyPressure, 0) / Math.max(1, supplyTiles.length)
-  const supplyLineHealth = clampPercent(100 - averageSupplyPressure * 16)
-  const playerFood = world.factions[factionId]?.food ?? 0
-  const developmentCapacity = clampPercent(factionResourceTiles.length * 24 + playerFood * 1.8)
-  const reconCoverage = Math.round(
-    (world.map.tiles.filter((tile) => world.intel[tile.id]?.level === 'confirmed').length /
-      world.map.tiles.length) *
-      100,
+  const factionResourceTiles = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'collect_faction_resource_tiles'),
+    () => world.map.tiles.filter((tile) => tile.owner === factionId && tile.type === 'resource'),
   )
-  const allianceCoordination = clampPercent(
-    macroRegions.reduce((sum, region) => sum + region.alliedSupport, 0) /
-      Math.max(1, macroRegions.length),
+  const foodSecurity = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_food_security'),
+    () => Number(
+      factionResourceTiles.reduce((sum, tile) => sum + 2 - tile.enemyPressure * 0.2, 0).toFixed(1),
+    ),
   )
-  const recentBattleTilt = world.feedback.battleRecords
-    .slice(0, 6)
-    .reduce(
-      (sum, record) =>
-        sum + (record.outcome === 'win' ? 1 : -1) * (record.attackerFaction === factionId ? 1 : -1),
-      0,
-    )
-  const playerBattleLoss = world.feedback.battleRecords
-    .slice(0, 6)
-    .filter((record) => record.attackerFaction === factionId)
-    .reduce((sum, record) => sum + record.attackerLoss, 0)
-  const battleRisk = clampPercent(frontlineRisk * 10 + playerBattleLoss * 0.7 - recentBattleTilt * 6)
+  const supplyLineHealth = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_supply_line_health'),
+    () => {
+      const supplyTileIds = ['tile_11', 'tile_12', 'tile_13', 'tile_08'] as const
+      const supplyTiles = supplyTileIds
+        .map((id) => getTileByIdFast(world, id))
+        .filter((tile): tile is NonNullable<typeof tile> => !!tile)
+      const averageSupplyPressure =
+        supplyTiles.reduce((sum, tile) => sum + tile.enemyPressure, 0) / Math.max(1, supplyTiles.length)
+      return clampPercent(100 - averageSupplyPressure * 16)
+    },
+  )
+  const developmentCapacity = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_development_capacity'),
+    () => {
+      const playerFood = world.factions[factionId]?.food ?? 0
+      return clampPercent(factionResourceTiles.length * 24 + playerFood * 1.8)
+    },
+  )
+  const reconCoverage = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_recon_coverage'),
+    () => Math.round(
+      (world.map.tiles.filter((tile) => world.intel[tile.id]?.level === 'confirmed').length /
+        world.map.tiles.length) *
+        100,
+    ),
+  )
+  const allianceCoordination = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_alliance_coordination'),
+    () => clampPercent(
+      macroRegions.reduce((sum, region) => sum + region.alliedSupport, 0) /
+        Math.max(1, macroRegions.length),
+    ),
+  )
+  const { recentBattleTilt, battleRisk } = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'compute_battle_risk'),
+    () => {
+      const recentBattleTilt = world.feedback.battleRecords
+        .slice(0, 6)
+        .reduce(
+          (sum, record) =>
+            sum + (record.outcome === 'win' ? 1 : -1) * (record.attackerFaction === factionId ? 1 : -1),
+          0,
+        )
+      const playerBattleLoss = world.feedback.battleRecords
+        .slice(0, 6)
+        .filter((record) => record.attackerFaction === factionId)
+        .reduce((sum, record) => sum + record.attackerLoss, 0)
+      const battleRisk = clampPercent(frontlineRisk * 10 + playerBattleLoss * 0.7 - recentBattleTilt * 6)
+      return { recentBattleTilt, battleRisk }
+    },
+  )
 
   return {
     macroRegions,
@@ -96,45 +200,122 @@ export function summarizeRegion(
     world.map.tiles.map((tile) => [tile.id, tile]),
   ),
   factionId: FactionId = resolveDefaultFactionId(world),
+  diagnostics?: TheaterDiagnostics,
+  subphasePrefix?: string,
+  summaryIndexes?: TheaterSummaryIndexes,
 ): RegionSnapshot {
-  const tiles = region.tileIds
-    .map((tileId) => tileById[tileId])
-    .filter((tile): tile is NonNullable<typeof tile> => !!tile)
-  const friendlyControlledTiles = tiles.filter((tile) => tile.owner === factionId).length
-  const hostileControlledTiles = tiles.filter((tile) => tile.owner !== factionId && tile.owner !== 'neutral' && !!tile.owner).length
-  // Phase 1B: 用 Set.has() O(1) 替换 Array.includes() O(n) 的单位区域归属检查
-  const regionTileSet = buildTileIdSet(region.tileIds)
-  const friendlyUnits = world.units.filter(
-    (unit) => unit.faction === factionId && regionTileSet.has(unit.tileId),
-  ).length
-  const hostileUnits = world.units.filter(
-    (unit) => unit.faction !== factionId && regionTileSet.has(unit.tileId),
-  ).length
-  const resourceTiles = tiles.filter((tile) => tile.type === 'resource').length
-  const scoutingCoverage = Math.round(
-    (tiles.filter((tile) => world.intel[tile.id]?.level === 'confirmed').length /
-      Math.max(1, tiles.length)) *
-      100,
+  const measureRegionSubphase = <T>(suffix: string, work: () => T): T => {
+    if (!diagnostics || !subphasePrefix) {
+      return work()
+    }
+    return measureTheaterSubphase(diagnostics, buildTheaterSubphaseName(subphasePrefix, suffix), work)
+  }
+  const tiles = measureRegionSubphase('resolve_tiles', () =>
+    region.tileIds
+      .map((tileId) => tileById[tileId])
+      .filter((tile): tile is NonNullable<typeof tile> => !!tile),
   )
-  const averageEnemyPressure = Number(
-    (tiles.reduce((sum, tile) => sum + tile.enemyPressure, 0) / Math.max(1, tiles.length)).toFixed(1),
+  const { friendlyControlledTiles, hostileControlledTiles, resourceTiles, scoutingCoverage, averageEnemyPressure } =
+    measureRegionSubphase('scan_tiles', () => {
+      let friendlyControlledTiles = 0
+      let hostileControlledTiles = 0
+      let resourceTiles = 0
+      let confirmedIntelTiles = 0
+      let totalEnemyPressure = 0
+
+      for (const tile of tiles) {
+        if (tile.owner === factionId) {
+          friendlyControlledTiles += 1
+        } else if (tile.owner !== factionId && tile.owner !== 'neutral' && !!tile.owner) {
+          hostileControlledTiles += 1
+        }
+        if (tile.type === 'resource') {
+          resourceTiles += 1
+        }
+        if (world.intel[tile.id]?.level === 'confirmed') {
+          confirmedIntelTiles += 1
+        }
+        totalEnemyPressure += tile.enemyPressure
+      }
+
+      return {
+        friendlyControlledTiles,
+        hostileControlledTiles,
+        resourceTiles,
+        scoutingCoverage: Math.round((confirmedIntelTiles / Math.max(1, tiles.length)) * 100),
+        averageEnemyPressure: Number((totalEnemyPressure / Math.max(1, tiles.length)).toFixed(1)),
+      }
+    })
+  const { friendlyUnits, hostileUnits } = measureRegionSubphase('count_units', () => {
+    const precomputedCounts = summaryIndexes?.unitCountsByRegionId.get(region.id)
+    if (precomputedCounts) {
+      return measureRegionSubphase('count_units.resolve_precomputed_counts', () => precomputedCounts)
+    }
+
+    const regionTileSet = measureRegionSubphase('count_units.build_region_tile_set', () =>
+      buildTileIdSet(region.tileIds),
+    )
+    return measureRegionSubphase('count_units.scan_units', () => {
+      let friendlyUnits = 0
+      let hostileUnits = 0
+      for (const unit of world.units) {
+        if (!regionTileSet.has(unit.tileId)) {
+          continue
+        }
+        if (unit.faction === factionId) {
+          friendlyUnits += 1
+        } else {
+          hostileUnits += 1
+        }
+      }
+      return { friendlyUnits, hostileUnits }
+    })
+  })
+  const control = measureRegionSubphase('resolve_control', () =>
+    resolveRegionControl(friendlyControlledTiles, hostileControlledTiles, tiles.length, factionId),
   )
-  const control = resolveRegionControl(friendlyControlledTiles, hostileControlledTiles, tiles.length, factionId)
-  const directive = getAllianceDirective(world, region.id)
-  const commander = world.alliance.commanders.find(
-    (candidate) => candidate.id === directive.assignedCommanderId,
+  const { directive, commanderName, alliedSupport } = measureRegionSubphase('resolve_directive', () => {
+    const directive = measureRegionSubphase(
+      'resolve_directive.lookup_directive',
+      () => summaryIndexes?.directiveByRegionId.get(region.id) ?? getAllianceDirective(world, region.id),
+    )
+    const commanderName = measureRegionSubphase(
+      'resolve_directive.lookup_commander_name',
+      () => summaryIndexes?.commanderNameById.get(directive.assignedCommanderId) ?? directive.assignedCommanderId,
+    )
+    return {
+      directive,
+      commanderName,
+      alliedSupport: Math.round(directive.supportLevel),
+    }
+  })
+  const recentBattlePressure = measureRegionSubphase('compute_recent_battle_pressure', () =>
+    clampPercent(
+      world.feedback.battleRecords
+        .filter((record) => record.regionId === region.id)
+        .slice(0, 3)
+        .reduce((sum, record) => {
+          const signedLoss =
+            record.outcome === 'loss' && record.attackerFaction === factionId ? record.attackerLoss : 0
+          const winRelief = record.outcome === 'win' && record.attackerFaction === factionId ? -8 : 0
+          return sum + signedLoss + winRelief
+        }, averageEnemyPressure * 12),
+    ),
   )
-  const alliedSupport = Math.round(directive.supportLevel)
-  const recentBattlePressure = clampPercent(
-    world.feedback.battleRecords
-      .filter((record) => record.regionId === region.id)
-      .slice(0, 3)
-      .reduce((sum, record) => {
-        const signedLoss =
-          record.outcome === 'loss' && record.attackerFaction === factionId ? record.attackerLoss : 0
-        const winRelief = record.outcome === 'win' && record.attackerFaction === factionId ? -8 : 0
-        return sum + signedLoss + winRelief
-      }, averageEnemyPressure * 12),
+  const summary = measureRegionSubphase('build_summary', () =>
+    buildRegionSummary(
+      region,
+      control,
+      friendlyUnits,
+      hostileUnits,
+      averageEnemyPressure,
+      scoutingCoverage,
+      directive,
+      commanderName,
+      alliedSupport,
+      recentBattlePressure,
+      factionId,
+    ),
   )
 
   return {
@@ -152,21 +333,85 @@ export function summarizeRegion(
     scoutingCoverage,
     allianceStance: directive.stance,
     alliedSupport,
-    alliedCommanderName: commander?.name ?? directive.assignedCommanderId,
+    alliedCommanderName: commanderName,
     recentBattlePressure,
-    summary: buildRegionSummary(
-      region,
-      control,
-      friendlyUnits,
-      hostileUnits,
-      averageEnemyPressure,
-      scoutingCoverage,
-      directive,
-      commander?.name ?? directive.assignedCommanderId,
-      alliedSupport,
-      recentBattlePressure,
-      factionId,
-    ),
+    summary,
+  }
+}
+
+function buildTheaterSummaryIndexes(
+  world: WorldState,
+  factionId: FactionId,
+  diagnostics: TheaterDiagnostics | undefined,
+  subphasePrefix: string,
+): TheaterSummaryIndexes {
+  const directiveByRegionId = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'build_directive_index'),
+    () => new Map(Object.entries(world.alliance.directives)),
+  )
+  const commanderNameById = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'build_commander_index'),
+    () => new Map(world.alliance.commanders.map((commander) => [commander.id, commander.name] as const)),
+  )
+  const unitCountsByRegionId = measureTheaterSubphase(
+    diagnostics,
+    buildTheaterSubphaseName(subphasePrefix, 'build_region_unit_count_index'),
+    () => {
+      const countsByRegionId = new Map<string, RegionUnitCounts>()
+      measureTheaterSubphase(
+        diagnostics,
+        buildTheaterSubphaseName(subphasePrefix, 'build_region_unit_count_index.initialize_regions'),
+        () => {
+          for (const region of world.map.regions) {
+            countsByRegionId.set(region.id, { friendlyUnits: 0, hostileUnits: 0 })
+          }
+        },
+      )
+      const regionIdByTileId = measureTheaterSubphase(
+        diagnostics,
+        buildTheaterSubphaseName(subphasePrefix, 'build_region_unit_count_index.build_tile_to_region_index'),
+        () => {
+          const index = new Map<string, string>()
+          for (const region of world.map.regions) {
+            for (const tileId of region.tileIds) {
+              if (!index.has(tileId)) {
+                index.set(tileId, region.id)
+              }
+            }
+          }
+          return index
+        },
+      )
+      measureTheaterSubphase(
+        diagnostics,
+        buildTheaterSubphaseName(subphasePrefix, 'build_region_unit_count_index.scan_units'),
+        () => {
+          for (const unit of world.units) {
+            const regionId = regionIdByTileId.get(unit.tileId)
+            if (!regionId) {
+              continue
+            }
+            const counts = countsByRegionId.get(regionId)
+            if (!counts) {
+              continue
+            }
+            if (unit.faction === factionId) {
+              counts.friendlyUnits += 1
+            } else {
+              counts.hostileUnits += 1
+            }
+          }
+        },
+      )
+      return countsByRegionId
+    },
+  )
+  return {
+    directiveByRegionId,
+    commanderNameById,
+    unitCountsByRegionId,
   }
 }
 

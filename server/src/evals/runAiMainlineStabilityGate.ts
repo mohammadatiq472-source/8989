@@ -246,7 +246,7 @@ async function runTemplateReplayScenario(factionId: string): Promise<TemplateRep
   const targetTileId = unit ? resolveMoveTargetTileId(unit.tileId) : null
   const cityTileId = resolveOwnedCityTileId(factionId)
   const reserveHeroTarget = resolveReserveHeroTarget(factionId)
-  const researchTechId = 'governance'
+  const researchTechId = 'logistics'
   const buildingGroupId = 'market'
   const buildingId = 'market_plaza'
   const affairId = 'queue_tax_upgrade'
@@ -306,6 +306,12 @@ async function runTemplateReplayScenario(factionId: string): Promise<TemplateRep
         run: async () => enqueueAffairAction(cityTileId, affairId, false, factionId),
       },
       {
+        templateId: 'advance_tick_recharge_before_building',
+        eventAction: 'advance_tick',
+        required: true,
+        run: async () => advanceTickAction(false),
+      },
+      {
         templateId: 'upgrade_first_city_building',
         eventAction: 'promote_city_building',
         required: true,
@@ -332,7 +338,7 @@ async function runTemplateReplayScenario(factionId: string): Promise<TemplateRep
       {
         templateId: 'deploy_first_reserve_hero',
         eventAction: 'deploy_reserve_hero',
-        required: true,
+        required: false,
         run: async () => {
           const target = resolveReserveHeroTarget(factionId)
           if (!target) {

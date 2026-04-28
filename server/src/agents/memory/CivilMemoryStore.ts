@@ -214,12 +214,16 @@ export function queryCivilMemory(params: CivilMemoryQuery = {}): CivilMemoryEntr
   const limit = Number.isFinite(params.limit) ? Math.max(1, Math.min(500, Math.floor(params.limit ?? 120))) : 120
   const tickFrom = params.tickFrom
   const tickTo = params.tickTo
+  const factionId = params.factionId?.trim()
+  const relatedId = params.relatedId?.trim()
 
   return entries
     .filter((item) => {
       if (params.type && item.type !== params.type) return false
       if (typeof tickFrom === 'number' && item.tick < tickFrom) return false
       if (typeof tickTo === 'number' && item.tick > tickTo) return false
+      if (factionId && !item.factionIds.includes(factionId)) return false
+      if (relatedId && !item.relatedIds.includes(relatedId)) return false
       return true
     })
     .slice(0, limit)

@@ -83,7 +83,7 @@ export function spawnBackend(
 export async function requestJson(
   baseUrl: string,
   path: string,
-  method: 'GET' | 'POST',
+  method: 'GET' | 'POST' | 'DELETE',
   body?: Record<string, unknown>,
   timeoutMs = 15_000,
 ): Promise<HttpJsonResult> {

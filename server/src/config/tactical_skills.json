@@ -6,18 +6,18 @@
       "pressure:high",
       "scenario:u3_于_tile_10"
     ],
-    "tacticSummary": "unit_jiao_1 于 luoyang_4_4 失利，战损 A8/D12，协同 0。；unit_liang_5 于 luoyang_5_4 失利，战损 A8/D4，协同 0。",
+    "tacticSummary": "e4 于 tile_08 失利，战损 A13/D48，协同 0。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
-        "action": "siege",
-        "context": "对洛阳或要塞展开围城，持续施压直至倒计时完成"
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.3500010214234938,
-    "tickRecorded": 11,
+    "outcomeScore": 0.386269030508427,
+    "tickRecorded": 15,
     "factionId": "u3",
     "id": "8c9ba54b-8d85-4951-88dd-a510357e8fda",
-    "uses": 579
+    "uses": 582
   },
   {
     "situationTags": [
@@ -26,18 +26,18 @@
       "pressure:high",
       "scenario:e4_于_tile_08"
     ],
-    "tacticSummary": "u1 于 tile_10 失利，战损 A11/D60，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "tacticSummary": "u2 于 tile_10 失利，战损 A8/D66，协同 4。；u1 于 tile_10 失利，战损 A8/D66，协同 4。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.345075,
-    "tickRecorded": 21,
+    "outcomeScore": 0.39730745133107426,
+    "tickRecorded": 29,
     "factionId": "e4",
     "id": "b5e2e5e5-b82a-4a7a-9fe9-5ca1aacae1ee",
-    "uses": 361
+    "uses": 368
   },
   {
     "situationTags": [
@@ -46,18 +46,18 @@
       "pressure:low",
       "scenario:东境屯垦军_推进_eas"
     ],
-    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "tacticSummary": "东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 165-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.6999999934300167,
-    "tickRecorded": 12,
+    "outcomeScore": 0.6999999999999998,
+    "tickRecorded": 3,
     "factionId": "alliance",
     "id": "643d4c93-abee-44a2-9cdc-8d31edf04681",
-    "uses": 12713
+    "uses": 14574
   },
   {
     "situationTags": [
@@ -206,18 +206,18 @@
       "pressure:medium",
       "scenario:unit_jiao_5_"
     ],
-    "tacticSummary": "unit_jiao_1 于 grid_160_179 取胜，战损 A8/D12，协同 0。；unit_liang_1 于 luoyang_5_4 失利，战损 A8/D0，协同 0。",
+    "tacticSummary": "u2 于 tile_09 取胜，战损 A8/D16，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.6494454229206564,
-    "tickRecorded": 7,
+    "outcomeScore": 0.7836406911839773,
+    "tickRecorded": 11,
     "factionId": "unit_jiao_5",
     "id": "ba77f9dc-f90b-40ad-bc11-b01b70c1fd20",
-    "uses": 710
+    "uses": 712
   },
   {
     "situationTags": [
@@ -226,18 +226,18 @@
       "pressure:high",
       "scenario:unit_yang_7_"
     ],
-    "tacticSummary": "unit_yang_7 于 grid_221_158 失利，战损 A8/D12，协同 0。；unit_yu_5 于 luoyang_7_4 失利，战损 A8/D10，协同 0。",
+    "tacticSummary": "e3 于 tile_09 失利，战损 A8/D42，协同 0。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.275,
-    "tickRecorded": 43,
+    "outcomeScore": 0.3983171570819214,
+    "tickRecorded": 45,
     "factionId": "yan",
     "id": "e32951d6-2e53-48a3-a4bc-156e41e9e667",
-    "uses": 23
+    "uses": 33
   },
   {
     "situationTags": [
@@ -326,18 +326,18 @@
       "pressure:high",
       "scenario:unit_liang_r"
     ],
-    "tacticSummary": "unit_yu_6 于 luoyang_5_4 失利，战损 A8/D0，协同 0。；unit_yu_5 于 luoyang_5_4 失利，战损 A8/D0，协同 0。",
+    "tacticSummary": "u3 于 tile_10 失利，战损 A8/D12，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
     "prototypeOrders": [
       {
         "action": "garrison",
         "context": "稳守既有阵地，等待反击机会"
       }
     ],
-    "outcomeScore": 0.34944542290672215,
-    "tickRecorded": 50,
+    "outcomeScore": 0.39999955081927574,
+    "tickRecorded": 154,
     "factionId": "yu",
     "id": "b02f37ac-a10c-4b94-9558-7622e9dd2d9c",
-    "uses": 78
+    "uses": 105
   },
   {
     "situationTags": [
@@ -354,9 +354,69 @@
       }
     ],
     "outcomeScore": 0.7,
-    "tickRecorded": 78,
+    "tickRecorded": 161,
     "factionId": "player",
     "id": "1ee44517-7692-4781-b81f-05a1a969e3f2",
-    "uses": 12
+    "uses": 107
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:neutral",
+      "pressure:medium",
+      "scenario:unit_player_"
+    ],
+    "tacticSummary": "unit_player_r4 于 tile_09 取胜，战损 A8/D13，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 1,
+    "tickRecorded": 31,
+    "factionId": "player",
+    "id": "a879e9ff-e00d-4b53-8d50-862d9a40c22b",
+    "uses": 1
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:opposing",
+      "pressure:high",
+      "scenario:e3_于_tile_09"
+    ],
+    "tacticSummary": "e3 于 tile_09 失利，战损 A8/D42，协同 0。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.4,
+    "tickRecorded": 164,
+    "factionId": "enemy",
+    "id": "613c23a1-3cca-44ee-b411-93c1d860fd8b",
+    "uses": 44
+  },
+  {
+    "situationTags": [
+      "phase:endgame",
+      "luoyang:ours",
+      "pressure:medium",
+      "scenario:u1_于_tile_04"
+    ],
+    "tacticSummary": "u1 于 tile_04 失利，战损 A8/D8，协同 4。；东境屯垦军 推进 East Expansion Belt: 东境屯垦军 在 司隶 Resource 154-156 展开同盟先遣推进，为我方打开发展或接敌空间。",
+    "prototypeOrders": [
+      {
+        "action": "garrison",
+        "context": "稳守既有阵地，等待反击机会"
+      }
+    ],
+    "outcomeScore": 0.7,
+    "tickRecorded": 129,
+    "factionId": "player",
+    "id": "bd25ce6f-263e-4a78-9959-07daa9b0fa67",
+    "uses": 1
   }
 ]

@@ -76,6 +76,44 @@ async function run() {
     assert.equal(transferEntry.requiresApprovalByDefault, true)
     assert.equal(transferEntry.mappedWorldAction, 'transferFactionResourcesToGovernor')
 
+    const setPolicy = await requestJson(backend.baseUrl, '/api/world/action?includeWorld=false', 'POST', {
+      action: 'setAiResourceTransferPolicy',
+      payload: {
+        factionId: FACTION_ID,
+        dailyQuotaTotal: 25,
+        dailyWindowTicks: 12,
+        cooldownTicks: 2,
+      },
+    })
+    assert.equal(setPolicy.status, 200, `set transfer policy failed: ${JSON.stringify(setPolicy.data)}`)
+    assert.equal(readObject(setPolicy.data).ok, true)
+
+    const runtimeWithPolicy = await requestJson(backend.baseUrl, `/api/ai/players/${AI_PLAYER_ID}`, 'GET')
+    assert.equal(runtimeWithPolicy.status, 200, `runtime policy read failed: ${JSON.stringify(runtimeWithPolicy.data)}`)
+    const resourceTransferBefore = readObject(readObject(runtimeWithPolicy.data).resourceTransfer)
+    assert.deepEqual(
+      readObject(resourceTransferBefore.configuredPolicy),
+      {
+        dailyQuotaTotal: 25,
+        dailyWindowTicks: 12,
+        cooldownTicks: 2,
+      },
+      'runtime read model should expose configured resource transfer policy',
+    )
+    assert.deepEqual(
+      readObject(resourceTransferBefore.effectivePolicy),
+      {
+        dailyQuotaTotal: 25,
+        dailyWindowTicks: 12,
+        cooldownTicks: 2,
+      },
+      'runtime read model should expose effective resource transfer policy',
+    )
+    assert.equal(resourceTransferBefore.remainingQuotaTotal, 25)
+    assert.equal(resourceTransferBefore.cooldownRemainingTicks, 0)
+    assert.equal(resourceTransferBefore.canTransferNow, true)
+    assert.equal(resourceTransferBefore.blockedBy, null)
+
     const invalidArgs = await requestJson(backend.baseUrl, '/api/ai/players/proposals', 'POST', {
       aiPlayerId: AI_PLAYER_ID,
       action: 'resource_transfer_to_governor',
@@ -106,6 +144,68 @@ async function run() {
     assert.equal(createdProposal.requiresApproval, true)
     assert.equal(createdProposal.riskLevel, 'high')
 
+    const unauthorizedCreate = await requestJson(backend.baseUrl, '/api/ai/players/proposals', 'POST', {
+      aiPlayerId: AI_PLAYER_ID,
+      action: 'resource_transfer_to_governor',
+      source: 'mcp',
+      reason: 'non-governor approval should fail in world authority',
+      args: {
+        resources: {
+          wood: 9,
+        },
+      },
+    })
+    assert.equal(
+      unauthorizedCreate.status,
+      200,
+      `create unauthorized transfer proposal failed: ${JSON.stringify(unauthorizedCreate.data)}`,
+    )
+    const unauthorizedProposal = readObject(readObject(unauthorizedCreate.data).proposal)
+    const unauthorizedProposalId = String(unauthorizedProposal.proposalId)
+    const unauthorizedApprove = await requestJson(
+      backend.baseUrl,
+      `/api/ai/players/proposals/${unauthorizedProposalId}/approve`,
+      'POST',
+      {
+        approvedBy: 'not_the_governor',
+      },
+    )
+    assert.equal(
+      unauthorizedApprove.status,
+      200,
+      `approve unauthorized transfer proposal failed: ${JSON.stringify(unauthorizedApprove.data)}`,
+    )
+    const unauthorizedExecute = await requestJson(
+      backend.baseUrl,
+      `/api/ai/players/proposals/${unauthorizedProposalId}/execute`,
+      'POST',
+      {
+        executedBy: 'not_the_governor',
+        includeWorld: false,
+      },
+    )
+    assert.equal(
+      unauthorizedExecute.status,
+      200,
+      `execute unauthorized transfer proposal failed: ${JSON.stringify(unauthorizedExecute.data)}`,
+    )
+    const unauthorizedReceipt = readObject(readObject(unauthorizedExecute.data).receipt)
+    assert.equal(unauthorizedReceipt.ok, false)
+    assert.equal(unauthorizedReceipt.worldAction, 'transferFactionResourcesToGovernor')
+    assert.equal(unauthorizedReceipt.failureCode, 'approval_required')
+    assert.ok(readObject(unauthorizedReceipt.worldActionPayload).approvedBy === 'not_the_governor')
+    assert.ok(readObject(unauthorizedReceipt.execution), 'failed transfer receipt should include execution')
+
+    const worldAfterUnauthorized = await loadWorldState(backend.baseUrl)
+    const accountAfterUnauthorized = worldAfterUnauthorized.factions[FACTION_ID]?.aiResourceAccounts?.[AI_PLAYER_ID]
+    assert.ok(accountAfterUnauthorized, 'AI subaccount should remain after rejected approval')
+    assert.equal(accountAfterUnauthorized.resources.wood, 70, 'unauthorized approval must not debit AI subaccount')
+    assert.equal(
+      worldAfterUnauthorized.factions[FACTION_ID]?.governorResourceInboxes?.[GOVERNOR_PLAYER_ID],
+      undefined,
+      'unauthorized approval must not create governor pending inbox',
+    )
+
     const { receipt } = await createApproveExecuteProposal(
       backend.baseUrl,
       'resource_transfer_to_governor',
@@ -131,6 +231,77 @@ async function run() {
     assert.equal(inbox.pendingTransfers.length, 1)
     assert.equal(inbox.totalPendingResources.food, 11)
     assert.equal(inbox.totalPendingResources.iron, 7)
+
+    const runtimeAfterTransfer = await requestJson(backend.baseUrl, `/api/ai/players/${AI_PLAYER_ID}`, 'GET')
+    assert.equal(runtimeAfterTransfer.status, 200, `runtime quota read failed: ${JSON.stringify(runtimeAfterTransfer.data)}`)
+    const resourceTransferAfter = readObject(readObject(runtimeAfterTransfer.data).resourceTransfer)
+    assert.equal(resourceTransferAfter.remainingQuotaTotal, 7)
+    assert.equal(resourceTransferAfter.cooldownRemainingTicks, 2)
+    assert.equal(resourceTransferAfter.windowRemainingTicks, 12)
+    assert.equal(resourceTransferAfter.canTransferNow, false)
+    assert.equal(resourceTransferAfter.blockedBy, 'transfer_cooldown_active')
+    const quotaAfterTransfer = readObject(resourceTransferAfter.quota)
+    assert.equal(quotaAfterTransfer.transferredTotal, 18)
+    assert.equal(quotaAfterTransfer.dailyQuotaTotal, 25)
+
+    const createWrongApprover = await requestJson(backend.baseUrl, '/api/ai/players/proposals', 'POST', {
+      aiPlayerId: AI_PLAYER_ID,
+      action: 'resource_transfer_to_governor',
+      source: 'mcp',
+      reason: 'resource transfer approved by non-governor should fail in world authority',
+      args: {
+        resources: {
+          food: 5,
+        },
+      },
+    })
+    assert.equal(
+      createWrongApprover.status,
+      200,
+      `create wrong-approver transfer proposal failed: ${JSON.stringify(createWrongApprover.data)}`,
+    )
+    const wrongApproverProposal = readObject(readObject(createWrongApprover.data).proposal)
+    const wrongApproverProposalId = String(wrongApproverProposal.proposalId)
+    assert.equal(wrongApproverProposal.status, 'pending_approval')
+
+    const approveWrongApprover = await requestJson(
+      backend.baseUrl,
+      `/api/ai/players/proposals/${wrongApproverProposalId}/approve`,
+      'POST',
+      {
+        approvedBy: 'human_not_the_governor',
+      },
+    )
+    assert.equal(
+      approveWrongApprover.status,
+      200,
+      `approve wrong-approver transfer proposal failed: ${JSON.stringify(approveWrongApprover.data)}`,
+    )
+
+    const executeWrongApprover = await requestJson(
+      backend.baseUrl,
+      `/api/ai/players/proposals/${wrongApproverProposalId}/execute`,
+      'POST',
+      {
+        executedBy: 'human_not_the_governor',
+        includeWorld: false,
+      },
+      60_000,
+    )
+    assert.equal(
+      executeWrongApprover.status,
+      200,
+      `execute wrong-approver transfer proposal should return a failed receipt: ${JSON.stringify(executeWrongApprover.data)}`,
+    )
+    const wrongApproverReceipt = readObject(readObject(executeWrongApprover.data).receipt)
+    assert.equal(wrongApproverReceipt.ok, false)
+    assert.equal(wrongApproverReceipt.worldAction, 'transferFactionResourcesToGovernor')
+    assert.equal(wrongApproverReceipt.failureCode, 'approval_required')
+    assert.equal(readObject(wrongApproverReceipt.worldActionPayload).approvedBy, 'human_not_the_governor')
+    assert.ok(
+      Object.prototype.hasOwnProperty.call(wrongApproverReceipt, 'execution'),
+      'failed transfer receipt should preserve the execution field',
+    )
 
     console.log('[ai_player_http_resource_transfer_contract] all checks passed')
   } finally {

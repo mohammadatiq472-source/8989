@@ -33,6 +33,14 @@ export const webSocketObservabilityStatsSchema = z.object({
   subscribedConnections: z.number().int(),
   factionDistribution: z.record(z.string(), z.number().int()),
   recentErrors: z.array(webSocketObservabilityErrorSchema),
+  maxConnections: z.number().int(),
+  maxSubscriptionsPerFaction: z.number().int(),
+  maxVisibleEventsPerTick: z.number().int(),
+  maxVisibleUnitChangesPerTick: z.number().int(),
+  maxVisibleTileChangesPerTick: z.number().int(),
+  rejectedConnections: z.number().int(),
+  rejectedSubscriptions: z.number().int(),
+  truncatedTickDeltaMessages: z.number().int(),
 })
 
 export const worldEventsResponseSchema = z.object({

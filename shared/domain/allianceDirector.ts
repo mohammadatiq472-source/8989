@@ -1,5 +1,26 @@
+import { performance } from 'node:perf_hooks'
 import { buildTheaterSnapshot, getRegionById } from './theater'
-import type { AllianceActionSummary, Tile, WorldState } from '../contracts/game'
+import type { AiRuntimeAdvanceTickSubphaseTiming, AllianceActionSummary, AlliedCommander, MapRegion, Tile, Unit, WorldState } from '../contracts/game'
+
+export type AllianceDirectorDiagnostics = {
+  subphases?: AiRuntimeAdvanceTickSubphaseTiming[]
+}
+
+function measureAllianceDirectorSubphase<T>(
+  diagnostics: AllianceDirectorDiagnostics | undefined,
+  subphase: string,
+  work: () => T,
+): T {
+  const startedAtMs = performance.now()
+  try {
+    return work()
+  } finally {
+    diagnostics?.subphases?.push({
+      subphase,
+      durationMs: Number((performance.now() - startedAtMs).toFixed(2)),
+    })
+  }
+}
 
 function resolveDefaultBeneficiaryFactionId(world: WorldState) {
   const factionIds = Object.keys(world.factions)
@@ -10,158 +31,397 @@ function resolvePrimaryRivalFactionId(world: WorldState, beneficiaryFactionId: s
   return Object.keys(world.factions).find((factionId) => factionId !== beneficiaryFactionId) ?? beneficiaryFactionId
 }
 
-export function runAllianceDirector(world: WorldState, beneficiaryFactionId: string = resolveDefaultBeneficiaryFactionId(world)) {
+type AllianceDirectorIndexes = {
+  regionSummaryById: Map<string, ReturnType<typeof buildTheaterSnapshot>['macroRegions'][number]>
+  commanderById: Map<string, AlliedCommander>
+  tileById: Map<string, Tile>
+  beneficiaryUnits: Unit[]
+  beneficiaryUnitTileIds: Set<string>
+}
+
+type AllianceDirectiveExecutionContext = {
+  world: WorldState
+  beneficiaryFactionId: string
+  region: MapRegion
+  commander: AlliedCommander
+  targetTile: Tile
+  anchorUnit?: Unit
+  indexes: AllianceDirectorIndexes
+  diagnostics?: AllianceDirectorDiagnostics
+}
+
+function buildAllianceDirectorIndexes(
+  world: WorldState,
+  theater: ReturnType<typeof buildTheaterSnapshot>,
+  beneficiaryFactionId: string,
+  diagnostics?: AllianceDirectorDiagnostics,
+): AllianceDirectorIndexes {
+  const regionSummaryById = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.build_region_summary_index',
+    () => new Map(theater.macroRegions.map((summary) => [summary.id, summary])),
+  )
+  const commanderById = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.build_commander_index',
+    () => new Map(world.alliance.commanders.map((commander) => [commander.id, commander])),
+  )
+  const tileById = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.build_tile_index',
+    () => new Map(world.map.tiles.map((tile) => [tile.id, tile])),
+  )
+  const beneficiaryUnits = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.build_beneficiary_unit_index',
+    () => world.units.filter((unit) => unit.faction === beneficiaryFactionId),
+  )
+  const beneficiaryUnitTileIds = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.build_beneficiary_unit_tile_set',
+    () => new Set(beneficiaryUnits.map((unit) => unit.tileId)),
+  )
+
+  return {
+    regionSummaryById,
+    commanderById,
+    tileById,
+    beneficiaryUnits,
+    beneficiaryUnitTileIds,
+  }
+}
+
+function updateAllianceTargetPressure(
+  context: AllianceDirectiveExecutionContext,
+  subphasePrefix: string,
+) {
+  measureAllianceDirectorSubphase(
+    context.diagnostics,
+    `${subphasePrefix}.decrease_enemy_pressure`,
+    () => {
+      context.targetTile.enemyPressure = Math.max(0, context.targetTile.enemyPressure - 1)
+    },
+  )
+}
+
+function buildAllianceActionContext(context: AllianceDirectiveExecutionContext) {
+  return {
+    factionId: context.beneficiaryFactionId,
+    unitId: context.anchorUnit?.id,
+    tileId: context.targetTile.id,
+    fromTileId: context.anchorUnit?.tileId,
+    toTileId: context.targetTile.id,
+  }
+}
+
+function appendAllianceDirectiveAction(
+  actions: AllianceActionSummary[],
+  context: AllianceDirectiveExecutionContext,
+  subphasePrefix: string,
+  severity: AllianceActionSummary['severity'],
+  title: string,
+  detail: string,
+) {
+  const action = measureAllianceDirectorSubphase(
+    context.diagnostics,
+    `${subphasePrefix}.append_action`,
+    () =>
+      createAllianceAction(
+        context.world,
+        context.region.id,
+        severity,
+        title,
+        detail,
+        buildAllianceActionContext(context),
+      ),
+  )
+  actions.push(action)
+}
+
+function applyAllianceHold(
+  actions: AllianceActionSummary[],
+  context: AllianceDirectiveExecutionContext,
+) {
+  measureAllianceDirectorSubphase(
+    context.diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.apply_stance_hold',
+    () => {
+      updateAllianceTargetPressure(
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_hold',
+      )
+      appendAllianceDirectiveAction(
+        actions,
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_hold',
+        'low',
+        `${context.commander.name} 稳住 ${context.region.name}`,
+        `${context.commander.name} 在 ${context.targetTile.name} 加固警戒，压低敌压并维持补给秩序。`,
+      )
+    },
+  )
+}
+
+function applyAllianceSupport(
+  actions: AllianceActionSummary[],
+  context: AllianceDirectiveExecutionContext,
+) {
+  measureAllianceDirectorSubphase(
+    context.diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.apply_stance_support',
+    () => {
+      updateAllianceTargetPressure(
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_support',
+      )
+      const regionTileIdSet = measureAllianceDirectorSubphase(
+        context.diagnostics,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_support.build_region_tile_set',
+        () => new Set(context.region.tileIds),
+      )
+      measureAllianceDirectorSubphase(
+        context.diagnostics,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_support.boost_regional_supply',
+        () => {
+          for (const unit of context.indexes.beneficiaryUnits) {
+            if (regionTileIdSet.has(unit.tileId)) {
+              unit.supply = Math.min(9, unit.supply + 1)
+            }
+          }
+        },
+      )
+      appendAllianceDirectiveAction(
+        actions,
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_support',
+        'medium',
+        `${context.commander.name} 策应 ${context.region.name}`,
+        `${context.commander.name} 向 ${context.region.name} 输送补给和侧翼策应，减轻 ${context.targetTile.name} 压力。`,
+      )
+    },
+  )
+}
+
+function applyAllianceHarass(
+  actions: AllianceActionSummary[],
+  context: AllianceDirectiveExecutionContext,
+) {
+  measureAllianceDirectorSubphase(
+    context.diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.apply_stance_harass',
+    () => {
+      updateAllianceTargetPressure(
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_harass',
+      )
+      measureAllianceDirectorSubphase(
+        context.diagnostics,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_harass.refresh_intel',
+        () => {
+          context.world.intel[context.targetTile.id] = {
+            level: 'confirmed',
+            lastScoutedTick: context.world.tick,
+            summary: `盟友骚扰后回传：${context.targetTile.name} 敌压 ${context.targetTile.enemyPressure}。`,
+          }
+        },
+      )
+      appendAllianceDirectiveAction(
+        actions,
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_harass',
+        'medium',
+        `${context.commander.name} 骚扰 ${context.targetTile.name}`,
+        `${context.commander.name} 对 ${context.targetTile.name} 发起袭扰并共享视野，压低敌军组织度。`,
+      )
+    },
+  )
+}
+
+function applyAllianceExpand(
+  actions: AllianceActionSummary[],
+  context: AllianceDirectiveExecutionContext,
+) {
+  measureAllianceDirectorSubphase(
+    context.diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.apply_stance_expand',
+    () => {
+      updateAllianceTargetPressure(
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_expand',
+      )
+      measureAllianceDirectorSubphase(
+        context.diagnostics,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_expand.claim_neutral_resource',
+        () => {
+          if (context.targetTile.owner === 'neutral' && context.targetTile.type === 'resource') {
+            context.targetTile.owner = context.beneficiaryFactionId
+          }
+        },
+      )
+      appendAllianceDirectiveAction(
+        actions,
+        context,
+        'advance_world_state.directors_and_theater.alliance_director.apply_stance_expand',
+        'high',
+        `${context.commander.name} 推进 ${context.region.name}`,
+        `${context.commander.name} 在 ${context.targetTile.name} 展开同盟先遣推进，为我方打开发展或接敌空间。`,
+      )
+    },
+  )
+}
+
+function applyAllianceDirectiveByStance(
+  actions: AllianceActionSummary[],
+  stance: string,
+  context: AllianceDirectiveExecutionContext,
+) {
+  switch (stance) {
+    case 'hold':
+      applyAllianceHold(actions, context)
+      break
+    case 'support':
+      applyAllianceSupport(actions, context)
+      break
+    case 'harass':
+      applyAllianceHarass(actions, context)
+      break
+    case 'expand':
+      applyAllianceExpand(actions, context)
+      break
+  }
+}
+
+export function runAllianceDirector(
+  world: WorldState,
+  beneficiaryFactionId: string = resolveDefaultBeneficiaryFactionId(world),
+  diagnostics?: AllianceDirectorDiagnostics,
+) {
   const actions: AllianceActionSummary[] = []
   const rivalFactionId = resolvePrimaryRivalFactionId(world, beneficiaryFactionId)
-  const theater = buildTheaterSnapshot(world, beneficiaryFactionId)
+  const theater = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.build_theater_snapshot',
+    () =>
+      buildTheaterSnapshot(
+        world,
+        beneficiaryFactionId,
+        diagnostics,
+        'advance_world_state.directors_and_theater.alliance_director.build_theater_snapshot',
+      ),
+  )
+  const indexes = buildAllianceDirectorIndexes(world, theater, beneficiaryFactionId, diagnostics)
 
   for (const directive of Object.values(world.alliance.directives)) {
-    const region = getRegionById(world, directive.regionId)
-    const regionSummary = theater.macroRegions.find((item) => item.id === directive.regionId)
-    const commander = world.alliance.commanders.find(
-      (candidate) => candidate.id === directive.assignedCommanderId,
+    const context = measureAllianceDirectorSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.alliance_director.resolve_directive_context',
+      () => ({
+        region: getRegionById(world, directive.regionId),
+        regionSummary: indexes.regionSummaryById.get(directive.regionId),
+        commander: indexes.commanderById.get(directive.assignedCommanderId),
+      }),
     )
+    const region = context.region
+    const regionSummary = context.regionSummary
+    const commander = context.commander
 
     if (!region || !regionSummary || !commander) {
       continue
     }
 
-    const targetTile = pickAllianceTargetTile(world, region.tileIds, directive.stance, beneficiaryFactionId, rivalFactionId)
+    const targetTile = measureAllianceDirectorSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.alliance_director.pick_target_tile',
+      () => pickAllianceTargetTile(indexes, region, directive.stance, rivalFactionId, diagnostics),
+    )
     if (!targetTile) {
       continue
     }
-    const anchorUnit = pickAllianceAnchorUnit(world, beneficiaryFactionId, region.tileIds)
-
-    switch (directive.stance) {
-      case 'hold':
-        targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
-        actions.push(
-          createAllianceAction(
-            world,
-            region.id,
-            'low',
-            `${commander.name} 稳住 ${region.name}`,
-            `${commander.name} 在 ${targetTile.name} 加固警戒，压低敌压并维持补给秩序。`,
-            {
-              factionId: beneficiaryFactionId,
-              unitId: anchorUnit?.id,
-              tileId: targetTile.id,
-              fromTileId: anchorUnit?.tileId,
-              toTileId: targetTile.id,
-            },
-          ),
-        )
-        break
-      case 'support':
-        targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
-        for (const unit of world.units) {
-          if (unit.faction === beneficiaryFactionId && region.tileIds.includes(unit.tileId)) {
-            unit.supply = Math.min(9, unit.supply + 1)
-          }
-        }
-        actions.push(
-          createAllianceAction(
-            world,
-            region.id,
-            'medium',
-            `${commander.name} 策应 ${region.name}`,
-            `${commander.name} 向 ${region.name} 输送补给和侧翼策应，减轻 ${targetTile.name} 压力。`,
-            {
-              factionId: beneficiaryFactionId,
-              unitId: anchorUnit?.id,
-              tileId: targetTile.id,
-              fromTileId: anchorUnit?.tileId,
-              toTileId: targetTile.id,
-            },
-          ),
-        )
-        break
-      case 'harass':
-        targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
-        world.intel[targetTile.id] = {
-          level: 'confirmed',
-          lastScoutedTick: world.tick,
-          summary: `盟友骚扰后回传：${targetTile.name} 敌压 ${targetTile.enemyPressure}。`,
-        }
-        actions.push(
-          createAllianceAction(
-            world,
-            region.id,
-            'medium',
-            `${commander.name} 骚扰 ${targetTile.name}`,
-            `${commander.name} 对 ${targetTile.name} 发起袭扰并共享视野，压低敌军组织度。`,
-            {
-              factionId: beneficiaryFactionId,
-              unitId: anchorUnit?.id,
-              tileId: targetTile.id,
-              fromTileId: anchorUnit?.tileId,
-              toTileId: targetTile.id,
-            },
-          ),
-        )
-        break
-      case 'expand':
-        targetTile.enemyPressure = Math.max(0, targetTile.enemyPressure - 1)
-        if (targetTile.owner === 'neutral' && targetTile.type === 'resource') {
-          targetTile.owner = beneficiaryFactionId
-        }
-        actions.push(
-          createAllianceAction(
-            world,
-            region.id,
-            'high',
-            `${commander.name} 推进 ${region.name}`,
-            `${commander.name} 在 ${targetTile.name} 展开同盟先遣推进，为我方打开发展或接敌空间。`,
-            {
-              factionId: beneficiaryFactionId,
-              unitId: anchorUnit?.id,
-              tileId: targetTile.id,
-              fromTileId: anchorUnit?.tileId,
-              toTileId: targetTile.id,
-            },
-          ),
-        )
-        break
-    }
+    const anchorUnit = measureAllianceDirectorSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.alliance_director.pick_anchor_unit',
+      () => pickAllianceAnchorUnit(indexes, region, diagnostics),
+    )
+    applyAllianceDirectiveByStance(actions, directive.stance, {
+      world,
+      beneficiaryFactionId,
+      region,
+      commander,
+      targetTile,
+      anchorUnit,
+      indexes,
+      diagnostics,
+    })
   }
 
   if (actions.length > 0) {
-    world.feedback.allianceActions = [...actions, ...world.feedback.allianceActions].slice(0, 8)
+    measureAllianceDirectorSubphase(
+      diagnostics,
+      'advance_world_state.directors_and_theater.alliance_director.commit_feedback_actions',
+      () => {
+        world.feedback.allianceActions = [...actions, ...world.feedback.allianceActions].slice(0, 8)
+      },
+    )
   }
 
   return actions
 }
 
 function pickAllianceTargetTile(
-  world: WorldState,
-  regionTileIds: string[],
+  indexes: AllianceDirectorIndexes,
+  region: MapRegion,
   stance: string,
-  beneficiaryFactionId: string,
   rivalFactionId: string,
+  diagnostics?: AllianceDirectorDiagnostics,
 ) {
-  const regionTiles = regionTileIds
-    .map((tileId) => world.map.tiles.find((tile) => tile.id === tileId))
-    .filter((tile): tile is Tile => !!tile)
+  const regionTiles = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.pick_target_tile.collect_region_tiles',
+    () =>
+      region.tileIds
+        .map((tileId) => indexes.tileById.get(tileId))
+        .filter((tile): tile is Tile => !!tile),
+  )
 
-  if (stance === 'expand') {
-    return (
-      regionTiles.find((tile) => tile.type === 'resource' && tile.owner !== rivalFactionId) ??
-      regionTiles.sort((left, right) => right.enemyPressure - left.enemyPressure)[0]
-    )
-  }
+  return measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.pick_target_tile.select_candidate',
+    () => {
+      let lowestPressureTile: Tile | undefined
+      let highestPressureTile: Tile | undefined
+      let supportAnchorTile: Tile | undefined
+      let expandableResourceTile: Tile | undefined
 
-  if (stance === 'harass') {
-    return regionTiles.sort((left, right) => right.enemyPressure - left.enemyPressure)[0]
-  }
+      for (const tile of regionTiles) {
+        if (!lowestPressureTile || tile.enemyPressure < lowestPressureTile.enemyPressure) {
+          lowestPressureTile = tile
+        }
+        if (!highestPressureTile || tile.enemyPressure > highestPressureTile.enemyPressure) {
+          highestPressureTile = tile
+        }
+        if (!supportAnchorTile && indexes.beneficiaryUnitTileIds.has(tile.id)) {
+          supportAnchorTile = tile
+        }
+        if (!expandableResourceTile && tile.type === 'resource' && tile.owner !== rivalFactionId) {
+          expandableResourceTile = tile
+        }
+      }
 
-  if (stance === 'support') {
-    return (
-      regionTiles.find((tile) => world.units.some((unit) => unit.faction === beneficiaryFactionId && unit.tileId === tile.id)) ??
-      regionTiles.sort((left, right) => right.enemyPressure - left.enemyPressure)[0]
-    )
-  }
+      if (stance === 'expand') {
+        return expandableResourceTile ?? highestPressureTile
+      }
 
-  return regionTiles.sort((left, right) => left.enemyPressure - right.enemyPressure)[0]
+      if (stance === 'harass') {
+        return highestPressureTile
+      }
+
+      if (stance === 'support') {
+        return supportAnchorTile ?? highestPressureTile
+      }
+
+      return lowestPressureTile
+    },
+  )
 }
 
 function createAllianceAction(
@@ -193,7 +453,21 @@ function createAllianceAction(
   }
 }
 
-function pickAllianceAnchorUnit(world: WorldState, factionId: string, regionTileIds: string[]) {
-  return world.units.find((unit) => unit.faction === factionId && regionTileIds.includes(unit.tileId))
-    ?? world.units.find((unit) => unit.faction === factionId)
+function pickAllianceAnchorUnit(
+  indexes: AllianceDirectorIndexes,
+  region: MapRegion,
+  diagnostics?: AllianceDirectorDiagnostics,
+) {
+  const regionTileIdSet = measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.pick_anchor_unit.build_region_tile_set',
+    () => new Set(region.tileIds),
+  )
+  return measureAllianceDirectorSubphase(
+    diagnostics,
+    'advance_world_state.directors_and_theater.alliance_director.pick_anchor_unit.scan_units',
+    () =>
+      indexes.beneficiaryUnits.find((unit) => regionTileIdSet.has(unit.tileId)) ??
+      indexes.beneficiaryUnits[0],
+  )
 }

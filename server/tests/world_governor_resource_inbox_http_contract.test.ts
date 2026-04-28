@@ -8,6 +8,7 @@ import {
   readObject,
   requestJson,
   shutdownChild,
+  sleep,
   spawnBackend,
   type TailState,
   waitForHealth,
@@ -84,9 +85,20 @@ function seedWorldStateWithGovernorInbox(): string {
 }
 
 async function loadWorldState(baseUrl: string): Promise<WorldState> {
-  const worldResult = await requestJson(baseUrl, '/api/world?intelMode=full', 'GET')
-  assert.equal(worldResult.status, 200, `world route failed: ${JSON.stringify(worldResult.data)}`)
-  return readWorldStatePayload(worldResult.data)
+  let lastError: unknown = null
+  for (let attempt = 1; attempt <= 3; attempt += 1) {
+    try {
+      const worldResult = await requestJson(baseUrl, '/api/world', 'GET')
+      assert.equal(worldResult.status, 200, `world route failed: ${JSON.stringify(worldResult.data)}`)
+      return readWorldStatePayload(worldResult.data)
+    } catch (error) {
+      lastError = error
+      if (attempt < 3) {
+        await sleep(500)
+      }
+    }
+  }
+  throw lastError
 }
 
 async function run() {
@@ -196,6 +208,14 @@ async function run() {
       0,
       'governor inbox pending transfers should stay empty after reload',
     )
+  } catch (error) {
+    console.error('[world_governor_resource_inbox_http_contract] backend tail:', JSON.stringify({
+      stdout: tail.stdout,
+      stderr: tail.stderr,
+      childExitCode: child.exitCode,
+      childSignalCode: child.signalCode,
+    }, null, 2))
+    throw error
   } finally {
     await shutdownChild(child)
   }

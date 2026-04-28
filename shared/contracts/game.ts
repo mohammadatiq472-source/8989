@@ -1,8 +1,10 @@
 export type * from './game/common'
 export type * from './game/planning'
 export type * from './game/history'
+export type * from './game/observability'
 export type * from './game/ai'
 export type * from './game/meta'
+export type * from './game/worldCellFootprint'
 export type * from './game/world'
 export type * from './game/session'
 

@@ -120,6 +120,8 @@ export function getCivilMemoryEntries(params: {
   type?: CivilMemoryEventType
   tickFrom?: number
   tickTo?: number
+  factionId?: string
+  relatedId?: string
 } = {}): CivilMemoryEntry[] {
   return queryCivilMemory(params)
 }

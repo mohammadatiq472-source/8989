@@ -10,11 +10,15 @@ import {
   gatherAiResourceTileAction,
   getWorldMapLayout,
   getWorldSummary,
+  healTroopAction,
+  issueClaimableRewardAction,
   moveUnitAction,
+  occupyTileAction,
   promoteCityBuildingAction,
   promoteTroopFacilityBuildingAction,
   rewardClaimAction,
   recruitProspectHeroAction,
+  setAiResourceTransferPolicyAction,
   setAiContextFocusAction,
   setGeneralActiveHeroAction,
   setGeneralTacticAction,
@@ -222,14 +226,26 @@ export async function handleWorldActionRoute(
           rewardClaimAction(request.payload?.rewardId, includeWorld, request.payload?.factionId),
         )
         return
+      case 'issueClaimableReward':
+        writeJson(res, 200, issueClaimableRewardAction(request.payload, includeWorld))
+        return
       case 'transferFactionResourcesToGovernor':
         writeJson(res, 200, transferFactionResourcesToGovernorAction(request.payload, includeWorld))
+        return
+      case 'setAiResourceTransferPolicy':
+        writeJson(res, 200, setAiResourceTransferPolicyAction(request.payload, includeWorld))
         return
       case 'claimGovernorResourceInbox':
         writeJson(res, 200, claimGovernorResourceInboxAction(request.payload, includeWorld))
         return
       case 'gatherAiResourceTile':
         writeJson(res, 200, gatherAiResourceTileAction(request.payload, includeWorld))
+        return
+      case 'occupyTile':
+        writeJson(res, 200, occupyTileAction(request.payload, includeWorld))
+        return
+      case 'healTroop':
+        writeJson(res, 200, healTroopAction(request.payload, includeWorld))
         return
       case 'promoteTroopFacilityBuilding':
         writeJson(

@@ -168,6 +168,10 @@ export function tileTypeLabel(tileType: Tile['type']) {
       return '资源点'
     case 'pass':
       return '关口'
+    case 'fort':
+      return '要塞'
+    case 'dock':
+      return '码头'
     case 'city':
       return '城池'
     case 'fog':
@@ -185,6 +189,8 @@ export function describeTile(tile: Tile) {
     plain: '平原',
     resource: '资源点',
     pass: '关口',
+    fort: '要塞',
+    dock: '码头',
     city: '城池',
     fog: '雾区',
   }

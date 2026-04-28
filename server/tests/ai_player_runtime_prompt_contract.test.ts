@@ -53,8 +53,15 @@ function testRenderedPromptKeepsAuthorityBoundary() {
     'shared/domain/rules.ts',
     'commitWorldState',
     'action-specific',
+    'developmentPlan',
+    'candidateActions',
+    'riskItems',
     'failureCode',
     'JSON only',
+    '资源：',
+    '目标：',
+    '风险：',
+    '批准后结果：',
   ]) {
     assert.ok(rendered.includes(requiredToken), `rendered prompt must preserve ${requiredToken}`)
   }

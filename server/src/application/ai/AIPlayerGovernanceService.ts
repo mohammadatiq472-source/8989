@@ -1,13 +1,17 @@
+import { randomUUID } from 'node:crypto'
 import type {
   AiPlayerActionCatalogEntry,
   AiPlayerActionType,
   AiPlayerApprovalPolicy,
   AiPlayerBudgetPolicy,
+  AiPlayerContextDocument,
   AiPlayerRuntimePolicy,
   CreateGovernedAiPlayerRequest,
   GovernedAiPlayer,
   GovernedAiPlayerRuntime,
   GovernedAiPlayerRuntimeDetail,
+  UpsertAiPlayerContextDocumentRequest,
+  UpdateGovernedAiPlayerProfileRequest,
 } from '../../../../shared/contracts/aiPlayer'
 import { getWorldStateReadonly } from '../world/WorldService'
 import { AI_PLAYER_ACTION_CATALOG, listStaticAiPlayerActionCatalog } from './aiPlayerActionCatalog'
@@ -60,6 +64,8 @@ const DEFAULT_RUNTIME_POLICY: AiPlayerRuntimePolicy = {
   allowCliExecution: true,
 }
 
+const MAX_CONTEXT_DOCUMENTS_PER_AI = 16
+
 function listAllActionTypes(): AiPlayerActionType[] {
   return AI_PLAYER_ACTION_CATALOG.map((entry) => entry.action)
 }
@@ -89,6 +95,10 @@ function uniqueActions(actions: AiPlayerActionType[]): AiPlayerActionType[] {
   return Array.from(new Set(actions))
 }
 
+function measureUtf8Bytes(text: string): number {
+  return Buffer.byteLength(text, 'utf8')
+}
+
 function ensureFactionExists(factionId: string): boolean {
   const world = getWorldStateReadonly()
   return Boolean(world.factions[factionId])
@@ -114,6 +124,8 @@ export function registerGovernedAiPlayer(input: CreateGovernedAiPlayerRequest): 
   const player: GovernedAiPlayer = {
     aiPlayerId: input.aiPlayerId,
     displayName: input.displayName,
+    avatarId: input.avatarId?.trim() || undefined,
+    avatarImagePath: input.avatarImagePath?.trim() || undefined,
     governorPlayerId: input.governorPlayerId,
     factionId: input.factionId,
     enabled: input.enabled ?? true,
@@ -122,6 +134,7 @@ export function registerGovernedAiPlayer(input: CreateGovernedAiPlayerRequest): 
     approvalPolicy: mergeApprovalPolicy(input.approvalPolicy),
     budgetPolicy: mergeBudgetPolicy(input.budgetPolicy),
     runtimePolicy: mergeRuntimePolicy(input.runtimePolicy),
+    contextDocuments: input.contextDocuments?.slice(0, MAX_CONTEXT_DOCUMENTS_PER_AI) ?? [],
     createdAt,
     updatedAt: createdAt,
   }
@@ -139,6 +152,78 @@ export function registerGovernedAiPlayer(input: CreateGovernedAiPlayerRequest): 
     },
   })
   return { player: buildAiPlayerRuntimeDetail(player) }
+}
+
+export function upsertGovernedAiPlayerContextDocument(
+  aiPlayerId: string,
+  input: UpsertAiPlayerContextDocumentRequest,
+): {
+  player?: GovernedAiPlayerRuntimeDetail
+  document?: AiPlayerContextDocument
+  error?: string
+} {
+  ensureAiPlayerGovernanceLoaded()
+  const player = governedAiPlayers.get(aiPlayerId)
+  if (!player) {
+    return { error: `ai player not found: ${aiPlayerId}` }
+  }
+
+  const title = input.title.trim()
+  const content = input.content.trim()
+  if (!title) {
+    return { error: 'context document title required' }
+  }
+  if (!content) {
+    return { error: 'context document content required' }
+  }
+
+  if (!Array.isArray(player.contextDocuments)) {
+    player.contextDocuments = []
+  }
+  const now = nowIso()
+  const documentId = input.documentId?.trim() || `ctx_${randomUUID()}`
+  const existingIndex = player.contextDocuments.findIndex((item) => item.documentId === documentId)
+  if (existingIndex < 0 && player.contextDocuments.length >= MAX_CONTEXT_DOCUMENTS_PER_AI) {
+    return { error: 'context document limit reached' }
+  }
+
+  const previous = existingIndex >= 0 ? player.contextDocuments[existingIndex] : null
+  const document: AiPlayerContextDocument = {
+    documentId,
+    kind: input.kind,
+    title,
+    content,
+    sourceFileName: input.sourceFileName?.trim() || undefined,
+    contentBytes: measureUtf8Bytes(content),
+    createdAt: previous?.createdAt ?? now,
+    updatedAt: now,
+    updatedBy: input.updatedBy.trim(),
+  }
+
+  if (existingIndex >= 0) {
+    player.contextDocuments[existingIndex] = document
+  } else {
+    player.contextDocuments.push(document)
+  }
+  player.updatedAt = now
+  governedAiPlayers.set(aiPlayerId, player)
+  scheduleAiPlayerGovernancePersist()
+  recordAiPlayerGovernanceEvent({
+    action: 'ai_player_context_document_upsert',
+    success: true,
+    message: `upserted governed ai player context document ${aiPlayerId}`,
+    metadata: {
+      aiPlayerId,
+      documentId,
+      kind: document.kind,
+      title: document.title,
+      contentBytes: document.contentBytes,
+      updatedBy: document.updatedBy,
+      governorPlayerId: player.governorPlayerId,
+      factionId: player.factionId,
+    },
+  })
+  return { player: buildAiPlayerRuntimeDetail(player), document }
 }
 
 export function listGovernedAiPlayers(params: {
@@ -169,6 +254,57 @@ export function getGovernedAiPlayerRuntime(aiPlayerId: string): GovernedAiPlayer
   ensureAiPlayerGovernanceLoaded()
   const player = governedAiPlayers.get(aiPlayerId)
   return player ? buildAiPlayerRuntimeDetail(player) : null
+}
+
+export function updateGovernedAiPlayerProfile(
+  aiPlayerId: string,
+  input: UpdateGovernedAiPlayerProfileRequest,
+): {
+  player?: GovernedAiPlayerRuntimeDetail
+  error?: string
+} {
+  ensureAiPlayerGovernanceLoaded()
+  const player = governedAiPlayers.get(aiPlayerId)
+  if (!player) {
+    return { error: `ai player not found: ${aiPlayerId}` }
+  }
+
+  const nextDisplayName = input.displayName?.trim()
+  const nextAvatarId = input.avatarId?.trim()
+  const nextAvatarImagePath = input.avatarImagePath?.trim()
+  if (!nextDisplayName && nextAvatarId === undefined && nextAvatarImagePath === undefined) {
+    return { error: 'profile update field required' }
+  }
+
+  const changedFields: Record<string, unknown> = {}
+  if (nextDisplayName) {
+    player.displayName = nextDisplayName
+    changedFields.displayName = nextDisplayName
+  }
+  if (input.avatarId !== undefined) {
+    player.avatarId = nextAvatarId || undefined
+    changedFields.avatarId = player.avatarId ?? null
+  }
+  if (input.avatarImagePath !== undefined) {
+    player.avatarImagePath = nextAvatarImagePath || undefined
+    changedFields.avatarImagePath = player.avatarImagePath ?? null
+  }
+  player.updatedAt = nowIso()
+  governedAiPlayers.set(aiPlayerId, player)
+  scheduleAiPlayerGovernancePersist()
+  recordAiPlayerGovernanceEvent({
+    action: 'ai_player_profile_update',
+    success: true,
+    message: `updated governed ai player profile ${aiPlayerId}`,
+    metadata: {
+      aiPlayerId,
+      ...changedFields,
+      updatedBy: input.updatedBy,
+      governorPlayerId: player.governorPlayerId,
+      factionId: player.factionId,
+    },
+  })
+  return { player: buildAiPlayerRuntimeDetail(player) }
 }
 
 export function pauseGovernedAiPlayer(aiPlayerId: string, updatedBy: string): {

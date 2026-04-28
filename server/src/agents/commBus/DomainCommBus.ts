@@ -7,6 +7,7 @@ import type {
   CommTopic,
   DomainAgenda,
   DomainAgendaCandidate,
+  DomainAgendaOption,
   DomainCommDropReason,
   DomainCommMetricsSnapshot,
   DomainCommPreviewResponse,
@@ -262,10 +263,13 @@ function buildActorMessages(world: WorldState, domainId: string, factionId: stri
 
   const candidate: DomainAgendaCandidate = {
     intent: top.intent,
+    actionId: resolveAgendaActionIdFromIntent(top.intent),
     priority: top.priority,
     summary: `${actor.name} proposes ${top.intent} at ${situation.primaryTileId}`,
     supportingAiPlayerIds: [actor.aiPlayerId],
     evidenceRefs: top.evidenceRefs,
+    targetTileId: situation.primaryTileId,
+    targetUnitIds: [...actor.unitIds],
   }
 
   return { messages, candidate }
@@ -286,6 +290,7 @@ function compileAgenda(
         ...candidate,
         supportingAiPlayerIds: [...candidate.supportingAiPlayerIds],
         evidenceRefs: [...candidate.evidenceRefs],
+        targetUnitIds: candidate.targetUnitIds ? [...candidate.targetUnitIds] : undefined,
       })
       continue
     }
@@ -296,10 +301,13 @@ function compileAgenda(
 
     merged.set(candidate.intent, {
       intent: candidate.intent,
+      actionId: existing.actionId,
       priority: higherPriority,
       summary: existing.summary,
       supportingAiPlayerIds: [...aiSet],
       evidenceRefs: [...evidenceSet],
+      targetTileId: existing.targetTileId ?? candidate.targetTileId,
+      targetUnitIds: existing.targetUnitIds ?? candidate.targetUnitIds,
     })
   }
 
@@ -310,13 +318,19 @@ function compileAgenda(
       return right.supportingAiPlayerIds.length - left.supportingAiPlayerIds.length
     })
     .slice(0, MAX_AGENDA_CANDIDATES)
+  const options = topCandidates.map((candidate) => buildAgendaOption(candidate))
 
   const agenda: DomainAgenda = {
     id: `domain_agenda_${factionId}_${world.tick}`,
     tick: world.tick,
+    generatedWorldVersion: world.worldVersion,
     domainId,
     factionId,
     candidates: topCandidates,
+    options,
+    targetTileId: topCandidates[0]?.targetTileId,
+    targetUnitIds: topCandidates[0]?.targetUnitIds ? [...topCandidates[0].targetUnitIds] : undefined,
+    recommendedFollowups: buildAgendaRecommendedFollowups(topCandidates[0]?.actionId ?? ''),
     summary:
       topCandidates.length > 0
         ? `Domain ${factionId} agenda: ${topCandidates.map((candidate) => candidate.intent).join(', ')}`
@@ -325,6 +339,67 @@ function compileAgenda(
   }
 
   return domainAgendaSchema.parse(agenda)
+}
+
+function buildAgendaOption(candidate: DomainAgendaCandidate): DomainAgendaOption {
+  return {
+    actionId: candidate.actionId,
+    intent: candidate.intent,
+    label: resolveAgendaActionLabel(candidate.actionId),
+    summary: candidate.summary,
+    priority: candidate.priority,
+    targetTileId: candidate.targetTileId,
+    targetUnitIds: candidate.targetUnitIds ? [...candidate.targetUnitIds] : undefined,
+    supportingAiPlayerIds: [...candidate.supportingAiPlayerIds],
+    evidenceRefs: [...candidate.evidenceRefs],
+    supportCount: candidate.supportingAiPlayerIds.length,
+    recommendedFollowups: buildAgendaRecommendedFollowups(candidate.actionId),
+  }
+}
+
+function resolveAgendaActionIdFromIntent(intent: string): string {
+  switch (intent.trim()) {
+    case 'reinforce_hotspot':
+      return 'agenda_support'
+    case 'stabilize_supply':
+      return 'agenda_recover'
+    case 'share_recon_snapshot':
+      return 'agenda_redeploy'
+    case 'hold_position':
+      return 'agenda_stabilize'
+    default:
+      return 'agenda_expand'
+  }
+}
+
+function resolveAgendaActionLabel(actionId: string): string {
+  switch (actionId) {
+    case 'agenda_support':
+      return '执行支援议程'
+    case 'agenda_stabilize':
+      return '执行稳态议程'
+    case 'agenda_recover':
+      return '执行整补议程'
+    case 'agenda_redeploy':
+      return '执行调动议程'
+    default:
+      return '执行扩张议程'
+  }
+}
+
+function buildAgendaRecommendedFollowups(actionId: string): string[] {
+  switch (actionId) {
+    case 'agenda_support':
+      return ['stabilize_supply', 'share_recon_snapshot']
+    case 'agenda_stabilize':
+      return ['stabilize_supply', 'hold_position']
+    case 'agenda_recover':
+      return ['stabilize_supply', 'share_recon_snapshot']
+    case 'agenda_redeploy':
+      return ['share_recon_snapshot', 'reinforce_hotspot']
+    default:
+      return ['reinforce_hotspot', 'share_recon_snapshot']
+  }
 }
 
 function routeMessages(domainActors: DomainActor[], outbound: BusMessage[]): {

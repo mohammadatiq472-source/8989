@@ -1,6 +1,25 @@
 import { buildHeroProfileFromPool, getHeroPoolEntryByName } from './heroPool'
 import { generateInitialPveNodes } from './provincePve'
-import type { CityCamp, CityTechLevels, MapContinuousOverlays, MapRegion, ResourceKind, Tile, TileIntel, Unit, WorldState } from '../contracts/game'
+import {
+  DEFAULT_WORLD_RESOURCE_GENERATION_POLICY,
+  buildWorldResourceGenerationSummary,
+  resolveGeneratedWorldResourceKind,
+  resolveGeneratedWorldResourceLevel,
+  shouldGenerateWorldResourceTile,
+  type WorldResourceGenerationPolicy,
+} from './worldResourceGeneration'
+import type {
+  CityCamp,
+  CityFootprintTiles,
+  CityTechLevels,
+  MapContinuousOverlays,
+  MapRegion,
+  ResourceKind,
+  Tile,
+  TileIntel,
+  Unit,
+  WorldState,
+} from '../contracts/game'
 
 const MAP_WIDTH = 320
 const MAP_HEIGHT = 320
@@ -141,10 +160,58 @@ export function getHanProvinceAnchors(): HanProvinceAnchor[] {
   }))
 }
 
-const worldSetup = createWorldSetup()
+type StrategicNodeTileType = Extract<Tile['type'], 'pass' | 'fort' | 'dock'>
+type StrategicNodeAnchor = {
+  id: string
+  name: string
+  type: StrategicNodeTileType
+  owner: Tile['owner']
+  x: number
+  y: number
+  terrain: Tile['terrain']
+  moveCost: number
+  enemyPressure: number
+  scoutingDifficulty: number
+}
+
+const STRATEGIC_FORT_ANCHORS: StrategicNodeAnchor[] = [
+  { id: 'fort_liangzhou_corridor', name: '凉州走廊营寨', type: 'fort', owner: 'player', x: 72, y: 190, terrain: 'wasteland', moveCost: 2, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'fort_yizhou_north_gate', name: '益州北门营寨', type: 'fort', owner: 'player', x: 96, y: 214, terrain: 'highland', moveCost: 2, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'fort_sili_west_ridge', name: '司隶西岭要塞', type: 'fort', owner: 'neutral', x: 132, y: 132, terrain: 'mountain', moveCost: 2, enemyPressure: 3, scoutingDifficulty: 3 },
+  { id: 'fort_sili_south_camp', name: '司隶南营', type: 'fort', owner: 'neutral', x: 146, y: 184, terrain: 'grassland', moveCost: 1, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'fort_jizhou_frontier', name: '冀州前沿营寨', type: 'fort', owner: 'enemy', x: 184, y: 132, terrain: 'highland', moveCost: 2, enemyPressure: 4, scoutingDifficulty: 2 },
+  { id: 'fort_yanzhou_supply_camp', name: '兖州补给营寨', type: 'fort', owner: 'neutral', x: 214, y: 166, terrain: 'grassland', moveCost: 1, enemyPressure: 3, scoutingDifficulty: 2 },
+  { id: 'fort_bingzhou_ridge', name: '并州山垒', type: 'fort', owner: 'enemy', x: 126, y: 104, terrain: 'mountain', moveCost: 2, enemyPressure: 4, scoutingDifficulty: 3 },
+  { id: 'fort_jizhou_hillcamp', name: '冀州丘营', type: 'fort', owner: 'enemy', x: 170, y: 122, terrain: 'highland', moveCost: 2, enemyPressure: 4, scoutingDifficulty: 2 },
+  { id: 'fort_yanzhou_north_line', name: '兖州北线营寨', type: 'fort', owner: 'neutral', x: 218, y: 134, terrain: 'grassland', moveCost: 1, enemyPressure: 3, scoutingDifficulty: 2 },
+  { id: 'fort_yizhou_south_ridge', name: '益州南岭营寨', type: 'fort', owner: 'player', x: 92, y: 268, terrain: 'highland', moveCost: 2, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'fort_jiaozhou_forest_camp', name: '交州林间营寨', type: 'fort', owner: 'enemy', x: 210, y: 292, terrain: 'forest', moveCost: 2, enemyPressure: 4, scoutingDifficulty: 3 },
+  { id: 'fort_yizhou_ba_ridge', name: '益州巴岭要塞', type: 'fort', owner: 'player', x: 88, y: 236, terrain: 'mountain', moveCost: 2, enemyPressure: 3, scoutingDifficulty: 3 },
+]
+
+const STRATEGIC_DOCK_ANCHORS: StrategicNodeAnchor[] = [
+  { id: 'dock_liangzhou_yellow_river', name: '凉州黄河渡口', type: 'dock', owner: 'player', x: 74, y: 146, terrain: 'riverland', moveCost: 1, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'dock_yanzhou_yellow_river', name: '兖州黄河渡口', type: 'dock', owner: 'neutral', x: 224, y: 152, terrain: 'riverland', moveCost: 1, enemyPressure: 3, scoutingDifficulty: 2 },
+  { id: 'dock_qingzhou_yellow_river', name: '青州黄河渡口', type: 'dock', owner: 'enemy', x: 264, y: 152, terrain: 'riverland', moveCost: 1, enemyPressure: 4, scoutingDifficulty: 2 },
+  { id: 'dock_jingzhou_huaihe_west', name: '荆州淮西渡口', type: 'dock', owner: 'neutral', x: 154, y: 224, terrain: 'riverland', moveCost: 1, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'dock_jingzhou_huaihe_mid', name: '荆州淮中渡口', type: 'dock', owner: 'neutral', x: 184, y: 224, terrain: 'riverland', moveCost: 1, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'dock_yangzhou_huaihe', name: '扬州淮河渡口', type: 'dock', owner: 'enemy', x: 224, y: 224, terrain: 'riverland', moveCost: 1, enemyPressure: 4, scoutingDifficulty: 2 },
+  { id: 'dock_jingzhou_yangtze_west', name: '荆州江陵渡口', type: 'dock', owner: 'player', x: 140, y: 268, terrain: 'riverland', moveCost: 1, enemyPressure: 2, scoutingDifficulty: 2 },
+  { id: 'dock_jingzhou_yangtze_mid', name: '荆州汉津渡口', type: 'dock', owner: 'neutral', x: 180, y: 268, terrain: 'riverland', moveCost: 1, enemyPressure: 3, scoutingDifficulty: 2 },
+  { id: 'dock_yangzhou_yangtze_mid', name: '扬州江心渡口', type: 'dock', owner: 'enemy', x: 230, y: 268, terrain: 'riverland', moveCost: 1, enemyPressure: 4, scoutingDifficulty: 2 },
+  { id: 'dock_yangzhou_yangtze_east', name: '扬州东江渡口', type: 'dock', owner: 'enemy', x: 280, y: 268, terrain: 'riverland', moveCost: 1, enemyPressure: 4, scoutingDifficulty: 2 },
+]
+
+const STRATEGIC_NODE_BACKFILL_ANCHORS: StrategicNodeAnchor[] = [
+  ...STRATEGIC_FORT_ANCHORS,
+  ...STRATEGIC_DOCK_ANCHORS,
+]
+
+const worldSetup = createWorldSetup(DEFAULT_WORLD_RESOURCE_GENERATION_POLICY)
 const tiles: Tile[] = worldSetup.tiles
 const regions: MapRegion[] = worldSetup.regions
 const overlays: MapContinuousOverlays = worldSetup.overlays
+const resourceGeneration = worldSetup.resourceGeneration
 const connections = buildGridConnections(tiles)
 const playerStartingHeroIds = ['关羽', '太史慈', '郝昭', '张辽', '吕布', '华佗', '刘备'].map(
   getHeroIdByName,
@@ -477,17 +544,32 @@ const unitDrafts: ScenarioUnitDraft[] = [
 
 const units: Unit[] = unitDrafts.map(createScenarioUnit)
 
-export function createInitialWorldState(): WorldState {
+export type CreateInitialWorldStateOptions = {
+  resourceGenerationPolicy?: WorldResourceGenerationPolicy
+}
+
+export function createInitialWorldState(options?: CreateInitialWorldStateOptions): WorldState {
+  const setup = options?.resourceGenerationPolicy
+    ? createWorldSetup(options.resourceGenerationPolicy)
+    : {
+        tiles,
+        connections,
+        regions,
+        overlays,
+        resourceGeneration,
+      }
+
   return {
     tick: 1,
     worldVersion: 1,
     map: {
       width: MAP_WIDTH,
       height: MAP_HEIGHT,
-      tiles,
-      connections,
-      regions,
-      overlays,
+      tiles: setup.tiles,
+      connections: setup.connections,
+      regions: setup.regions,
+      overlays: setup.overlays,
+      resourceGeneration: setup.resourceGeneration,
     },
     factions: {
       player: {
@@ -620,14 +702,14 @@ export function createInitialWorldState(): WorldState {
           '赤垒要塞与东侧峡口对我形成正面挤压，洛阳周边大城群仍处于高压争夺态势。',
       },
     ],
-    intel: createInitialIntel(),
+    intel: createInitialIntel(setup.tiles),
     tacticalOverrides: [],
     executions: {},
     history: {
       planningJobs: [],
       executionReplays: [],
     },
-    pveNodes: generateInitialPveNodes(tiles),
+    pveNodes: generateInitialPveNodes(setup.tiles),
     luoyangSiegeProgress: {},
     citySiegeProgress: {},
   }
@@ -660,9 +742,9 @@ function getHeroIdByName(name: string) {
   return getHeroPoolEntryByName(name).id
 }
 
-function createInitialIntel(): Record<string, TileIntel> {
+function createInitialIntel(inputTiles: Tile[] = tiles): Record<string, TileIntel> {
   return Object.fromEntries(
-    tiles.map((tile) => {
+    inputTiles.map((tile) => {
       if (tile.owner === 'player') {
         return [
           tile.id,
@@ -724,18 +806,85 @@ type TileOverride = Omit<Partial<Tile>, 'id' | 'x' | 'y'> & {
   owner: Tile['owner']
 }
 
-function createWorldSetup() {
+function isStrategicNodeTileType(type: Tile['type']): type is StrategicNodeTileType {
+  return type === 'pass' || type === 'fort' || type === 'dock'
+}
+
+export function normalizeWorldStrategicNodesForWorld(world: WorldState): { world: WorldState; changed: boolean } {
+  const tileIndexByCoord = new Map(world.map.tiles.map((tile, index) => [keyOf(tile.x, tile.y), index]))
+  let nextTiles: Tile[] | null = null
+
+  for (const anchor of STRATEGIC_NODE_BACKFILL_ANCHORS) {
+    const index = tileIndexByCoord.get(keyOf(anchor.x, anchor.y))
+    if (index === undefined) {
+      continue
+    }
+
+    const tile = (nextTiles ?? world.map.tiles)[index]
+    const nextTile: Tile = {
+      ...tile,
+      name: anchor.name,
+      type: anchor.type,
+      terrain: anchor.terrain,
+      moveCost: anchor.moveCost,
+      enemyPressure: anchor.enemyPressure,
+      scoutingDifficulty: anchor.scoutingDifficulty,
+      resourceLevel: undefined,
+      resourceKind: undefined,
+      cityLevel: undefined,
+      district: tile.district ?? resolveProvinceAt(anchor.x, anchor.y).id,
+    }
+
+    if (
+      tile.name === nextTile.name &&
+      tile.type === nextTile.type &&
+      tile.terrain === nextTile.terrain &&
+      tile.moveCost === nextTile.moveCost &&
+      tile.enemyPressure === nextTile.enemyPressure &&
+      tile.scoutingDifficulty === nextTile.scoutingDifficulty &&
+      tile.resourceLevel === undefined &&
+      tile.resourceKind === undefined &&
+      tile.cityLevel === undefined &&
+      tile.district === nextTile.district
+    ) {
+      continue
+    }
+
+    nextTiles ??= [...world.map.tiles]
+    nextTiles[index] = nextTile
+  }
+
+  if (!nextTiles) {
+    return { world, changed: false }
+  }
+
+  return {
+    world: {
+      ...world,
+      map: {
+        ...world.map,
+        tiles: nextTiles,
+        connections: buildGridConnections(nextTiles),
+      },
+    },
+    changed: true,
+  }
+}
+
+function createWorldSetup(resourceGenerationPolicy: WorldResourceGenerationPolicy) {
   const overrides = new Map<string, TileOverride>()
 
   appendLegacyAnchorTiles(overrides)
   appendHistoricPassAnchors(overrides)
+  appendStrategicFortAnchors(overrides)
+  appendStrategicDockAnchors(overrides)
   appendCityCluster(overrides, {
     idPrefix: 'luoyang',
     name: '洛阳',
     startX: 156,
     startY: 154,
-    width: 8,
-    height: 7,
+    width: 9,
+    height: 9,
     owner: 'neutral',
     minCityLevel: 7,
     maxCityLevel: 9,
@@ -746,8 +895,8 @@ function createWorldSetup() {
     name: '邺城',
     startX: 200,
     startY: 104,
-    width: 4,
-    height: 4,
+    width: 5,
+    height: 5,
     owner: 'enemy',
     minCityLevel: 5,
     maxCityLevel: 7,
@@ -758,8 +907,8 @@ function createWorldSetup() {
     name: '许昌',
     startX: 186,
     startY: 184,
-    width: 4,
-    height: 4,
+    width: 5,
+    height: 5,
     owner: 'neutral',
     minCityLevel: 4,
     maxCityLevel: 6,
@@ -770,8 +919,8 @@ function createWorldSetup() {
     name: '长安',
     startX: 120,
     startY: 152,
-    width: 4,
-    height: 4,
+    width: 5,
+    height: 5,
     owner: 'player',
     minCityLevel: 4,
     maxCityLevel: 6,
@@ -782,8 +931,8 @@ function createWorldSetup() {
     name: '成都',
     startX: 78,
     startY: 236,
-    width: 4,
-    height: 4,
+    width: 5,
+    height: 5,
     owner: 'player',
     minCityLevel: 4,
     maxCityLevel: 6,
@@ -794,14 +943,15 @@ function createWorldSetup() {
     name: '建业',
     startX: 248,
     startY: 236,
-    width: 4,
-    height: 4,
+    width: 5,
+    height: 5,
     owner: 'enemy',
     minCityLevel: 4,
     maxCityLevel: 6,
     landmarkId: 'jianye',
   })
-  appendResourceCluster(overrides, {
+  const resourceBlockedFootprintKeys = buildResourceBlockedWorldCellFootprintKeys(overrides)
+  appendResourceCluster(overrides, resourceGenerationPolicy, {
     idPrefix: 'mine',
     name: '矿脉',
     positions: [
@@ -818,8 +968,8 @@ function createWorldSetup() {
     owner: 'neutral',
     levelBias: 2,
     resourceKind: 'stone',
-  })
-  appendResourceCluster(overrides, {
+  }, resourceBlockedFootprintKeys)
+  appendResourceCluster(overrides, resourceGenerationPolicy, {
     idPrefix: 'field',
     name: '良田',
     positions: [
@@ -836,13 +986,13 @@ function createWorldSetup() {
     owner: 'neutral',
     levelBias: 0,
     resourceKind: 'food',
-  })
+  }, resourceBlockedFootprintKeys)
 
   const generatedTiles: Tile[] = []
   for (let y = 0; y < MAP_HEIGHT; y += 1) {
     for (let x = 0; x < MAP_WIDTH; x += 1) {
       const override = overrides.get(keyOf(x, y))
-      generatedTiles.push(createTileFromGrid(x, y, override))
+      generatedTiles.push(createTileFromGrid(x, y, resourceGenerationPolicy, resourceBlockedFootprintKeys, override))
     }
   }
 
@@ -850,11 +1000,15 @@ function createWorldSetup() {
   applyProvincePasses(generatedTiles, overrides)
 
   const generatedRegions = buildStrategicRegions(generatedTiles)
+  const generatedOverlays = buildMapContinuousOverlays(generatedTiles)
+  clearResourceTilesFromReservedOverlays(generatedTiles, generatedOverlays)
 
   return {
     tiles: generatedTiles,
+    connections: buildGridConnections(generatedTiles),
     regions: generatedRegions,
-    overlays: buildMapContinuousOverlays(generatedTiles),
+    overlays: generatedOverlays,
+    resourceGeneration: buildWorldResourceGenerationSummary(generatedTiles, resourceGenerationPolicy),
   }
 }
 
@@ -1103,6 +1257,26 @@ function appendHistoricPassAnchors(overrides: Map<string, TileOverride>) {
   ])
 }
 
+function appendStrategicFortAnchors(overrides: Map<string, TileOverride>) {
+  appendStrategicNodeAnchors(overrides, STRATEGIC_FORT_ANCHORS)
+}
+
+function appendStrategicDockAnchors(overrides: Map<string, TileOverride>) {
+  appendStrategicNodeAnchors(overrides, STRATEGIC_DOCK_ANCHORS)
+}
+
+function appendStrategicNodeAnchors(
+  overrides: Map<string, TileOverride>,
+  anchors: StrategicNodeAnchor[],
+) {
+  for (const anchor of anchors) {
+    overrides.set(keyOf(anchor.x, anchor.y), {
+      ...anchor,
+      district: resolveProvinceAt(anchor.x, anchor.y).id,
+    })
+  }
+}
+
 function appendCityCluster(
   overrides: Map<string, TileOverride>,
   config: {
@@ -1160,6 +1334,7 @@ function appendCityCluster(
 
 function appendResourceCluster(
   overrides: Map<string, TileOverride>,
+  resourceGenerationPolicy: WorldResourceGenerationPolicy,
   config: {
     idPrefix: string
     name: string
@@ -1168,9 +1343,13 @@ function appendResourceCluster(
     levelBias: number
     resourceKind?: ResourceKind
   },
+  resourceBlockedFootprintKeys: ReadonlySet<string> = new Set(),
 ) {
   for (const [index, position] of config.positions.entries()) {
     const [x, y] = position
+    if (resourceBlockedFootprintKeys.has(keyOf(x, y))) {
+      continue
+    }
     overrides.set(keyOf(x, y), {
       id: `${config.idPrefix}_${index + 1}`,
       name: `${config.name}${index + 1}`,
@@ -1182,8 +1361,8 @@ function appendResourceCluster(
       moveCost: 1,
       enemyPressure: clampNumber(Math.round(x / 22) + config.levelBias, 1, 5),
       scoutingDifficulty: 1,
-      resourceLevel: clampNumber(((x + y + index) % 9) + 1 + config.levelBias, 1, 9),
-      resourceKind: config.resourceKind ?? resolveResourceKind(x, y),
+      resourceLevel: clampNumber(resolveResourceLevel(x, y, resourceGenerationPolicy) + config.levelBias, 1, 9),
+      resourceKind: config.resourceKind ?? resolveResourceKind(x, y, resourceGenerationPolicy),
     })
   }
 }
@@ -1211,6 +1390,80 @@ function appendPassChain(
   }
 }
 
+function buildResourceBlockedWorldCellFootprintKeys(overrides: Map<string, TileOverride>) {
+  const blockedKeys = new Set<string>()
+
+  for (let y = 0; y < MAP_HEIGHT; y += 1) {
+    for (let x = 0; x < MAP_WIDTH; x += 1) {
+      const terrain = resolveBaseTerrain(x, y)
+      if (terrain === 'mountain' || terrain === 'riverland') {
+        blockedKeys.add(keyOf(x, y))
+      }
+    }
+  }
+
+  const cityGroups = new Map<string, TileOverride[]>()
+  for (const override of overrides.values()) {
+    if (isStrategicNodeTileType(override.type)) {
+      reserveCenteredFootprint(blockedKeys, override.x, override.y, 1)
+      continue
+    }
+
+    if (override.type !== 'city') {
+      continue
+    }
+
+    const groupKey = override.landmarkId ?? override.id
+    const bucket = cityGroups.get(groupKey) ?? []
+    bucket.push(override)
+    cityGroups.set(groupKey, bucket)
+  }
+
+  for (const cityGroup of cityGroups.values()) {
+    if (cityGroup.length === 0) {
+      continue
+    }
+
+    const centerX = cityGroup.reduce((sum, tile) => sum + tile.x, 0) / cityGroup.length
+    const centerY = cityGroup.reduce((sum, tile) => sum + tile.y, 0) / cityGroup.length
+    const maxCityLevel = cityGroup.reduce((level, tile) => Math.max(level, tile.cityLevel ?? 3), 3)
+    const homeCity = cityGroup.some((tile) => tile.id === 'tile_08' || tile.id === 'tile_10')
+    const sideLength = homeCity ? 3 : resolveSystemCityFootprintSideLength(maxCityLevel)
+    reserveCenteredFootprint(blockedKeys, Math.round(centerX), Math.round(centerY), sideLength)
+  }
+
+  return blockedKeys
+}
+
+function reserveCenteredFootprint(blockedKeys: Set<string>, centerX: number, centerY: number, sideLength: number) {
+  const normalizedSideLength = Math.max(1, Math.floor(sideLength))
+  const half = Math.floor(normalizedSideLength / 2)
+  for (let localY = -half; localY <= half; localY += 1) {
+    for (let localX = -half; localX <= half; localX += 1) {
+      const x = centerX + localX
+      const y = centerY + localY
+      if (x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT) {
+        continue
+      }
+      blockedKeys.add(keyOf(x, y))
+    }
+  }
+}
+
+function resolveSystemCityFootprintSideLength(cityLevel: number) {
+  const normalizedLevel = clampNumber(cityLevel, 3, 9)
+  if (normalizedLevel >= 9) {
+    return 9
+  }
+  if (normalizedLevel >= 7) {
+    return 7
+  }
+  if (normalizedLevel >= 5) {
+    return 5
+  }
+  return 3
+}
+
 function applyProvinceBarriers(tiles: Tile[]) {
   const tileByCoord = new Map(tiles.map((tile) => [keyOf(tile.x, tile.y), tile]))
   const directions = [
@@ -1221,7 +1474,7 @@ function applyProvinceBarriers(tiles: Tile[]) {
   ]
 
   for (const tile of tiles) {
-    if (tile.type === 'city' || tile.type === 'pass' || tile.landmarkId) {
+    if (tile.type === 'city' || isStrategicNodeTileType(tile.type) || tile.landmarkId) {
       continue
     }
 
@@ -1236,7 +1489,9 @@ function applyProvinceBarriers(tiles: Tile[]) {
     const pairKey = [tile.district ?? 'unknown', boundaryNeighbor.district ?? 'unknown'].sort().join('|')
     const riverBoundary = hashString(pairKey) % 3 === 0
     tile.terrain = riverBoundary ? 'riverland' : 'mountain'
-    tile.type = tile.type === 'resource' ? tile.type : 'plain'
+    tile.type = 'plain'
+    tile.resourceLevel = undefined
+    tile.resourceKind = undefined
     tile.moveCost = 2
     tile.scoutingDifficulty = 3
     tile.enemyPressure = clampNumber(tile.enemyPressure + 1, 0, 5)
@@ -1303,8 +1558,8 @@ function applyProvincePasses(tiles: Tile[], overrides: Map<string, TileOverride>
     tile.moveCost = override.moveCost ?? tile.moveCost
     tile.enemyPressure = override.enemyPressure ?? tile.enemyPressure
     tile.scoutingDifficulty = override.scoutingDifficulty ?? tile.scoutingDifficulty
-    tile.resourceLevel = override.resourceLevel
-    tile.resourceKind = override.resourceKind
+    tile.resourceLevel = override.resourceLevel ?? (tile.type === 'resource' ? tile.resourceLevel : undefined)
+    tile.resourceKind = override.resourceKind ?? (tile.type === 'resource' ? tile.resourceKind : undefined)
     tile.cityLevel = override.cityLevel
     tile.district = override.district ?? tile.district
     tile.landmarkId = override.landmarkId
@@ -1317,11 +1572,11 @@ function canTraverseBetweenTiles(from: Tile, to: Tile) {
     return true
   }
 
-  return from.type === 'pass' || to.type === 'pass'
+  return isStrategicNodeTileType(from.type) || isStrategicNodeTileType(to.type)
 }
 
 function markTileAsPass(tile: Tile, passName: string) {
-  if (tile.landmarkId || tile.type === 'city') {
+  if (tile.landmarkId || tile.type === 'city' || tile.type === 'fort' || tile.type === 'dock') {
     return
   }
 
@@ -1359,10 +1614,16 @@ function resolveProvinceAt(x: number, y: number): ProvinceDefinition {
   return nearestProvince
 }
 
-function createTileFromGrid(x: number, y: number, override?: TileOverride): Tile {
+function createTileFromGrid(
+  x: number,
+  y: number,
+  resourceGenerationPolicy: WorldResourceGenerationPolicy,
+  resourceBlockedFootprintKeys: ReadonlySet<string>,
+  override?: TileOverride,
+): Tile {
   const province = resolveProvinceAt(x, y)
   const terrain = override?.terrain ?? resolveBaseTerrain(x, y)
-  const type = override?.type ?? resolveBaseTileType(x, y, terrain)
+  const type = override?.type ?? resolveBaseTileType(x, y, terrain, resourceGenerationPolicy, resourceBlockedFootprintKeys)
   const owner = override?.owner ?? resolveBaseOwner(x, y)
 
   return {
@@ -1376,8 +1637,8 @@ function createTileFromGrid(x: number, y: number, override?: TileOverride): Tile
     moveCost: override?.moveCost ?? resolveMoveCost(terrain, type),
     enemyPressure: override?.enemyPressure ?? resolveEnemyPressure(x, y, owner, type),
     scoutingDifficulty: override?.scoutingDifficulty ?? resolveScoutingDifficulty(terrain, type),
-    resourceLevel: override?.resourceLevel ?? (type === 'resource' ? resolveResourceLevel(x, y) : undefined),
-    resourceKind: override?.resourceKind ?? (type === 'resource' ? resolveResourceKind(x, y) : undefined),
+    resourceLevel: override?.resourceLevel ?? (type === 'resource' ? resolveResourceLevel(x, y, resourceGenerationPolicy) : undefined),
+    resourceKind: override?.resourceKind ?? (type === 'resource' ? resolveResourceKind(x, y, resourceGenerationPolicy) : undefined),
     cityLevel: override?.cityLevel ?? (type === 'city' ? resolveCityLevel(x, y) : undefined),
     district: override?.district ?? province.id,
     landmarkId: override?.landmarkId,
@@ -1422,7 +1683,13 @@ function resolveBaseTerrain(x: number, y: number): Tile['terrain'] {
   }
 }
 
-function resolveBaseTileType(x: number, y: number, terrain: Tile['terrain']): Tile['type'] {
+function resolveBaseTileType(
+  x: number,
+  y: number,
+  terrain: Tile['terrain'],
+  resourceGenerationPolicy: WorldResourceGenerationPolicy,
+  resourceBlockedFootprintKeys: ReadonlySet<string> = new Set(),
+): Tile['type'] {
   const province = resolveProvinceAt(x, y)
   const signal = Math.abs((x * 31 + y * 17 + hashString(province.id)) % 211)
 
@@ -1447,9 +1714,10 @@ function resolveBaseTileType(x: number, y: number, terrain: Tile['terrain']): Ti
     return 'city'
   }
 
-  // ~48% of remaining tiles become resource nodes (SLG standard density)
-  const resourceRoll = Math.abs((x * 7 + y * 13 + signal) % 100)
-  if (resourceRoll < 48) {
+  if (
+    !resourceBlockedFootprintKeys.has(keyOf(x, y))
+    && shouldGenerateWorldResourceTile(x, y, province.id, resourceGenerationPolicy)
+  ) {
     return 'resource'
   }
 
@@ -1483,7 +1751,7 @@ function resolveMoveCost(terrain: Tile['terrain'], type: Tile['type']) {
     return 1
   }
 
-  if (type === 'pass' || terrain === 'mountain') {
+  if (type === 'pass' || type === 'fort' || terrain === 'mountain') {
     return 2
   }
 
@@ -1532,22 +1800,32 @@ function resolveScoutingDifficulty(terrain: Tile['terrain'], type: Tile['type'])
   return 1
 }
 
-function resolveResourceLevel(x: number, y: number) {
-  return clampNumber(((x * 3 + y * 5) % 9) + 1, 1, 9)
+function resolveResourceLevel(
+  x: number,
+  y: number,
+  resourceGenerationPolicy: WorldResourceGenerationPolicy = DEFAULT_WORLD_RESOURCE_GENERATION_POLICY,
+) {
+  return resolveGeneratedWorldResourceLevel(
+    x,
+    y,
+    resolveProvinceAt(x, y).id,
+    resourceGenerationPolicy,
+  )
 }
 
-function resolveResourceKind(x: number, y: number): ResourceKind {
-  const signal = Math.abs((x * 19 + y * 23 + 7) % 4)
-  switch (signal) {
-    case 0:
-      return 'wood'
-    case 1:
-      return 'stone'
-    case 2:
-      return 'iron'
-    default:
-      return 'food'
-  }
+function resolveResourceKind(
+  x: number,
+  y: number,
+  resourceGenerationPolicy: WorldResourceGenerationPolicy = DEFAULT_WORLD_RESOURCE_GENERATION_POLICY,
+): ResourceKind {
+  const province = resolveProvinceAt(x, y)
+  return resolveGeneratedWorldResourceKind(
+    x,
+    y,
+    province.id,
+    resolveBaseTerrain(x, y),
+    resourceGenerationPolicy,
+  )
 }
 
 function resolveCityLevel(x: number, y: number) {
@@ -1571,6 +1849,14 @@ function buildBaseTileName(
 
   if (type === 'pass') {
     return `${provinceName} Pass ${x}-${y}`
+  }
+
+  if (type === 'fort') {
+    return `${provinceName} Fort ${x}-${y}`
+  }
+
+  if (type === 'dock') {
+    return `${provinceName} Dock ${x}-${y}`
   }
 
   switch (terrain) {
@@ -1744,13 +2030,47 @@ function buildCityClusterOverlays(tiles: Tile[], tileByCoord: Map<string, Tile>)
           : 'autonomous') as CityCamp,
       footprintTiles,
       footprintTier: resolveCityFootprintTier(footprintTiles),
-      upgradeCapTiles: centerTile.owner === 'player' && footprintTiles < 16 ? 9 : footprintTiles,
-      isUpgradeable: centerTile.owner === 'player' && footprintTiles < 9,
+      upgradeCapTiles: footprintTiles,
+      isUpgradeable: false,
       techLevels: createInitialCityTechLevels(footprintTiles, centerTile.owner === 'player'),
     })
   }
 
   return clusters
+}
+
+function clearResourceTilesFromReservedOverlays(tiles: Tile[], overlays: MapContinuousOverlays) {
+  const tileById = new Map(tiles.map((tile) => [tile.id, tile]))
+  const reservedTileIds = new Set<string>()
+
+  for (const cluster of overlays.cityClusters) {
+    for (const tileId of cluster.tileIds) {
+      reservedTileIds.add(tileId)
+    }
+  }
+
+  for (const path of overlays.mountainRidges) {
+    for (const tileId of path.tileIds) {
+      reservedTileIds.add(tileId)
+    }
+  }
+
+  for (const path of overlays.rivers) {
+    for (const tileId of path.tileIds) {
+      reservedTileIds.add(tileId)
+    }
+  }
+
+  for (const tileId of reservedTileIds) {
+    const tile = tileById.get(tileId)
+    if (!tile || tile.type !== 'resource') {
+      continue
+    }
+
+    tile.type = 'plain'
+    tile.resourceLevel = undefined
+    tile.resourceKind = undefined
+  }
 }
 
 function resolveCityFootprintTiles(params: {
@@ -1759,46 +2079,39 @@ function resolveCityFootprintTiles(params: {
   tileCount: number
   landmarkId?: string
   landmarkName?: string
-}): 1 | 4 | 9 | 16 {
+}): CityFootprintTiles {
   const cityLevel = params.cityLevel ?? 1
 
   const landmarkId = params.landmarkId ?? ''
   const landmarkName = params.landmarkName ?? ''
-  if (
-    landmarkId === 'luoyang' ||
-    landmarkId === 'hejian' ||
-    landmarkId === 'changan' ||
-    landmarkName.includes('\u6d1b\u9633') ||
-    landmarkName.includes('\u957f\u5b89')
-  ) {
-    return 16
-  }
-
-  if (params.owner === 'player') {
-    if (cityLevel >= 6 || params.tileCount >= 9) {
-      return 9
-    }
-
-    if (cityLevel >= 4 || params.tileCount >= 4) {
-      return 4
-    }
-
-    return 1
-  }
-
-  if (cityLevel >= 7 || params.tileCount >= 9) {
+  if (landmarkId === 'qingshi' || landmarkId === 'chilei') {
     return 9
   }
 
-  if (params.landmarkId || params.tileCount >= 4) {
-    return 4
+  if (
+    landmarkId === 'luoyang' ||
+    landmarkName.includes('\u6d1b\u9633')
+  ) {
+    return 81
   }
 
-  return 1
+  if (params.landmarkId || params.tileCount >= 9) {
+    return resolveSystemCityFootprintTiles(cityLevel)
+  }
+
+  return 9
 }
 
-function createInitialCityTechLevels(footprintTiles: 1 | 4 | 9 | 16, isPlayerCity: boolean): CityTechLevels {
-  const tierBase = footprintTiles === 1 ? 1 : footprintTiles === 4 ? 2 : footprintTiles === 9 ? 3 : 4
+function resolveSystemCityFootprintTiles(cityLevel: number): CityFootprintTiles {
+  const sideLength = resolveSystemCityFootprintSideLength(cityLevel)
+  return (sideLength * sideLength) as CityFootprintTiles
+}
+
+function createInitialCityTechLevels(footprintTiles: CityFootprintTiles, isPlayerCity: boolean): CityTechLevels {
+  const tierBase =
+    footprintTiles === 9 ? 3 :
+      footprintTiles === 25 ? 4 :
+        footprintTiles === 49 ? 5 : 6
   const bonus = isPlayerCity ? 1 : 0
 
   return {
@@ -1809,23 +2122,23 @@ function createInitialCityTechLevels(footprintTiles: 1 | 4 | 9 | 16, isPlayerCit
   }
 }
 
-function resolveCityFootprintTier(footprintTiles: 1 | 4 | 9 | 16) {
+function resolveCityFootprintTier(footprintTiles: CityFootprintTiles) {
   switch (footprintTiles) {
-    case 1:
-      return 'single_1' as const
-    case 4:
-      return 'small_2x2' as const
     case 9:
-      return 'medium_3x3' as const
+      return 'city_3x3' as const
+    case 25:
+      return 'city_5x5' as const
+    case 49:
+      return 'city_7x7' as const
     default:
-      return 'mega_4x4' as const
+      return 'city_9x9' as const
   }
 }
 
 function resolveCityFootprintTileIds(params: {
   centerX: number
   centerY: number
-  footprintTiles: 1 | 4 | 9 | 16
+  footprintTiles: CityFootprintTiles
   tileByCoord: Map<string, Tile>
   fallbackTiles: Tile[]
 }) {

@@ -31,7 +31,7 @@ export type BattleOutcomeRecord = {
   tileId: string
   attackerFaction: FactionId
   attackerUnitId: string
-  outcome: 'win' | 'loss'
+  outcome: 'win' | 'loss' | 'draw'
   attackerLoss: number
   defenderLoss: number
   alliedSupport: number
@@ -183,6 +183,14 @@ export type WebSocketObservabilityStats = {
   subscribedConnections: number
   factionDistribution: Record<string, number>
   recentErrors: WebSocketObservabilityError[]
+  maxConnections: number
+  maxSubscriptionsPerFaction: number
+  maxVisibleEventsPerTick: number
+  maxVisibleUnitChangesPerTick: number
+  maxVisibleTileChangesPerTick: number
+  rejectedConnections: number
+  rejectedSubscriptions: number
+  truncatedTickDeltaMessages: number
 }
 
 export type WorldEventsResponse = {

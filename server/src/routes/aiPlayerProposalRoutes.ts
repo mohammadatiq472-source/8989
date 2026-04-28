@@ -14,6 +14,11 @@ import {
   executeAiPlayerProposalRequestSchema,
   rejectAiPlayerProposalRequestSchema,
 } from '../../../shared/schemas/aiPlayer'
+import {
+  recordAiPlayerProposalFailureInChat,
+  recordAiPlayerProposalInChat,
+  recordAiPlayerReceiptInChat,
+} from '../application/ai/aiPlayerChatCommandService'
 import { writeJson } from './http'
 import { parseBody, parseOptionalLimit } from './aiPlayerRouteShared'
 
@@ -30,9 +35,16 @@ async function handleCreateProposalRoute(req: IncomingMessage, res: ServerRespon
     return
   }
 
+  const chatRecord = result.proposal ? recordAiPlayerProposalInChat(result.proposal) : {
+    proposalMessage: null,
+    aggregateMessage: null,
+  }
+
   writeJson(res, 200, {
     ok: true,
     proposal: result.proposal,
+    chatMessage: chatRecord.proposalMessage,
+    aggregateChatMessage: chatRecord.aggregateMessage,
   })
 }
 
@@ -122,7 +134,22 @@ async function handleExecuteProposalRoute(req: IncomingMessage, res: ServerRespo
       : result.error.includes('not approved') || result.error.includes('not executable')
         ? 409
         : 400
-    writeJson(res, status, { ok: false, error: result.error })
+    const chatMessage = result.proposal && result.failureCode
+      ? recordAiPlayerProposalFailureInChat({
+        proposal: result.proposal,
+        failureCode: result.failureCode,
+        error: result.error,
+        recoveryHint: result.recoveryHint,
+      })
+      : null
+    writeJson(res, status, {
+      ok: false,
+      error: result.error,
+      failureCode: result.failureCode ?? null,
+      recoveryHint: result.recoveryHint,
+      proposal: result.proposal,
+      chatMessage,
+    })
     return
   }
 
@@ -130,6 +157,7 @@ async function handleExecuteProposalRoute(req: IncomingMessage, res: ServerRespo
     ok: true,
     proposal: result.proposal,
     receipt: result.receipt,
+    chatMessage: result.receipt ? recordAiPlayerReceiptInChat(result.receipt) : null,
   })
 }
 

@@ -17,12 +17,14 @@ const EXECUTABLE_ACTIONS: Record<string, string> = {
   queue_fill_idle_slot: 'enqueueAffair',
   research_start: 'upgradeCityTech',
   troop_train: 'deployReserveHero',
+  troop_heal: 'healTroop',
   recruit_pool_select: 'setRecruitSelectedPool',
   recruit_commander: 'recruitProspectHero',
   world_scout: 'queuePlanExecution',
   march_move: 'moveUnit',
   garrison_set: 'queueTacticalOverride',
   resource_gather: 'gatherAiResourceTile',
+  tile_occupy: 'occupyTile',
   troop_facility_upgrade: 'promoteTroopFacilityBuilding',
   general_focus_set: 'setGeneralActiveHero',
   formation_assign: 'setGeneralTactic',
@@ -45,6 +47,8 @@ const INVALID_PROPOSAL_CASES: Array<{
   { action: 'march_move', args: { unitId: 123, targetTileId: 'tile_01' }, message: 'march_move rejects non-string unitId' },
   { action: 'world_scout', args: { targetTileId: 123 }, message: 'world_scout rejects non-string targetTileId' },
   { action: 'resource_gather', args: { unitId: 123, tileId: 'tile_01' }, message: 'resource_gather rejects non-string unitId' },
+  { action: 'tile_occupy', args: { unitId: 123, tileId: 'tile_01' }, message: 'tile_occupy rejects non-string unitId' },
+  { action: 'troop_heal', args: { unitId: 123 }, message: 'troop_heal rejects non-string unitId' },
   { action: 'troop_train', args: { heroId: 123 }, message: 'troop_train rejects non-string heroId' },
   {
     action: 'troop_facility_upgrade',
@@ -79,6 +83,14 @@ async function run() {
   const child = spawnBackend(port, tail, {
     AI_PLAYER_GOVERNANCE_STATE_PATH: aiPlayerPersistPath,
     SESSION_STATE_PERSIST_PATH: buildSessionPersistPath('ai_player_http_core_session_state'),
+    AI_PLAYER_RUNTIME_MODEL: '',
+    AI_PLAYER_RUNTIME_MODEL_BASE_URL: '',
+    AI_PLAYER_RUNTIME_MODEL_API_KEY: '',
+    LLM_RELAY_MODEL: '',
+    LLM_RELAY_URL: '',
+    LLM_RELAY_API_KEY: '',
+    LLM_RELAY_API_KEYS: '',
+    OPENAI_API_KEY: '',
   })
 
   try {
@@ -126,12 +138,68 @@ async function run() {
     assert.equal(playerAlphaRuntime.autonomyLevel, 'L1_assigned', 'runtime should reflect SessionManager authority')
     assert.equal(playerAlphaRuntime.controlMode, 'human_assigned', 'runtime should derive control mode from session authority')
     assert.equal(playerAlphaRuntime.governorOnline, true, 'runtime should detect online governor through session roster')
+    assert.equal(playerAlphaRuntime.modelName, 'claude-sonnet-4-6')
+    assert.equal(playerAlphaRuntime.modelSource, 'default')
+    const playerAlphaModelStatus = readObject(playerAlphaRuntime.modelStatus)
+    assert.equal(playerAlphaModelStatus.activeModel, 'claude-sonnet-4-6')
+    assert.equal(playerAlphaModelStatus.activeProvider, 'xiamiapi.xyz')
+    assert.equal(playerAlphaModelStatus.source, 'default')
+    assert.equal(playerAlphaModelStatus.strictJsonOnlyCapable, true)
+    assert.equal(playerAlphaModelStatus.budgetTier, 'strict_action')
+    assert.equal(playerAlphaModelStatus.fallbackEnabled, false)
+    assert.equal(playerAlphaModelStatus.fallbackModel, null)
+    assert.equal(playerAlphaModelStatus.secretConfigured, false)
+    assert.equal(playerAlphaModelStatus.secretSource, null)
+    assert.equal('apiKeys' in playerAlphaModelStatus, false, 'runtime modelStatus must not expose raw apiKeys')
 
     const runtimeBeforeProposal = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha', 'GET')
     assert.equal(runtimeBeforeProposal.status, 200, 'get ai player runtime should return 200')
     const runtimeBeforeProposalPayload = readObject(runtimeBeforeProposal.data)
     assert.equal(readObject(runtimeBeforeProposalPayload.observability).factionId, 'player')
     assert.equal(readObject(runtimeBeforeProposalPayload.persistence).path, aiPlayerPersistPath)
+    assert.deepEqual(
+      readObject(runtimeBeforeProposalPayload.modelStatus),
+      playerAlphaModelStatus,
+      'runtime detail should expose the same modelStatus read-model as list',
+    )
+
+    const renameAlpha = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha/profile', 'POST', {
+      displayName: '青州 AI 参谋',
+      avatarId: 'cai_wenji_fate_frontier_qin_v1',
+      avatarImagePath: 'res://assets/portraits/ai_chat/cai_wenji_fate_frontier_qin_v1_avatar_160.png',
+      updatedBy: 'human_alpha',
+    })
+    assert.equal(renameAlpha.status, 200, `rename alpha failed: ${JSON.stringify(renameAlpha.data)}`)
+    const renamedAlphaPlayer = readObject(readObject(renameAlpha.data).player)
+    assert.equal(renamedAlphaPlayer.displayName, '青州 AI 参谋')
+    assert.equal(renamedAlphaPlayer.avatarId, 'cai_wenji_fate_frontier_qin_v1')
+    assert.equal(renamedAlphaPlayer.avatarImagePath, 'res://assets/portraits/ai_chat/cai_wenji_fate_frontier_qin_v1_avatar_160.png')
+
+    const avatarOnlyUpdate = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha/profile', 'POST', {
+      avatarId: 'cao_cao_fate_v1',
+      avatarImagePath: 'res://assets/portraits/ai_chat/cao_cao_fate_v1_avatar_160.png',
+      updatedBy: 'human_alpha',
+    })
+    assert.equal(avatarOnlyUpdate.status, 200, `avatar profile update failed: ${JSON.stringify(avatarOnlyUpdate.data)}`)
+    const avatarOnlyPlayer = readObject(readObject(avatarOnlyUpdate.data).player)
+    assert.equal(avatarOnlyPlayer.displayName, '青州 AI 参谋')
+    assert.equal(avatarOnlyPlayer.avatarId, 'cao_cao_fate_v1')
+    assert.equal(avatarOnlyPlayer.avatarImagePath, 'res://assets/portraits/ai_chat/cao_cao_fate_v1_avatar_160.png')
+
+    const contextDocument = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha/context-documents', 'POST', {
+      kind: 'skill',
+      title: '青州后勤官 SKLL',
+      content: '身份：后勤 AI。规则：只生成 proposal，移动、采集、征兵都等待后端回执。',
+      sourceFileName: 'qingzhou-logistics.skll',
+      updatedBy: 'human_alpha',
+    })
+    assert.equal(contextDocument.status, 200, `context document upsert failed: ${JSON.stringify(contextDocument.data)}`)
+    const contextDocumentPayload = readObject(contextDocument.data)
+    assert.equal(readObject(contextDocumentPayload.document).kind, 'skill')
+    const playerWithContext = readObject(contextDocumentPayload.player)
+    const contextDocuments = readArray(playerWithContext.contextDocuments)
+    assert.equal(contextDocuments.length, 1)
+    assert.equal(readObject(contextDocuments[0]).title, '青州后勤官 SKLL')
 
     for (const testCase of INVALID_PROPOSAL_CASES) {
       const invalidProposal = await requestJson(baseUrl, '/api/ai/players/proposals', 'POST', {
@@ -143,6 +211,20 @@ async function run() {
       })
       assert.equal(invalidProposal.status, 422, testCase.message)
     }
+
+    const nonExecutableProposal = await requestJson(baseUrl, '/api/ai/players/proposals', 'POST', {
+      aiPlayerId: 'player_operator_alpha',
+      action: 'battle_report_read',
+      source: 'mcp',
+      reason: 'Core contract validation: non-executable catalog actions should not create proposals',
+      args: {},
+    })
+    assert.equal(nonExecutableProposal.status, 400, 'non-executable catalog actions should be rejected at proposal creation')
+    assert.match(
+      String(readObject(nonExecutableProposal.data).error),
+      /not executable in v1/,
+      'non-executable proposal rejection should explain the v1 execution boundary',
+    )
 
     const createProposal = await requestJson(baseUrl, '/api/ai/players/proposals', 'POST', {
       aiPlayerId: 'player_operator_alpha',

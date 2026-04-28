@@ -46,7 +46,7 @@ export type GeneralReflectFeedback = {
   summary: string
   significance: 'minor' | 'major' | 'epic'
   outcome: GeneralReflectOutcome
-  battleOutcome?: 'win' | 'loss'
+  battleOutcome?: 'win' | 'loss' | 'draw'
   grievance?: string
 }
 

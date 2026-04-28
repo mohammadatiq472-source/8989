@@ -106,6 +106,17 @@ export const AI_PLAYER_PROMOTED_V1_ACTION_KNOWLEDGE: readonly AiPlayerPromotedAc
     criticalNotes: ['Semantics are reserve deployment, not generic barracks training.'],
   },
   {
+    aiAction: 'troop_heal',
+    worldAction: 'healTroop',
+    semanticSummary: 'Restore a damaged AI-assigned unit through the authoritative troop heal action.',
+    verificationCommands: ['npm run build', 'npx tsx server/tests/ai_player_http_troop_heal_contract.test.ts'],
+    criticalNotes: [
+      'V1 requires the unit to be assigned to the governed AI player.',
+      'Success consumes 1 action point and 2 food through WorldService/rules and returns a healTroop receipt.',
+      'This does not model injury queues, hero stamina, or tactic cooldowns.',
+    ],
+  },
+  {
     aiAction: 'troop_facility_upgrade',
     worldAction: 'promoteTroopFacilityBuilding',
     semanticSummary: 'Upgrade a troop-panel facility building with authority ids reused from the troop panel.',
@@ -187,14 +198,28 @@ export const AI_PLAYER_PROMOTED_V1_ACTION_KNOWLEDGE: readonly AiPlayerPromotedAc
     ],
   },
   {
+    aiAction: 'tile_occupy',
+    worldAction: 'occupyTile',
+    semanticSummary: 'Occupy a neutral non-city tile already reached by an AI-assigned unit.',
+    verificationCommands: ['npm run build', 'npx tsx server/tests/ai_player_http_tile_occupy_contract.test.ts'],
+    criticalNotes: [
+      'V1 requires an AI-assigned unit already standing on the target neutral tile.',
+      'Success changes tile owner through WorldService/rules and returns an occupyTile receipt.',
+      'Combat, siege, fog scouting, and enemy-owned tiles remain separate authorities.',
+    ],
+  },
+  {
     aiAction: 'resource_transfer_to_governor',
     worldAction: 'transferFactionResourcesToGovernor',
     semanticSummary: 'Move resources from an AI player subaccount into the same-governor pending resource inbox.',
     verificationCommands: ['npm run build', 'npm run test:ai:player-http-contract', 'npm run test:world:resource-transfer-http-contract'],
     criticalNotes: [
-      'V1 is same-governor only; cross-faction trade remains deferred.',
+      'V1 is same-governor only; cross-faction trade is not implemented.',
       'This action is high-risk and requires explicit governor approval.',
       'Settlement writes a pending governor inbox entry, not UI-local resources.',
+      'Rules enforce server-side daily quota and transfer cooldown with daily_quota_exceeded / transfer_cooldown_active receipts.',
+      'Quota and cooldown are configurable through FactionState.aiResourceTransferPolicy and must not be reimplemented in UI.',
+      'AI runtime exposes resourceTransfer policy/quota/cooldown read models so UI does not need full world snapshots.',
     ],
   },
   {
@@ -239,16 +264,16 @@ export const AI_PLAYER_AUTHORITY_DECISIONS: readonly AiPlayerAuthorityDecision[]
         id: 'transfer-scope',
         requiresUserConfirmation: false,
         question: 'Should AI resource transfer be same-governor only, same-alliance only, or allow cross-faction diplomacy/trade?',
-        recommendedDefault: 'Confirmed for v1: same-governor only; cross-faction trade remains deferred.',
-        rationale: 'Cross-faction resource transfer changes diplomacy and economy balance; there is no trade tax, cooldown, or alliance permission model yet.',
+        recommendedDefault: 'Confirmed for v1: same-governor only; cross-faction trade is not implemented.',
+        rationale: 'Cross-faction resource transfer changes diplomacy and economy balance; the current product scope explicitly excludes cross-faction trade.',
         unblocks: 'route validation, alliance permission checks, and abuse-prevention policy.',
       },
       {
         id: 'approval-and-limits',
         requiresUserConfirmation: false,
         question: 'What approval and limits should apply: mandatory human approval, reserve floor, per-tick cap, per-day cap, and cooldown?',
-        recommendedDefault: 'Confirmed for v1: high-risk and approval-required, with reserve floor and per-action cap.',
-        rationale: 'This action can permanently move economic value. It must not inherit low-risk proposal defaults from reward_claim or alliance_help.',
+        recommendedDefault: 'Confirmed for v1: high-risk and approval-required, with reserve floor, per-action cap, daily quota, and short transfer cooldown.',
+        rationale: 'This action can permanently move economic value. It must not inherit low-risk proposal defaults from reward_claim or alliance_help, and repeated transfers must be bounded by server-side rules instead of UI-only throttles.',
         unblocks: 'AI action risk level, budget policy, failureCode set, and HTTP contract tests.',
       },
       {
@@ -268,10 +293,28 @@ export const AI_PLAYER_AUTHORITY_DECISIONS: readonly AiPlayerAuthorityDecision[]
     rationale: 'User confirmed v1 semantics: an AI assigned unit must control and stand on a resource tile, then gather once by resourceKind/resourceLevel into the governed AI resource subaccount. No daily limit is added in v1.',
   },
   {
+    worldAction: 'occupyTile',
+    recommendation: 'promoted',
+    suggestedAiAction: 'tile_occupy',
+    rationale: 'V1 occupation is limited to an AI-assigned unit already standing on a neutral non-city tile; it updates owner through WorldService/rules and intentionally defers combat, fog scouting, and siege semantics.',
+  },
+  {
+    worldAction: 'healTroop',
+    recommendation: 'promoted',
+    suggestedAiAction: 'troop_heal',
+    rationale: 'V1 healing restores strength and supply for AI-assigned units through WorldService/rules with action point and food costs, while leaving injury queues, hero stamina, and tactic cooldown systems for later authorities.',
+  },
+  {
     worldAction: 'claimGovernorResourceInbox',
     recommendation: 'defer',
     suggestedAiAction: null,
     rationale: 'This is a human/governor settlement authority for pending AI transfers. It claims governor inbox resources into faction resources and should not be exposed as an AI player atomic action.',
+  },
+  {
+    worldAction: 'setAiResourceTransferPolicy',
+    recommendation: 'defer',
+    suggestedAiAction: null,
+    rationale: 'This is a governor/backend configuration authority for AI resource transfer quota and cooldown policy. AI players consume the resulting policy through resource_transfer_to_governor receipts and must not mutate their own policy.',
   },
 ] as const
 

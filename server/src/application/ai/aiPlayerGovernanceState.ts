@@ -4,6 +4,10 @@ import type {
   AiPlayerActionReceipt,
   GovernedAiPlayer,
 } from '../../../../shared/contracts/aiPlayer'
+import type {
+  AiPlayerChatMessage,
+  AiPlayerChatReadCursor,
+} from '../../../../shared/contracts/aiPlayerChat'
 
 export const AI_PLAYER_GOVERNANCE_PERSIST_PATH =
   process.env.AI_PLAYER_GOVERNANCE_STATE_PATH?.trim() || join(process.cwd(), 'tmp', 'ai_player_governance_state.json')
@@ -12,11 +16,15 @@ export const AI_PLAYER_GOVERNANCE_PERSIST_DEBOUNCE_MS = 1_000
 export const MAX_PERSISTED_AI_PLAYERS = 5_000
 export const MAX_PERSISTED_PROPOSALS = 20_000
 export const MAX_PERSISTED_RECEIPTS_PER_PLAYER = 200
+export const MAX_PERSISTED_CHAT_MESSAGES_PER_PLAYER = 200
+export const MAX_PERSISTED_CHAT_READ_CURSORS = 20_000
 export const AI_RUNTIME_EVENT_LIMIT = 8
 
 export const governedAiPlayers = new Map<string, GovernedAiPlayer>()
 export const actionProposals = new Map<string, AiPlayerActionProposal>()
 export const actionReceiptsByAiPlayer = new Map<string, AiPlayerActionReceipt[]>()
+export const chatMessagesByAiPlayer = new Map<string, AiPlayerChatMessage[]>()
+export const chatReadCursors = new Map<string, AiPlayerChatReadCursor>()
 
 export const aiPlayerGovernancePersistState: {
   loaded: boolean

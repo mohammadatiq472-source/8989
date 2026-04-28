@@ -14,12 +14,14 @@ import type { PlayerResources } from '../contracts/game'
 
 /**
  * 地块类型 + resourceKind 映射到资源产出
- * 游戏中 TileType: 'plain' | 'resource' | 'pass' | 'city' | 'fog'
+ * 游戏中 TileType: 'plain' | 'resource' | 'pass' | 'fort' | 'dock' | 'city' | 'fog'
  * resource 类地块通过 resourceKind 区分具体资源
  */
 export const TILE_TYPE_OUTPUT: Record<string, Partial<PlayerResources>> = {
   plain:    { food: 10 },
   pass:     { stone: 5, iron: 5 },
+  fort:     {},
+  dock:     {},
   city:     { food: 50, wood: 30, stone: 20, iron: 15 },
   fog:      {},
 }

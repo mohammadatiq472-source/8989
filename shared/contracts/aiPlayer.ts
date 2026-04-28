@@ -1,4 +1,10 @@
-import type { FactionAiQuota, ResourceTransferBundle } from './game/world'
+import type {
+  AiResourceTransferPolicyState,
+  AiResourceTransferQuotaState,
+  FactionAiQuota,
+  ResourceTransferBundle,
+} from './game/world'
+import type { BattleOutcomeRecord } from './game/history'
 import type {
   AiRuntimeFailureAggregation,
   AiRuntimeFailureRecord,
@@ -33,6 +39,12 @@ export type AiPlayerProposalStatus =
   | 'rejected'
   | 'executed'
   | 'failed'
+
+export type AiPlayerRecoveryHint = {
+  summary: string
+  recommendedCommand?: string
+  focus?: 'approval' | 'resources' | 'cooldown' | 'inbox' | 'retry' | 'none'
+}
 
 export type AiPlayerActionType =
   | 'ai_player_pause'
@@ -106,6 +118,7 @@ export type AiPlayerExecutableV1ActionType =
   | 'queue_fill_idle_slot'
   | 'research_start'
   | 'troop_train'
+  | 'troop_heal'
   | 'troop_facility_upgrade'
   | 'recruit_pool_select'
   | 'recruit_commander'
@@ -113,6 +126,7 @@ export type AiPlayerExecutableV1ActionType =
   | 'march_move'
   | 'garrison_set'
   | 'resource_gather'
+  | 'tile_occupy'
   | 'general_focus_set'
   | 'formation_assign'
   | 'threat_escape'
@@ -234,6 +248,15 @@ export type AiPlayerResourceGatherArgs = {
   tileId: string
 }
 
+export type AiPlayerTileOccupyArgs = {
+  unitId?: string
+  tileId?: string
+}
+
+export type AiPlayerTroopHealArgs = {
+  unitId?: string
+}
+
 export type AiPlayerResourceTransferToGovernorArgs = {
   resources: Partial<ResourceTransferBundle>
 }
@@ -248,6 +271,7 @@ type AiPlayerActionArgsByType = {
   queue_fill_idle_slot: AiPlayerQueueFillIdleSlotArgs
   research_start: AiPlayerResearchStartArgs
   troop_train: AiPlayerTroopTrainArgs
+  troop_heal: AiPlayerTroopHealArgs
   troop_facility_upgrade: AiPlayerTroopFacilityUpgradeArgs
   recruit_pool_select: AiPlayerRecruitPoolSelectArgs
   recruit_commander: AiPlayerRecruitCommanderArgs
@@ -255,6 +279,7 @@ type AiPlayerActionArgsByType = {
   march_move: AiPlayerMarchMoveArgs
   garrison_set: AiPlayerGarrisonSetArgs
   resource_gather: AiPlayerResourceGatherArgs
+  tile_occupy: AiPlayerTileOccupyArgs
   general_focus_set: AiPlayerGeneralFocusSetArgs
   formation_assign: AiPlayerFormationAssignArgs
   threat_escape: AiPlayerThreatEscapeArgs
@@ -287,9 +312,25 @@ export type AiPlayerRuntimePolicy = {
   allowCliExecution: boolean
 }
 
+export type AiPlayerContextDocumentKind = 'identity' | 'memory' | 'skill' | 'instruction'
+
+export type AiPlayerContextDocument = {
+  documentId: string
+  kind: AiPlayerContextDocumentKind
+  title: string
+  content: string
+  sourceFileName?: string
+  contentBytes: number
+  createdAt: string
+  updatedAt: string
+  updatedBy: string
+}
+
 export type GovernedAiPlayer = {
   aiPlayerId: string
   displayName: string
+  avatarId?: string
+  avatarImagePath?: string
   governorPlayerId: string
   factionId: string
   enabled: boolean
@@ -298,6 +339,7 @@ export type GovernedAiPlayer = {
   approvalPolicy: AiPlayerApprovalPolicy
   budgetPolicy: AiPlayerBudgetPolicy
   runtimePolicy: AiPlayerRuntimePolicy
+  contextDocuments: AiPlayerContextDocument[]
   createdAt: string
   updatedAt: string
 }
@@ -307,6 +349,161 @@ export type AiPlayerBudgetSnapshot = {
   foodRemaining: number
   aiQuota: FactionAiQuota | null
 }
+
+export type AiPlayerResourceTransferRuntime = {
+  configuredPolicy: AiResourceTransferPolicyState | null
+  effectivePolicy: Required<AiResourceTransferPolicyState>
+  quota: AiResourceTransferQuotaState | null
+  remainingQuotaTotal: number
+  cooldownRemainingTicks: number
+  windowRemainingTicks: number
+  canTransferNow: boolean
+  blockedBy: 'daily_quota_exceeded' | 'transfer_cooldown_active' | null
+}
+
+export type AiPlayerBattleReportPerspective = 'attacker' | 'nearby' | 'faction_history'
+
+export type AiPlayerBattleReportSeverity = 'low' | 'medium' | 'high'
+
+export type AiPlayerBattleReportReadItem = BattleOutcomeRecord & {
+  reportId: string
+  perspective: AiPlayerBattleReportPerspective
+  assignedUnitInvolved: boolean
+  ownLoss: number | null
+  enemyLoss: number | null
+  severity: AiPlayerBattleReportSeverity
+  nextStepSuggestion: string
+}
+
+export type AiPlayerBattleReportReadModel = {
+  aiPlayerId: string
+  factionId: string
+  unitIds: string[]
+  limit: number
+  count: number
+  items: AiPlayerBattleReportReadItem[]
+  generatedAt: string
+}
+
+export type AiPlayerDevelopmentPlanGoal = {
+  kind: 'development_points'
+  targetDevelopmentPoints: number
+  currentDevelopmentPoints: number
+  remainingDevelopmentPoints: number
+  summary: string
+}
+
+export type AiPlayerDevelopmentPlanResourceSnapshot = {
+  faction: ResourceTransferBundle & {
+    actionPoints: number
+  }
+  aiAccount: ResourceTransferBundle
+  aiAccountUpdatedTick?: number
+}
+
+export type AiPlayerDevelopmentPlanUnit = {
+  unitId: string
+  name: string
+  tileId: string
+  status: string
+  strength: number
+  mobility: number
+  supply: number
+  heroId: string
+  heroName: string
+  aiPlayerOwned: boolean
+  currentTask?: string
+  neighborTileIds: string[]
+}
+
+export type AiPlayerDevelopmentPlanTileRisk =
+  | 'owned_resource'
+  | 'safe_neighbor'
+  | 'enemy_pressure'
+  | 'contested'
+  | 'unknown'
+
+export type AiPlayerDevelopmentPlanCandidateTile = {
+  tileId: string
+  name: string
+  type: string
+  owner: string
+  resourceKind?: string
+  resourceLevel?: number
+  enemyPressure: number
+  moveCost: number
+  distance: number
+  adjacentToUnitId?: string
+  risk: AiPlayerDevelopmentPlanTileRisk
+  recommendedAction?: AiPlayerExecutableV1ActionType
+  args?: Record<string, unknown>
+  reason: string
+}
+
+export type AiPlayerDevelopmentPlanActionReadiness =
+  | 'ready'
+  | 'needs_target'
+  | 'blocked'
+  | 'information_only'
+
+export type AiPlayerDevelopmentPlanCandidateAction = {
+  action: AiPlayerActionType
+  label: string
+  executableInV1: boolean
+  readiness: AiPlayerDevelopmentPlanActionReadiness
+  riskLevel: AiPlayerActionRiskLevel
+  mappedWorldAction?: string
+  args?: Record<string, unknown>
+  proposalArgs?: Record<string, unknown>
+  proposalReason?: string
+  targetUnitId?: string
+  targetTileId?: string
+  reason: string
+  blockers: string[]
+}
+
+export type AiPlayerDevelopmentPlanRiskItem = {
+  code: string
+  severity: 'info' | 'warning' | 'blocker'
+  action?: AiPlayerActionType
+  title: string
+  detail: string
+  nextStep: string
+}
+
+export type AiPlayerDevelopmentPlanLoopStep = {
+  order: number
+  action: AiPlayerActionType
+  label: string
+  readiness: AiPlayerDevelopmentPlanActionReadiness
+  summary: string
+  nextWhen: string
+  blockers: string[]
+}
+
+export type AiPlayerDevelopmentPlan = {
+  ok: true
+  aiPlayerId: string
+  factionId: string
+  governorPlayerId: string
+  tick: number
+  worldVersion: number
+  generatedAt: string
+  goal: AiPlayerDevelopmentPlanGoal
+  resources: AiPlayerDevelopmentPlanResourceSnapshot
+  units: AiPlayerDevelopmentPlanUnit[]
+  candidateTiles: AiPlayerDevelopmentPlanCandidateTile[]
+  candidateActions: AiPlayerDevelopmentPlanCandidateAction[]
+  recommendedLoop: AiPlayerDevelopmentPlanLoopStep[]
+  riskItems: AiPlayerDevelopmentPlanRiskItem[]
+}
+
+export type AiPlayerDevelopmentPlanResponse =
+  | AiPlayerDevelopmentPlan
+  | {
+    ok: false
+    error: string
+  }
 
 export type AiPlayerProposalStats = {
   pendingApprovalCount: number
@@ -364,7 +561,47 @@ export type AiPlayerRuntimeObservabilitySummary = {
   recentEventActions: string[]
 }
 
+export type AiPlayerModelRoutingSource = 'default' | 'env' | 'faction_config' | 'player_config' | 'fallback'
+
+export type AiPlayerModelBudgetTier = 'strict_action' | 'economy_chat' | 'disabled'
+
+export type AiPlayerModelByokSource = 'none' | 'faction_config' | 'player_config'
+
+export type AiPlayerModelTargetCandidate = {
+  model: string
+  provider: string
+  source: AiPlayerModelRoutingSource
+  byokSource: AiPlayerModelByokSource
+  priority: number
+  isActive: boolean
+  fallbackCandidate: boolean
+  strictJsonOnlyCapable: boolean
+  budgetTier: AiPlayerModelBudgetTier
+  lastFailureReason: string | null
+  secretConfigured: boolean
+  secretSource: string | null
+}
+
+export type AiPlayerModelStatus = {
+  activeModel: string
+  activeProvider: string
+  source: AiPlayerModelRoutingSource
+  strictJsonOnlyCapable: boolean
+  budgetTier: AiPlayerModelBudgetTier
+  fallbackEnabled: boolean
+  fallbackModel: string | null
+  lastFallbackReason: string | null
+  secretConfigured: boolean
+  secretSource: string | null
+  byokSource: AiPlayerModelByokSource
+  targetCount: number
+  candidateTargets: AiPlayerModelTargetCandidate[]
+}
+
 export type GovernedAiPlayerRuntime = GovernedAiPlayer & {
+  modelName: string
+  modelSource: 'env' | 'default'
+  modelStatus: AiPlayerModelStatus
   autonomyLevel: SessionAutonomyLevel
   controlMode: SessionControlMode
   online: boolean
@@ -373,6 +610,7 @@ export type GovernedAiPlayerRuntime = GovernedAiPlayer & {
   playerNames: string[]
   governorOnline: boolean
   budget: AiPlayerBudgetSnapshot
+  resourceTransfer: AiPlayerResourceTransferRuntime
   proposalStats: AiPlayerProposalStats
   latestProposalId?: string
   latestReceipt?: AiPlayerActionReceipt
@@ -407,6 +645,7 @@ export type AiPlayerActionProposal = {
   executedBy?: string
   worldAction?: string
   worldActionPayload?: Record<string, unknown>
+  recoveryHint?: AiPlayerRecoveryHint
 }
 
 export type AiPlayerActionProposalOf<T extends AiPlayerActionType> =
@@ -425,15 +664,18 @@ export type AiPlayerActionReceipt = {
   worldActionPayload?: Record<string, unknown>
   actionRequestId: string | null
   ok: boolean
-  failureCode?: string | null
+  failureCode: string | null
   message?: string
   execution: unknown | null
   observedAt: string
+  recoveryHint?: AiPlayerRecoveryHint
 }
 
 export type CreateGovernedAiPlayerRequest = {
   aiPlayerId: string
   displayName: string
+  avatarId?: string
+  avatarImagePath?: string
   governorPlayerId: string
   factionId: string
   enabled?: boolean
@@ -442,9 +684,26 @@ export type CreateGovernedAiPlayerRequest = {
   approvalPolicy?: Partial<AiPlayerApprovalPolicy>
   budgetPolicy?: Partial<AiPlayerBudgetPolicy>
   runtimePolicy?: Partial<AiPlayerRuntimePolicy>
+  contextDocuments?: AiPlayerContextDocument[]
 }
 
 export type UpdateGovernedAiPlayerStatusRequest = {
+  updatedBy: string
+}
+
+export type UpdateGovernedAiPlayerProfileRequest = {
+  displayName?: string
+  avatarId?: string
+  avatarImagePath?: string
+  updatedBy: string
+}
+
+export type UpsertAiPlayerContextDocumentRequest = {
+  documentId?: string
+  kind: AiPlayerContextDocumentKind
+  title: string
+  content: string
+  sourceFileName?: string
   updatedBy: string
 }
 
@@ -505,5 +764,7 @@ export type AiPlayerProposalMutationResponse = {
   ok: boolean
   proposal?: AiPlayerActionProposal
   receipt?: AiPlayerActionReceipt
+  failureCode?: string | null
+  recoveryHint?: AiPlayerRecoveryHint
   error?: string
 }

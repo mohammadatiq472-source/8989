@@ -19,7 +19,9 @@ import {
   enqueueAffairAction,
   gatherAiResourceTileAction,
   getWorldStateReadonly,
+  healTroopAction,
   moveUnitAction,
+  occupyTileAction,
   promoteCityBuildingAction,
   promoteTroopFacilityBuildingAction,
   queueAiAgendaActionAction,
@@ -546,6 +548,97 @@ function resolveGarrisonTarget(
     targetTileId,
     summary,
   }
+}
+
+function resolveTileOccupyTarget(
+  factionId: string,
+  aiPlayerId: string,
+  requestedUnitId?: string,
+  requestedTileId?: string,
+): { unitId: string; tileId: string } | null {
+  const world = getWorldStateReadonly()
+  const faction = world.factions[factionId]
+  const aiPlayer = faction?.aiPlayers?.find((candidate) => candidate.id === aiPlayerId)
+  if (!faction || !aiPlayer) {
+    return null
+  }
+
+  const assignedUnitIds = new Set(aiPlayer.unitIds)
+  const normalizedRequestedUnitId = requestedUnitId?.trim()
+  const normalizedRequestedTileId = requestedTileId?.trim()
+  const assignedUnits = world.units.filter((unit) =>
+    unit.faction === factionId && assignedUnitIds.has(unit.id),
+  )
+
+  if (normalizedRequestedUnitId) {
+    const unit = assignedUnits.find((candidate) => candidate.id === normalizedRequestedUnitId)
+    if (!unit) {
+      return null
+    }
+    return {
+      unitId: unit.id,
+      tileId: normalizedRequestedTileId || unit.tileId,
+    }
+  }
+
+  if (normalizedRequestedTileId) {
+    const unitOnTile = assignedUnits.find((unit) => unit.tileId === normalizedRequestedTileId)
+    if (!unitOnTile) {
+      return null
+    }
+    return {
+      unitId: unitOnTile.id,
+      tileId: normalizedRequestedTileId,
+    }
+  }
+
+  const tileById = new Map(world.map.tiles.map((tile) => [tile.id, tile] as const))
+  const occupiableUnit = assignedUnits.find((unit) => {
+    const tile = tileById.get(unit.tileId)
+    return tile && tile.owner === 'neutral' && tile.type !== 'city' && tile.type !== 'fog'
+  })
+  if (!occupiableUnit) {
+    return null
+  }
+
+  return {
+    unitId: occupiableUnit.id,
+    tileId: occupiableUnit.tileId,
+  }
+}
+
+function resolveTroopHealUnitId(
+  factionId: string,
+  aiPlayerId: string,
+  requestedUnitId?: string,
+): string {
+  const normalizedRequestedUnitId = requestedUnitId?.trim()
+  if (normalizedRequestedUnitId) {
+    return normalizedRequestedUnitId
+  }
+
+  const world = getWorldStateReadonly()
+  const faction = world.factions[factionId]
+  const aiPlayer = faction?.aiPlayers?.find((candidate) => candidate.id === aiPlayerId)
+  if (!faction || !aiPlayer) {
+    return ''
+  }
+
+  const assignedUnitIds = new Set(aiPlayer.unitIds)
+  const assignedUnits = world.units
+    .filter((unit) => unit.faction === factionId && assignedUnitIds.has(unit.id))
+    .sort((left, right) => {
+      if (left.strength !== right.strength) {
+        return left.strength - right.strength
+      }
+      if (left.supply !== right.supply) {
+        return left.supply - right.supply
+      }
+      return left.id.localeCompare(right.id)
+    })
+
+  const damagedUnit = assignedUnits.find((unit) => unit.strength < 100 || unit.supply < 9)
+  return (damagedUnit ?? assignedUnits[0])?.id ?? ''
 }
 
 function resolveGeneralFocusHeroId(factionId: string, requestedHeroId?: string): string | null {
@@ -1080,6 +1173,29 @@ export async function executeSupportedAiPlayerProposal(
       response = allianceHelpAction(regionId, includeWorld, typedProposal.factionId as never)
       break
     }
+    case 'troop_heal': {
+      const typedProposal = proposal as AiPlayerActionProposalOf<'troop_heal'>
+      const unitId = resolveTroopHealUnitId(
+        typedProposal.factionId,
+        typedProposal.aiPlayerId,
+        typedProposal.args.unitId,
+      )
+      worldAction = 'healTroop'
+      worldActionPayload = {
+        factionId: typedProposal.factionId,
+        aiPlayerId: typedProposal.aiPlayerId,
+        unitId,
+      }
+      response = healTroopAction(
+        {
+          factionId: typedProposal.factionId as never,
+          aiPlayerId: typedProposal.aiPlayerId,
+          unitId,
+        },
+        includeWorld,
+      )
+      break
+    }
     case 'resource_gather': {
       const typedProposal = proposal as AiPlayerActionProposalOf<'resource_gather'>
       worldAction = 'gatherAiResourceTile'
@@ -1095,6 +1211,37 @@ export async function executeSupportedAiPlayerProposal(
           aiPlayerId: typedProposal.aiPlayerId,
           unitId: typedProposal.args.unitId,
           tileId: typedProposal.args.tileId,
+        },
+        includeWorld,
+      )
+      break
+    }
+    case 'tile_occupy': {
+      const typedProposal = proposal as AiPlayerActionProposalOf<'tile_occupy'>
+      const target = resolveTileOccupyTarget(
+        typedProposal.factionId,
+        typedProposal.aiPlayerId,
+        typedProposal.args.unitId,
+        typedProposal.args.tileId,
+      )
+      if (!target) {
+        return {
+          error: `no tile occupy target found for AI player ${typedProposal.aiPlayerId}`,
+        }
+      }
+      worldAction = 'occupyTile'
+      worldActionPayload = {
+        factionId: typedProposal.factionId,
+        aiPlayerId: typedProposal.aiPlayerId,
+        unitId: target.unitId,
+        tileId: target.tileId,
+      }
+      response = occupyTileAction(
+        {
+          factionId: typedProposal.factionId as never,
+          aiPlayerId: typedProposal.aiPlayerId,
+          unitId: target.unitId,
+          tileId: target.tileId,
         },
         includeWorld,
       )

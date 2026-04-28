@@ -17,11 +17,19 @@ import {
 } from './luoyangEndgame'
 import { computeResourceIncome } from './resources'
 import { actionLabel, allianceStanceLabel, ownerLabel, templateLabel } from './ruleLabels'
+import {
+  resolveRepresentativeTacticalDuel,
+  type TacticalCombatant,
+  type TacticalDuelReport,
+  type TacticalSkillEvent,
+  type TacticalTroopType,
+} from './tacticalSkillRules'
 import type {
   ActionType,
   AiRuntimeAdvanceTickSubphaseTiming,
   AllianceActionSummary,
   BattleOutcomeRecord,
+  CityFootprintTiles,
   CityTechLevels,
   CityTechTrackId,
   ExecutableOrder,
@@ -34,8 +42,11 @@ import type {
   PlanningJobHistoryEntry,
   PlanSource,
   ExecutionEnqueueMode,
+  ClaimableReward,
+  ClaimableRewardSource,
   ReplayHighlight,
   ReplayOrderSnapshot,
+  RewardBundle,
   ResourceTransferBundle,
   SlgGeneralDirectivePreviewState,
   StrategicPlan,
@@ -79,19 +90,14 @@ type UpgradeCityResult =
   | { ok: false; message: string }
 
 type CityUpgradeRule = {
-  nextFootprintTiles: 4 | 9
+  nextFootprintTiles: CityFootprintTiles
   actionPoints: number
   food: number
 }
 
-const CITY_UPGRADE_RULES: Record<1 | 4, CityUpgradeRule> = {
-  1: {
-    nextFootprintTiles: 4,
-    actionPoints: 1,
-    food: 4,
-  },
-  4: {
-    nextFootprintTiles: 9,
+const CITY_UPGRADE_RULES: Partial<Record<CityFootprintTiles, CityUpgradeRule>> = {
+  9: {
+    nextFootprintTiles: 25,
     actionPoints: 2,
     food: 8,
   },
@@ -100,7 +106,18 @@ const CITY_UPGRADE_RULES: Record<1 | 4, CityUpgradeRule> = {
 const RESOURCE_TRANSFER_KINDS = ['food', 'wood', 'stone', 'iron'] as const
 const AI_RESOURCE_TRANSFER_RESERVE_FLOOR = 10
 const AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION = 10_000
+export const DEFAULT_AI_RESOURCE_TRANSFER_POLICY = {
+  dailyQuotaTotal: 100,
+  dailyWindowTicks: 24,
+  cooldownTicks: 3,
+} as const
 const AI_RESOURCE_GATHER_AMOUNT_PER_LEVEL = 10
+const TROOP_HEAL_ACTION_POINTS = 1
+const TROOP_HEAL_FOOD = 2
+const TROOP_HEAL_STRENGTH_GAIN = 20
+const TROOP_HEAL_SUPPLY_GAIN = 2
+const TROOP_HEAL_MAX_STRENGTH = 100
+const TROOP_HEAL_MAX_SUPPLY = 9
 
 type UpgradeCityTechResult =
   | { ok: true; world: WorldState; message: string; cityHallTileId: string; techId: CityTechTrackId; nextLevel: number }
@@ -123,6 +140,12 @@ export type ResourceTransferFailureCode =
   | 'insufficient_resources'
   | 'reserve_floor_violation'
   | 'transfer_limit_exceeded'
+  | 'daily_quota_exceeded'
+  | 'transfer_cooldown_active'
+
+export type AiResourceTransferPolicyFailureCode =
+  | 'unknown_faction'
+  | 'invalid_transfer_policy'
 
 export type GovernorResourceInboxClaimFailureCode =
   | 'unknown_faction'
@@ -142,6 +165,29 @@ export type AiResourceGatherFailureCode =
   | 'unit_not_on_tile'
   | 'resource_tile_already_gathered'
 
+export type TileOccupyFailureCode =
+  | 'unknown_faction'
+  | 'unknown_unit'
+  | 'unit_faction_mismatch'
+  | 'unit_not_assigned_to_ai_player'
+  | 'unknown_tile'
+  | 'tile_not_occupiable'
+  | 'tile_already_controlled'
+  | 'tile_not_neutral'
+  | 'tile_occupied_by_hostile_unit'
+  | 'unit_not_on_tile'
+  | 'insufficient_resources'
+  | 'active_orders_exist'
+
+export type TroopHealFailureCode =
+  | 'unknown_faction'
+  | 'unknown_unit'
+  | 'unit_faction_mismatch'
+  | 'unit_not_assigned_to_ai_player'
+  | 'unit_already_full'
+  | 'insufficient_resources'
+  | 'active_orders_exist'
+
 type TransferFactionResourcesToGovernorResult =
   | {
       ok: true
@@ -156,6 +202,20 @@ type TransferFactionResourcesToGovernorResult =
       ok: false
       message: string
       failureCode: ResourceTransferFailureCode
+    }
+
+type SetAiResourceTransferPolicyResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      factionId: string
+      policy: NonNullable<WorldState['factions'][string]['aiResourceTransferPolicy']>
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: AiResourceTransferPolicyFailureCode
     }
 
 type ClaimGovernorResourceInboxResult =
@@ -188,6 +248,44 @@ type GatherAiResourceTileResult =
       ok: false
       message: string
       failureCode: AiResourceGatherFailureCode
+    }
+
+type OccupyTileResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      aiPlayerId: string
+      unitId: string
+      tileId: string
+      previousOwner: string
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: TileOccupyFailureCode
+    }
+
+type TroopHealResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      aiPlayerId: string
+      unitId: string
+      strengthBefore: number
+      strengthAfter: number
+      supplyBefore: number
+      supplyAfter: number
+      resourcesSpent: {
+        actionPoints: number
+        food: number
+      }
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: TroopHealFailureCode
     }
 
 type RecruitProspectHeroResult =
@@ -254,6 +352,29 @@ export type RewardClaimFailureCode =
   | 'unknown_faction'
   | 'missing_claimable_reward'
 
+export type IssueClaimableRewardFailureCode =
+  | 'unknown_faction'
+  | 'invalid_reward'
+  | 'reward_already_pending'
+  | 'daily_welfare_already_issued'
+
+type IssueClaimableRewardResult =
+  | {
+      ok: true
+      world: WorldState
+      message: string
+      factionId: string
+      rewardId: string
+      ledgerKey?: string
+      source: ClaimableRewardSource
+      pendingRewardCount: number
+    }
+  | {
+      ok: false
+      message: string
+      failureCode: IssueClaimableRewardFailureCode
+    }
+
 type AllianceHelpResult =
   | {
       ok: true
@@ -294,6 +415,18 @@ type CityTechUpgradeRule = {
   food: number
   minFootprint: 1 | 4 | 9 | 16
 }
+
+type RepresentativeTacticalLoadout = {
+  innateSkillId: string
+  equippedSkillIds: string[]
+}
+
+type RepresentativeTacticalEncounter = {
+  defender: Unit
+  report: TacticalDuelReport
+}
+
+const WORLD_TACTICAL_STRENGTH_SCALE = 100
 
 const CITY_TECH_UPGRADE_RULES: Record<CityTechTrackId, CityTechUpgradeRule> = {
   governance: { maxLevel: 5, actionPoints: 1, food: 3, minFootprint: 1 },
@@ -567,6 +700,17 @@ function cloneSlgDomainState(
               {
                 ...generalState,
                 tacticByHeroId: generalState.tacticByHeroId ? { ...generalState.tacticByHeroId } : undefined,
+                tacticalSkillSlotsByHeroId: generalState.tacticalSkillSlotsByHeroId
+                  ? Object.fromEntries(
+                      Object.entries(generalState.tacticalSkillSlotsByHeroId).map(([heroId, slotState]) => [
+                        heroId,
+                        {
+                          ...slotState,
+                          equippedSkillIds: [...slotState.equippedSkillIds],
+                        },
+                      ]),
+                    )
+                  : undefined,
                 directivePreviewHeroId: generalState.directivePreviewHeroId,
                 directivePreview: generalState.directivePreview
                   ? {
@@ -859,6 +1003,20 @@ export function claimReward(
 
   const [claimedReward] = pendingRewards.splice(rewardIndex, 1)
   faction.claimableRewards = pendingRewards
+  if (claimedReward.source === 'daily_welfare' && claimedReward.ledgerKey) {
+    const ledger = faction.dailyWelfareLedgerByKey ?? {}
+    const currentEntry = ledger[claimedReward.ledgerKey]
+    faction.dailyWelfareLedgerByKey = {
+      ...ledger,
+      [claimedReward.ledgerKey]: {
+        ledgerKey: claimedReward.ledgerKey,
+        rewardId: currentEntry?.rewardId ?? claimedReward.id,
+        status: 'claimed',
+        issuedTick: currentEntry?.issuedTick ?? claimedReward.createdTick,
+        claimedTick: nextWorld.tick,
+      },
+    }
+  }
   faction.food += claimedReward.reward.food
   faction.actionPoints = Math.min(8, faction.actionPoints + claimedReward.reward.ap)
 
@@ -879,6 +1037,96 @@ export function claimReward(
     actionPointReward: claimedReward.reward.ap,
     pendingRewardCount: pendingRewards.length,
     source: claimedReward.source,
+  }
+}
+
+export function issueClaimableReward(
+  world: WorldState,
+  params: {
+    factionId?: string
+    rewardId?: string
+    ledgerKey?: string
+    source: 'daily_welfare' | 'event_reward'
+    label?: string
+    summary?: string
+    reward: RewardBundle
+  },
+): IssueClaimableRewardResult {
+  const nextWorld = shallowCloneWorld(world)
+  const factionId = params.factionId?.trim() || resolveFallbackFactionId(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return { ok: false, message: `Unknown faction: ${factionId}`, failureCode: 'unknown_faction' }
+  }
+
+  const food = params.reward.food
+  const ap = params.reward.ap
+  if (!Number.isInteger(food) || !Number.isInteger(ap) || food < 0 || ap < 0 || food + ap <= 0) {
+    return { ok: false, message: 'Invalid claimable reward bundle.', failureCode: 'invalid_reward' }
+  }
+
+  const pendingRewards = faction.claimableRewards ?? []
+  const defaultRewardId = `${params.source}_${nextWorld.tick}_${pendingRewards.length + 1}`
+  const rewardId = params.rewardId?.trim() || defaultRewardId
+  if (pendingRewards.some((reward) => reward.id === rewardId)) {
+    return { ok: false, message: `Claimable reward already pending: ${rewardId}`, failureCode: 'reward_already_pending' }
+  }
+  const ledgerKey = params.source === 'daily_welfare'
+    ? (params.ledgerKey?.trim() || rewardId)
+    : undefined
+  if (ledgerKey) {
+    const ledger = faction.dailyWelfareLedgerByKey ?? {}
+    if (ledger[ledgerKey]) {
+      return {
+        ok: false,
+        message: `Daily welfare already issued: ${ledgerKey}`,
+        failureCode: 'daily_welfare_already_issued',
+      }
+    }
+    faction.dailyWelfareLedgerByKey = {
+      ...ledger,
+      [ledgerKey]: {
+        ledgerKey,
+        rewardId,
+        status: 'pending',
+        issuedTick: nextWorld.tick,
+      },
+    }
+  }
+
+  const label = params.label?.trim() || (params.source === 'daily_welfare' ? '每日福利' : '活动奖励')
+  const summary = params.summary?.trim() || (params.source === 'daily_welfare' ? '每日登录福利。' : '活动结算奖励。')
+  const reward: ClaimableReward = {
+    id: rewardId,
+    source: params.source,
+    label,
+    summary,
+    reward: {
+      food,
+      ap,
+    },
+    createdTick: nextWorld.tick,
+    ledgerKey,
+  }
+  faction.claimableRewards = [reward, ...pendingRewards]
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    '奖励发放',
+    `${resolveFactionDisplayLabel(factionId)} 收到 ${label}，可在通用收件箱领取。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `${resolveFactionDisplayLabel(factionId)} 已收到 ${label}。`,
+    factionId,
+    rewardId,
+    ledgerKey,
+    source: params.source,
+    pendingRewardCount: faction.claimableRewards.length,
   }
 }
 
@@ -954,6 +1202,95 @@ function subtractResourceBundles(
   }
 }
 
+function normalizePositiveIntegerPolicyValue(value: unknown, fallback: number, min: number, max: number) {
+  return typeof value === 'number' && Number.isInteger(value)
+    ? Math.max(min, Math.min(max, value))
+    : fallback
+}
+
+export function resolveAiResourceTransferPolicy(faction: WorldState['factions'][string]) {
+  return {
+    dailyQuotaTotal: normalizePositiveIntegerPolicyValue(
+      faction.aiResourceTransferPolicy?.dailyQuotaTotal,
+      DEFAULT_AI_RESOURCE_TRANSFER_POLICY.dailyQuotaTotal,
+      1,
+      AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION,
+    ),
+    dailyWindowTicks: normalizePositiveIntegerPolicyValue(
+      faction.aiResourceTransferPolicy?.dailyWindowTicks,
+      DEFAULT_AI_RESOURCE_TRANSFER_POLICY.dailyWindowTicks,
+      1,
+      365,
+    ),
+    cooldownTicks: normalizePositiveIntegerPolicyValue(
+      faction.aiResourceTransferPolicy?.cooldownTicks,
+      DEFAULT_AI_RESOURCE_TRANSFER_POLICY.cooldownTicks,
+      0,
+      365,
+    ),
+  }
+}
+
+function resolveAiResourceTransferPolicyPatch(
+  faction: WorldState['factions'][string],
+  params: {
+    dailyQuotaTotal?: number
+    dailyWindowTicks?: number
+    cooldownTicks?: number
+  },
+) {
+  const currentPolicy = resolveAiResourceTransferPolicy(faction)
+  return {
+    dailyQuotaTotal: normalizePositiveIntegerPolicyValue(
+      params.dailyQuotaTotal ?? currentPolicy.dailyQuotaTotal,
+      currentPolicy.dailyQuotaTotal,
+      1,
+      AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION,
+    ),
+    dailyWindowTicks: normalizePositiveIntegerPolicyValue(
+      params.dailyWindowTicks ?? currentPolicy.dailyWindowTicks,
+      currentPolicy.dailyWindowTicks,
+      1,
+      365,
+    ),
+    cooldownTicks: normalizePositiveIntegerPolicyValue(
+      params.cooldownTicks ?? currentPolicy.cooldownTicks,
+      currentPolicy.cooldownTicks,
+      0,
+      365,
+    ),
+  }
+}
+
+function resolveAiResourceTransferQuotaState(
+  faction: WorldState['factions'][string],
+  aiPlayerId: string,
+  governorPlayerId: string,
+  factionId: string,
+  currentTick: number,
+  policy: ReturnType<typeof resolveAiResourceTransferPolicy>,
+) {
+  const existing = faction.aiResourceTransferQuotaByAiPlayer?.[aiPlayerId]
+  const existingWindowActive =
+    existing &&
+    existing.factionId === factionId &&
+    existing.governorPlayerId === governorPlayerId &&
+    currentTick < existing.windowEndsTick
+
+  return existingWindowActive
+    ? existing
+    : {
+        aiPlayerId,
+        governorPlayerId,
+        factionId,
+        windowStartedTick: currentTick,
+        windowEndsTick: currentTick + policy.dailyWindowTicks,
+        dailyQuotaTotal: policy.dailyQuotaTotal,
+        transferredTotal: 0,
+        transferredResources: createEmptyResourceTransferBundle(),
+      }
+}
+
 function resourceBundleForKind(
   resourceKind: NonNullable<Tile['resourceKind']>,
   amount: number,
@@ -987,6 +1324,59 @@ function normalizeTransferLabel(input: string, fallback: string) {
   return normalized.length > 0 ? normalized : fallback
 }
 
+export function setAiResourceTransferPolicy(
+  world: WorldState,
+  params: {
+    factionId: string
+    dailyQuotaTotal?: number
+    dailyWindowTicks?: number
+    cooldownTicks?: number
+  },
+): SetAiResourceTransferPolicyResult {
+  const factionId = normalizeTransferLabel(params.factionId, '')
+  const hasPolicyPatch =
+    params.dailyQuotaTotal !== undefined ||
+    params.dailyWindowTicks !== undefined ||
+    params.cooldownTicks !== undefined
+
+  if (!hasPolicyPatch) {
+    return {
+      ok: false,
+      message: 'At least one AI resource transfer policy field is required.',
+      failureCode: 'invalid_transfer_policy',
+    }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return {
+      ok: false,
+      message: `Unknown faction: ${factionId}`,
+      failureCode: 'unknown_faction',
+    }
+  }
+
+  const policy = resolveAiResourceTransferPolicyPatch(faction, params)
+  faction.aiResourceTransferPolicy = policy
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    'AI资源输送策略',
+    `${resolveFactionDisplayLabel(factionId)} 已更新 AI 资源输送每日额度/冷却策略。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `AI resource transfer policy updated for ${factionId}.`,
+    factionId,
+    policy,
+  }
+}
+
 export function transferFactionResourcesToGovernor(
   world: WorldState,
   params: {
@@ -1013,7 +1403,8 @@ export function transferFactionResourcesToGovernor(
     }
   }
 
-  if (totalResourceTransferAmount(resources) > AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION) {
+  const transferTotal = totalResourceTransferAmount(resources)
+  if (transferTotal > AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION) {
     return {
       ok: false,
       message: `Resource transfer exceeds per-action cap ${AI_RESOURCE_TRANSFER_MAX_TOTAL_PER_ACTION}.`,
@@ -1056,6 +1447,32 @@ export function transferFactionResourcesToGovernor(
     }
   }
 
+  const transferPolicy = resolveAiResourceTransferPolicy(faction)
+  const quotaState = resolveAiResourceTransferQuotaState(
+    faction,
+    sourceAiPlayerId,
+    governorPlayerId,
+    sourceFactionId,
+    nextWorld.tick,
+    transferPolicy,
+  )
+
+  if (quotaState.cooldownUntilTick !== undefined && quotaState.cooldownUntilTick > nextWorld.tick) {
+    return {
+      ok: false,
+      message: `AI resource transfer is cooling down until tick ${quotaState.cooldownUntilTick}.`,
+      failureCode: 'transfer_cooldown_active',
+    }
+  }
+
+  if (quotaState.transferredTotal + transferTotal > quotaState.dailyQuotaTotal) {
+    return {
+      ok: false,
+      message: `AI resource transfer daily quota exceeded: ${quotaState.transferredTotal + transferTotal}/${quotaState.dailyQuotaTotal}.`,
+      failureCode: 'daily_quota_exceeded',
+    }
+  }
+
   if (!hasSufficientAiResources(account.resources, resources)) {
     return {
       ok: false,
@@ -1074,6 +1491,16 @@ export function transferFactionResourcesToGovernor(
 
   account.resources = subtractResourceBundles(account.resources, resources)
   account.updatedTick = nextWorld.tick
+  faction.aiResourceTransferQuotaByAiPlayer = {
+    ...(faction.aiResourceTransferQuotaByAiPlayer ?? {}),
+    [sourceAiPlayerId]: {
+      ...quotaState,
+      transferredTotal: quotaState.transferredTotal + transferTotal,
+      transferredResources: addResourceBundles(quotaState.transferredResources, resources),
+      lastTransferTick: nextWorld.tick,
+      cooldownUntilTick: nextWorld.tick + transferPolicy.cooldownTicks,
+    },
+  }
 
   const existingInboxes = faction.governorResourceInboxes ?? {}
   const existingInbox = existingInboxes[governorPlayerId]
@@ -1340,6 +1767,250 @@ export function gatherAiResourceTile(
   }
 }
 
+export function occupyTile(
+  world: WorldState,
+  params: {
+    factionId: string
+    aiPlayerId: string
+    unitId: string
+    tileId: string
+  },
+): OccupyTileResult {
+  const factionId = normalizeTransferLabel(params.factionId, '')
+  const aiPlayerId = normalizeTransferLabel(params.aiPlayerId, '')
+  const unitId = normalizeTransferLabel(params.unitId, '')
+  const tileId = normalizeTransferLabel(params.tileId, '')
+
+  if (hasActiveOrders(world, factionId)) {
+    return {
+      ok: false,
+      message: `Faction ${factionId} has active orders; tile occupy requires an idle action window.`,
+      failureCode: 'active_orders_exist',
+    }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return {
+      ok: false,
+      message: `Unknown faction: ${factionId}`,
+      failureCode: 'unknown_faction',
+    }
+  }
+
+  const unit = getUnitById(nextWorld, unitId)
+  if (!unit) {
+    return {
+      ok: false,
+      message: `Unit not found: ${unitId}`,
+      failureCode: 'unknown_unit',
+    }
+  }
+
+  if (unit.faction !== factionId) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} does not belong to faction ${factionId}.`,
+      failureCode: 'unit_faction_mismatch',
+    }
+  }
+
+  if (!isUnitAssignedToAiPlayer(faction, aiPlayerId, unitId)) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} is not assigned to AI player ${aiPlayerId}.`,
+      failureCode: 'unit_not_assigned_to_ai_player',
+    }
+  }
+
+  const tile = getTileById(nextWorld, tileId)
+  if (!tile) {
+    return {
+      ok: false,
+      message: `Tile not found: ${tileId}`,
+      failureCode: 'unknown_tile',
+    }
+  }
+
+  if (tile.type === 'city' || tile.type === 'fog') {
+    return {
+      ok: false,
+      message: `Tile ${tile.name} requires a dedicated ${tile.type === 'city' ? 'siege' : 'scout'} authority before occupy.`,
+      failureCode: 'tile_not_occupiable',
+    }
+  }
+
+  if (tile.owner === factionId) {
+    return {
+      ok: false,
+      message: `Tile ${tile.name} is already controlled by faction ${factionId}.`,
+      failureCode: 'tile_already_controlled',
+    }
+  }
+
+  if (tile.owner !== 'neutral') {
+    return {
+      ok: false,
+      message: `Tile ${tile.name} is controlled by ${tile.owner}; combat occupy is not wired in this v1 action.`,
+      failureCode: 'tile_not_neutral',
+    }
+  }
+
+  if (unit.tileId !== tileId) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} must stand on tile ${tileId} before occupying it.`,
+      failureCode: 'unit_not_on_tile',
+    }
+  }
+
+  if (hasHostileUnit(nextWorld, tileId, factionId)) {
+    return {
+      ok: false,
+      message: `Tile ${tile.name} still has hostile units; resolve battle before occupy.`,
+      failureCode: 'tile_occupied_by_hostile_unit',
+    }
+  }
+
+  if (!spendFactionResources(nextWorld, factionId, 1, 1)) {
+    return {
+      ok: false,
+      message: `Resources are insufficient; occupying ${tile.name} requires 1 action point and 1 food.`,
+      failureCode: 'insufficient_resources',
+    }
+  }
+
+  const previousOwner = tile.owner
+  tile.owner = factionId
+  tile.enemyPressure = Math.max(0, tile.enemyPressure - 1)
+  unit.status = '占领中'
+  unit.currentTask = `占领${tile.name}`
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    'AI占地完成',
+    `${aiPlayerId} 指挥 ${unit.name} 占领 ${tile.name}，消耗 1 行动点与 1 粮草。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `AI player ${aiPlayerId} occupied ${tileId}.`,
+    aiPlayerId,
+    unitId,
+    tileId,
+    previousOwner,
+  }
+}
+
+export function healTroop(
+  world: WorldState,
+  params: {
+    factionId: string
+    aiPlayerId: string
+    unitId: string
+  },
+): TroopHealResult {
+  const factionId = normalizeTransferLabel(params.factionId, '')
+  const aiPlayerId = normalizeTransferLabel(params.aiPlayerId, '')
+  const unitId = normalizeTransferLabel(params.unitId, '')
+
+  if (hasActiveOrders(world, factionId)) {
+    return {
+      ok: false,
+      message: `Faction ${factionId} has active orders; troop heal requires an idle action window.`,
+      failureCode: 'active_orders_exist',
+    }
+  }
+
+  const nextWorld = shallowCloneWorld(world)
+  const faction = nextWorld.factions[factionId]
+  if (!faction) {
+    return {
+      ok: false,
+      message: `Unknown faction: ${factionId}`,
+      failureCode: 'unknown_faction',
+    }
+  }
+
+  const unit = getUnitById(nextWorld, unitId)
+  if (!unit) {
+    return {
+      ok: false,
+      message: `Unit not found: ${unitId}`,
+      failureCode: 'unknown_unit',
+    }
+  }
+
+  if (unit.faction !== factionId) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} does not belong to faction ${factionId}.`,
+      failureCode: 'unit_faction_mismatch',
+    }
+  }
+
+  if (!isUnitAssignedToAiPlayer(faction, aiPlayerId, unitId)) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} is not assigned to AI player ${aiPlayerId}.`,
+      failureCode: 'unit_not_assigned_to_ai_player',
+    }
+  }
+
+  const strengthBefore = unit.strength
+  const supplyBefore = unit.supply
+  const strengthAfter = Math.min(TROOP_HEAL_MAX_STRENGTH, strengthBefore + TROOP_HEAL_STRENGTH_GAIN)
+  const supplyAfter = Math.min(TROOP_HEAL_MAX_SUPPLY, supplyBefore + TROOP_HEAL_SUPPLY_GAIN)
+  if (strengthAfter === strengthBefore && supplyAfter === supplyBefore) {
+    return {
+      ok: false,
+      message: `Unit ${unitId} is already at full troop strength and supply.`,
+      failureCode: 'unit_already_full',
+    }
+  }
+
+  if (!spendFactionResources(nextWorld, factionId, TROOP_HEAL_ACTION_POINTS, TROOP_HEAL_FOOD)) {
+    return {
+      ok: false,
+      message: `Resources are insufficient; healing ${unit.name} requires ${TROOP_HEAL_ACTION_POINTS} action point and ${TROOP_HEAL_FOOD} food.`,
+      failureCode: 'insufficient_resources',
+    }
+  }
+
+  unit.strength = strengthAfter
+  unit.supply = supplyAfter
+  unit.status = '待命'
+  unit.currentTask = `整补${unit.name}`
+
+  prependReport(
+    nextWorld,
+    nextWorld.tick,
+    'AI部队整补',
+    `${aiPlayerId} 指挥 ${unit.name} 整补，兵力 ${strengthBefore} -> ${strengthAfter}，补给 ${supplyBefore} -> ${supplyAfter}。`,
+  )
+  bumpWorldVersion(nextWorld)
+
+  return {
+    ok: true,
+    world: nextWorld,
+    message: `AI player ${aiPlayerId} healed ${unitId}.`,
+    aiPlayerId,
+    unitId,
+    strengthBefore,
+    strengthAfter,
+    supplyBefore,
+    supplyAfter,
+    resourcesSpent: {
+      actionPoints: TROOP_HEAL_ACTION_POINTS,
+      food: TROOP_HEAL_FOOD,
+    },
+  }
+}
+
 export function queueTacticalOverride(
   world: WorldState,
   unitId: string,
@@ -1469,7 +2140,7 @@ export function upgradeCity(world: WorldState, tileId: string, factionId: string
     return { ok: false, message: '该城池已达到当前阶段上限。' }
   }
 
-  if (cluster.footprintTiles !== 1 && cluster.footprintTiles !== 4) {
+  if (cluster.footprintTiles !== 9) {
     return { ok: false, message: '当前城池规模不在可升级范围内。' }
   }
 
@@ -1521,7 +2192,9 @@ export function upgradeCity(world: WorldState, tileId: string, factionId: string
     }
   }
 
-  const cityLevelTarget = upgradeRule.nextFootprintTiles === 4 ? 5 : 7
+  const cityLevelTarget =
+    upgradeRule.nextFootprintTiles >= 49 ? 7 :
+      upgradeRule.nextFootprintTiles >= 25 ? 5 : 3
   for (const candidateTileId of nextFootprintTileIds) {
     const tile = getTileById(nextWorld, candidateTileId)
     if (!tile) {
@@ -1543,8 +2216,8 @@ export function upgradeCity(world: WorldState, tileId: string, factionId: string
   cluster.centerTileId = cluster.cityHallTileId
   cluster.footprintTiles = upgradeRule.nextFootprintTiles
   cluster.footprintTier = resolveCityFootprintTier(upgradeRule.nextFootprintTiles)
-  cluster.upgradeCapTiles = 9
-  cluster.isUpgradeable = upgradeRule.nextFootprintTiles < 9
+  cluster.upgradeCapTiles = upgradeRule.nextFootprintTiles
+  cluster.isUpgradeable = false
 
   prependReport(
     nextWorld,
@@ -4596,6 +5269,155 @@ function resolveMarchResourceCost(fromTile: Tile | undefined, toTile: Tile) {
   }
 }
 
+function resolveRepresentativeTacticalEncounter(
+  world: WorldState,
+  attacker: Unit,
+  hostileDefenders: Unit[],
+  tile: Tile,
+): RepresentativeTacticalEncounter | null {
+  if (hostileDefenders.length !== 1) {
+    return null
+  }
+
+  const attackerCombatant = buildRepresentativeTacticalCombatant(world, attacker)
+  if (!attackerCombatant) {
+    return null
+  }
+
+  const defender = hostileDefenders[0]
+  const defenderCombatant = buildRepresentativeTacticalCombatant(world, defender)
+  if (!defenderCombatant) {
+    return null
+  }
+
+  return {
+    defender,
+    report: resolveRepresentativeTacticalDuel({
+      round: 1,
+      maxRounds: 8,
+      seed: buildRepresentativeTacticalEncounterSeed(world, attacker, defender, tile),
+      attacker: attackerCombatant,
+      defender: defenderCombatant,
+    }),
+  }
+}
+
+function buildRepresentativeTacticalCombatant(world: WorldState, unit: Unit): TacticalCombatant | null {
+  const heroId = resolveRepresentativeHeroId(unit)
+  if (!heroId) {
+    return null
+  }
+
+  const loadout = resolveUnitTacticalSkillSlotState(world, unit, heroId)
+  if (!loadout) {
+    return null
+  }
+
+  return {
+    heroId,
+    heroName: unit.hero.name,
+    troopType: normalizeTacticalTroopType(unit.hero.troopType),
+    stats: {
+      force: unit.hero.force,
+      command: unit.hero.command,
+      intelligence: unit.hero.intelligence,
+      charisma: unit.hero.charisma,
+      speed: unit.hero.speed,
+    },
+    strength: Math.max(1, Math.round(unit.strength * WORLD_TACTICAL_STRENGTH_SCALE)),
+    mobility: unit.mobility,
+    supply: unit.supply,
+    innateSkillId: loadout.innateSkillId,
+    equippedSkillIds: [...loadout.equippedSkillIds],
+  }
+}
+
+function resolveRepresentativeHeroId(unit: Unit) {
+  const rawHeroId = unit.hero.id.startsWith('hero_') ? unit.hero.id.slice('hero_'.length) : unit.hero.id
+  return rawHeroId.trim() || null
+}
+
+function resolveUnitTacticalSkillSlotState(
+  world: WorldState,
+  unit: Unit,
+  normalizedHeroId: string,
+): RepresentativeTacticalLoadout | null {
+  const slotsByHeroId = world.slgDomainState?.generalStateByFaction?.[unit.faction]?.tacticalSkillSlotsByHeroId
+  const rawSlot = slotsByHeroId?.[normalizedHeroId] ?? slotsByHeroId?.[unit.hero.id]
+  if (!rawSlot) {
+    return null
+  }
+
+  const equippedSkillIds = rawSlot.equippedSkillIds.filter((skillId) => skillId.trim().length > 0)
+  if (equippedSkillIds.length > 2) {
+    return null
+  }
+
+  return {
+    innateSkillId: rawSlot.innateSkillId,
+    equippedSkillIds,
+  }
+}
+
+function normalizeTacticalTroopType(troopType: Unit['hero']['troopType']): TacticalTroopType {
+  return troopType
+}
+
+function buildRepresentativeTacticalEncounterSeed(
+  world: WorldState,
+  attacker: Unit,
+  defender: Unit,
+  tile: Tile,
+) {
+  return `world_encounter:${world.tick}:${attacker.id}:${defender.id}:${tile.id}`
+}
+
+function toWorldStrength(tacticalStrength: number) {
+  if (tacticalStrength <= 0) {
+    return 0
+  }
+  return Math.max(1, Math.ceil(tacticalStrength / WORLD_TACTICAL_STRENGTH_SCALE))
+}
+
+function formatTacticalDuelSummary(report: TacticalDuelReport) {
+  const outcomeLabel =
+    report.winner === 'attacker'
+      ? '攻击方胜'
+      : report.winner === 'defender'
+        ? '防守方胜'
+        : '平局'
+  const eventSummary = report.events
+    .filter((event) => event.skillId !== 'normal_attack')
+    .slice(0, 8)
+    .map(formatTacticalSkillEvent)
+    .join('；')
+
+  return [
+    `战法公式 ${report.attacker.heroName}[${report.attacker.innateSkillId}+${report.attacker.equippedSkillIds.join('/')}]`,
+    `对 ${report.defender.heroName}[${report.defender.innateSkillId}+${report.defender.equippedSkillIds.join('/')}]`,
+    `第${report.round}/${report.maxRounds}回合${outcomeLabel}(${report.outcomeReason})`,
+    eventSummary ? `战法事件：${eventSummary}` : undefined,
+  ].filter((part): part is string => Boolean(part)).join('，')
+}
+
+function formatTacticalSkillEvent(event: TacticalSkillEvent) {
+  if (event.phase === 'battle_start') {
+    return `${event.skillName}生效${event.notes.length > 0 ? `(${event.notes.join('/')})` : ''}`
+  }
+
+  const rollText =
+    event.activationRoll !== undefined && event.activationRate !== undefined
+      ? `(${event.activationRoll}/${event.activationRate})`
+      : ''
+  if (!event.activated) {
+    return `${event.skillName}未发动${rollText}`
+  }
+
+  const damageText = event.damage !== undefined ? `伤害${event.damage}` : '生效'
+  const preventedText = event.preventedDamage ? `规避${event.preventedDamage}` : ''
+  return `${event.skillName}${rollText}${damageText}${preventedText ? `/${preventedText}` : ''}`
+}
+
 function resolveBattleAtTile(
   world: WorldState,
   attacker: Unit,
@@ -4621,6 +5443,109 @@ function resolveBattleAtTile(
 
   attacker.status = '交战中'
   const allianceSupport = getAllianceSupportModifier(world, tile.id, attacker.faction)
+  const representativeTacticalEncounter = resolveRepresentativeTacticalEncounter(world, attacker, hostileDefenders, tile)
+  if (representativeTacticalEncounter) {
+    const { defender, report } = representativeTacticalEncounter
+    const attackerStrengthBefore = attacker.strength
+    const defenderStrengthBefore = defender.strength
+    const attackerStrengthAfter = toWorldStrength(report.attacker.strengthAfter)
+    const defenderStrengthAfter = toWorldStrength(report.defender.strengthAfter)
+    const attackerLoss = Math.max(0, attackerStrengthBefore - attackerStrengthAfter)
+    const defenderLoss = Math.max(0, defenderStrengthBefore - defenderStrengthAfter)
+    const destroyedDefenderNames: string[] = []
+    const retreatedDefenderNames: string[] = []
+
+    attacker.strength = attackerStrengthAfter
+    attacker.supply = Math.max(0, attacker.supply - 1)
+    attacker.corps.readiness = Math.max(0, attacker.corps.readiness - 20)
+
+    defender.strength = defenderStrengthAfter
+    defender.supply = Math.max(0, defender.supply - 1)
+    defender.corps.readiness = Math.max(0, defender.corps.readiness - 20)
+
+    if (report.winner === 'attacker') {
+      if (defender.strength <= 12) {
+        destroyedDefenderNames.push(defender.name)
+        removeUnit(world, defender.id)
+      } else {
+        const retreatTileId = findRetreatTile(world, defender, tile.id, originTileId)
+        if (!retreatTileId) {
+          destroyedDefenderNames.push(defender.name)
+          removeUnit(world, defender.id)
+        } else {
+          defender.tileId = retreatTileId
+          defender.status = '待命'
+          defender.currentTask = `从${tile.name}撤退`
+          retreatedDefenderNames.push(`${defender.name}→${getTileById(world, retreatTileId)?.name ?? retreatTileId}`)
+        }
+      }
+      tile.enemyPressure = Math.max(0, tile.enemyPressure - 2)
+      attacker.currentTask = `突破${tile.name}`
+    } else {
+      if (defender.strength <= 0) {
+        destroyedDefenderNames.push(defender.name)
+        removeUnit(world, defender.id)
+      } else {
+        defender.status = '驻防中'
+        defender.currentTask = `坚守${tile.name}`
+      }
+      if (attacker.strength > 0) {
+        attacker.tileId = originTileId
+        attacker.status = '待命'
+        attacker.currentTask = report.winner === 'draw' ? `自${tile.name}战平撤回` : `自${tile.name}撤回`
+      }
+      tile.enemyPressure = Math.min(6, tile.enemyPressure + 1)
+      if (attacker.strength <= 0) {
+        removeUnit(world, attacker.id)
+      }
+    }
+
+    const tacticalSummary = formatTacticalDuelSummary(report)
+    const message = report.winner === 'attacker'
+      ? `${attacker.name} 在 ${tile.name} 接敌后以战法公式取胜，损失 ${attackerLoss} 战力。${formatDefenderOutcome(destroyedDefenderNames, retreatedDefenderNames)} ${tacticalSummary}`
+      : report.winner === 'draw'
+        ? `${attacker.name} 在 ${tile.name} 与 ${defender.name} 战至第 ${report.round} 回合未分胜负，损失 ${attackerLoss} 战力后撤回 ${getTileById(world, originTileId)?.name ?? originTileId}。${tacticalSummary}`
+        : `${attacker.name} 在 ${tile.name} 接敌失利，损失 ${attackerLoss} 战力后撤回 ${getTileById(world, originTileId)?.name ?? originTileId}。${tacticalSummary}`
+    const title = report.winner === 'attacker'
+      ? '前线战法接敌取胜'
+      : report.winner === 'draw'
+        ? '前线战法接敌平局'
+        : '前线战法接敌失利'
+
+    recordBattleOutcome(world, {
+      id: `battle_${world.tick}_${attacker.id}_${tile.id}`,
+      tick: world.tick,
+      regionId: getRegionIdForTile(world, tile.id),
+      tileId: tile.id,
+      attackerFaction: attacker.faction,
+      attackerUnitId: attacker.id,
+      outcome: report.winner === 'attacker' ? 'win' : report.winner === 'draw' ? 'draw' : 'loss',
+      attackerLoss,
+      defenderLoss,
+      alliedSupport: allianceSupport,
+      summary: message,
+    })
+
+    prependReport(world, world.tick, title, message)
+    highlights.push(
+      createEngageReplayHighlight(
+        world.tick,
+        'battle',
+        report.winner === 'attacker' ? 'high' : 'medium',
+        report.winner === 'attacker' ? `战法突破 ${tile.name}` : `${tile.name} 战法接敌受阻`,
+        message,
+        {
+          unitId: attacker.id,
+          tileId: tile.id,
+          fromTileId: originTileId,
+          toTileId: tile.id,
+          factionId: attacker.faction,
+        },
+      ),
+    )
+
+    return message
+  }
 
   // 武将五维属性加成（force/command/intelligence/charisma/speed 标准值 60，范围 40-98）
   // force（武力）: 直接伤害加成
@@ -4964,27 +5889,19 @@ function getRegionIdForTile(world: WorldState, tileId: string) {
 function resolveCityUpgradeFootprintTileIds(
   world: WorldState,
   hallTile: Tile,
-  nextFootprintTiles: 4 | 9,
+  nextFootprintTiles: CityFootprintTiles,
   existingTileIds: string[],
 ) {
   const tileByCoord = new Map(world.map.tiles.map((tile) => [`${tile.x},${tile.y}`, tile]))
   const sideLength = Math.round(Math.sqrt(nextFootprintTiles))
   const existingTileIdSet = new Set(existingTileIds)
-
-  const candidateStarts =
-    nextFootprintTiles === 4
-      ? [
-          { x: hallTile.x, y: hallTile.y },
-          { x: hallTile.x - 1, y: hallTile.y },
-          { x: hallTile.x, y: hallTile.y - 1 },
-          { x: hallTile.x - 1, y: hallTile.y - 1 },
-        ]
-      : [
-          { x: hallTile.x - 1, y: hallTile.y - 1 },
-          { x: hallTile.x - 1, y: hallTile.y },
-          { x: hallTile.x, y: hallTile.y - 1 },
-          { x: hallTile.x, y: hallTile.y },
-        ]
+  const halfSideLength = Math.floor(sideLength / 2)
+  const candidateStarts = [
+    { x: hallTile.x - halfSideLength, y: hallTile.y - halfSideLength },
+    { x: hallTile.x - halfSideLength, y: hallTile.y - halfSideLength - 1 },
+    { x: hallTile.x - halfSideLength - 1, y: hallTile.y - halfSideLength },
+    { x: hallTile.x - halfSideLength - 1, y: hallTile.y - halfSideLength - 1 },
+  ]
 
   let bestTileSet: Tile[] = []
   let bestScore = Number.NEGATIVE_INFINITY
@@ -5044,20 +5961,20 @@ function resolveCityUpgradeFootprintTileIds(
     .map((tile) => tile.id)
 }
 
-function resolveCityFootprintTier(footprintTiles: 1 | 4 | 9 | 16) {
-  if (footprintTiles === 1) {
-    return 'single_1' as const
-  }
-
-  if (footprintTiles === 4) {
-    return 'small_2x2' as const
-  }
-
+function resolveCityFootprintTier(footprintTiles: CityFootprintTiles) {
   if (footprintTiles === 9) {
-    return 'medium_3x3' as const
+    return 'city_3x3' as const
   }
 
-  return 'mega_4x4' as const
+  if (footprintTiles === 25) {
+    return 'city_5x5' as const
+  }
+
+  if (footprintTiles === 49) {
+    return 'city_7x7' as const
+  }
+
+  return 'city_9x9' as const
 }
 
 // Backward-compatible helper used by city upgrade actions.

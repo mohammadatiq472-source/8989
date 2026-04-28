@@ -27,7 +27,7 @@ import {
   recordSimulationNarrativeEvents as recordSimulationNarrativeEventsFromPersistence,
   scheduleWorldPersist,
 } from './persistence/worldPersistence'
-import { buildWorldPersistencePath } from './persistence/worldPersistencePaths'
+import { WORLD_STATE_PERSIST_PATH, buildWorldPersistencePath } from './persistence/worldPersistencePaths'
 import {
   buildLayoutChunkByTileIds,
   listProvinceIds,
@@ -56,8 +56,16 @@ import {
   getSessionMetrics,
   resolveSessionControlMode,
 } from '../../multiplayer/SessionManager'
-import { createInitialWorldState } from '../../../../shared/domain/scenario'
+import { createInitialWorldState, normalizeWorldStrategicNodesForWorld } from '../../../../shared/domain/scenario'
 import { syncAllFactionAiQuota } from '../../../../shared/domain/aiQuota'
+import {
+  DEFAULT_WORLD_RESOURCE_GENERATION_POLICY,
+  normalizeGeneratedWorldResourceTiles,
+  normalizeWorldResourceGenerationMetadata,
+  type WorldResourceGenerationPolicy,
+  type WorldResourceKindWeight,
+  type WorldResourceLevelWeight,
+} from '../../../../shared/domain/worldResourceGeneration'
 import { settleResourcesForAllPlayers, syncV2StateWithWorld, syncWorldFactionResourcesFromV2 } from '../v2/V2GameService'
 import {
   advanceTick,
@@ -68,11 +76,15 @@ import {
   clearPlanExecution,
   deployReserveHero,
   gatherAiResourceTile,
+  healTroop,
+  issueClaimableReward,
   moveUnit,
+  occupyTile,
   promoteCityBuilding,
   promoteTroopFacilityBuilding,
   queueAiAgendaAction,
   recruitProspectHero,
+  setAiResourceTransferPolicy,
   setRecruitSelectedPool,
   cloneGeneralDirectivePreviewMirror,
   setAiContextFocus,
@@ -90,10 +102,14 @@ import type {
   AdvanceTickDiagnostics,
   AllianceHelpFailureCode,
   AiResourceGatherFailureCode,
+  AiResourceTransferPolicyFailureCode,
   GovernorResourceInboxClaimFailureCode,
+  IssueClaimableRewardFailureCode,
   QueuePlanFailureCode,
   ResourceTransferFailureCode,
   RewardClaimFailureCode,
+  TileOccupyFailureCode,
+  TroopHealFailureCode,
 } from '../../../../shared/domain/rules'
 import type {
   ActionType,
@@ -201,9 +217,13 @@ type WorldActionFailureCode =
   | QueuePlanFailureCode
   | AllianceHelpFailureCode
   | RewardClaimFailureCode
+  | IssueClaimableRewardFailureCode
   | ResourceTransferFailureCode
+  | AiResourceTransferPolicyFailureCode
   | GovernorResourceInboxClaimFailureCode
   | AiResourceGatherFailureCode
+  | TileOccupyFailureCode
+  | TroopHealFailureCode
   | 'invalid_ai_agenda_action'
   | 'unknown_faction'
   | 'no_primary_unit'
@@ -610,12 +630,153 @@ function readSaveSlotsBooleanEnv(name: string, fallback: boolean): boolean {
   return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on'
 }
 
+function resolveWorldResourceGenerationPolicyFromEnv(): WorldResourceGenerationPolicy {
+  return {
+    worldSeed: readWorldResourceStringEnv(
+      'WORLD_RESOURCE_SEED',
+      DEFAULT_WORLD_RESOURCE_GENERATION_POLICY.worldSeed,
+    ),
+    generationVersion: readWorldResourceStringEnv(
+      'WORLD_RESOURCE_GENERATION_VERSION',
+      DEFAULT_WORLD_RESOURCE_GENERATION_POLICY.generationVersion,
+    ),
+    resourceTileDensityPermille: readWorldResourceIntegerEnv(
+      'WORLD_RESOURCE_TILE_DENSITY_PERMILLE',
+      DEFAULT_WORLD_RESOURCE_GENERATION_POLICY.resourceTileDensityPermille,
+      1,
+      1000,
+    ),
+    levelWeightTable: readWorldResourceLevelWeightTableEnv(
+      'WORLD_RESOURCE_LEVEL_WEIGHT_TABLE',
+      DEFAULT_WORLD_RESOURCE_GENERATION_POLICY.levelWeightTable,
+    ),
+    kindWeightTable: readWorldResourceKindWeightTableEnv(
+      'WORLD_RESOURCE_KIND_WEIGHT_TABLE',
+      DEFAULT_WORLD_RESOURCE_GENERATION_POLICY.kindWeightTable,
+    ),
+  }
+}
+
+function readWorldResourceStringEnv(name: string, fallback: string) {
+  const value = process.env[name]?.trim()
+  return value ? value : fallback
+}
+
+function readWorldResourceIntegerEnv(name: string, fallback: number, minimum: number, maximum: number) {
+  const value = Number(process.env[name] ?? fallback)
+  if (!Number.isFinite(value)) {
+    return fallback
+  }
+
+  return Math.max(minimum, Math.min(maximum, Math.floor(value)))
+}
+
+function readWorldResourceLevelWeightTableEnv(name: string, fallback: WorldResourceLevelWeight[]) {
+  const parsed = parseWorldResourceLevelWeightTable(process.env[name])
+  return parsed.length > 0 ? parsed : fallback
+}
+
+function readWorldResourceKindWeightTableEnv(name: string, fallback: WorldResourceKindWeight[]) {
+  const parsed = parseWorldResourceKindWeightTable(process.env[name])
+  return parsed.length > 0 ? parsed : fallback
+}
+
+function parseWorldResourceLevelWeightTable(raw: string | undefined): WorldResourceLevelWeight[] {
+  const entries = parseWorldResourceWeightEntries(raw)
+  return entries
+    .map((entry) => ({
+      level: Number(entry.key),
+      weight: entry.weight,
+    }))
+    .filter((entry) => Number.isInteger(entry.level) && entry.level >= 1 && entry.level <= 9 && entry.weight > 0)
+}
+
+function parseWorldResourceKindWeightTable(raw: string | undefined): WorldResourceKindWeight[] {
+  const entries = parseWorldResourceWeightEntries(raw)
+  return entries
+    .map((entry) => ({
+      kind: entry.key,
+      weight: entry.weight,
+    }))
+    .filter((entry): entry is WorldResourceKindWeight =>
+      (entry.kind === 'food' || entry.kind === 'wood' || entry.kind === 'stone' || entry.kind === 'iron')
+      && entry.weight > 0,
+    )
+}
+
+function parseWorldResourceWeightEntries(raw: string | undefined): Array<{ key: string; weight: number }> {
+  const value = raw?.trim()
+  if (!value) {
+    return []
+  }
+
+  const parsedJson = tryParseWorldResourceWeightJson(value)
+  if (parsedJson.length > 0) {
+    return parsedJson
+  }
+
+  return value
+    .split(',')
+    .map((entry) => {
+      const [key, weight] = entry.split(':')
+      return {
+        key: key?.trim() ?? '',
+        weight: Number(weight),
+      }
+    })
+    .filter((entry) => entry.key.length > 0 && Number.isFinite(entry.weight))
+}
+
+function tryParseWorldResourceWeightJson(value: string): Array<{ key: string; weight: number }> {
+  if (!value.startsWith('[') && !value.startsWith('{')) {
+    return []
+  }
+
+  try {
+    const parsed = JSON.parse(value) as unknown
+    if (Array.isArray(parsed)) {
+      return parsed
+        .map((entry) => readWorldResourceWeightEntry(entry))
+        .filter((entry): entry is { key: string; weight: number } => !!entry)
+    }
+
+    if (parsed && typeof parsed === 'object') {
+      return Object.entries(parsed)
+        .map(([key, weight]) => ({
+          key,
+          weight: Number(weight),
+        }))
+        .filter((entry) => entry.key.length > 0 && Number.isFinite(entry.weight))
+    }
+  } catch {
+    return []
+  }
+
+  return []
+}
+
+function readWorldResourceWeightEntry(value: unknown) {
+  if (!value || typeof value !== 'object') {
+    return null
+  }
+
+  const entry = value as { level?: unknown; kind?: unknown; weight?: unknown }
+  const key = entry.level !== undefined ? String(entry.level) : String(entry.kind ?? '')
+  const weight = Number(entry.weight)
+  if (!key || !Number.isFinite(weight)) {
+    return null
+  }
+
+  return { key, weight }
+}
+
 const MAX_TILE_STATE_DIFF_HISTORY = 180
 const MAX_INTEL_DIFF_HISTORY = 180
 const DEFAULT_MAP_LAYOUT_VERSION = 1
 const MAX_GENERAL_DIRECTIVES = 16
 const GENERAL_NAME_FUZZY_MIN_SCORE = 0.72
 const GENERAL_NAME_FUZZY_GAP = 0.08
+const WORLD_RESOURCE_GENERATION_POLICY = resolveWorldResourceGenerationPolicyFromEnv()
 
 const TARGET_TILE_ALIAS_TABLE: Array<{ canonical: string; aliases: string[] }> = [
   { canonical: '\u6d1b\u9633', aliases: ['\u6d1b\u9633', '\u6d1b\u9633\u57ce', '\u6d1b\u9633\u4e3b\u57ce', 'luoyang', 'capital'] },
@@ -710,7 +871,9 @@ type ResolvedWorldMapLayoutOptions =
       layer: MapHierarchyLayer
     }
 
-let worldState: WorldState = createInitialWorldState()
+let worldState: WorldState = createInitialWorldState({
+  resourceGenerationPolicy: WORLD_RESOURCE_GENERATION_POLICY,
+})
 syncAllFactionAiQuota(worldState)
 let mapLayoutVersion = DEFAULT_MAP_LAYOUT_VERSION
 let worldMapLayout = buildWorldMapLayout(worldState, mapLayoutVersion)
@@ -771,14 +934,23 @@ let saveSlotsLastRestoreRollbackDrillStatus: SaveSlotsArchiveRestoreRollbackDril
 let saveSlotsLastRestoreRollbackDrillMessage: string | null = null
 let saveSlotsLastRestoreRollbackDrillVerified: boolean | null = null
 let lastNationalAgenda: NationalAgendaWindow | null = null
+let shouldPersistRestoredWorldState = false
 loadPersistedWorldState((savedWorldState) => {
-  worldState = savedWorldState
+  const strategicNodesNormalized = normalizeWorldStrategicNodesForWorld(savedWorldState)
+  const normalized = normalizeWorldResourceGenerationForWorld(strategicNodesNormalized.world)
+  worldState = normalized.world
+  shouldPersistRestoredWorldState =
+    shouldPersistRestoredWorldState || strategicNodesNormalized.changed || normalized.changed
   syncAllFactionAiQuota(worldState)
 }) // P0: restore world state first
+worldMapLayout = buildWorldMapLayout(worldState, mapLayoutVersion)
 loadPersistedNarrativeEvents()
 loadPersistedSaveSlots()
 refreshSaveSlotsArchiveFileCount()
 syncV2StateWithWorld(worldState)
+if (shouldPersistRestoredWorldState) {
+  scheduleWorldPersist(() => worldState)
+}
 
 appendWorldEvent({
   category: 'system',
@@ -847,7 +1019,9 @@ export function getWorldStateReadonly(): Readonly<WorldState> {
 }
 
 export function resetWorldServiceForTests() {
-  worldState = createInitialWorldState()
+  worldState = createInitialWorldState({
+    resourceGenerationPolicy: WORLD_RESOURCE_GENERATION_POLICY,
+  })
   syncAllFactionAiQuota(worldState)
   mapLayoutVersion = DEFAULT_MAP_LAYOUT_VERSION
   worldMapLayout = buildWorldMapLayout(worldState, mapLayoutVersion)
@@ -1857,6 +2031,31 @@ export function runSaveSlotsArchiveRestoreRollbackDrill(options: { archivePath?:
   }
 }
 
+export function getWorldStatePersistHealth() {
+  let exists = false
+  let fileSizeBytes: number | null = null
+
+  try {
+    const stats = statSync(WORLD_STATE_PERSIST_PATH)
+    exists = stats.isFile()
+    fileSizeBytes = exists ? stats.size : null
+  } catch {
+    exists = false
+    fileSizeBytes = null
+  }
+
+  return {
+    path: WORLD_STATE_PERSIST_PATH,
+    exists,
+    fileSizeBytes,
+    tick: worldState.tick,
+    worldVersion: worldState.worldVersion,
+    resourceGeneration: worldState.map.resourceGeneration
+      ? structuredClone(worldState.map.resourceGeneration)
+      : undefined,
+  }
+}
+
 export function getSaveSlotsPersistHealth() {
   refreshSaveSlotsArchiveFileCount()
   const { fileSizeBytes, fileSizeLevel } = resolveSaveSlotsFileSizeSnapshot()
@@ -1969,7 +2168,9 @@ export function primeReplayFixtureSlot(
 ): SaveSlotRecord {
   const normalizedSlotId = normalizeSlotId(slotId)
   const source: ReplayFixtureSource = options.source === 'current_world' ? 'current_world' : 'initial_world_v1'
-  const fixtureWorld = source === 'current_world' ? structuredClone(worldState) : createInitialWorldState()
+  const fixtureWorld = source === 'current_world'
+    ? structuredClone(worldState)
+    : createInitialWorldState({ resourceGenerationPolicy: WORLD_RESOURCE_GENERATION_POLICY })
   syncAllFactionAiQuota(fixtureWorld)
 
   const now = new Date().toISOString()
@@ -4785,6 +4986,107 @@ export function rewardClaimAction(
   }
 }
 
+export function issueClaimableRewardAction(
+  params: {
+    factionId?: FactionId
+    rewardId?: string
+    ledgerKey?: string
+    source: 'daily_welfare' | 'event_reward'
+    label?: string
+    summary?: string
+    reward: {
+      food: number
+      ap: number
+    }
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const mutationLock = tryAcquireWorldMutationLock('issue_claimable_reward')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, params.factionId, requestId)
+  }
+
+  try {
+    const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+    const result = issueClaimableReward(worldState, {
+      ...params,
+      factionId: targetFactionId,
+    })
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: params.rewardId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'issue_claimable_reward',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          factionId: targetFactionId,
+          rewardId: params.rewardId,
+          ledgerKey: params.ledgerKey,
+          source: params.source,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, result.factionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.rewardId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'issue_claimable_reward',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        factionId: result.factionId,
+        rewardId: result.rewardId,
+        ledgerKey: result.ledgerKey,
+        source: result.source,
+        pendingRewardCount: result.pendingRewardCount,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
 export function transferFactionResourcesToGovernorAction(
   params: {
     sourceFactionId: string
@@ -4869,6 +5171,97 @@ export function transferFactionResourcesToGovernorAction(
         governorPlayerId: result.governorPlayerId,
         transferId: result.transferId,
         resources: result.resources,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
+export function setAiResourceTransferPolicyAction(
+  params: {
+    factionId?: FactionId
+    dailyQuotaTotal?: number
+    dailyWindowTicks?: number
+    cooldownTicks?: number
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+  const mutationLock = tryAcquireWorldMutationLock('set_ai_resource_transfer_policy')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, targetFactionId, requestId)
+  }
+
+  try {
+    const result = setAiResourceTransferPolicy(worldState, {
+      factionId: targetFactionId,
+      dailyQuotaTotal: params.dailyQuotaTotal,
+      dailyWindowTicks: params.dailyWindowTicks,
+      cooldownTicks: params.cooldownTicks,
+    })
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: targetFactionId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'set_ai_resource_transfer_policy',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          factionId: targetFactionId,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, result.factionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.factionId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'set_ai_resource_transfer_policy',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        factionId: result.factionId,
+        policy: result.policy,
         executionStatus: execution?.status,
         activeOrderCount: execution?.activeOrderCount,
         actionPointsRemaining: execution?.actionPointsRemaining,
@@ -5060,6 +5453,203 @@ export function gatherAiResourceTileAction(
         tileId: result.tileId,
         claimId: result.claimId,
         resources: result.resources,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
+export function occupyTileAction(
+  params: {
+    factionId?: FactionId
+    aiPlayerId: string
+    unitId: string
+    tileId: string
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+  const mutationLock = tryAcquireWorldMutationLock('occupy_tile')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, targetFactionId, requestId)
+  }
+
+  try {
+    const result = occupyTile(worldState, {
+      factionId: targetFactionId,
+      aiPlayerId: params.aiPlayerId,
+      unitId: params.unitId,
+      tileId: params.tileId,
+    })
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: params.tileId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'occupy_tile',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          factionId: targetFactionId,
+          aiPlayerId: params.aiPlayerId,
+          unitId: params.unitId,
+          tileId: params.tileId,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.tileId,
+      unitId: result.unitId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'occupy_tile',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        factionId: targetFactionId,
+        aiPlayerId: result.aiPlayerId,
+        unitId: result.unitId,
+        tileId: result.tileId,
+        previousOwner: result.previousOwner,
+        executionStatus: execution?.status,
+        activeOrderCount: execution?.activeOrderCount,
+        actionPointsRemaining: execution?.actionPointsRemaining,
+        foodRemaining: execution?.foodRemaining,
+      },
+    })
+
+    return response
+  } finally {
+    mutationLock.release()
+  }
+}
+
+export function healTroopAction(
+  params: {
+    factionId?: FactionId
+    aiPlayerId: string
+    unitId: string
+  },
+  includeWorld = true,
+): WorldActionResponse {
+  const requestId = randomUUID()
+  const targetFactionId = params.factionId ?? resolveDefaultFactionId()
+  const mutationLock = tryAcquireWorldMutationLock('heal_troop')
+  if (!mutationLock) {
+    return buildWorldMutationBusyResponse(includeWorld, targetFactionId, requestId)
+  }
+
+  try {
+    const result = healTroop(worldState, {
+      factionId: targetFactionId,
+      aiPlayerId: params.aiPlayerId,
+      unitId: params.unitId,
+    })
+    if (!result.ok) {
+      const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+      const failed = buildWorldActionResponse({
+        ok: false,
+        includeWorld,
+        message: result.message,
+        failureCode: result.failureCode,
+        requestId,
+        execution,
+        relatedId: params.unitId,
+        unitId: params.unitId,
+      })
+
+      appendWorldEvent({
+        category: 'world_action',
+        action: 'heal_troop',
+        success: false,
+        tick: worldState.tick,
+        worldVersion: worldState.worldVersion,
+        requestId,
+        message: result.message,
+        metadata: {
+          factionId: targetFactionId,
+          aiPlayerId: params.aiPlayerId,
+          unitId: params.unitId,
+          failureCode: result.failureCode,
+          executionStatus: execution?.status,
+          activeOrderCount: execution?.activeOrderCount,
+          actionPointsRemaining: execution?.actionPointsRemaining,
+          foodRemaining: execution?.foodRemaining,
+        },
+      })
+
+      return failed
+    }
+
+    commitWorldState(result.world)
+    const execution = buildAiExecutionStateSnapshot(worldState, targetFactionId)
+    const response = buildWorldActionResponse({
+      ok: true,
+      includeWorld,
+      message: result.message,
+      requestId,
+      execution,
+      relatedId: result.unitId,
+      unitId: result.unitId,
+    })
+
+    appendWorldEvent({
+      category: 'world_action',
+      action: 'heal_troop',
+      success: true,
+      tick: worldState.tick,
+      worldVersion: worldState.worldVersion,
+      requestId,
+      message: result.message,
+      metadata: {
+        factionId: targetFactionId,
+        aiPlayerId: result.aiPlayerId,
+        unitId: result.unitId,
+        strengthBefore: result.strengthBefore,
+        strengthAfter: result.strengthAfter,
+        supplyBefore: result.supplyBefore,
+        supplyAfter: result.supplyAfter,
+        resourcesSpent: result.resourcesSpent,
         executionStatus: execution?.status,
         activeOrderCount: execution?.activeOrderCount,
         actionPointsRemaining: execution?.actionPointsRemaining,
@@ -5409,6 +5999,37 @@ export async function flushWorldPersist() {
 }
 
 
+function normalizeWorldResourceGenerationForWorld(world: WorldState): { world: WorldState; changed: boolean } {
+  const metadataPolicy = normalizeWorldResourceGenerationMetadata(
+    world.map.tiles,
+    world.map.resourceGeneration,
+    WORLD_RESOURCE_GENERATION_POLICY,
+  )
+  const normalizedTiles = normalizeGeneratedWorldResourceTiles(world.map.tiles, metadataPolicy)
+  const resourceGeneration = normalizeWorldResourceGenerationMetadata(
+    normalizedTiles.tiles,
+    world.map.resourceGeneration,
+    WORLD_RESOURCE_GENERATION_POLICY,
+  )
+  const metadataChanged = JSON.stringify(world.map.resourceGeneration ?? null) !== JSON.stringify(resourceGeneration)
+
+  if (!normalizedTiles.changed && !metadataChanged) {
+    return { world, changed: false }
+  }
+
+  return {
+    world: {
+      ...world,
+      map: {
+        ...world.map,
+        tiles: normalizedTiles.tiles,
+        resourceGeneration,
+      },
+    },
+    changed: true,
+  }
+}
+
 function buildOverlaySignature(overlays: WorldState['map']['overlays']) {
   const mountainSignature = overlays.mountainRidges
     .map((path) => `${path.id}:${path.tileIds.length}:${path.nodes.length}`)
@@ -5424,6 +6045,14 @@ function buildOverlaySignature(overlays: WorldState['map']['overlays']) {
   return `${mountainSignature}#${riverSignature}#${citySignature}`
 }
 
+function buildResourceGenerationSignature(resourceGeneration: WorldState['map']['resourceGeneration']) {
+  if (!resourceGeneration) {
+    return 'none'
+  }
+
+  return JSON.stringify(resourceGeneration)
+}
+
 function syncWorldMapLayout(previousWorld: WorldState, nextWorld: WorldState) {
   const previousTiles = previousWorld.map.tiles
   const nextTiles = nextWorld.map.tiles
@@ -5431,6 +6060,8 @@ function syncWorldMapLayout(previousWorld: WorldState, nextWorld: WorldState) {
   const nextLastTileId = nextTiles.length > 0 ? nextTiles[nextTiles.length - 1].id : undefined
   const previousOverlaySignature = buildOverlaySignature(previousWorld.map.overlays)
   const nextOverlaySignature = buildOverlaySignature(nextWorld.map.overlays)
+  const previousResourceGenerationSignature = buildResourceGenerationSignature(previousWorld.map.resourceGeneration)
+  const nextResourceGenerationSignature = buildResourceGenerationSignature(nextWorld.map.resourceGeneration)
 
   const layoutChanged =
     previousWorld.map.width !== nextWorld.map.width ||
@@ -5438,6 +6069,7 @@ function syncWorldMapLayout(previousWorld: WorldState, nextWorld: WorldState) {
     previousTiles.length !== nextTiles.length ||
     previousWorld.map.regions.length !== nextWorld.map.regions.length ||
     previousOverlaySignature !== nextOverlaySignature ||
+    previousResourceGenerationSignature !== nextResourceGenerationSignature ||
     previousTiles[0]?.id !== nextTiles[0]?.id ||
     previousLastTileId !== nextLastTileId
 
@@ -5469,6 +6101,9 @@ function buildWorldMapLayout(world: WorldState, layoutVersion: number): WorldMap
       connections: world.map.connections,
       regions: world.map.regions,
       overlays: world.map.overlays,
+      resourceGeneration: world.map.resourceGeneration
+        ? structuredClone(world.map.resourceGeneration)
+        : undefined,
     },
   }
 }
@@ -5554,6 +6189,18 @@ function resolveWorldMapLayoutOptions(options?: WorldMapLayoutOptions): Resolved
       }
     }
 
+    return {
+      scope: 'bootstrap',
+    }
+  }
+
+  if (options?.scope === 'province' && !options.provinceId) {
+    return {
+      scope: 'bootstrap',
+    }
+  }
+
+  if (options?.scope === 'region' && !options.regionId) {
     return {
       scope: 'bootstrap',
     }
@@ -5759,6 +6406,9 @@ function buildWorldSummary(
       tileStateMode,
       baseWorldVersion,
       tileStates: structuredClone(tileStates),
+      resourceGeneration: world.map.resourceGeneration
+        ? structuredClone(world.map.resourceGeneration)
+        : undefined,
     },
   }
 }

@@ -7,6 +7,8 @@ import type {
   CreateGovernedAiPlayerRequest,
   ExecuteAiPlayerProposalRequest,
   RejectAiPlayerProposalRequest,
+  UpsertAiPlayerContextDocumentRequest,
+  UpdateGovernedAiPlayerProfileRequest,
   UpdateGovernedAiPlayerStatusRequest,
 } from '../contracts/aiPlayer'
 import {
@@ -225,6 +227,15 @@ export const aiPlayerResourceGatherArgsSchema = z.object({
   tileId: z.string().trim().min(1).max(120),
 }).strict()
 
+export const aiPlayerTileOccupyArgsSchema = z.object({
+  unitId: z.string().trim().min(1).max(120).optional(),
+  tileId: z.string().trim().min(1).max(120).optional(),
+}).strict()
+
+export const aiPlayerTroopHealArgsSchema = z.object({
+  unitId: z.string().trim().min(1).max(120).optional(),
+}).strict()
+
 export const aiPlayerResourceTransferToGovernorArgsSchema = z.object({
   resources: resourceTransferBundleSchema,
 }).strict()
@@ -239,6 +250,7 @@ const aiPlayerActionArgsSchemaByAction = {
   queue_fill_idle_slot: aiPlayerQueueFillIdleSlotArgsSchema,
   research_start: aiPlayerResearchStartArgsSchema,
   troop_train: aiPlayerTroopTrainArgsSchema,
+  troop_heal: aiPlayerTroopHealArgsSchema,
   troop_facility_upgrade: aiPlayerTroopFacilityUpgradeArgsSchema,
   recruit_pool_select: aiPlayerRecruitPoolSelectArgsSchema,
   recruit_commander: aiPlayerRecruitCommanderArgsSchema,
@@ -250,6 +262,7 @@ const aiPlayerActionArgsSchemaByAction = {
   threat_escape: aiPlayerThreatEscapeArgsSchema,
   alliance_help: aiPlayerAllianceHelpArgsSchema,
   resource_gather: aiPlayerResourceGatherArgsSchema,
+  tile_occupy: aiPlayerTileOccupyArgsSchema,
   resource_transfer_to_governor: aiPlayerResourceTransferToGovernorArgsSchema,
   reward_claim: aiPlayerRewardClaimArgsSchema,
 } as const
@@ -266,6 +279,8 @@ function resolveAiPlayerActionArgsSchema(action: AiPlayerActionType) {
       return aiPlayerActionArgsSchemaByAction.research_start
     case 'troop_train':
       return aiPlayerActionArgsSchemaByAction.troop_train
+    case 'troop_heal':
+      return aiPlayerActionArgsSchemaByAction.troop_heal
     case 'troop_facility_upgrade':
       return aiPlayerActionArgsSchemaByAction.troop_facility_upgrade
     case 'recruit_pool_select':
@@ -288,6 +303,8 @@ function resolveAiPlayerActionArgsSchema(action: AiPlayerActionType) {
       return aiPlayerActionArgsSchemaByAction.alliance_help
     case 'resource_gather':
       return aiPlayerActionArgsSchemaByAction.resource_gather
+    case 'tile_occupy':
+      return aiPlayerActionArgsSchemaByAction.tile_occupy
     case 'resource_transfer_to_governor':
       return aiPlayerActionArgsSchemaByAction.resource_transfer_to_governor
     case 'reward_claim':
@@ -338,9 +355,30 @@ export const aiPlayerRuntimePolicySchema = z.object({
   allowCliExecution: z.boolean(),
 })
 
+export const aiPlayerContextDocumentKindSchema = z.enum([
+  'identity',
+  'memory',
+  'skill',
+  'instruction',
+])
+
+export const aiPlayerContextDocumentSchema = z.object({
+  documentId: z.string().trim().min(1).max(120),
+  kind: aiPlayerContextDocumentKindSchema,
+  title: z.string().trim().min(1).max(120),
+  content: z.string().trim().min(1).max(12000),
+  sourceFileName: z.string().trim().min(1).max(240).optional(),
+  contentBytes: z.number().int().nonnegative().max(120000),
+  createdAt: z.string().trim().min(1),
+  updatedAt: z.string().trim().min(1),
+  updatedBy: z.string().trim().min(1).max(80),
+})
+
 export const governedAiPlayerSchema = z.object({
   aiPlayerId: z.string().trim().min(1).max(80),
   displayName: z.string().trim().min(1).max(80),
+  avatarId: z.string().trim().min(1).max(120).optional(),
+  avatarImagePath: z.string().trim().min(1).max(240).optional(),
   governorPlayerId: z.string().trim().min(1).max(80),
   factionId: z.string().trim().min(1).max(64),
   enabled: z.boolean(),
@@ -349,6 +387,7 @@ export const governedAiPlayerSchema = z.object({
   approvalPolicy: aiPlayerApprovalPolicySchema,
   budgetPolicy: aiPlayerBudgetPolicySchema,
   runtimePolicy: aiPlayerRuntimePolicySchema,
+  contextDocuments: z.array(aiPlayerContextDocumentSchema).max(16).default([]),
   createdAt: z.string().trim().min(1),
   updatedAt: z.string().trim().min(1),
 })
@@ -357,6 +396,49 @@ export const aiPlayerBudgetSnapshotSchema = z.object({
   actionPointsRemaining: z.number().int(),
   foodRemaining: z.number().int(),
   aiQuota: factionAiQuotaSchema.nullable(),
+})
+
+const resourceTransferBundleSnapshotSchema = z.object({
+  food: z.number().int().nonnegative(),
+  wood: z.number().int().nonnegative(),
+  stone: z.number().int().nonnegative(),
+  iron: z.number().int().nonnegative(),
+})
+
+const aiResourceTransferPolicyStateSchema = z.object({
+  dailyQuotaTotal: z.number().int().positive().optional(),
+  dailyWindowTicks: z.number().int().positive().optional(),
+  cooldownTicks: z.number().int().nonnegative().optional(),
+})
+
+const aiResourceTransferEffectivePolicySchema = z.object({
+  dailyQuotaTotal: z.number().int().positive(),
+  dailyWindowTicks: z.number().int().positive(),
+  cooldownTicks: z.number().int().nonnegative(),
+})
+
+const aiResourceTransferQuotaStateSchema = z.object({
+  aiPlayerId: z.string().trim().min(1).max(80),
+  governorPlayerId: z.string().trim().min(1).max(80),
+  factionId: z.string().trim().min(1).max(64),
+  windowStartedTick: z.number().int().nonnegative(),
+  windowEndsTick: z.number().int().nonnegative(),
+  dailyQuotaTotal: z.number().int().positive(),
+  transferredTotal: z.number().int().nonnegative(),
+  transferredResources: resourceTransferBundleSnapshotSchema,
+  lastTransferTick: z.number().int().nonnegative().optional(),
+  cooldownUntilTick: z.number().int().nonnegative().optional(),
+})
+
+export const aiPlayerResourceTransferRuntimeSchema = z.object({
+  configuredPolicy: aiResourceTransferPolicyStateSchema.nullable(),
+  effectivePolicy: aiResourceTransferEffectivePolicySchema,
+  quota: aiResourceTransferQuotaStateSchema.nullable(),
+  remainingQuotaTotal: z.number().int().nonnegative(),
+  cooldownRemainingTicks: z.number().int().nonnegative(),
+  windowRemainingTicks: z.number().int().nonnegative(),
+  canTransferNow: z.boolean(),
+  blockedBy: z.enum(['daily_quota_exceeded', 'transfer_cooldown_active']).nullable(),
 })
 
 export const aiPlayerProposalStatsSchema = z.object({
@@ -415,6 +497,49 @@ export const aiPlayerRuntimeObservabilitySummarySchema = z.object({
   recentEventActions: z.array(z.string().trim().min(1).max(120)),
 })
 
+export const aiPlayerModelRoutingSourceSchema = z.enum(['default', 'env', 'faction_config', 'player_config', 'fallback'])
+
+export const aiPlayerModelBudgetTierSchema = z.enum(['strict_action', 'economy_chat', 'disabled'])
+
+export const aiPlayerModelByokSourceSchema = z.enum(['none', 'faction_config', 'player_config'])
+
+export const aiPlayerModelTargetCandidateSchema = z.object({
+  model: z.string().trim().min(1).max(160),
+  provider: z.string().trim().min(1).max(160),
+  source: aiPlayerModelRoutingSourceSchema,
+  byokSource: aiPlayerModelByokSourceSchema,
+  priority: z.number().int().nonnegative(),
+  isActive: z.boolean(),
+  fallbackCandidate: z.boolean(),
+  strictJsonOnlyCapable: z.boolean(),
+  budgetTier: aiPlayerModelBudgetTierSchema,
+  lastFailureReason: z.string().trim().min(1).max(240).nullable(),
+  secretConfigured: z.boolean(),
+  secretSource: z.string().trim().min(1).max(120).nullable(),
+})
+
+export const aiPlayerModelStatusSchema = z.object({
+  activeModel: z.string().trim().min(1).max(160),
+  activeProvider: z.string().trim().min(1).max(160),
+  source: aiPlayerModelRoutingSourceSchema,
+  strictJsonOnlyCapable: z.boolean(),
+  budgetTier: aiPlayerModelBudgetTierSchema,
+  fallbackEnabled: z.boolean(),
+  fallbackModel: z.string().trim().min(1).max(160).nullable(),
+  lastFallbackReason: z.string().trim().min(1).max(240).nullable(),
+  secretConfigured: z.boolean(),
+  secretSource: z.string().trim().min(1).max(120).nullable(),
+  byokSource: aiPlayerModelByokSourceSchema,
+  targetCount: z.number().int().nonnegative(),
+  candidateTargets: z.array(aiPlayerModelTargetCandidateSchema).max(8),
+})
+
+export const aiPlayerRecoveryHintSchema = z.object({
+  summary: z.string().trim().min(1).max(500),
+  recommendedCommand: z.string().trim().min(1).max(500).optional(),
+  focus: z.enum(['approval', 'resources', 'cooldown', 'inbox', 'retry', 'none']).optional(),
+})
+
 export const aiPlayerActionReceiptSchema = z.object({
   proposalId: z.string().trim().min(1).max(120),
   aiPlayerId: z.string().trim().min(1).max(80),
@@ -425,13 +550,17 @@ export const aiPlayerActionReceiptSchema = z.object({
   worldActionPayload: z.record(z.string(), z.unknown()).optional(),
   actionRequestId: z.string().trim().min(1).max(160).nullable(),
   ok: z.boolean(),
-  failureCode: z.string().trim().min(1).max(120).nullable().optional(),
+  failureCode: z.string().trim().min(1).max(120).nullable().default(null),
   message: z.string().trim().min(1).max(1000).optional(),
-  execution: z.unknown().nullable().optional().transform((value) => value ?? null),
+  execution: z.unknown().nullable().default(null),
   observedAt: z.string().trim().min(1),
+  recoveryHint: aiPlayerRecoveryHintSchema.optional(),
 })
 
 export const governedAiPlayerRuntimeSchema = governedAiPlayerSchema.extend({
+  modelName: z.string().trim().min(1).max(160),
+  modelSource: z.enum(['env', 'default']),
+  modelStatus: aiPlayerModelStatusSchema,
   autonomyLevel: sessionAutonomyLevelSchema,
   controlMode: sessionControlModeSchema,
   online: z.boolean(),
@@ -440,6 +569,7 @@ export const governedAiPlayerRuntimeSchema = governedAiPlayerSchema.extend({
   playerNames: z.array(z.string()),
   governorOnline: z.boolean(),
   budget: aiPlayerBudgetSnapshotSchema,
+  resourceTransfer: aiPlayerResourceTransferRuntimeSchema,
   proposalStats: aiPlayerProposalStatsSchema,
   latestProposalId: z.string().trim().min(1).max(120).optional(),
   latestReceipt: aiPlayerActionReceiptSchema.optional(),
@@ -474,6 +604,7 @@ const aiPlayerActionProposalBaseSchema = z.object({
   executedBy: z.string().trim().min(1).max(80).optional(),
   worldAction: z.string().trim().min(1).max(120).optional(),
   worldActionPayload: z.record(z.string(), z.unknown()).optional(),
+  recoveryHint: aiPlayerRecoveryHintSchema.optional(),
 })
 
 export const aiPlayerActionProposalSchema = aiPlayerActionProposalBaseSchema
@@ -491,6 +622,8 @@ export const aiPlayerActionProposalSchema = aiPlayerActionProposalBaseSchema
 export const createGovernedAiPlayerRequestSchema = z.object({
   aiPlayerId: z.string().trim().min(1).max(80),
   displayName: z.string().trim().min(1).max(80),
+  avatarId: z.string().trim().min(1).max(120).optional(),
+  avatarImagePath: z.string().trim().min(1).max(240).optional(),
   governorPlayerId: z.string().trim().min(1).max(80),
   factionId: z.string().trim().min(1).max(64),
   enabled: z.boolean().optional(),
@@ -499,9 +632,29 @@ export const createGovernedAiPlayerRequestSchema = z.object({
   approvalPolicy: aiPlayerApprovalPolicySchema.partial().optional(),
   budgetPolicy: aiPlayerBudgetPolicySchema.partial().optional(),
   runtimePolicy: aiPlayerRuntimePolicySchema.partial().optional(),
+  contextDocuments: z.array(aiPlayerContextDocumentSchema).max(16).optional(),
 })
 
 export const updateGovernedAiPlayerStatusRequestSchema = z.object({
+  updatedBy: z.string().trim().min(1).max(80),
+})
+
+export const updateGovernedAiPlayerProfileRequestSchema = z.object({
+  displayName: z.string().trim().min(1).max(80).optional(),
+  avatarId: z.string().trim().min(1).max(120).optional(),
+  avatarImagePath: z.string().trim().min(1).max(240).optional(),
+  updatedBy: z.string().trim().min(1).max(80),
+}).refine(
+  (value) => value.displayName !== undefined || value.avatarId !== undefined || value.avatarImagePath !== undefined,
+  { message: 'displayName, avatarId or avatarImagePath is required' },
+)
+
+export const upsertAiPlayerContextDocumentRequestSchema = z.object({
+  documentId: z.string().trim().min(1).max(120).optional(),
+  kind: aiPlayerContextDocumentKindSchema,
+  title: z.string().trim().min(1).max(120),
+  content: z.string().trim().min(1).max(12000),
+  sourceFileName: z.string().trim().min(1).max(240).optional(),
   updatedBy: z.string().trim().min(1).max(80),
 })
 
@@ -568,6 +721,8 @@ export const aiPlayerProposalMutationResponseSchema = z.object({
   ok: z.boolean(),
   proposal: aiPlayerActionProposalSchema.optional(),
   receipt: aiPlayerActionReceiptSchema.optional(),
+  failureCode: z.string().trim().min(1).max(120).nullable().optional(),
+  recoveryHint: aiPlayerRecoveryHintSchema.optional(),
   error: z.string().trim().min(1).optional(),
 })
 
@@ -577,6 +732,14 @@ export function parseCreateGovernedAiPlayerRequest(input: unknown): CreateGovern
 
 export function parseUpdateGovernedAiPlayerStatusRequest(input: unknown): UpdateGovernedAiPlayerStatusRequest {
   return updateGovernedAiPlayerStatusRequestSchema.parse(input) as UpdateGovernedAiPlayerStatusRequest
+}
+
+export function parseUpdateGovernedAiPlayerProfileRequest(input: unknown): UpdateGovernedAiPlayerProfileRequest {
+  return updateGovernedAiPlayerProfileRequestSchema.parse(input) as UpdateGovernedAiPlayerProfileRequest
+}
+
+export function parseUpsertAiPlayerContextDocumentRequest(input: unknown): UpsertAiPlayerContextDocumentRequest {
+  return upsertAiPlayerContextDocumentRequestSchema.parse(input) as UpsertAiPlayerContextDocumentRequest
 }
 
 export function parseAiPlayerActionProposalRequest(input: unknown): AiPlayerActionProposalRequest {

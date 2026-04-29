@@ -1441,13 +1441,13 @@
           "grade": "S",
           "type": "指挥",
           "level": 10,
-          "description": "战斗开始时，我军全体统率+12%、谋略+10%、获得14%伤害减免；我军获得1次控制净化。",
+          "description": "战斗开始时，我军全体统率+12%、谋略+12%、获得14%伤害减免；我军获得1次控制净化。",
           "trigger": "第1回合战斗开始时自动生效。",
           "target": "我军全体3名武将",
-          "effect": "我军全体统率+12%、谋略+10%、减伤14%；控制净化+1。",
+          "effect": "我军全体统率+12%、谋略+12%、减伤14%；控制净化+1。",
           "attribute_effects": {
             "command": "+12%",
-            "intelligence": "+10%",
+            "intelligence": "+12%",
             "damage_reduction": "14%",
             "control_cleanse": "1"
           },
@@ -1808,12 +1808,12 @@
           "grade": "S",
           "type": "主动",
           "level": 10,
-          "description": "70%发动，对敌军全体造成52%攻击伤害，伤害受攻击、当前兵力、机动影响。",
+          "description": "70%发动，对敌军全体造成50%攻击伤害，伤害受攻击、当前兵力、机动影响。",
           "trigger": "战斗回合行动时有70%概率发动。",
           "target": "敌军全体3名武将",
-          "effect": "70%发动，敌军全体52%攻击伤害。",
+          "effect": "70%发动，敌军全体50%攻击伤害。",
           "attribute_effects": {
-            "damage": "52%攻击"
+            "damage": "50%攻击"
           },
           "source": {
             "kind": "hero_innate",

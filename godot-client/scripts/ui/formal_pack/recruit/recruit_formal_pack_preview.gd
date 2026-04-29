@@ -180,10 +180,14 @@ func _build() -> void:
 	body.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	body.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	column.add_child(body)
-	body.add_child(_build_pack_scroll())
+	if _active_recruit_packs().is_empty():
+		body.add_child(_build_empty_pool_state())
+	else:
+		body.add_child(_build_pack_scroll())
 	column.add_child(_build_bottom_resource_bar())
 
-	_select_recruit_pack(0, false)
+	if not _active_recruit_packs().is_empty():
+		_select_recruit_pack(0, false)
 	_maybe_capture_viewport("FORMAL_PACK_SCREENSHOT_RECRUIT")
 
 func _build_header() -> Control:
@@ -223,14 +227,35 @@ func _rebuild_pack_row() -> void:
 	_pack_buttons.clear()
 	_pack_glow_strips.clear()
 	_pack_state_labels.clear()
-	for index in range(RECRUIT_PACKS.size()):
-		var pack := RECRUIT_PACKS[index] as Dictionary
+	var packs := _active_recruit_packs()
+	for index in range(packs.size()):
+		var pack := packs[index] as Dictionary
 		var button := _build_pack_card(index, pack)
 		_pack_buttons.append(button)
 		_pack_row.add_child(button)
 		_update_pack_feedback(index, pack, index == _selected_pack_index)
 		if index == _selected_pack_index:
 			_pack_row.add_child(_build_inline_action_panel(pack))
+
+func _build_empty_pool_state() -> Control:
+	var panel := _panel(Color(0.045, 0.046, 0.047, 0.80), Color(0.150, 0.140, 0.110, 0.34), 2)
+	panel.name = "RecruitEmptyPoolState"
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var margin := _margin(18, 18, 18, 18)
+	panel.add_child(margin)
+	var center := CenterContainer.new()
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	margin.add_child(center)
+	var column := VBoxContainer.new()
+	column.custom_minimum_size = Vector2(440, 0)
+	column.add_theme_constant_override("separation", 8)
+	center.add_child(column)
+	column.add_child(_compact_label("暂无可用卡池", 28, TEXT_GOLD, HORIZONTAL_ALIGNMENT_CENTER))
+	column.add_child(_compact_label("等待 RecruitPoolCatalog 返回开放卡包", 16, TEXT_MAIN, HORIZONTAL_ALIGNMENT_CENTER))
+	column.add_child(_compact_label("资源条保留；本地不生成卡池、不抽取结果", 13, TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+	return panel
 
 func _build_pack_card(index: int, pack: Dictionary) -> Control:
 	var button := _panel(BG_CARD, BORDER, 2)
@@ -345,7 +370,11 @@ func _corner_badge(text: String) -> Control:
 	return badge
 
 func _select_recruit_pack(index: int, animated: bool = true) -> void:
-	_selected_pack_index = clampi(index, 0, RECRUIT_PACKS.size() - 1)
+	var packs := _active_recruit_packs()
+	if packs.is_empty():
+		_selected_pack_index = 0
+		return
+	_selected_pack_index = clampi(index, 0, packs.size() - 1)
 	_rebuild_pack_row()
 	_update_pack_row_width()
 	call_deferred("_scroll_selected_pack_into_view", animated)
@@ -484,7 +513,11 @@ func _build_bottom_resource_bar() -> Control:
 func _request_draw(mode: String) -> void:
 	if _recruit_status_label == null:
 		return
-	var pack := RECRUIT_PACKS[_selected_pack_index] as Dictionary
+	var packs := _active_recruit_packs()
+	if packs.is_empty():
+		_recruit_status_label.text = "暂无卡池可招募"
+		return
+	var pack := packs[_selected_pack_index] as Dictionary
 	_recruit_status_label.text = "已选择 %s / %s，进入招募结果页 drawMode=%s。" % [str(pack.get("title", "")), "单抽" if mode == "single" else "五连", mode]
 
 func _candidate_toggle_button() -> Button:
@@ -504,6 +537,15 @@ func _toggle_pool_candidates() -> void:
 	_rebuild_pack_row()
 	_update_pack_row_width()
 
+func _active_recruit_packs() -> Array:
+	if _env_flag("FORMAL_PACK_EMPTY_POOLS"):
+		return []
+	return RECRUIT_PACKS
+
+func _env_flag(name: String) -> bool:
+	var value := OS.get_environment(name).strip_edges().to_lower()
+	return value == "1" or value == "true" or value == "yes"
+
 func _on_preview_close_pressed() -> void:
 	if _recruit_status_label != null:
 		_recruit_status_label.text = "close_requested / activePanelId=\"\""
@@ -519,12 +561,13 @@ func _update_responsive_layout() -> void:
 func _update_pack_row_width() -> void:
 	if _pack_row == null:
 		return
+	var packs := _active_recruit_packs()
 	var width := 0.0
-	for i in range(RECRUIT_PACKS.size()):
+	for i in range(packs.size()):
 		width += PACK_ACTIVE_WIDTH if i == _selected_pack_index else PACK_MIN_WIDTH
 		if i == _selected_pack_index:
 			width += PACK_ACTION_WIDTH + 12.0
-	width += maxi(0, RECRUIT_PACKS.size() - 1) * 12.0
+	width += maxi(0, packs.size() - 1) * 12.0
 	_pack_row.custom_minimum_size = Vector2(width, 0)
 
 func _update_pack_feedback(index: int, pack: Dictionary, active: bool) -> void:

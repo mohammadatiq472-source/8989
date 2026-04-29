@@ -179,7 +179,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_team',
       activationRate: 40,
       damageKind: 'physical',
-      damageRate: 0.68,
+      damageRate: 0.61,
     }),
     defineFormula({
       id: 'innate_100661',
@@ -302,7 +302,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_random_1',
       activationRate: 60,
       damageKind: 'physical',
-      damageRate: 2.1,
+      damageRate: 2.0,
       speedBonusRate: 0.25,
     }),
     defineFormula({

@@ -82,14 +82,14 @@ function testRandomLoadoutThreeVsThreeMatrix() {
 
   assert.equal(matrix.skillStats.innate_100027.seenInLoadouts, 32)
   assert.equal(matrix.skillStats.innate_100027.eventCount, 74)
-  assert.equal(matrix.skillStats.innate_100027.totalDamage, 52398)
-  assert.equal(matrix.skillStats.innate_100451.totalDamage, 73473)
-  assert.equal(matrix.skillStats.innate_100661.totalPreventedDamage, 18282)
+  assert.equal(matrix.skillStats.innate_100027.totalDamage, 52227)
+  assert.equal(matrix.skillStats.innate_100451.totalDamage, 65537)
+  assert.equal(matrix.skillStats.innate_100661.totalPreventedDamage, 18352)
   assert.equal(matrix.skillStats.lib_s_active_fire_raid.seenInLoadouts, 7)
-  assert.equal(matrix.skillStats.lib_s_active_fire_raid.totalDamage, 22622)
+  assert.equal(matrix.skillStats.lib_s_active_fire_raid.totalDamage, 22800)
   assert.equal(matrix.skillStats.lib_s_active_thunder_camp.seenInLoadouts, 13)
-  assert.equal(matrix.skillStats.lib_s_active_thunder_camp.totalDamage, 32339)
-  assert.equal(matrix.skillStats.lib_a_active_benevolent_aid.totalHealing, 7027)
+  assert.equal(matrix.skillStats.lib_s_active_thunder_camp.totalDamage, 32071)
+  assert.equal(matrix.skillStats.lib_a_active_benevolent_aid.totalHealing, 6958)
   assert.equal(matrix.skillStats.lib_s_command_battle_banner.seenInLoadouts, 6)
 }
 
@@ -211,7 +211,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
       && event.round === 2
   ))
   assert.ok(commandRecoveryEvent)
-  assert.equal(commandRecoveryEvent.healing, 55)
+  assert.equal(commandRecoveryEvent.healing, 56)
   assert.ok(commandRecoveryEvent.notes.includes('trigger=received_damage_this_round'))
   assert.ok(commandRecoveryEvent.notes.includes('healingSourceStat=intelligence'))
   assert.ok(commandRecoveryEvent.notes.includes('baseHealingRate=0.75'))
@@ -224,7 +224,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
   ))
   assert.ok(repeatedCommanderStrikeEvent)
   assert.equal(repeatedCommanderStrikeEvent.activated, true)
-  assert.equal(repeatedCommanderStrikeEvent.damage, 1581)
+  assert.equal(repeatedCommanderStrikeEvent.damage, 1566)
   assert.ok(repeatedCommanderStrikeEvent.notes.includes('commanderTargetDamageReduction-57%'))
   assert.ok(repeatedCommanderStrikeEvent.notes.includes('commanderTargetDamagePressureLevel=2'))
 }

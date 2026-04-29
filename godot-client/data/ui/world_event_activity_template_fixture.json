@@ -57,49 +57,43 @@
   },
   "activities": {
     "headline": "精彩活动",
-    "subtitle": "保留登录奖励、武将传承、外观商店三张主卡。",
-    "state": "只展示玉符，不写库存。",
+    "subtitle": "登录奖励、武将传承、外观商店。",
+    "state": "玉符仅展示，不写库存。",
     "summary_lines": [
-      "三张主卡保留，其他位置继续预留。"
+      "三张主卡保留，其余占位。"
     ],
     "cards": [
       {
         "title": "登录奖励",
-        "image_path": "",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/activity/activity_login_reward_cover.png",
         "asset_slot": "activity_login_reward",
-        "cover_mode": "blank_upload_slot",
+        "cover_mode": "asset_drop_cover",
         "value": "每日可领",
-        "meta": "连续登录",
-        "description": "登录后可领玉符。",
-        "reward": "玉符",
-        "progress": "今日 1/1",
-        "status_label": "可领取",
+        "meta": "登录",
+        "description": "登录领玉符。",
+        "status_label": "可领",
         "tone": "gold",
         "red_dot": true
       },
       {
         "title": "武将传承",
-        "image_path": "",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/activity/activity_inherit_cover.png",
         "asset_slot": "activity_inherit",
-        "cover_mode": "blank_upload_slot",
+        "cover_mode": "asset_drop_cover",
         "value": "传承入口",
-        "meta": "武将养成",
-        "description": "只保留入口卡。",
-        "reward": "玉符",
-        "progress": "未完成",
-        "status_label": "进行中",
+        "meta": "养成",
+        "description": "入口卡。",
+        "status_label": "进行",
         "tone": "blue"
       },
       {
         "title": "外观商店",
-        "image_path": "",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/activity/activity_shop_cover.png",
         "asset_slot": "activity_shop",
-        "cover_mode": "blank_upload_slot",
+        "cover_mode": "asset_drop_cover",
         "value": "外观入口",
-        "meta": "皮肤 / 装饰",
-        "description": "只保留入口卡。",
-        "reward": "玉符",
-        "progress": "浏览",
+        "meta": "皮肤",
+        "description": "入口卡。",
         "status_label": "可浏览",
         "tone": "green"
       },
@@ -108,7 +102,6 @@
         "value": "待定",
         "meta": "空位",
         "description": "后续补位。",
-        "progress": "未开放",
         "status_label": "未开放",
         "tone": "neutral",
         "empty": true
@@ -118,7 +111,6 @@
         "value": "待定",
         "meta": "空位",
         "description": "继续预留。",
-        "progress": "未开放",
         "status_label": "未开放",
         "tone": "neutral",
         "empty": true
@@ -128,7 +120,6 @@
         "value": "待定",
         "meta": "空位",
         "description": "仅占位。",
-        "progress": "未开放",
         "status_label": "未开放",
         "tone": "neutral",
         "empty": true
@@ -138,7 +129,6 @@
         "value": "待定",
         "meta": "空位",
         "description": "后续替换。",
-        "progress": "未开放",
         "status_label": "未开放",
         "tone": "neutral",
         "empty": true
@@ -174,7 +164,7 @@
   "world_affairs": {
     "headline": "天下大势",
     "asset_slot": "world_affairs_scene",
-    "scene_image_path": "res://data/ui/world_event_activity_fixtures/world_affairs_battlefield_fixture.png",
+    "scene_image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_scene.png",
     "subtitle": "把原国战页改为天下大势，浓缩为赛季目标和局势推进模板。",
     "state": "天下 / 局势 先行，赛季后续可加。",
     "summary_lines": [
@@ -213,6 +203,7 @@
         "progress": "1/1",
         "reward": "玉符 100",
         "asset_slot": "world_affairs_node_01",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_01.png",
         "tone": "gold",
         "completed": true
       },
@@ -223,6 +214,7 @@
         "progress": "6/10",
         "reward": "玉符 100",
         "asset_slot": "world_affairs_node_02",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_02.png",
         "tone": "blue",
         "current": true
       },
@@ -233,6 +225,7 @@
         "progress": "待完成",
         "reward": "玉符 120",
         "asset_slot": "world_affairs_node_03",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_03.png",
         "tone": "neutral"
       },
       {
@@ -242,6 +235,7 @@
         "progress": "未达成",
         "reward": "玉符 120",
         "asset_slot": "world_affairs_node_04",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_04.png",
         "tone": "neutral"
       },
       {
@@ -251,6 +245,7 @@
         "progress": "待开放",
         "reward": "玉符 120",
         "asset_slot": "world_affairs_node_05",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_05.png",
         "tone": "neutral"
       },
       {
@@ -260,6 +255,7 @@
         "progress": "锁定",
         "reward": "玉符 150",
         "asset_slot": "world_affairs_node_06",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_06.png",
         "tone": "blue"
       },
       {
@@ -269,6 +265,7 @@
         "progress": "锁定",
         "reward": "玉符 150",
         "asset_slot": "world_affairs_node_07",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_07.png",
         "tone": "neutral"
       },
       {
@@ -278,6 +275,7 @@
         "progress": "锁定",
         "reward": "玉符 160",
         "asset_slot": "world_affairs_node_08",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_08.png",
         "tone": "neutral"
       },
       {
@@ -287,6 +285,7 @@
         "progress": "锁定",
         "reward": "玉符 180",
         "asset_slot": "world_affairs_node_09",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_09.png",
         "tone": "gold"
       },
       {
@@ -296,6 +295,7 @@
         "progress": "锁定",
         "reward": "玉符 200",
         "asset_slot": "world_affairs_node_10",
+        "image_path": "res://data/ui/world_event_activity_asset_drop/round_01/world_affairs/world_affairs_node_10.png",
         "tone": "gold"
       }
     ],
@@ -326,7 +326,7 @@
   "tasks": {
     "headline": "任务",
     "asset_slot": "task_chapter_scene",
-    "scene_image_path": "res://data/ui/world_event_activity_fixtures/task_chapter_scene_fixture.png",
+    "scene_image_path": "res://data/ui/world_event_activity_asset_drop/round_01/tasks/task_chapter_scene.png",
     "subtitle": "任务页从第一章到第十一章，像新手教程一样逐章推进。",
     "state": "任务奖励以资源为主，不给玉符。",
     "summary_lines": [
@@ -473,12 +473,19 @@
   },
   "faction_status": {
     "headline": "势力状态",
-    "subtitle": "这里只保留动态领地壳，不放假样本。",
-    "state": "后端回传 territories[] 后再显示；当前不接地图跳转。",
+    "subtitle": "复用主界面左下状态位语义。",
+    "state": "等待 territories[]，当前不接地图跳转。",
     "summary_lines": [
-      "默认只展示空态，不放静态领地或地图占位。",
-      "等 territories[] 有结果后，再显示等级、坐标和操作位。"
+      "空数组只显示状态壳，不放静态领地或地图占位。",
+      "后续复用主界面左下角状态 UI 尺寸和按钮语义。"
     ],
+    "data_contract": {
+      "source": "territories[]",
+      "empty_policy": "empty_shell",
+      "future_ui_reuse": "main_hud_bottom_left_status",
+      "no_static_samples": true,
+      "no_map_jump": true
+    },
     "category_cards": [
       {
         "title": "领地",

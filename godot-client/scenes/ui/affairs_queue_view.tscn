@@ -1,0 +1,90 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/affairs_queue_view.gd" id="1_2f8dt"]
+
+[node name="AffairsQueueView" type="HBoxContainer"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+script = ExtResource("1_2f8dt")
+
+[node name="LeftPanel" type="PanelContainer" parent="."]
+custom_minimum_size = Vector2(280, 0)
+size_flags_vertical = 3
+
+[node name="LeftMargin" type="MarginContainer" parent="LeftPanel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="LeftColumn" type="VBoxContainer" parent="LeftPanel/LeftMargin"]
+theme_override_constants/separation = 8
+
+[node name="TitleLabel" type="Label" parent="LeftPanel/LeftMargin/LeftColumn"]
+text = ""
+theme_override_font_sizes/font_size = 19
+size_flags_horizontal = 3
+
+[node name="SubtitleLabel" type="Label" parent="LeftPanel/LeftMargin/LeftColumn"]
+text = ""
+theme_override_font_sizes/font_size = 14
+size_flags_horizontal = 3
+
+[node name="QueueButtons" type="VBoxContainer" parent="LeftPanel/LeftMargin/LeftColumn"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="RightPanel" type="PanelContainer" parent="."]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RightMargin" type="MarginContainer" parent="RightPanel"]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="RightColumn" type="VBoxContainer" parent="RightPanel/RightMargin"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="SummaryTitleLabel" type="Label" parent="RightPanel/RightMargin/RightColumn"]
+text = ""
+theme_override_font_sizes/font_size = 18
+size_flags_horizontal = 3
+
+[node name="SelectedLabel" type="Label" parent="RightPanel/RightMargin/RightColumn"]
+text = ""
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 2
+size_flags_horizontal = 3
+
+[node name="StatusLabel" type="Label" parent="RightPanel/RightMargin/RightColumn"]
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 2
+size_flags_horizontal = 3
+
+[node name="DescriptionLabel" type="Label" parent="RightPanel/RightMargin/RightColumn"]
+text = ""
+theme_override_font_sizes/font_size = 14
+autowrap_mode = 2
+size_flags_horizontal = 3
+
+[node name="DetailActionWrap" type="HFlowContainer" parent="RightPanel/RightMargin/RightColumn"]
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="FooterTitleLabel" type="Label" parent="RightPanel/RightMargin/RightColumn"]
+text = ""
+theme_override_font_sizes/font_size = 15
+size_flags_horizontal = 3
+
+[node name="FooterNoteLabel" type="Label" parent="RightPanel/RightMargin/RightColumn"]
+text = ""
+theme_override_font_sizes/font_size = 13
+autowrap_mode = 2
+size_flags_horizontal = 3

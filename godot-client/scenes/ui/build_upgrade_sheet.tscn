@@ -1,0 +1,68 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/build_upgrade_sheet.gd" id="1_upgrade_sheet"]
+
+[node name="BuildUpgradeSheet" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 220)
+script = ExtResource("1_upgrade_sheet")
+
+[node name="BodyMargin" type="MarginContainer" parent="."]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="BodyVBox" type="VBoxContainer" parent="BodyMargin"]
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="SubtitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = ""
+autowrap_mode = 3
+
+[node name="CloseButton" type="Button" parent="BodyMargin/BodyVBox/HeaderRow"]
+custom_minimum_size = Vector2(92, 0)
+text = ""
+
+[node name="PlaceholderLabel" type="Label" parent="BodyMargin/BodyVBox"]
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="SheetBody" type="Label" parent="BodyMargin/BodyVBox"]
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="CostLabel" type="Label" parent="BodyMargin/BodyVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="EffectLabel" type="Label" parent="BodyMargin/BodyVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="ActionRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 8
+
+[node name="PrimaryButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
+custom_minimum_size = Vector2(132, 0)
+size_flags_horizontal = 3
+text = ""
+
+[node name="SecondaryButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
+custom_minimum_size = Vector2(132, 0)
+size_flags_horizontal = 3
+text = ""

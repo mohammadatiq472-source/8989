@@ -379,6 +379,8 @@ func _make_context_action_button(label: String) -> Button:
 	button.focus_mode = Control.FOCUS_NONE
 	button.custom_minimum_size = Vector2(108.0, 38.0)
 	button.add_theme_font_size_override("font_size", 14)
+	button.add_theme_color_override("font_disabled_color", Color(0.78, 0.74, 0.64, 0.96))
+	button.add_theme_stylebox_override("disabled", _make_panel_style(Color(0.15, 0.125, 0.090, 0.92), Color(0.55, 0.42, 0.24, 0.68), 1))
 	return button
 
 
@@ -482,7 +484,7 @@ func _build_context_overview() -> Control:
 	right.add_theme_constant_override("separation", 10)
 	split.add_child(right)
 	right.add_child(_build_context_resource_strip())
-	right.add_child(_build_context_entry_cards())
+	right.add_child(_build_context_object_feedback())
 	right.add_child(_build_context_general_strip())
 	return split
 
@@ -559,6 +561,88 @@ func _build_context_entry_cards() -> Control:
 		col.add_child(button)
 		grid.add_child(card)
 	return grid
+
+
+func _build_context_object_feedback() -> Control:
+	var panel := _make_context_panel(Color(0.095, 0.082, 0.066, 0.90), Color(0.58, 0.44, 0.24, 0.70))
+	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var margin := MarginContainer.new()
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	panel.add_child(margin)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 10)
+	margin.add_child(col)
+	col.add_child(_make_context_label("主府已选中 · 近场反馈", 18))
+	col.add_child(_make_context_label("左侧主城舞台高亮主府，右侧只呈现和该对象相关的钻取动作；资源、武将和模板状态仍留在同一主城上下文。", 12, true))
+
+	var focus_row := HBoxContainer.new()
+	focus_row.add_theme_constant_override("separation", 10)
+	col.add_child(focus_row)
+	for item in [
+		{"title": "城务", "body": "内政全屏"},
+		{"title": "军务", "body": "部队编排"},
+		{"title": "营建", "body": "设施 / 建筑树"},
+	]:
+		var tile := _make_context_panel(Color(0.14, 0.115, 0.085, 0.92), Color(0.60, 0.46, 0.26, 0.72))
+		tile.custom_minimum_size = Vector2(0.0, 74.0)
+		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var tile_col := VBoxContainer.new()
+		tile_col.alignment = BoxContainer.ALIGNMENT_CENTER
+		tile.add_child(tile_col)
+		var title := _make_context_label(str(item.get("title", "")), 16)
+		title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tile_col.add_child(title)
+		var body := _make_context_label(str(item.get("body", "")), 11, true)
+		body.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tile_col.add_child(body)
+		focus_row.add_child(tile)
+
+	var action_row := HBoxContainer.new()
+	action_row.add_theme_constant_override("separation", 8)
+	col.add_child(action_row)
+	for action in [
+		{"label": "部队编排", "tab": "troop"},
+		{"label": "设施组成", "tab": "facility"},
+		{"label": "建筑树", "tab": "building_tree"},
+		{"label": "内政全屏", "entry": "interior"},
+	]:
+		var button := _make_context_action_button(str(action.get("label", "")))
+		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		if str(action.get("entry", "")) != "":
+			button.pressed.connect(Callable(self, "request_entry").bind(str(action.get("entry", ""))))
+		else:
+			var tab_id := str(action.get("tab", "overview"))
+			button.pressed.connect(func() -> void:
+				_select_context_tab(tab_id)
+			)
+		action_row.add_child(button)
+
+	var route := _make_context_panel(Color(0.105, 0.095, 0.078, 0.82), Color(0.48, 0.37, 0.22, 0.64))
+	route.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	col.add_child(route)
+	var route_margin := MarginContainer.new()
+	route_margin.add_theme_constant_override("margin_left", 12)
+	route_margin.add_theme_constant_override("margin_top", 10)
+	route_margin.add_theme_constant_override("margin_right", 12)
+	route_margin.add_theme_constant_override("margin_bottom", 10)
+	route.add_child(route_margin)
+	var route_col := VBoxContainer.new()
+	route_col.add_theme_constant_override("separation", 8)
+	route_margin.add_child(route_col)
+	route_col.add_child(_make_context_label("承接路径", 15))
+	var route_row := HBoxContainer.new()
+	route_row.add_theme_constant_override("separation", 6)
+	route_col.add_child(route_row)
+	for line in ["地图节点", "对象组成", "焦点动作", "模板反馈"]:
+		var chip := _make_context_action_button(line)
+		chip.disabled = true
+		chip.custom_minimum_size = Vector2(0.0, 40.0)
+		chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		route_row.add_child(chip)
+	return panel
 
 
 func _build_context_general_strip() -> Control:
@@ -713,8 +797,8 @@ func _build_facility_context_stage() -> Control:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 10)
 	margin.add_child(col)
-	col.add_child(_make_context_label("主城设施组成", 19))
-	col.add_child(_make_context_label("先在城内选中设施对象，再进入建筑树和升级模板反馈。", 12, true))
+	col.add_child(_make_context_label("主城设施组成 · %s已选中" % _active_facility_label(), 19))
+	col.add_child(_make_context_label("先在城内选中设施对象，再进入建筑树和升级模板反馈；左侧节点与右侧模板单保持同一选中对象。", 12, true))
 	col.add_child(_build_facility_city_core())
 
 	var grid := GridContainer.new()
@@ -724,7 +808,15 @@ func _build_facility_context_stage() -> Control:
 	grid.add_theme_constant_override("v_separation", 10)
 	col.add_child(grid)
 	for building in PREVIEW_BUILDINGS:
-		var card := _make_context_panel(_facility_node_color(str(building.get("id", ""))), Color(0.62, 0.48, 0.27, 0.74))
+		var building_id := str(building.get("id", ""))
+		var selected := building_id == _active_building_id
+		var border := Color(0.62, 0.48, 0.27, 0.74)
+		var border_width := 1
+		if selected:
+			border = Color(1.00, 0.74, 0.28, 0.98)
+			border_width = 2
+		var card := _make_context_panel(_facility_node_color(building_id), border)
+		card.add_theme_stylebox_override("panel", _make_panel_style(_facility_node_color(building_id), border, border_width))
 		card.custom_minimum_size = Vector2(0.0, 82.0)
 		var card_margin := MarginContainer.new()
 		card_margin.add_theme_constant_override("margin_left", 12)
@@ -735,10 +827,11 @@ func _build_facility_context_stage() -> Control:
 		var card_col := VBoxContainer.new()
 		card_col.add_theme_constant_override("separation", 4)
 		card_margin.add_child(card_col)
-		card_col.add_child(_make_context_label("%s · %s" % [str(building.get("label", "")), str(building.get("status", ""))], 15, true))
+		var selected_suffix := " · 选中" if selected else ""
+		card_col.add_child(_make_context_label("%s · %s%s" % [str(building.get("label", "")), str(building.get("status", "")), selected_suffix], 15, true))
 		card_col.add_child(_make_context_label(str(building.get("body", "")), 11, true))
-		var button := _make_context_action_button("进入节点")
-		button.pressed.connect(Callable(self, "_open_context_building_tree_for").bind(str(building.get("id", ""))))
+		var button := _make_context_action_button("进入节点" if not selected else "查看模板反馈")
+		button.pressed.connect(Callable(self, "_open_context_building_tree_for").bind(building_id))
 		card_col.add_child(button)
 		grid.add_child(card)
 	return panel
@@ -813,8 +906,8 @@ func _build_facility_composition_stage() -> Control:
 	var col := VBoxContainer.new()
 	col.add_theme_constant_override("separation", 10)
 	margin.add_child(col)
-	col.add_child(_make_context_label("主城设施组成", 18))
-	col.add_child(_make_context_label("先看城内设施节点，再点选节点进入建筑树与升级模板反馈。当前只改 UI 承接，不请求后端。", 12, true))
+	col.add_child(_make_context_label("主城设施组成 · %s已选中" % _active_facility_label(), 18))
+	col.add_child(_make_context_label("先看城内设施节点，再点选节点进入建筑树与升级模板反馈。当前选中对象会同步到左侧设施舞台、建筑树和右侧模板单。", 12, true))
 	col.add_child(_build_facility_city_core())
 	var node_grid := GridContainer.new()
 	node_grid.columns = 2
@@ -824,13 +917,19 @@ func _build_facility_composition_stage() -> Control:
 	col.add_child(node_grid)
 	for building in PREVIEW_BUILDINGS:
 		var building_id := str(building.get("id", ""))
+		var selected := building_id == _active_building_id
 		var button := Button.new()
 		button.focus_mode = Control.FOCUS_NONE
 		button.custom_minimum_size = Vector2(0.0, 58.0)
 		button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		button.text = "%s\n%s" % [str(building.get("label", "")), str(building.get("status", ""))]
+		button.text = "%s\n%s%s" % [str(building.get("label", "")), str(building.get("status", "")), "\n选中" if selected else ""]
 		button.add_theme_font_size_override("font_size", 13)
-		button.add_theme_stylebox_override("normal", _make_panel_style(_facility_node_color(building_id), Color(0.58, 0.44, 0.24, 0.72), 1))
+		var normal_border := Color(0.58, 0.44, 0.24, 0.72)
+		var normal_width := 1
+		if selected:
+			normal_border = Color(1.00, 0.74, 0.28, 0.98)
+			normal_width = 2
+		button.add_theme_stylebox_override("normal", _make_panel_style(_facility_node_color(building_id), normal_border, normal_width))
 		button.add_theme_stylebox_override("hover", _make_panel_style(Color(0.24, 0.17, 0.09, 0.98), Color(0.90, 0.66, 0.30, 0.96), 1))
 		button.add_theme_stylebox_override("pressed", _make_panel_style(Color(0.34, 0.22, 0.10, 0.98), Color(1.00, 0.76, 0.32, 0.96), 2))
 		button.pressed.connect(Callable(self, "_select_context_building_template").bind(building_id))
@@ -862,10 +961,19 @@ func _build_facility_stage_row(labels: Array) -> Control:
 	row.add_theme_constant_override("separation", 6)
 	for label_variant in labels:
 		var label_text := str(label_variant)
-		var tile := _make_context_panel(_city_tile_color(label_text), Color(0.64, 0.49, 0.27, 0.72))
+		var building_id := _facility_label_to_building_id(label_text)
+		var selected := building_id != "" and building_id == _active_building_id
+		var tile_color := _facility_node_color(building_id) if building_id != "" else _city_tile_color(label_text)
+		var border := Color(0.64, 0.49, 0.27, 0.72)
+		var border_width := 1
+		if selected:
+			border = Color(1.00, 0.74, 0.28, 0.98)
+			border_width = 2
+		var tile := _make_context_panel(tile_color, border)
+		tile.add_theme_stylebox_override("panel", _make_panel_style(tile_color, border, border_width))
 		tile.custom_minimum_size = Vector2(0.0, 34.0)
 		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var label := _make_context_label(label_text, 12)
+		var label := _make_context_label(label_text if not selected else "%s\n选中" % label_text, 12)
 		label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		tile.add_child(label)
@@ -876,7 +984,7 @@ func _build_facility_stage_row(labels: Array) -> Control:
 func _build_facility_stage_footer() -> Control:
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 6)
-	for item in ["节点", "建筑树", "模板反馈"]:
+	for item in ["%s节点" % _active_facility_label(), "建筑树", "模板反馈"]:
 		var chip := _make_context_panel(Color(0.16, 0.13, 0.09, 0.92), Color(0.58, 0.44, 0.24, 0.72))
 		chip.custom_minimum_size = Vector2(0.0, 30.0)
 		chip.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -898,6 +1006,27 @@ func _facility_node_color(building_id: String) -> Color:
 	if building_id == "command_hall":
 		return Color(0.18, 0.16, 0.12, 0.94)
 	return Color(0.20, 0.17, 0.10, 0.94)
+
+
+func _facility_label_to_building_id(label: String) -> String:
+	match label:
+		"校场":
+			return "drill_ground"
+		"募兵所":
+			return "barracks"
+		"统帅厅":
+			return "command_hall"
+		"市井":
+			return "market_plaza"
+		_:
+			return ""
+
+
+func _active_facility_label() -> String:
+	var selected := _find_preview_building(_active_building_id)
+	if selected.is_empty():
+		return "设施"
+	return str(selected.get("label", "设施"))
 
 
 func _build_city_stage() -> Control:
@@ -925,10 +1054,17 @@ func _build_city_wall_row(labels: Array) -> Control:
 	row.add_theme_constant_override("separation", 8)
 	for label_variant in labels:
 		var label := str(label_variant)
-		var tile := _make_context_panel(_city_tile_color(label), Color(0.68, 0.53, 0.30, 0.68))
+		var selected := label == "主府"
+		var border := Color(0.68, 0.53, 0.30, 0.68)
+		var border_width := 1
+		if selected:
+			border = Color(1.0, 0.74, 0.28, 0.98)
+			border_width = 2
+		var tile := _make_context_panel(_city_tile_color(label), border)
+		tile.add_theme_stylebox_override("panel", _make_panel_style(_city_tile_color(label), border, border_width))
 		tile.custom_minimum_size = Vector2(0.0, 48.0)
 		tile.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		var tile_label := _make_context_label(label, 15)
+		var tile_label := _make_context_label(label if not selected else "主府\n选中", 15)
 		tile_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		tile_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		tile.add_child(tile_label)
@@ -937,6 +1073,8 @@ func _build_city_wall_row(labels: Array) -> Control:
 
 
 func _city_tile_color(label: String) -> Color:
+	if label == "主府":
+		return Color(0.44, 0.27, 0.09, 0.98)
 	if ["主府", "府署", "统帅厅"].has(label):
 		return Color(0.34, 0.22, 0.11, 0.94)
 	if ["校场", "募兵所", "练武场", "巡防"].has(label):
@@ -1086,8 +1224,8 @@ func _build_context_tree_contract() -> Dictionary:
 func _build_context_sheet_contract(building: Dictionary) -> Dictionary:
 	return {
 		"title": "%s升级单" % str(building.get("label", "设施")),
-		"subtitle": "模板/排队态预览，不请求后端。",
-		"body": "%s\n\n模板/排队态：点击确认只显示反馈，不请求后端，不扣资源。" % str(building.get("body", "")),
+		"subtitle": "来自主城设施节点的模板反馈，不请求后端。",
+		"body": "%s\n\n对象链：主城设施组成 -> %s节点 -> 建筑树 -> 模板/排队态反馈。\n点击确认只显示反馈，不请求后端，不扣资源。" % [str(building.get("body", "")), str(building.get("label", "设施"))],
 		"cost_summary": str(building.get("cost", "消耗：--")),
 		"effect_summary": str(building.get("effect", "效果：--")),
 		"primary_action_label": "加入模板队列",
@@ -1118,7 +1256,9 @@ func _select_context_building_template(building_id: String) -> void:
 	if selected.is_empty():
 		return
 	_active_building_id = building_id
-	if _upgrade_sheet != null and _upgrade_sheet.has_method("set_sheet_contract"):
+	if _active_context_tab == "building_tree" and _context_content_host != null:
+		_select_context_tab("building_tree")
+	elif _upgrade_sheet != null and _upgrade_sheet.has_method("set_sheet_contract"):
 		_upgrade_sheet.call("set_sheet_contract", _build_context_sheet_contract(selected))
 
 

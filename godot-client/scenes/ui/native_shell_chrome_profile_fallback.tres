@@ -1,0 +1,705 @@
+[gd_resource type="Resource" script_class="NativeShellChromeProfileCatalog" load_steps=54 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/native_shell_chrome_profile_catalog.gd" id="1_catalog"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_chrome_style_profile.gd" id="2_style_profile"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_left_rail_density_profile.gd" id="3_left_rail_density"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_icon_profile.gd" id="4_icon_profile"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_layout_profile.gd" id="11_layout_profile"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_typography_profile.gd" id="12_typography_profile"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_copy_profile.gd" id="13_copy_profile"]
+[ext_resource type="Script" path="res://scripts/ui/native_shell_texture_profile.gd" id="14_texture_profile"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/source/svg_shell_icons/task_board.svg" id="5_task_icon"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/source/svg_shell_icons/battle_report.svg" id="6_battle_report_icon"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/source/svg_shell_icons/activity_seal.svg" id="7_activity_icon"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/source/svg_shell_icons/help_badge.svg" id="8_help_icon"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/source/svg_shell_icons/jade_token.svg" id="9_jade_icon"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/source/svg_shell_icons/coin_copper.svg" id="10_copper_icon"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/current/ui/native_shell_troop_row_base_v1.png" id="15_troop_row_base"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/current/ui/native_shell_main_nav_button_base_v1.png" id="16_main_nav_button_base"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/current/ui/native_shell_main_nav_button_selected_v1.png" id="17_main_nav_button_selected"]
+[ext_resource type="Texture2D" path="res://assets/themes/slgclient/current/ui/native_shell_main_nav_button_pressed_v1.png" id="18_main_nav_button_pressed"]
+[ext_resource type="Resource" path="res://scenes/ui/native_shell_city_grid_profile.tres" id="19_city_grid_profile"]
+
+[sub_resource type="Resource" id="StyleProfile_city_action_main_nav_base"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.11, 0.11, 0.12, 0.88)
+border_color = Color(0.31, 0.29, 0.25, 0.88)
+radius = 8
+border_width = 1
+margin_left = 10
+margin_right = 10
+margin_top = 6
+margin_bottom = 6
+hover_lighten = 0.05
+pressed_darken = 0.06
+font_color = Color(0.82, 0.80, 0.74, 0.96)
+font_hover_color = Color(0.82, 0.80, 0.74, 0.96)
+font_pressed_color = Color(0.82, 0.80, 0.74, 0.96)
+font_disabled_color = Color(0.82, 0.80, 0.74, 0.96)
+alignment = 1
+
+[sub_resource type="Resource" id="StyleProfile_city_action_main_nav_selected"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.20, 0.16, 0.10, 0.96)
+border_color = Color(0.88, 0.71, 0.36, 0.96)
+radius = 8
+border_width = 2
+margin_left = 10
+margin_right = 10
+margin_top = 6
+margin_bottom = 6
+hover_lighten = 0.05
+pressed_darken = 0.06
+font_color = Color(0.98, 0.94, 0.84, 1.0)
+font_hover_color = Color(0.98, 0.94, 0.84, 1.0)
+font_pressed_color = Color(0.98, 0.94, 0.84, 1.0)
+font_disabled_color = Color(0.82, 0.80, 0.74, 0.96)
+alignment = 1
+
+[sub_resource type="Resource" id="StyleProfile_city_action_entry_base"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.10, 0.10, 0.11, 0.76)
+border_color = Color(0.28, 0.27, 0.24, 0.82)
+radius = 10
+border_width = 1
+margin_left = 8
+margin_right = 8
+margin_top = 6
+margin_bottom = 6
+hover_lighten = 0.05
+pressed_darken = 0.06
+font_color = Color(0.80, 0.79, 0.74, 0.94)
+font_hover_color = Color(0.80, 0.79, 0.74, 0.94)
+font_pressed_color = Color(0.80, 0.79, 0.74, 0.94)
+font_disabled_color = Color(0.82, 0.80, 0.74, 0.96)
+alignment = 1
+
+[sub_resource type="Resource" id="StyleProfile_city_action_entry_selected"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.21, 0.17, 0.10, 0.94)
+border_color = Color(0.92, 0.75, 0.40, 0.96)
+radius = 10
+border_width = 2
+margin_left = 8
+margin_right = 8
+margin_top = 6
+margin_bottom = 6
+hover_lighten = 0.05
+pressed_darken = 0.06
+font_color = Color(0.99, 0.95, 0.88, 1.0)
+font_hover_color = Color(0.99, 0.95, 0.88, 1.0)
+font_pressed_color = Color(0.99, 0.95, 0.88, 1.0)
+font_disabled_color = Color(0.82, 0.80, 0.74, 0.96)
+alignment = 1
+
+[sub_resource type="Resource" id="StyleProfile_default_button_fallback"]
+script = ExtResource("2_style_profile")
+font_color = Color(0.82, 0.80, 0.74, 0.96)
+font_hover_color = Color(0.82, 0.80, 0.74, 0.96)
+font_pressed_color = Color(0.82, 0.80, 0.74, 0.96)
+font_disabled_color = Color(0.70, 0.68, 0.62, 0.92)
+alignment = 1
+
+[sub_resource type="Resource" id="StyleProfile_backdrop"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.06, 0.09, 0.12, 0.28)
+
+[sub_resource type="Resource" id="StyleProfile_bottom_nav"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0, 0, 0, 0)
+border_color = Color(0, 0, 0, 0)
+radius = 0
+border_width = 0
+margin_left = 0
+margin_right = 0
+margin_top = 0
+margin_bottom = 0
+
+[sub_resource type="Resource" id="StyleProfile_left_rail_quick_link"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.09, 0.09, 0.10, 0.28)
+border_color = Color(0.20, 0.19, 0.17, 0.24)
+radius = 6
+border_width = 1
+margin_left = 4
+margin_right = 4
+margin_top = 2
+margin_bottom = 2
+hover_lighten = 0.05
+pressed_darken = 0.05
+font_color = Color(0.74, 0.73, 0.69, 0.94)
+font_hover_color = Color(0.92, 0.90, 0.84, 0.98)
+font_pressed_color = Color(0.92, 0.90, 0.84, 0.98)
+font_disabled_color = Color(0.74, 0.73, 0.69, 0.94)
+alignment = 1
+use_hover_bg_color = true
+hover_bg_color = Color(0.11, 0.11, 0.12, 0.42)
+use_pressed_bg_color = true
+pressed_bg_color = Color(0.14, 0.12, 0.09, 0.48)
+use_flat = true
+flat = true
+
+[sub_resource type="Resource" id="StyleProfile_troop_primary_base"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.10, 0.09, 0.08, 0.94)
+border_color = Color(0.27, 0.22, 0.16, 0.82)
+radius = 2
+border_width = 1
+margin_left = 6
+margin_right = 6
+margin_top = 5
+margin_bottom = 5
+hover_lighten = 0.05
+pressed_darken = 0.05
+font_color = Color(0.58, 0.57, 0.54, 0.92)
+font_hover_color = Color(0.58, 0.57, 0.54, 0.92)
+font_pressed_color = Color(0.58, 0.57, 0.54, 0.92)
+font_disabled_color = Color(0.58, 0.57, 0.54, 0.92)
+alignment = 0
+use_font_size = true
+font_size = 8
+use_min_size = true
+min_size = Vector2(0, 54)
+
+[sub_resource type="Resource" id="StyleProfile_troop_mobile_base"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.10, 0.09, 0.08, 0.92)
+border_color = Color(0.25, 0.22, 0.18, 0.76)
+radius = 2
+border_width = 1
+margin_left = 6
+margin_right = 6
+margin_top = 5
+margin_bottom = 5
+hover_lighten = 0.05
+pressed_darken = 0.05
+font_color = Color(0.58, 0.57, 0.54, 0.92)
+font_hover_color = Color(0.58, 0.57, 0.54, 0.92)
+font_pressed_color = Color(0.58, 0.57, 0.54, 0.92)
+font_disabled_color = Color(0.58, 0.57, 0.54, 0.92)
+alignment = 0
+use_font_size = true
+font_size = 7
+use_min_size = true
+min_size = Vector2(0, 50)
+
+[sub_resource type="Resource" id="StyleProfile_troop_reserve_base"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.09, 0.09, 0.08, 0.88)
+border_color = Color(0.24, 0.22, 0.19, 0.68)
+radius = 1
+border_width = 1
+margin_left = 5
+margin_right = 5
+margin_top = 4
+margin_bottom = 4
+hover_lighten = 0.05
+pressed_darken = 0.05
+font_color = Color(0.58, 0.57, 0.54, 0.92)
+font_hover_color = Color(0.58, 0.57, 0.54, 0.92)
+font_pressed_color = Color(0.58, 0.57, 0.54, 0.92)
+font_disabled_color = Color(0.58, 0.57, 0.54, 0.92)
+alignment = 0
+use_font_size = true
+font_size = 7
+use_min_size = true
+min_size = Vector2(0, 46)
+
+[sub_resource type="Resource" id="StyleProfile_troop_primary_disabled"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.08, 0.08, 0.09, 0.54)
+border_color = Color(0.42, 0.34, 0.20, 0.38)
+
+[sub_resource type="Resource" id="StyleProfile_troop_mobile_disabled"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.08, 0.08, 0.09, 0.46)
+border_color = Color(0.28, 0.28, 0.25, 0.32)
+
+[sub_resource type="Resource" id="StyleProfile_troop_reserve_disabled"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.08, 0.08, 0.09, 0.38)
+border_color = Color(0.22, 0.22, 0.22, 0.26)
+
+[sub_resource type="Resource" id="StyleProfile_troop_primary_idle"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.12, 0.10, 0.08, 0.96)
+border_color = Color(0.71, 0.56, 0.31, 0.92)
+font_color = Color(0.96, 0.92, 0.82, 1.0)
+font_hover_color = Color(0.96, 0.92, 0.82, 1.0)
+font_pressed_color = Color(0.96, 0.92, 0.82, 1.0)
+
+[sub_resource type="Resource" id="StyleProfile_troop_mobile_idle"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.10, 0.09, 0.08, 0.94)
+border_color = Color(0.35, 0.30, 0.23, 0.80)
+font_color = Color(0.88, 0.86, 0.80, 0.98)
+font_hover_color = Color(0.88, 0.86, 0.80, 0.98)
+font_pressed_color = Color(0.88, 0.86, 0.80, 0.98)
+
+[sub_resource type="Resource" id="StyleProfile_troop_reserve_idle"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.09, 0.09, 0.08, 0.88)
+border_color = Color(0.30, 0.27, 0.21, 0.68)
+font_color = Color(0.88, 0.86, 0.80, 0.98)
+font_hover_color = Color(0.88, 0.86, 0.80, 0.98)
+font_pressed_color = Color(0.88, 0.86, 0.80, 0.98)
+
+[sub_resource type="Resource" id="StyleProfile_troop_shared_moving"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.14, 0.11, 0.08, 0.97)
+border_color = Color(0.84, 0.68, 0.38, 0.94)
+font_color = Color(0.96, 0.92, 0.82, 1.0)
+font_hover_color = Color(0.96, 0.92, 0.82, 1.0)
+font_pressed_color = Color(0.96, 0.92, 0.82, 1.0)
+
+[sub_resource type="Resource" id="StyleProfile_utility_button"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.08, 0.08, 0.09, 0.36)
+border_color = Color(0.18, 0.18, 0.19, 0.24)
+radius = 8
+border_width = 1
+margin_left = 8
+margin_right = 8
+margin_top = 4
+margin_bottom = 4
+hover_lighten = 0.05
+pressed_darken = 0.05
+font_color = Color(0.70, 0.69, 0.65, 0.92)
+font_hover_color = Color(0.82, 0.80, 0.74, 0.96)
+font_pressed_color = Color(0.82, 0.80, 0.74, 0.96)
+font_disabled_color = Color(0.70, 0.69, 0.65, 0.92)
+alignment = 1
+use_hover_bg_color = true
+hover_bg_color = Color(0.12, 0.12, 0.13, 0.52)
+use_pressed_bg_color = true
+pressed_bg_color = Color(0.10, 0.10, 0.11, 0.46)
+
+[sub_resource type="Resource" id="StyleProfile_under_construction_enabled"]
+script = ExtResource("2_style_profile")
+font_color = Color(0.92, 0.84, 0.62, 1.0)
+font_hover_color = Color(0.92, 0.84, 0.62, 1.0)
+font_pressed_color = Color(0.92, 0.84, 0.62, 1.0)
+font_disabled_color = Color(0.70, 0.68, 0.62, 0.92)
+use_modulate = true
+modulate_color = Color(0.96, 0.92, 0.82, 1.0)
+
+[sub_resource type="Resource" id="StyleProfile_under_construction_disabled"]
+script = ExtResource("2_style_profile")
+font_color = Color(0.70, 0.68, 0.62, 0.92)
+font_hover_color = Color(0.70, 0.68, 0.62, 0.92)
+font_pressed_color = Color(0.70, 0.68, 0.62, 0.92)
+font_disabled_color = Color(0.70, 0.68, 0.62, 0.92)
+use_modulate = true
+modulate_color = Color(0.78, 0.76, 0.72, 0.95)
+
+[sub_resource type="Resource" id="StyleProfile_right_context"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.05, 0.06, 0.07, 0.74)
+border_color = Color(0.20, 0.19, 0.17, 0.28)
+radius = 12
+border_width = 1
+margin_left = 8
+margin_right = 8
+margin_top = 8
+margin_bottom = 8
+
+[sub_resource type="Resource" id="StyleProfile_right_context_slot"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.09, 0.10, 0.12, 0.58)
+border_color = Color(0.24, 0.23, 0.20, 0.34)
+radius = 8
+border_width = 1
+margin_left = 8
+margin_right = 8
+margin_top = 5
+margin_bottom = 5
+
+[sub_resource type="Resource" id="StyleProfile_center_stage_base"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.04, 0.04, 0.05, 0.08)
+border_color = Color(0.16, 0.16, 0.16, 0.12)
+radius = 12
+border_width = 0
+margin_left = 6
+margin_right = 6
+margin_top = 4
+margin_bottom = 4
+
+[sub_resource type="Resource" id="StyleProfile_center_stage_world"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.07, 0.09, 0.12, 0.74)
+border_color = Color(0.30, 0.34, 0.39, 0.44)
+border_width = 1
+
+[sub_resource type="Resource" id="StyleProfile_center_stage_focus"]
+script = ExtResource("2_style_profile")
+bg_color = Color(0.09, 0.08, 0.06, 0.34)
+border_color = Color(0.70, 0.58, 0.31, 0.52)
+border_width = 1
+
+[sub_resource type="Resource" id="LeftRailDensityProfile_default"]
+script = ExtResource("3_left_rail_density")
+outer_margin = 6
+section_gap = 1
+task_header_gap = 1
+card_list_gap = 1
+quick_link_gap = 1
+task_icon_min_size = Vector2(14, 14)
+task_title_font_size = 11
+task_body_min_height = 18
+primary_token_font_size = 8
+section_label_min_height = 12
+section_title_font_size = 7
+summary_row_min_height = 13
+secondary_token_font_size = 6
+quick_link_min_height = 18
+quick_link_font_size = 7
+title_color = Color(0.89, 0.84, 0.73, 0.96)
+token_color = Color(0.92, 0.90, 0.84, 0.98)
+secondary_color = Color(0.74, 0.73, 0.69, 0.94)
+
+[sub_resource type="Resource" id="ShellLayoutProfile_default"]
+script = ExtResource("11_layout_profile")
+top_strip_offset_left = 16.0
+top_strip_offset_top = 8.0
+top_strip_offset_right = -16.0
+top_strip_offset_bottom = 58.0
+top_margin_left = 8
+top_margin_top = 4
+top_margin_right = 8
+top_margin_bottom = 4
+top_row_separation = 5
+top_actions_separation = 4
+premium_currency_row_separation = 4
+left_rail_offset_left = 16.0
+left_rail_offset_top = 82.0
+left_rail_offset_right = 206.0
+left_rail_offset_bottom = 494.0
+troop_slot_scroll_min_height = 156
+right_context_offset_left = -334.0
+right_context_offset_top = 102.0
+right_context_offset_right = -18.0
+right_context_offset_bottom = 584.0
+right_margin_left = 12
+right_margin_top = 12
+right_margin_right = 12
+right_margin_bottom = 12
+right_column_separation = 10
+right_context_slot_list_separation = 6
+context_body_min_height = 88
+context_slot_min_height = 28
+center_stage_offset_left = -168.0
+center_stage_offset_top = -36.0
+center_stage_offset_right = 168.0
+center_stage_offset_bottom = 40.0
+stage_margin_left = 5
+stage_margin_top = 3
+stage_margin_right = 5
+stage_margin_bottom = 3
+stage_column_separation = 2
+city_entry_grid_h_separation = 3
+city_entry_grid_v_separation = 3
+bottom_nav_offset_left = 16.0
+bottom_nav_offset_top = -144.0
+bottom_nav_offset_right = 578.0
+bottom_nav_offset_bottom = -16.0
+bottom_margin_left = 10
+bottom_margin_top = 8
+bottom_margin_right = 10
+bottom_margin_bottom = 8
+bottom_row_separation = 6
+main_nav_separation = 4
+utility_row_separation = 3
+nav_buttons_separation = 4
+premium_currency_row_min_size = Vector2(146, 0)
+jade_currency_badge_min_size = Vector2(58, 0)
+copper_currency_badge_min_size = Vector2(70, 0)
+mode_toggle_button_min_size = Vector2(78, 0)
+city_entry_button_min_size = Vector2(56, 26)
+utility_mail_button_min_size = Vector2(64, 0)
+utility_activity_button_min_size = Vector2(64, 0)
+utility_help_button_min_size = Vector2(56, 0)
+main_nav_button_min_size = Vector2(76, 76)
+under_construction_button_min_size = Vector2(110, 0)
+
+[sub_resource type="Resource" id="TypographyProfile_default"]
+script = ExtResource("12_typography_profile")
+profile_badge_font_size = 13
+resource_strip_font_size = 10
+currency_badge_font_size = 9
+right_context_title_font_size = 18
+right_context_body_font_size = 14
+right_context_slot_font_size = 10
+center_mode_badge_font_size = 10
+center_stage_title_font_size = 16
+center_stage_body_font_size = 10
+center_city_focus_font_size = 8
+center_entry_button_font_size = 9
+center_entry_status_font_size = 8
+center_mode_hint_font_size = 13
+utility_button_font_size = 10
+main_nav_button_font_size = 11
+world_entry_hint_font_size = 9
+
+[sub_resource type="Resource" id="CopyProfile_default"]
+script = ExtResource("13_copy_profile")
+default_context_summary = "等待 runtime 与 world 数据加载。"
+default_profile_badge_text = "主公"
+default_context_title_text = "城市上下文"
+default_context_slots = [{
+"id": "view",
+"label": "视图",
+"tooltip": "当前主壳视图",
+"value": "主城"
+}, {
+"id": "faction",
+"label": "势力",
+"tooltip": "当前操作势力",
+"value": "none"
+}, {
+"id": "control",
+"label": "托管",
+"tooltip": "当前托管状态",
+"value": "unknown/unknown"
+}]
+default_resource_summary = "木 -- | 铁 -- | 石 -- | 粮 --"
+default_mode_badge_city = "主城"
+default_mode_badge_world = "大地图"
+default_stage_title_city = "主城入口"
+default_stage_title_world = "十三州世界图"
+default_stage_body_city = "主城先稳定任务、队列和入口层级。"
+default_stage_body_world = "世界主视图先保留浏览、镜头和模式切换。"
+default_mode_hint_city = "当前继续压主壳层级，让地图回到主视区。"
+default_mode_hint_world = "当前仅保留世界浏览和模式切换。"
+default_world_entry_hint_city = "主线入口留底栏；战报/活动降为辅助。"
+default_world_entry_hint_world = "当前正在浏览大地图；可从右上返回主城。"
+default_mode_toggle_label_city = "大地图"
+default_mode_toggle_label_world = "回主城"
+default_city_task_title = "主城经营"
+default_city_task_body = "等待主城任务流加载。"
+default_city_task_hint = "保持主城壳层稳定，再向大地图递进。"
+default_city_state_title = "主城态势"
+default_city_state_summary = "等待主城业务数据加载。"
+default_city_tech_summary = "政 0 后 0 防 0 募 0"
+default_city_focus = "主城：等待识别 | 已占城池 0 | 开发点 0"
+default_entry_status = "当前：内政"
+default_troop_section_title = "五队"
+default_troop_summary = "等待 5 部队总览加载。"
+default_troop_slot_description = "等待部队编组。"
+currency_jade_label = "玉符"
+currency_copper_label = "铜钱"
+currency_tooltip_template = "{jade_label} {jade} | {copper_label} {copper}"
+current_entry_status_template = "当前：{label}"
+current_entry_tooltip_template = "当前入口：{label} | {description}"
+world_entry_selected_status_template = "已选：{label}"
+world_entry_selected_tooltip_template = "已选入口：{label}（开发中） | {description}"
+under_construction_tooltip_template = "开发中：{description}"
+interior_quick_link_tooltip_template = "直达内政/{label}"
+troop_slot_tooltip_template = "{label} | {role} | {state}"
+context_slot_line_template = "{label} | {value}"
+interior_tab_labels = {
+"affairs": "政务",
+"market": "市井",
+"policy": "政策",
+"tax": "税收"
+}
+city_action_copy = {
+"ai_hub": {
+"description": "AI 是第一阶段的强入口，后续承接托管、议程和城市上下文助手。",
+"label": "AI"
+},
+"chat": {
+"description": "打开聊天频道，承接 AI、同盟、系统消息，关闭后返回地图。",
+"label": "聊天"
+},
+"alliance": {
+"description": "同盟入口保留联盟、国战协同和社交组织能力，不再埋在 preview 文档链里。",
+"label": "同盟"
+},
+"generals": {
+"description": "武将入口承接阵容、委任和队伍编组，后续接入真实 roster 与队伍状态。",
+"label": "武将"
+},
+"interior": {
+"description": "内政先承接资源、城建、开发点和城池升级，是主城首页默认焦点。",
+"label": "内政"
+},
+"recruit": {
+"description": "招募入口预留给武将获取、征兵补位和卡池信息，先占住原生 SLG 的固定位置。",
+"label": "招募"
+}
+}
+utility_action_copy = {
+"activity": {
+"description": "活动入口。",
+"label": "活动"
+},
+"help": {
+"description": "帮助入口。",
+"label": "帮助"
+},
+"mail": {
+"description": "打开战报主线面板。",
+"label": "战报"
+}
+}
+under_construction_copy = {
+"bag": {
+"description": "背包系统尚未接入当前主线，避免先展示空面板。",
+"disabled": true,
+"label": "背包",
+"stateLabel": "背包\n开发中"
+},
+"settings": {
+"description": "设置面板尚未收口到当前主线，后续统一接入正式配置链。",
+"disabled": true,
+"label": "设置",
+"stateLabel": "设置\n开发中"
+},
+"world": {
+"description": "当前仅保留大地图模式切换与运行时浏览，正式国战二级面板尚未接入。",
+"disabled": false,
+"label": "国战",
+"stateLabel": "国战\n开发中"
+}
+}
+
+[sub_resource type="Resource" id="IconProfile_task"]
+script = ExtResource("4_icon_profile")
+icon_texture = ExtResource("5_task_icon")
+tooltip_text = "任务"
+expand_icon = true
+icon_alignment = 0
+use_h_separation = false
+
+[sub_resource type="Resource" id="IconProfile_mail"]
+script = ExtResource("4_icon_profile")
+icon_texture = ExtResource("6_battle_report_icon")
+tooltip_text = "战报"
+expand_icon = true
+icon_alignment = 0
+use_h_separation = true
+h_separation = 4
+
+[sub_resource type="Resource" id="IconProfile_activity"]
+script = ExtResource("4_icon_profile")
+icon_texture = ExtResource("7_activity_icon")
+tooltip_text = "活动"
+expand_icon = true
+icon_alignment = 0
+use_h_separation = true
+h_separation = 4
+
+[sub_resource type="Resource" id="IconProfile_help"]
+script = ExtResource("4_icon_profile")
+icon_texture = ExtResource("8_help_icon")
+tooltip_text = "帮助"
+expand_icon = true
+icon_alignment = 0
+use_h_separation = true
+h_separation = 4
+
+[sub_resource type="Resource" id="IconProfile_jade"]
+script = ExtResource("4_icon_profile")
+icon_texture = ExtResource("9_jade_icon")
+tooltip_text = "玉符"
+expand_icon = true
+icon_alignment = 0
+use_h_separation = true
+h_separation = 4
+
+[sub_resource type="Resource" id="IconProfile_copper"]
+script = ExtResource("4_icon_profile")
+icon_texture = ExtResource("10_copper_icon")
+tooltip_text = "铜钱"
+expand_icon = true
+icon_alignment = 0
+use_h_separation = true
+h_separation = 4
+
+[sub_resource type="Resource" id="TextureProfile_troop_row_base"]
+script = ExtResource("14_texture_profile")
+texture = ExtResource("15_troop_row_base")
+modulate_color = Color(1, 1, 1, 1)
+expand_mode = 1
+stretch_mode = 0
+
+[sub_resource type="Resource" id="TextureProfile_main_nav_button_base"]
+script = ExtResource("14_texture_profile")
+texture = ExtResource("16_main_nav_button_base")
+modulate_color = Color(1, 1, 1, 1)
+expand_mode = 1
+stretch_mode = 0
+
+[sub_resource type="Resource" id="TextureProfile_main_nav_button_selected"]
+script = ExtResource("14_texture_profile")
+texture = ExtResource("17_main_nav_button_selected")
+modulate_color = Color(1, 1, 1, 1)
+expand_mode = 1
+stretch_mode = 0
+
+[sub_resource type="Resource" id="TextureProfile_main_nav_button_pressed"]
+script = ExtResource("14_texture_profile")
+texture = ExtResource("18_main_nav_button_pressed")
+modulate_color = Color(1, 1, 1, 1)
+expand_mode = 1
+stretch_mode = 0
+
+[resource]
+script = ExtResource("1_catalog")
+fallback_profile_id = "fallback_flat"
+city_action_base_profiles = {
+"entry": SubResource("StyleProfile_city_action_entry_base"),
+"main_nav": SubResource("StyleProfile_city_action_main_nav_base")
+}
+city_action_selected_overrides = {
+"entry": SubResource("StyleProfile_city_action_entry_selected"),
+"main_nav": SubResource("StyleProfile_city_action_main_nav_selected")
+}
+left_rail_quick_link_profile = SubResource("StyleProfile_left_rail_quick_link")
+left_rail_density_profile = SubResource("LeftRailDensityProfile_default")
+default_button_fallback_profile = SubResource("StyleProfile_default_button_fallback")
+shell_layout_profile = SubResource("ShellLayoutProfile_default")
+typography_profile = SubResource("TypographyProfile_default")
+copy_profile = SubResource("CopyProfile_default")
+city_grid_profile = ExtResource("19_city_grid_profile")
+backdrop_profile = SubResource("StyleProfile_backdrop")
+bottom_nav_profile = SubResource("StyleProfile_bottom_nav")
+task_icon_profile = SubResource("IconProfile_task")
+mail_button_icon_profile = SubResource("IconProfile_mail")
+activity_button_icon_profile = SubResource("IconProfile_activity")
+help_button_icon_profile = SubResource("IconProfile_help")
+jade_currency_icon_profile = SubResource("IconProfile_jade")
+copper_currency_icon_profile = SubResource("IconProfile_copper")
+troop_slot_base_profiles = {
+"mobile": SubResource("StyleProfile_troop_mobile_base"),
+"primary": SubResource("StyleProfile_troop_primary_base"),
+"reserve": SubResource("StyleProfile_troop_reserve_base")
+}
+troop_slot_disabled_overrides = {
+"mobile": SubResource("StyleProfile_troop_mobile_disabled"),
+"primary": SubResource("StyleProfile_troop_primary_disabled"),
+"reserve": SubResource("StyleProfile_troop_reserve_disabled")
+}
+troop_slot_enabled_idle_overrides = {
+"mobile": SubResource("StyleProfile_troop_mobile_idle"),
+"primary": SubResource("StyleProfile_troop_primary_idle"),
+"reserve": SubResource("StyleProfile_troop_reserve_idle")
+}
+troop_slot_enabled_moving_overrides = {
+"mobile": SubResource("StyleProfile_troop_shared_moving"),
+"primary": SubResource("StyleProfile_troop_shared_moving"),
+"reserve": SubResource("StyleProfile_troop_shared_moving")
+}
+troop_slot_shell_profile = SubResource("TextureProfile_troop_row_base")
+main_nav_button_shell_profile = SubResource("TextureProfile_main_nav_button_base")
+main_nav_button_selected_shell_profile = SubResource("TextureProfile_main_nav_button_selected")
+main_nav_button_pressed_shell_profile = SubResource("TextureProfile_main_nav_button_pressed")
+utility_button_profile = SubResource("StyleProfile_utility_button")
+under_construction_enabled_profile = SubResource("StyleProfile_under_construction_enabled")
+under_construction_disabled_profile = SubResource("StyleProfile_under_construction_disabled")
+right_context_profile = SubResource("StyleProfile_right_context")
+right_context_slot_profile = SubResource("StyleProfile_right_context_slot")
+center_stage_base_profile = SubResource("StyleProfile_center_stage_base")
+center_stage_world_override = SubResource("StyleProfile_center_stage_world")
+center_stage_focus_override = SubResource("StyleProfile_center_stage_focus")

@@ -1,0 +1,528 @@
+{
+  "schema_version": "1.0",
+  "topic_id": "native_slg_shell",
+  "generated_on": "2026-04-20",
+  "workspace_root": "C:/Users/26739/Desktop/8989",
+  "purpose": [
+    "让新窗口或新 AI 直接继承 native_slg_shell 当前状态，避免重做",
+    "把已经资源化、必须保留在骨架层、以及仍可继续替换的部分做成机器可读索引"
+  ],
+  "scope": {
+    "allowed": [
+      "native_slg_shell",
+      "主壳文案单源",
+      "runtime HUD 已从主壳剥离后的继续收口",
+      "主壳与本地视频/截图、主流 SLG UI 的层级、比例、密度对齐"
+    ],
+    "disallowed": [
+      "server/src/**",
+      "shared/**",
+      "AI 玩家系统",
+      "编辑器插件",
+      "Web 原型",
+      "其他 UI 域"
+    ]
+  },
+  "read_order": [
+    "C:/Users/26739/Desktop/8989/AGENTS.md",
+    "C:/Users/26739/Desktop/8989/docs/AGENTS_EXECUTION_CURRENT_2026_04.md",
+    "C:/Users/26739/Desktop/8989/CODEX.md",
+    "C:/Users/26739/Desktop/8989/docs/GODOT_NATIVE_SHELL_LAYOUT_ALIGNMENT_2026_04_18.md",
+    "C:/Users/26739/Desktop/8989/docs/NATIVE_SLG_SHELL_HANDOFF_2026_04_20.md",
+    "C:/Users/26739/Desktop/8989/docs/NATIVE_SLG_SHELL_KNOWLEDGE_MAP_2026_04_20.md",
+    "C:/Users/26739/Desktop/8989/docs/NATIVE_SLG_SHELL_KNOWLEDGE_MAP_2026_04_20.json"
+  ],
+  "source_documents": [
+    "C:/Users/26739/Desktop/8989/docs/GODOT_NATIVE_SHELL_LAYOUT_ALIGNMENT_2026_04_18.md",
+    "C:/Users/26739/Desktop/8989/docs/NATIVE_SLG_SHELL_HANDOFF_2026_04_20.md",
+    "C:/Users/26739/Desktop/8989/docs/NATIVE_SLG_SHELL_KNOWLEDGE_MAP_2026_04_20.md"
+  ],
+  "files": {
+    "shell_script": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+    "shell_scene": "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn",
+    "presenter": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd",
+    "chrome_catalog": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+    "chrome_style_profile": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_style_profile.gd",
+    "left_rail_density_profile": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_left_rail_density_profile.gd",
+    "layout_profile": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+    "typography_profile": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_typography_profile.gd",
+    "copy_profile": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd",
+    "icon_profile": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_icon_profile.gd",
+    "fallback_profile_resource": "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+    "quick_entry_index": "C:/Users/26739/Desktop/8989/docs/NATIVE_SLG_SHELL_AI_QUICK_ENTRY_2026_04_20.json",
+    "main_scene": "C:/Users/26739/Desktop/8989/godot-client/scenes/app/main.tscn",
+    "main_script": "C:/Users/26739/Desktop/8989/godot-client/scripts/app/main.gd"
+  },
+  "completed_milestones": [
+    {
+      "id": "hud_detached_from_shell",
+      "title": "runtime HUD 已从 NativeShell 剥离",
+      "status": "done",
+      "evidence": [
+        "runtime/dev HUD 不再挂在 native_slg_shell",
+        "HUD 当前在 main.tscn 的 HoverLayer"
+      ],
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/app/main.tscn",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/app/main.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ]
+    },
+    {
+      "id": "shell_copy_single_source",
+      "title": "主壳动态文案已回收至脚本单源",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd"
+      ]
+    },
+    {
+      "id": "left_rail_density_resourceized",
+      "title": "LeftRail 密度已资源化",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_left_rail_density_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres"
+      ]
+    },
+    {
+      "id": "chrome_fallback_resourceized",
+      "title": "主壳 chrome fallback 已资源化",
+      "status": "done",
+      "resource_domains": [
+        "city_action",
+        "left_rail_quick_link",
+        "troop_slot",
+        "utility_button",
+        "under_construction",
+        "center_stage",
+        "default_button_fallback"
+      ],
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_style_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ]
+    },
+    {
+      "id": "layout_profile_resourceized",
+      "title": "主壳骨架几何已资源化",
+      "status": "done",
+      "resource_domains": [
+        "TopStrip",
+        "LeftRail",
+        "RightContext",
+        "CenterStage",
+        "BottomNav",
+        "TopMargin",
+        "StageMargin",
+        "BottomMargin",
+        "TopRow",
+        "Actions",
+        "PremiumCurrencyRow",
+        "RightColumn",
+        "StageColumn",
+        "CityEntryGrid",
+        "BottomRow",
+        "MainNav",
+        "UtilityRow",
+        "NavButtons",
+        "关键按钮最小尺寸"
+      ],
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    },
+    {
+      "id": "icon_binding_resourceized",
+      "title": "图标绑定与 icon spacing 已资源化",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_icon_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ]
+    },
+    {
+      "id": "typography_defaults_resourceized",
+      "title": "结构文本字号已资源化",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_typography_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    },
+    {
+      "id": "backdrop_and_right_context_chrome_resourceized",
+      "title": "Backdrop 与 RightContext chrome 已接入资源槽",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    },
+    {
+      "id": "right_context_fixed_shell_lane",
+      "title": "RightContext 已定性为固定骨架内容栏",
+      "status": "done",
+      "notes": [
+        "RightContext 结构保留在骨架层",
+        "RightContext 的 offset、margin、separation、body 高度已资源化"
+      ],
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    },
+    {
+      "id": "shell_copy_defaults_resourceized",
+      "title": "主壳占位 copy 与按钮 flat 表现已资源化",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_style_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ]
+    },
+    {
+      "id": "inline_label_templates_resourceized",
+      "title": "内联标签映射与 tooltip 模板已进入 copy profile",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ]
+    },
+    {
+      "id": "right_context_slotized",
+      "title": "RightContext 已推进为可替换内容 slot",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/app/main.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_typography_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd"
+      ]
+    },
+    {
+      "id": "scene_empty_text_placeholders_cleared",
+      "title": "scene 空文本占位已从 native_slg_shell.tscn 清空",
+      "status": "done",
+      "affected_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "native_slg_shell.gd",
+      "type": "script",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+      "role": [
+        "主壳骨架 orchestrator",
+        "mode/focus 状态机",
+        "resource slot 消费层",
+        "runtime payload 到 node 映射层"
+      ],
+      "must_not_be_treated_as": [
+        "最终 UI 资产存放点",
+        "大批 fallback 视觉数据仓库"
+      ]
+    },
+    {
+      "id": "native_shell_presenter.gd",
+      "type": "script",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd",
+      "role": [
+        "主壳文案单源",
+        "task/queue/focus/troop token 压缩层"
+      ]
+    },
+    {
+      "id": "native_shell_chrome_profile_catalog.gd",
+      "type": "script",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+      "role": [
+        "chrome resource slot router",
+        "style/icon/layout/density 的统一解析入口"
+      ]
+    },
+    {
+      "id": "native_shell_chrome_style_profile.gd",
+      "type": "resource_model",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_style_profile.gd",
+      "role": [
+        "单体 chrome style 数据模型"
+      ]
+    },
+    {
+      "id": "native_shell_left_rail_density_profile.gd",
+      "type": "resource_model",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_left_rail_density_profile.gd",
+      "role": [
+        "LeftRail token/队列/卡列密度模型"
+      ]
+    },
+    {
+      "id": "native_shell_layout_profile.gd",
+      "type": "resource_model",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+      "role": [
+        "主壳骨架几何和 density 模型"
+      ]
+    },
+    {
+      "id": "native_shell_typography_profile.gd",
+      "type": "resource_model",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_typography_profile.gd",
+      "role": [
+        "主壳结构文本字号模型"
+      ]
+    },
+    {
+      "id": "native_shell_copy_profile.gd",
+      "type": "resource_model",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd",
+      "role": [
+        "主壳占位 copy 与 tooltip/status 模板模型"
+      ]
+    },
+    {
+      "id": "native_shell_icon_profile.gd",
+      "type": "resource_model",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_icon_profile.gd",
+      "role": [
+        "图标纹理与图标间距模型"
+      ]
+    },
+    {
+      "id": "native_shell_chrome_profile_fallback.tres",
+      "type": "resource_instance",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+      "role": [
+        "fallback 数据总装资源",
+        "真实 UI 资产接入前的默认 profile 实例"
+      ]
+    },
+    {
+      "id": "native_slg_shell.tscn",
+      "type": "scene",
+      "path": "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn",
+      "role": [
+        "主壳节点树与锚点骨架",
+        "最轻量字号与容器默认结构"
+      ],
+      "must_not_be_treated_as": [
+        "主壳 offsets/margins/separations 的长期真源",
+        "动态文案双持容器"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "from": "native_slg_shell.gd",
+      "relation": "consumes",
+      "to": "native_shell_chrome_profile_catalog.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "resolves",
+      "to": "native_shell_chrome_style_profile.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "resolves",
+      "to": "native_shell_left_rail_density_profile.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "resolves",
+      "to": "native_shell_layout_profile.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "resolves",
+      "to": "native_shell_typography_profile.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "resolves",
+      "to": "native_shell_copy_profile.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "resolves",
+      "to": "native_shell_icon_profile.gd"
+    },
+    {
+      "from": "native_shell_chrome_profile_catalog.gd",
+      "relation": "data_from",
+      "to": "native_shell_chrome_profile_fallback.tres"
+    },
+    {
+      "from": "native_shell_presenter.gd",
+      "relation": "feeds",
+      "to": "native_slg_shell.gd"
+    },
+    {
+      "from": "main.gd",
+      "relation": "injects_payload_into",
+      "to": "native_slg_shell.gd"
+    }
+  ],
+  "framework_constraints": [
+    {
+      "id": "scene_topology",
+      "title": "场景树拓扑必须保留在骨架层",
+      "required_nodes": [
+        "TopStrip",
+        "LeftRail",
+        "RightContext",
+        "CenterStage",
+        "BottomNav"
+      ],
+      "reason": "真实 UI 资产只能挂到 slot 上，不能取代主壳拓扑本身"
+    },
+    {
+      "id": "signal_contracts",
+      "title": "信号与事件路由必须保留在骨架层",
+      "required_signals": [
+        "mode_toggle_requested",
+        "shell_action_requested",
+        "troop_slot_requested",
+        "interior_tab_requested"
+      ],
+      "reason": "这些是主壳对 runtime/app 的合同层"
+    },
+    {
+      "id": "mode_machine",
+      "title": "city/world 模式机与显示编排必须保留在骨架层",
+      "required_logic": [
+        "city/world 模式切换",
+        "当前焦点入口",
+        "区块显示/隐藏编排"
+      ],
+      "reason": "这些决定的是产品交互结构，不是可替换资产"
+    },
+    {
+      "id": "semantic_slots",
+      "title": "语义槽位规则必须保留在骨架层",
+      "required_logic": [
+        "city action 的 surface_role",
+        "TroopSlot 的 primary/mobile/reserve archetype",
+        "LeftRail 的区块顺序"
+      ],
+      "reason": "这些决定哪一类信息占哪一个槽位"
+    },
+    {
+      "id": "payload_adapter",
+      "title": "payload 适配层必须保留在骨架层",
+      "required_logic": [
+        "presenter payload 到 shell node 的映射",
+        "token 压缩文本到控件的注入",
+        "货币摘要解析"
+      ],
+      "reason": "这是 runtime 数据与主壳结构之间的适配层"
+    }
+  ],
+  "replaceable_or_further_resourceizable": [],
+  "quick_lookup": [
+    {
+      "issue": "要改样式、边距、尺寸",
+      "read_first": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres"
+      ],
+      "do_not_start_with": [
+        "native_slg_shell.tscn"
+      ]
+    },
+    {
+      "issue": "要改 LeftRail 密度",
+      "read_first": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_left_rail_density_profile.gd"
+      ],
+      "do_not_start_with": [
+        "native_slg_shell.tscn"
+      ]
+    },
+    {
+      "issue": "要改按钮皮肤或 fallback 色",
+      "read_first": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_style_profile.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd"
+      ],
+      "do_not_start_with": [
+        "native_slg_shell.gd 里直接写死颜色"
+      ]
+    },
+    {
+      "issue": "要改图标或图标间距",
+      "read_first": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_icon_profile.gd"
+      ],
+      "do_not_start_with": [
+        "在 native_slg_shell.gd 里直接 preload 新图标"
+      ]
+    },
+    {
+      "issue": "要改 task/queue/focus/troop token",
+      "read_first": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd"
+      ],
+      "do_not_start_with": [
+        "scene 文案"
+      ]
+    }
+  ],
+  "do_not_redo": [
+    "不要再把 runtime HUD 放回 NativeShell",
+    "不要再把主壳 offsets/margins/separations 写回 native_slg_shell.tscn 作为长期真源",
+    "不要再把 fallback 颜色和按钮皮肤直接散写回 native_slg_shell.gd",
+    "不要再让图标绑定回到脚本里的直接 preload",
+    "不要把 LeftRail 重新做回大摘要说明板"
+  ],
+  "last_known_validation": {
+    "formal_commands": [
+      "npm run godot:headless:smoke -- --scene res://scenes/ui/native_slg_shell.tscn",
+      "npm run godot:mainline:runtime -- --quit-after 1",
+      "npm run gate:godot:week1",
+      "npm run gate:godot:week1:compat:debug-only"
+    ],
+    "reports": [
+      "C:/Users/26739/Desktop/8989/tmp/gates/godot_week1_gate_20260420_174000.json",
+      "C:/Users/26739/Desktop/8989/tmp/gates/godot_week1_gate_20260420_174008.json"
+    ],
+    "notes": [
+      "week1 和 compat 必须串行执行",
+      "本机 py 不在 PATH，优先用 bundled Python",
+      "rg 可能偶发 Access is denied"
+    ]
+  },
+  "one_sentence_for_new_ai": "native_slg_shell 这条线已经从代码假皮肤推进到骨架加 resource slot 加 fallback resource 结构；后续改动先判断自己属于骨架拓扑、语义槽位、layout slot、density slot、chrome slot、icon slot 还是文案单源，再动手。"
+}

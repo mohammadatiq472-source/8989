@@ -1,0 +1,128 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/slg_snapshot_section_page.gd" id="1_snapshot_page"]
+
+[node name="SlgSnapshotSectionPage" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_snapshot_page")
+
+[node name="RootColumn" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="SubtitleLabel" type="Label" parent="RootColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+autowrap_mode = 3
+
+[node name="SummaryTitleLabel" type="Label" parent="RootColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+
+[node name="SummaryLines" type="VBoxContainer" parent="RootColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 6
+
+[node name="SharedStatePanel" type="PanelContainer" parent="RootColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SharedStateMargin" type="MarginContainer" parent="RootColumn/SharedStatePanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="SharedStateColumn" type="VBoxContainer" parent="RootColumn/SharedStatePanel/SharedStateMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 8
+
+[node name="SharedStateTitleLabel" type="Label" parent="RootColumn/SharedStatePanel/SharedStateMargin/SharedStateColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 15
+text = ""
+
+[node name="SharedStateFlow" type="HFlowContainer" parent="RootColumn/SharedStatePanel/SharedStateMargin/SharedStateColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="BodyRow" type="HBoxContainer" parent="RootColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="LeftPanel" type="PanelContainer" parent="RootColumn/BodyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(300, 0)
+size_flags_vertical = 3
+
+[node name="LeftMargin" type="MarginContainer" parent="RootColumn/BodyRow/LeftPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="LeftColumn" type="VBoxContainer" parent="RootColumn/BodyRow/LeftPanel/LeftMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="LeftTitleLabel" type="Label" parent="RootColumn/BodyRow/LeftPanel/LeftMargin/LeftColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="LeftCardGrid" type="GridContainer" parent="RootColumn/BodyRow/LeftPanel/LeftMargin/LeftColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+columns = 2
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="RightPanel" type="PanelContainer" parent="RootColumn/BodyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="RightMargin" type="MarginContainer" parent="RootColumn/BodyRow/RightPanel"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 14
+
+[node name="RightColumn" type="VBoxContainer" parent="RootColumn/BodyRow/RightPanel/RightMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="RightTitleLabel" type="Label" parent="RootColumn/BodyRow/RightPanel/RightMargin/RightColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+
+[node name="ContentBlocks" type="VBoxContainer" parent="RootColumn/BodyRow/RightPanel/RightMargin/RightColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10

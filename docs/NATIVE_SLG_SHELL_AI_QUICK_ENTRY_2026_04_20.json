@@ -1,0 +1,115 @@
+{
+  "schema_version": "1.0",
+  "topic_id": "native_slg_shell",
+  "workspace_root": "C:/Users/26739/Desktop/8989",
+  "scope": {
+    "allowed": [
+      "native_slg_shell",
+      "主壳文案单源",
+      "runtime HUD 已从主壳剥离后的继续收口",
+      "主壳与本地视频/截图、主流 SLG UI 的层级、比例、密度对齐"
+    ],
+    "disallowed": [
+      "server/src/**",
+      "shared/**",
+      "AI 玩家系统",
+      "编辑器插件",
+      "Web 原型",
+      "其他 UI 域"
+    ]
+  },
+  "entry_routes": [
+    {
+      "intent": "style",
+      "label": "改样式",
+      "primary_file": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_style_profile.gd",
+      "secondary_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ],
+      "do_not_start_with": [
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    },
+    {
+      "intent": "copy",
+      "label": "改文案",
+      "primary_file": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd",
+      "secondary_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ],
+      "do_not_start_with": [
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ]
+    },
+    {
+      "intent": "layout",
+      "label": "改布局",
+      "primary_file": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_layout_profile.gd",
+      "secondary_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn"
+      ],
+      "do_not_start_with": [
+        "在 native_slg_shell.tscn 里直接写死长期 offsets 或 separations"
+      ]
+    },
+    {
+      "intent": "token",
+      "label": "改 token",
+      "primary_file": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd",
+      "secondary_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ],
+      "do_not_start_with": [
+        "scene 文案",
+        "native_slg_shell.tscn"
+      ]
+    },
+    {
+      "intent": "icon",
+      "label": "改图标",
+      "primary_file": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_icon_profile.gd",
+      "secondary_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_chrome_profile_catalog.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd"
+      ],
+      "do_not_start_with": [
+        "在 native_slg_shell.gd 里直接 preload 新图标"
+      ]
+    },
+    {
+      "intent": "context",
+      "label": "改 RightContext",
+      "primary_file": "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_shell_copy_profile.gd",
+      "secondary_files": [
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/presenters/native_shell_presenter.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/app/main.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scripts/ui/native_slg_shell.gd",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_slg_shell.tscn",
+        "C:/Users/26739/Desktop/8989/godot-client/scenes/ui/native_shell_chrome_profile_fallback.tres"
+      ],
+      "do_not_start_with": [
+        "只改 ContextTitle/ContextBody 两个死节点",
+        "在 native_slg_shell.tscn 里直接写死右侧内容"
+      ]
+    }
+  ],
+  "validation": {
+    "formal_commands": [
+      "npm run godot:headless:smoke -- --scene res://scenes/ui/native_slg_shell.tscn",
+      "npm run godot:mainline:runtime -- --quit-after 1",
+      "npm run gate:godot:week1",
+      "npm run gate:godot:week1:compat:debug-only"
+    ],
+    "notes": [
+      "week1 和 compat 必须串行执行",
+      "py 可能不在 PATH，优先用 bundled Python",
+      "rg 可能偶发 Access is denied"
+    ]
+  }
+}

@@ -12,11 +12,11 @@
     ]
   },
   "storyNavigation": {
-    "targetStoryId": "province_layer",
-    "buttonLabel": "进入州层",
-    "buttonHint": "从 map_surface 进入 province_layer 总览。",
-    "reason": "map_surface_to_province",
-    "title": "州层入口"
+    "targetStoryId": "",
+    "buttonLabel": "宏观旧线已退役",
+    "buttonHint": "province / warzone / nation preview 旧线已退役；当前主线从 native shell 进入。",
+    "reason": "macro_preview_retired",
+    "title": "旧线已退役"
   },
   "captureTargets": [
     "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceTopBar",

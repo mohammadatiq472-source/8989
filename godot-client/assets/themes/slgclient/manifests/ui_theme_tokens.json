@@ -1,74 +1,16 @@
 {
   "schemaVersion": 1,
   "theme": "slgclient",
-  "importedAt": "2026-04-12T00:00:00+08:00",
-  "tokens": {
-    "panel": {
-      "hud_top_left": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/toast_bg.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/dialog_bg.png",
-        "margin": 14
-      },
-      "hud_bottom_bar": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/bg_window_3.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/dialog_bg.png",
-        "margin": 12
-      },
-      "observability_panel": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/dialog_bg.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/toast_bg.png",
-        "margin": 20
-      }
-    },
-    "button": {
-      "refresh": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/btn_yellow_1.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/btn_set.png",
-        "margin": 8
-      },
-      "advance_tick": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/btn_red_1.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/btn_yellow_1.png",
-        "margin": 8
-      },
-      "export": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/btn_set.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/btn_yellow_1.png",
-        "margin": 8
-      }
-    },
-    "frame": {
-      "observability_section": {
-        "texturePath": "res://assets/themes/slgclient/current/ui/hud_v1/bg_window_3.png",
-        "fallbackTexturePath": "res://assets/themes/slgclient/current/ui/hud_v1/dialog_bg.png",
-        "margin": 12
-      }
-    },
-    "icon": {
-      "ws_state_connected": {
-        "color": {
-          "r": 0.24,
-          "g": 0.75,
-          "b": 0.32,
-          "a": 1.0
-        }
-      },
-      "ws_state_connecting": {
-        "color": {
-          "r": 0.95,
-          "g": 0.72,
-          "b": 0.20,
-          "a": 1.0
-        }
-      },
-      "ws_state_disconnected": {
-        "color": {
-          "r": 0.90,
-          "g": 0.28,
-          "b": 0.24,
-          "a": 1.0
-        }
-      }
-    }
-  }
+  "retired": true,
+  "retiredAt": "2026-04-28T10:15:21.845963+00:00",
+  "reason": "hud_v1 old-derived textures were removed from the asset pool; godot-client/scripts/ui/ui_theme_tokens.gd still has built-in stale references for window 1 to replace.",
+  "tokens": {},
+  "removedTexturePaths": [
+    "res://assets/themes/slgclient/current/ui/hud_v1/bg_window_3.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/dialog_bg.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/toast_bg.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/btn_red_1.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/btn_yellow_1.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/btn_set.png"
+  ]
 }

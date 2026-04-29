@@ -311,7 +311,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       type: 'command',
       templateId: 'command_ally_attribute_buff_v1',
       targetSelector: 'ally_team',
-      attributeModifiers: { command: 0.12, intelligence: 0.1 },
+      attributeModifiers: { command: 0.12, intelligence: 0.12 },
       damageReduction: 0.14,
       controlCleanseCharges: 1,
     }),
@@ -361,7 +361,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_team',
       activationRate: 70,
       damageKind: 'physical',
-      damageRate: 0.52,
+      damageRate: 0.5,
     }),
     defineFormula({
       id: 'innate_100717',

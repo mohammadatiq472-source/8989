@@ -1,0 +1,87 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/building_tree_view.gd" id="1_building_tree"]
+
+[node name="BuildingTreeView" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 360)
+script = ExtResource("1_building_tree")
+
+[node name="BodyMargin" type="MarginContainer" parent="."]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="BodyVBox" type="VBoxContainer" parent="BodyMargin"]
+theme_override_constants/separation = 10
+
+[node name="HeaderRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="StateBadge" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="EmptyHintLabel" type="Label" parent="BodyMargin/BodyVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="ContentSplit" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="ListScroll" type="ScrollContainer" parent="BodyMargin/BodyVBox/ContentSplit"]
+custom_minimum_size = Vector2(320, 0)
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ListVBox" type="VBoxContainer" parent="BodyMargin/BodyVBox/ContentSplit/ListScroll"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="DetailPanel" type="PanelContainer" parent="BodyMargin/BodyVBox/ContentSplit"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="DetailMargin" type="MarginContainer" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="DetailVBox" type="VBoxContainer" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel/DetailMargin"]
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="DetailName" type="Label" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel/DetailMargin/DetailVBox"]
+theme_override_font_sizes/font_size = 20
+text = ""
+
+[node name="DetailMeta" type="Label" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel/DetailMargin/DetailVBox"]
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="DetailBody" type="Label" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel/DetailMargin/DetailVBox"]
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="DetailCost" type="Label" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel/DetailMargin/DetailVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="DetailEffect" type="Label" parent="BodyMargin/BodyVBox/ContentSplit/DetailPanel/DetailMargin/DetailVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3

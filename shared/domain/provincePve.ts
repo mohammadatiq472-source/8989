@@ -9,6 +9,7 @@ import type { FactionId, PveNode, ReplayHighlight, Tile, WorldState } from '../c
 
 /** 每个省最多生成的 PVE 节点数 */
 const MAX_NODES_PER_PROVINCE = 4
+const MAX_PENDING_REWARDS_PER_FACTION = 64
 
 /**
  * 根据已生成地块列表初始化 PVE 节点。
@@ -74,6 +75,7 @@ export function generateInitialPveNodes(tiles: Tile[]): PveNode[] {
  * 每 tick 扫描所有未清剿的 PVE 节点：
  * 若有我方单位驻扎在该地块，自动触发开荒战斗。
  * 攻击方战力 >= 守卫战力 * 0.8 才能清剿成功。
+ * 清剿成功后只生成“待领取奖励”，实际资源发放需走正式 claimReward authority。
  */
 export function processProvincePve(
   world: WorldState,
@@ -101,22 +103,31 @@ export function processProvincePve(
 
       const faction = world.factions[factionId]
       if (faction) {
-        faction.food += node.reward.food
-        faction.actionPoints = Math.min(8, faction.actionPoints + node.reward.ap)
+        const reward = {
+          id: `reward_${node.id}_${factionId}`,
+          source: 'province_pve' as const,
+          label: `开荒奖励：${node.name}`,
+          summary: `${attacker.name} 清剿 ${node.name} 后等待领取的奖励。`,
+          reward: { ...node.reward },
+          createdTick: world.tick,
+          nodeId: node.id,
+          tileId: node.tileId,
+        }
+        faction.claimableRewards = [reward, ...(faction.claimableRewards ?? [])].slice(0, MAX_PENDING_REWARDS_PER_FACTION)
       }
 
       world.reports.unshift({
         id: `pve_clear_${world.tick}_${node.id}`,
         tick: world.tick,
         title: `开荒完成：${node.name}`,
-        detail: `${attacker.name} 清剿了 ${node.name}（${factionId}），斩获 ${node.reward.food} 粮草、${node.reward.ap} 行动点。`,
+        detail: `${attacker.name} 清剿了 ${node.name}（${factionId}），产出 ${node.reward.food} 粮草、${node.reward.ap} 行动点待领取。`,
       })
       highlights.push({
         id: `pve_clear_${world.tick}_${node.id}`,
         kind: 'tile_control',
         severity: 'low',
         title: `开荒完成：${node.name}`,
-        detail: `${attacker.name} 清剿了 ${node.name}，获得 ${node.reward.food} 粮草和 ${node.reward.ap} 行动点。`,
+        detail: `${attacker.name} 清剿了 ${node.name}，已挂起 ${node.reward.food} 粮草和 ${node.reward.ap} 行动点奖励。`,
         unitId: attacker.id,
         tileId: node.tileId,
         toTileId: node.tileId,

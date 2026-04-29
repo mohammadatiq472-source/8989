@@ -47,6 +47,7 @@ export function buildLayoutChunkByTileIds(
     connections,
     regions,
     overlays: buildOverlayChunkByTileIds(mapLayout, tileIds),
+    resourceGeneration: mapLayout.resourceGeneration ? structuredClone(mapLayout.resourceGeneration) : undefined,
   }
 }
 

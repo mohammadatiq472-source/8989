@@ -66,6 +66,11 @@ var _snapshot: Dictionary = {
 	"backendWsSubscribedConnections": 0,
 	"backendWsFactionDistribution": "none",
 	"backendWsRecentError": "none",
+	"backendWsMaxConnections": 0,
+	"backendWsMaxSubscriptionsPerFaction": 0,
+	"backendWsRejectedConnections": 0,
+	"backendWsRejectedSubscriptions": 0,
+	"backendWsTruncatedTickDeltaMessages": 0,
 }
 
 func configure(api_client: Node, base_url: String) -> void:
@@ -375,6 +380,11 @@ func _apply_backend_ws_stats(ws_stats: Dictionary) -> void:
 	var faction_distribution: Dictionary = ws_stats.get("factionDistribution", {}) as Dictionary
 	_snapshot["backendWsFactionDistribution"] = _format_faction_distribution(faction_distribution)
 	_snapshot["backendWsRecentError"] = _summarize_recent_ws_error(ws_stats.get("recentErrors", []))
+	_snapshot["backendWsMaxConnections"] = int(ws_stats.get("maxConnections", 0))
+	_snapshot["backendWsMaxSubscriptionsPerFaction"] = int(ws_stats.get("maxSubscriptionsPerFaction", 0))
+	_snapshot["backendWsRejectedConnections"] = int(ws_stats.get("rejectedConnections", 0))
+	_snapshot["backendWsRejectedSubscriptions"] = int(ws_stats.get("rejectedSubscriptions", 0))
+	_snapshot["backendWsTruncatedTickDeltaMessages"] = int(ws_stats.get("truncatedTickDeltaMessages", 0))
 
 func _format_faction_distribution(faction_distribution: Dictionary) -> String:
 	if faction_distribution.is_empty():

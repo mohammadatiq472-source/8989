@@ -53,6 +53,7 @@ let encryptionKeyCache: Buffer | null | undefined
 let warnedMissingEncryptionKeyPersist = false
 let warnedMissingEncryptionKeyDecrypt = false
 let warnedDecryptFailure = false
+let warnedPlaintextApiKeyDropped = false
 let persistSuccessCount = 0
 let persistFailureCount = 0
 let lastPersistAt: number | null = null
@@ -156,8 +157,17 @@ function encryptApiKey(apiKey: string): string | undefined {
 
 function decryptApiKey(raw: string): string | undefined {
   if (!raw.startsWith(APIKEY_ENCRYPTED_PREFIX)) {
-    // legacy plaintext payload (before encryption rollout)
-    return raw
+    if (allowPlaintextApiKeyPersist()) {
+      return raw
+    }
+
+    if (!warnedPlaintextApiKeyDropped) {
+      warnedPlaintextApiKeyDropped = true
+      console.warn(
+        `[FactionConfigStore] plaintext BYOK apiKey found in persisted store; set ${APIKEY_ALLOW_PLAINTEXT_ENV}=1 only for one-time legacy migration`,
+      )
+    }
+    return undefined
   }
 
   const key = getApiKeyEncryptionKey()

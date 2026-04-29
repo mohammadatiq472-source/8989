@@ -1,0 +1,162 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/troop_panel.gd" id="1_troop_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/building_tree_view.tscn" id="2_building_tree"]
+[ext_resource type="PackedScene" path="res://scenes/ui/build_upgrade_sheet.tscn" id="3_upgrade_sheet"]
+
+[node name="TroopPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 760)
+script = ExtResource("1_troop_panel")
+
+[node name="BodyMargin" type="MarginContainer" parent="."]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 14
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 14
+
+[node name="BodyVBox" type="VBoxContainer" parent="BodyMargin"]
+theme_override_constants/separation = 12
+
+[node name="HeaderRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 10
+
+[node name="TitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 22
+text = ""
+
+[node name="SubtitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="CloseButton" type="Button" parent="BodyMargin/BodyVBox/HeaderRow"]
+custom_minimum_size = Vector2(112, 52)
+theme_override_font_sizes/font_size = 14
+text = "关闭"
+
+[node name="OverviewSection" type="PanelContainer" parent="BodyMargin/BodyVBox"]
+size_flags_horizontal = 3
+
+[node name="OverviewMargin" type="MarginContainer" parent="BodyMargin/BodyVBox/OverviewSection"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="OverviewVBox" type="VBoxContainer" parent="BodyMargin/BodyVBox/OverviewSection/OverviewMargin"]
+theme_override_constants/separation = 10
+
+[node name="OverviewTitleRow" type="HBoxContainer" parent="BodyMargin/BodyVBox/OverviewSection/OverviewMargin/OverviewVBox"]
+theme_override_constants/separation = 10
+
+[node name="OverviewTitleLabel" type="Label" parent="BodyMargin/BodyVBox/OverviewSection/OverviewMargin/OverviewVBox/OverviewTitleRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="OverviewHintLabel" type="Label" parent="BodyMargin/BodyVBox/OverviewSection/OverviewMargin/OverviewVBox/OverviewTitleRow"]
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="TroopGrid" type="GridContainer" parent="BodyMargin/BodyVBox/OverviewSection/OverviewMargin/OverviewVBox"]
+columns = 5
+theme_override_constants/h_separation = 8
+theme_override_constants/v_separation = 8
+
+[node name="TroopPlaceholderLabel" type="Label" parent="BodyMargin/BodyVBox/OverviewSection/OverviewMargin/OverviewVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="FormationSection" type="PanelContainer" parent="BodyMargin/BodyVBox"]
+size_flags_horizontal = 3
+
+[node name="FormationMargin" type="MarginContainer" parent="BodyMargin/BodyVBox/FormationSection"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="FormationVBox" type="VBoxContainer" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin"]
+theme_override_constants/separation = 10
+
+[node name="FormationTitleLabel" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox"]
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="FormationHintLabel" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="FormationGrid" type="GridContainer" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox"]
+columns = 2
+theme_override_constants/h_separation = 12
+theme_override_constants/v_separation = 8
+
+[node name="CampLabel" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox/FormationGrid"]
+theme_override_font_sizes/font_size = 14
+text = ""
+
+[node name="CampValue" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox/FormationGrid"]
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="MidLabel" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox/FormationGrid"]
+theme_override_font_sizes/font_size = 14
+text = ""
+
+[node name="MidValue" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox/FormationGrid"]
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="FrontLabel" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox/FormationGrid"]
+theme_override_font_sizes/font_size = 14
+text = ""
+
+[node name="FrontValue" type="Label" parent="BodyMargin/BodyVBox/FormationSection/FormationMargin/FormationVBox/FormationGrid"]
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="FacilitySection" type="PanelContainer" parent="BodyMargin/BodyVBox"]
+size_flags_horizontal = 3
+
+[node name="FacilityMargin" type="MarginContainer" parent="BodyMargin/BodyVBox/FacilitySection"]
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="FacilityVBox" type="VBoxContainer" parent="BodyMargin/BodyVBox/FacilitySection/FacilityMargin"]
+theme_override_constants/separation = 10
+
+[node name="FacilityTitleRow" type="HBoxContainer" parent="BodyMargin/BodyVBox/FacilitySection/FacilityMargin/FacilityVBox"]
+theme_override_constants/separation = 10
+
+[node name="FacilityTitleLabel" type="Label" parent="BodyMargin/BodyVBox/FacilitySection/FacilityMargin/FacilityVBox/FacilityTitleRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="FacilityHintLabel" type="Label" parent="BodyMargin/BodyVBox/FacilitySection/FacilityMargin/FacilityVBox/FacilityTitleRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 12
+text = ""
+autowrap_mode = 3
+
+[node name="FacilityRow" type="HBoxContainer" parent="BodyMargin/BodyVBox/FacilitySection/FacilityMargin/FacilityVBox"]
+theme_override_constants/separation = 8
+
+[node name="FacilityPlaceholderLabel" type="Label" parent="BodyMargin/BodyVBox/FacilitySection/FacilityMargin/FacilityVBox"]
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
+
+[node name="BuildingTreeView" parent="BodyMargin/BodyVBox" instance=ExtResource("2_building_tree")]
+
+[node name="BuildUpgradeSheet" parent="BodyMargin/BodyVBox" instance=ExtResource("3_upgrade_sheet")]

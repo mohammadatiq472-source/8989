@@ -1,81 +1,129 @@
-[gd_scene load_steps=5 format=3]
+[gd_scene load_steps=9 format=3]
 
 [ext_resource type="Script" path="res://scripts/app/main.gd" id="1_main"]
 [ext_resource type="Script" path="res://scripts/map/map_grid.gd" id="2_map_grid"]
-[ext_resource type="PackedScene" path="res://scenes/ui/observability_panel.tscn" id="3_observability_panel"]
-[ext_resource type="Script" path="res://scripts/map/unit_view_layer.gd" id="4_unit_view_layer"]
+[ext_resource type="Script" path="res://scripts/map/unit_view_layer.gd" id="3_unit_view_layer"]
+[ext_resource type="PackedScene" path="res://scenes/ui/native_slg_shell.tscn" id="4_native_shell"]
+[ext_resource type="PackedScene" path="res://scenes/ui/observability_panel.tscn" id="5_observability_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/full_screen_panel_host.tscn" id="6_full_screen_panel_host"]
+[ext_resource type="PackedScene" path="res://scenes/ui/main_chat_overlay.tscn" id="7_main_chat_overlay"]
+[ext_resource type="Script" path="res://scripts/ui/main_city_hub_overlay.gd" id="8_main_city_hub"]
 
 [node name="Main" type="Node"]
 script = ExtResource("1_main")
+runtime_label_path = NodePath("HoverLayer/RuntimeLabel")
+refresh_button_path = NodePath("HoverLayer/RefreshWorldButton")
+advance_tick_button_path = NodePath("HoverLayer/AdvanceTickButton")
 
 [node name="MapGrid" type="Node2D" parent="."]
+visible = false
 script = ExtResource("2_map_grid")
+hover_label_path = NodePath("../HoverLayer/HoverInfo")
+perf_label_path = NodePath("../HoverLayer/PerfInfo")
+export_button_path = NodePath("../HoverLayer/ExportPerfButton")
+export_status_label_path = NodePath("../HoverLayer/ExportStatus")
 
 [node name="UnitViewLayer" type="Node2D" parent="."]
-script = ExtResource("4_unit_view_layer")
+visible = false
+script = ExtResource("3_unit_view_layer")
 
-[node name="ObservabilityPanel" parent="." instance=ExtResource("3_observability_panel")]
+[node name="HoverLayer" type="Control" parent="."]
+visible = false
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
 
-[node name="HoverLayer" type="CanvasLayer" parent="."]
-
-[node name="HudBackdrop" type="PanelContainer" parent="HoverLayer"]
-offset_left = 8.0
-offset_top = 8.0
-offset_right = 1186.0
-offset_bottom = 218.0
+[node name="RuntimeLabel" type="Label" parent="HoverLayer"]
+visible = false
+layout_mode = 1
+offset_left = 16.0
+offset_top = 12.0
+offset_right = 560.0
+offset_bottom = 40.0
+theme_override_font_sizes/font_size = 13
+text = ""
 
 [node name="HoverInfo" type="Label" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 10.0
-offset_right = 780.0
-offset_bottom = 74.0
-theme_override_font_sizes/font_size = 14
-text = "SLG Theme | waiting map data..."
+visible = false
+layout_mode = 1
+offset_left = 16.0
+offset_top = 44.0
+offset_right = 360.0
+offset_bottom = 160.0
+theme_override_font_sizes/font_size = 13
+text = ""
+autowrap_mode = 3
 
 [node name="PerfInfo" type="Label" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 78.0
-offset_right = 1080.0
-offset_bottom = 106.0
-theme_override_font_sizes/font_size = 14
-text = "Perf(5s) | waiting frame samples..."
-
-[node name="ExportPerfButton" type="Button" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 112.0
-offset_right = 180.0
-offset_bottom = 144.0
-theme_override_font_sizes/font_size = 14
-text = "Export Baseline (F8)"
-
-[node name="ExportStatus" type="Label" parent="HoverLayer"]
-offset_left = 192.0
-offset_top = 116.0
-offset_right = 1180.0
-offset_bottom = 146.0
-theme_override_font_sizes/font_size = 14
-text = "Export status: waiting..."
+visible = false
+layout_mode = 1
+offset_left = 16.0
+offset_top = 164.0
+offset_right = 360.0
+offset_bottom = 232.0
+theme_override_font_sizes/font_size = 12
+text = ""
+autowrap_mode = 3
 
 [node name="RefreshWorldButton" type="Button" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 150.0
-offset_right = 180.0
-offset_bottom = 182.0
-theme_override_font_sizes/font_size = 14
-text = "Refresh Snapshot"
+visible = false
+layout_mode = 1
+offset_left = 16.0
+offset_top = 240.0
+offset_right = 136.0
+offset_bottom = 272.0
+text = ""
 
 [node name="AdvanceTickButton" type="Button" parent="HoverLayer"]
-offset_left = 192.0
-offset_top = 150.0
-offset_right = 360.0
-offset_bottom = 182.0
-theme_override_font_sizes/font_size = 14
-text = "Advance Tick"
+visible = false
+layout_mode = 1
+offset_left = 144.0
+offset_top = 240.0
+offset_right = 264.0
+offset_bottom = 272.0
+text = ""
 
-[node name="RuntimeInfo" type="Label" parent="HoverLayer"]
-offset_left = 12.0
-offset_top = 186.0
-offset_right = 1500.0
-offset_bottom = 214.0
-theme_override_font_sizes/font_size = 14
-text = "Runtime | status=waiting..."
+[node name="ExportPerfButton" type="Button" parent="HoverLayer"]
+visible = false
+layout_mode = 1
+offset_left = 272.0
+offset_top = 240.0
+offset_right = 392.0
+offset_bottom = 272.0
+text = ""
+
+[node name="ExportStatus" type="Label" parent="HoverLayer"]
+visible = false
+layout_mode = 1
+offset_left = 400.0
+offset_top = 240.0
+offset_right = 656.0
+offset_bottom = 272.0
+theme_override_font_sizes/font_size = 12
+text = ""
+autowrap_mode = 3
+
+[node name="UiLayer" type="CanvasLayer" parent="."]
+
+[node name="NativeShell" parent="UiLayer" instance=ExtResource("4_native_shell")]
+
+[node name="MainCityHubOverlay" type="Control" parent="UiLayer"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("8_main_city_hub")
+
+[node name="MainChatOverlay" parent="UiLayer" instance=ExtResource("7_main_chat_overlay")]
+
+[node name="FullScreenPanelHost" parent="UiLayer" instance=ExtResource("6_full_screen_panel_host")]
+visible = false
+
+[node name="ObservabilityPanel" parent="." instance=ExtResource("5_observability_panel")]

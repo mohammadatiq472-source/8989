@@ -36,18 +36,45 @@ export type BusMessage = {
 
 export type DomainAgendaCandidate = {
   intent: string
+  actionId: string
   priority: CommPriority
   summary: string
   supportingAiPlayerIds: string[]
   evidenceRefs: string[]
+  targetTileId?: string
+  targetUnitIds?: string[]
+}
+
+export type DomainAgendaOption = {
+  actionId: string
+  intent: string
+  label: string
+  summary: string
+  priority: CommPriority
+  targetTileId?: string
+  targetUnitIds?: string[]
+  supportingAiPlayerIds: string[]
+  evidenceRefs: string[]
+  supportCount: number
+  recommendedFollowups?: string[]
 }
 
 export type DomainAgenda = {
   id: string
   tick: number
+  generatedWorldVersion?: number
   domainId: string
   factionId: string
   candidates: DomainAgendaCandidate[]
+  options: DomainAgendaOption[]
+  // Legacy mirror arrays for older consumers. New code should consume options[] directly.
+  optionActionIds?: string[]
+  optionLabels?: string[]
+  optionTargetTileIds?: string[]
+  optionSupportCounts?: number[]
+  targetTileId?: string
+  targetUnitIds?: string[]
+  recommendedFollowups?: string[]
   summary: string
   generatedAt: number
 }

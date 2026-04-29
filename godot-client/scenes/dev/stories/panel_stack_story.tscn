@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/dev/stories/panel_stack_story.gd" id="1_story"]
+
+[node name="PanelStackStory" type="Control"]
+script = ExtResource("1_story")
+payload_path = "res://data/ui_preview/stories/panel_stack_story.json"

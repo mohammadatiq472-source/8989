@@ -1,0 +1,389 @@
+[gd_resource type="Resource" script_class="NativeShellCityGridProfile" load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/native_shell_city_grid_profile.gd" id="1_city_grid_profile"]
+
+[resource]
+script = ExtResource("1_city_grid_profile")
+schema_version = 1
+layout_id = "main_city_5x5_visual_3x3_active"
+readable_name = "主城 5x5 视觉壳 / 3x3 功能核心"
+visual_grid = {
+"cell_size": Vector2(42, 24),
+"columns": 5,
+"meaning": "visual_shell",
+"preview_size": Vector2(300, 180),
+"rows": 5
+}
+city_grid_projection = {
+"anchor_rule": "center",
+"elevation_scale": 1.0,
+"origin": Vector2(150, 36),
+"tile_height": 30.0,
+"tile_width": 60.0,
+"type": "isometric_2_to_1",
+"z_sort_rule": {
+"base_z_index": 10,
+"flat_layers": Array[String](["foundation", "continuous_city_wall_ring"]),
+"layer_offsets": {
+"active_building": 20,
+"breathing": 0,
+"city_gate": 18,
+"continuous_city_wall_ring": -8,
+"corner_tower": 18,
+"foundation": -10,
+"reserved_plot": 10
+},
+"sort_step": 10,
+"type": "grid_sum_then_x",
+"x_step": 1
+}
+}
+active_grid = {
+"columns": 3,
+"meaning": "active_core",
+"origin_slot": Vector2i(1, 1),
+"rows": 3
+}
+asset_contract = {
+"asset_anchor": "bottom-center footprint center",
+"asset_canvas_px": Vector2i(384, 384),
+"tile_footprint_px": Vector2i(240, 240)
+}
+debug_labels_enabled_by_default = false
+asset_slots = {
+"Academy_Base_v1": {
+"asset_id": "Academy_Base_v1",
+"debug_label": "书院",
+"placeholder_token": "书",
+"slot_kind": "later_expansion",
+"texture_path": ""
+},
+"Armory_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Armory_Base_v1",
+"debug_label": "武库",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "武",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/armory_base_v1.png"
+},
+"Barracks_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Barracks_Base_v1",
+"debug_label": "兵营",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "兵",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/barracks_base_v1.png"
+},
+"CityGate_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "CityGate_Base_v1",
+"debug_label": "城门",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(60, 60),
+"placeholder_token": "门",
+"slot_kind": "city_gate",
+"texture_path": "res://assets/themes/slgclient/current/world/city_gate_base_v1.png"
+},
+"MainCityFoundation_Base_v1": {
+"anchor": "center",
+"asset_id": "MainCityFoundation_Base_v1",
+"debug_label": "主城底盘",
+"display_offset": Vector2(0, 8),
+"display_size": Vector2(306, 176),
+"placeholder_token": "基",
+"slot_kind": "foundation",
+"stretch_mode": 0,
+"texture_path": "res://assets/themes/slgclient/current/world/main_city_foundation_base_v1.png"
+},
+"CityHall_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "CityHall_Base_v1",
+"debug_label": "城主府",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(72, 72),
+"placeholder_token": "府",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/city_hall_base_v1.png"
+},
+"CityWallRing_Profile_v1": {
+"anchor": "center",
+"asset_id": "CityWallRing_Profile_v1",
+"debug_label": "连续城墙",
+"display_offset": Vector2(0, 9),
+"display_size": Vector2(292, 160),
+"stretch_mode": 0,
+"placeholder_token": "墙",
+"slot_kind": "continuous_city_wall_ring",
+"texture_path": "res://assets/themes/slgclient/current/world/city_wall_ring_profile_v1.png"
+},
+"ConstructionPlot_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "ConstructionPlot_Base_v1",
+"debug_label": "预留地",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(54, 54),
+"placeholder_token": "预",
+"slot_kind": "reserved_plot",
+"texture_path": "res://assets/themes/slgclient/current/world/construction_plot_base_v1.png"
+},
+"CornerWatchtower_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "CornerWatchtower_Base_v1",
+"debug_label": "望楼",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(56, 56),
+"placeholder_token": "角",
+"slot_kind": "corner_tower",
+"texture_path": "res://assets/themes/slgclient/current/world/corner_watchtower_base_v1.png"
+},
+"DrillGround_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "DrillGround_Base_v1",
+"debug_label": "校场",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "校",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/drill_ground_base_v1.png"
+},
+"Granary_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Granary_Base_v1",
+"debug_label": "粮仓",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "粮",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/granary_base_v1.png"
+},
+"Infirmary_Base_v1": {
+"asset_id": "Infirmary_Base_v1",
+"debug_label": "医馆",
+"placeholder_token": "医",
+"slot_kind": "later_expansion",
+"texture_path": ""
+},
+"Market_Base_v1": {
+"asset_id": "Market_Base_v1",
+"debug_label": "市集",
+"placeholder_token": "市",
+"slot_kind": "later_expansion",
+"texture_path": ""
+},
+"RecruitHall_Base_v1": {
+"asset_id": "RecruitHall_Base_v1",
+"debug_label": "招募所",
+"placeholder_token": "募",
+"slot_kind": "later_expansion",
+"texture_path": ""
+},
+"Residence_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Residence_Base_v1",
+"debug_label": "民居",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "民",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/residence_base_v1.png"
+},
+"Stable_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Stable_Base_v1",
+"debug_label": "马厩",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "马",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/stable_base_v1.png"
+},
+"Warehouse_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Warehouse_Base_v1",
+"debug_label": "仓库",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "仓",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/warehouse_base_v1.png"
+},
+"Workshop_Base_v1": {
+"anchor": "bottom_center",
+"asset_id": "Workshop_Base_v1",
+"debug_label": "工坊",
+"display_offset": Vector2(0, 1),
+"display_size": Vector2(66, 66),
+"placeholder_token": "工",
+"slot_kind": "active_building",
+"texture_path": "res://assets/themes/slgclient/current/world/workshop_base_v1.png"
+}
+}
+active_core_slots = Array[Dictionary]([{
+"asset_id": "Armory_Base_v1",
+"building_id": "armory",
+"debug_label": "武库",
+"grid": Vector2i(1, 1),
+"slot_id": "core_nw",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "Barracks_Base_v1",
+"building_id": "barracks",
+"debug_label": "兵营",
+"grid": Vector2i(2, 1),
+"slot_id": "core_n",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "Granary_Base_v1",
+"building_id": "granary",
+"debug_label": "粮仓",
+"grid": Vector2i(3, 1),
+"slot_id": "core_ne",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "Stable_Base_v1",
+"building_id": "stable",
+"debug_label": "马厩",
+"grid": Vector2i(1, 2),
+"slot_id": "core_w",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "CityHall_Base_v1",
+"building_id": "city_hall",
+"debug_label": "城主府",
+"grid": Vector2i(2, 2),
+"slot_id": "core_center",
+"slot_kind": "active_building",
+"state": "primary"
+}, {
+"asset_id": "Warehouse_Base_v1",
+"building_id": "warehouse",
+"debug_label": "仓库",
+"grid": Vector2i(3, 2),
+"slot_id": "core_e",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "Workshop_Base_v1",
+"building_id": "workshop",
+"debug_label": "工坊",
+"grid": Vector2i(1, 3),
+"slot_id": "core_sw",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "DrillGround_Base_v1",
+"building_id": "drill_ground",
+"debug_label": "校场",
+"grid": Vector2i(2, 3),
+"slot_id": "core_s",
+"slot_kind": "active_building",
+"state": "available"
+}, {
+"asset_id": "Residence_Base_v1",
+"building_id": "residence",
+"debug_label": "民居",
+"grid": Vector2i(3, 3),
+"slot_id": "core_se",
+"slot_kind": "active_building",
+"state": "available"
+}])
+visual_shell = {
+"breathing_slots": Array[Vector2i]([Vector2i(1, 0), Vector2i(3, 0), Vector2i(0, 1), Vector2i(4, 1), Vector2i(0, 3), Vector2i(4, 3), Vector2i(1, 4), Vector2i(3, 4)]),
+"corner_slots": Array[Dictionary]([{
+"asset_id": "CornerWatchtower_Base_v1",
+"debug_label": "西北望楼",
+"grid": Vector2i(0, 0),
+"slot_id": "corner_nw",
+"slot_kind": "corner_tower",
+"state": "decorative"
+}, {
+"asset_id": "CornerWatchtower_Base_v1",
+"debug_label": "东北望楼",
+"grid": Vector2i(4, 0),
+"slot_id": "corner_ne",
+"slot_kind": "corner_tower",
+"state": "decorative"
+}, {
+"asset_id": "CornerWatchtower_Base_v1",
+"debug_label": "西南望楼",
+"grid": Vector2i(0, 4),
+"slot_id": "corner_sw",
+"slot_kind": "corner_tower",
+"state": "decorative"
+}, {
+"asset_id": "CornerWatchtower_Base_v1",
+"debug_label": "东南望楼",
+"grid": Vector2i(4, 4),
+"slot_id": "corner_se",
+"slot_kind": "corner_tower",
+"state": "decorative"
+}]),
+"foundation": {
+"asset_id": "MainCityFoundation_Base_v1",
+"debug_label": "主城底盘",
+"grid": Vector2i(2, 2),
+"slot_kind": "foundation"
+},
+"gate_slots": Array[Dictionary]([{
+"asset_id": "CityGate_Base_v1",
+"debug_label": "北门",
+"grid": Vector2i(2, 0),
+"slot_id": "gate_n",
+"slot_kind": "city_gate",
+"state": "decorative"
+}, {
+"asset_id": "CityGate_Base_v1",
+"debug_label": "南门",
+"grid": Vector2i(2, 4),
+"slot_id": "gate_s",
+"slot_kind": "city_gate",
+"state": "decorative"
+}]),
+"perimeter": {
+"asset_id": "CityWallRing_Profile_v1",
+"debug_label": "连续城墙",
+"grid": Vector2i(2, 2),
+"rule": "continuous_perimeter_layer_not_separate_wall_cards",
+"slot_kind": "continuous_city_wall_ring"
+},
+"reserved_slots": Array[Dictionary]([{
+"asset_id": "ConstructionPlot_Base_v1",
+"debug_label": "西侧预留地",
+"grid": Vector2i(0, 2),
+"slot_id": "reserve_w",
+"slot_kind": "reserved_plot",
+"state": "locked_or_future"
+}, {
+"asset_id": "ConstructionPlot_Base_v1",
+"debug_label": "东侧预留地",
+"grid": Vector2i(4, 2),
+"slot_id": "reserve_e",
+"slot_kind": "reserved_plot",
+"state": "locked_or_future"
+}])
+}
+excluded_from_first_phase_core = Array[Dictionary]([{
+"asset_id": "Market_Base_v1",
+"building_id": "market",
+"reason": "geometry_needs_another_pass_before_stable_active_core"
+}, {
+"asset_id": "RecruitHall_Base_v1",
+"building_id": "recruit_hall",
+"reason": "later_expansion_content"
+}, {
+"asset_id": "Academy_Base_v1",
+"building_id": "academy",
+"reason": "later_research_or_policy_content"
+}, {
+"asset_id": "Infirmary_Base_v1",
+"building_id": "infirmary",
+"reason": "later_recovery_content"
+}])

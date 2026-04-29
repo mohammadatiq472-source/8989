@@ -1,0 +1,72 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/slg_panel_shell.gd" id="1_shell"]
+
+[node name="SLGPanelShell" type="PanelContainer"]
+custom_minimum_size = Vector2(540, 0)
+script = ExtResource("1_shell")
+
+[node name="BodyMargin" type="MarginContainer" parent="."]
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="BodyVBox" type="VBoxContainer" parent="BodyMargin"]
+theme_override_constants/separation = 10
+
+[node name="AccentBar" type="ColorRect" parent="BodyMargin/BodyVBox"]
+custom_minimum_size = Vector2(0, 5)
+color = Color(0.25, 0.58, 0.94, 1)
+
+[node name="HeaderRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 10
+
+[node name="DepthBadge" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+theme_override_font_sizes/font_size = 13
+text = ""
+
+[node name="TitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="HeaderSpacer" type="Control" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="BodyMargin/BodyVBox/HeaderRow"]
+custom_minimum_size = Vector2(120, 0)
+theme_override_font_sizes/font_size = 14
+text = ""
+
+[node name="BodyLabel" type="Label" parent="BodyMargin/BodyVBox"]
+custom_minimum_size = Vector2(0, 92)
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="StackHint" type="Label" parent="BodyMargin/BodyVBox"]
+theme_override_font_sizes/font_size = 12
+text = ""
+autowrap_mode = 3
+
+[node name="ActionRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 8
+
+[node name="PrimaryButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
+custom_minimum_size = Vector2(150, 0)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = ""
+
+[node name="SecondaryButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
+custom_minimum_size = Vector2(150, 0)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = ""
+
+[node name="BackButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
+custom_minimum_size = Vector2(150, 0)
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 14
+text = ""

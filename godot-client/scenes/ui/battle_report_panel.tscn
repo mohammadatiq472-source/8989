@@ -1,0 +1,134 @@
+[gd_scene load_steps=4 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/battle_report_panel.gd" id="1_battle_report_panel"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battle_report_list_page.tscn" id="2_battle_report_list_page"]
+[ext_resource type="PackedScene" path="res://scenes/ui/battle_report_detail_page.tscn" id="3_battle_report_detail_page"]
+
+[node name="BattleReportPanel" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_battle_report_panel")
+
+[node name="Backdrop" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+color = Color(0.05, 0.07, 0.10, 0.52)
+
+[node name="PanelFrame" type="PanelContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_left = 0.04
+anchor_top = 0.05
+anchor_right = 0.96
+anchor_bottom = 0.95
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="FrameMargin" type="MarginContainer" parent="PanelFrame"]
+layout_mode = 2
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 16
+
+[node name="FrameColumn" type="VBoxContainer" parent="PanelFrame/FrameMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="HeaderRow" type="HBoxContainer" parent="PanelFrame/FrameMargin/FrameColumn"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TitleColumn" type="VBoxContainer" parent="PanelFrame/FrameMargin/FrameColumn/HeaderRow"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="TitleLabel" type="Label" parent="PanelFrame/FrameMargin/FrameColumn/HeaderRow/TitleColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 28
+text = "个人战报"
+
+[node name="CountrySummaryLabel" type="Label" parent="PanelFrame/FrameMargin/FrameColumn/HeaderRow/TitleColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = "国家 / 势力"
+
+[node name="HeaderSpacer" type="Control" parent="PanelFrame/FrameMargin/FrameColumn/HeaderRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SearchButton" type="Button" parent="PanelFrame/FrameMargin/FrameColumn/HeaderRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(132, 0)
+text = "搜索"
+
+[node name="CloseButton" type="Button" parent="PanelFrame/FrameMargin/FrameColumn/HeaderRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(108, 0)
+text = "关闭"
+
+[node name="HeaderStateRow" type="HBoxContainer" parent="PanelFrame/FrameMargin/FrameColumn"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="ListModeRow" type="HBoxContainer" parent="PanelFrame/FrameMargin/FrameColumn/HeaderStateRow"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="PersonalTabButton" type="Button" parent="PanelFrame/FrameMargin/FrameColumn/HeaderStateRow/ListModeRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(110, 0)
+text = "个人"
+
+[node name="FavoriteTabButton" type="Button" parent="PanelFrame/FrameMargin/FrameColumn/HeaderStateRow/ListModeRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(110, 0)
+text = "收藏"
+
+[node name="DetailBackButton" type="Button" parent="PanelFrame/FrameMargin/FrameColumn/HeaderStateRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(136, 0)
+text = "返回战报列表"
+visible = false
+
+[node name="HeaderHintLabel" type="Label" parent="PanelFrame/FrameMargin/FrameColumn/HeaderStateRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 13
+text = "点击任意战报进入详情。"
+horizontal_alignment = 2
+autowrap_mode = 3
+
+[node name="PageRoot" type="Control" parent="PanelFrame/FrameMargin/FrameColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ListPage" parent="PanelFrame/FrameMargin/FrameColumn/PageRoot" instance=ExtResource("2_battle_report_list_page")]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="DetailPage" parent="PanelFrame/FrameMargin/FrameColumn/PageRoot" instance=ExtResource("3_battle_report_detail_page")]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2

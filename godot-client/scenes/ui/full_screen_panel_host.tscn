@@ -1,0 +1,68 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/full_screen_panel_host.gd" id="1_full_screen_host"]
+[ext_resource type="PackedScene" path="res://scenes/ui/panel_tab_strip.tscn" id="2_panel_tab_strip"]
+
+[node name="FullScreenPanelHost" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_full_screen_host")
+
+[node name="BodyMargin" type="MarginContainer" parent="."]
+theme_override_constants/margin_left = 18
+theme_override_constants/margin_top = 18
+theme_override_constants/margin_right = 18
+theme_override_constants/margin_bottom = 18
+
+[node name="BodyVBox" type="VBoxContainer" parent="BodyMargin"]
+theme_override_constants/separation = 12
+
+[node name="HeaderRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
+theme_override_constants/separation = 14
+
+[node name="BackButton" type="Button" parent="BodyMargin/BodyVBox/HeaderRow"]
+custom_minimum_size = Vector2(166, 70)
+text = ""
+
+[node name="TitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 24
+text = ""
+
+[node name="HeaderSpacer" type="Control" parent="BodyMargin/BodyVBox/HeaderRow"]
+size_flags_horizontal = 3
+
+[node name="CloseButton" type="Button" parent="BodyMargin/BodyVBox/HeaderRow"]
+custom_minimum_size = Vector2(126, 70)
+text = ""
+
+[node name="TabStrip" parent="BodyMargin/BodyVBox" instance=ExtResource("2_panel_tab_strip")]
+
+[node name="ContentFrame" type="PanelContainer" parent="BodyMargin/BodyVBox"]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+
+[node name="ContentMargin" type="MarginContainer" parent="BodyMargin/BodyVBox/ContentFrame"]
+theme_override_constants/margin_left = 16
+theme_override_constants/margin_top = 16
+theme_override_constants/margin_right = 16
+theme_override_constants/margin_bottom = 16
+
+[node name="ContentVBox" type="VBoxContainer" parent="BodyMargin/BodyVBox/ContentFrame/ContentMargin"]
+size_flags_vertical = 3
+size_flags_horizontal = 3
+theme_override_constants/separation = 12
+
+[node name="PlaceholderLabel" type="Label" parent="BodyMargin/BodyVBox/ContentFrame/ContentMargin/ContentVBox"]
+size_flags_vertical = 0
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = ""
+autowrap_mode = 3
+
+[node name="ContentHost" type="Control" parent="BodyMargin/BodyVBox/ContentFrame/ContentMargin/ContentVBox"]
+size_flags_vertical = 3
+size_flags_horizontal = 3

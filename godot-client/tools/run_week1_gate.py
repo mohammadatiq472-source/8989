@@ -135,6 +135,30 @@ def _append_step(steps: list[dict[str, Any]], name: str, started: float, ok: boo
     steps.append(item)
 
 
+def _snapshot_repo_file(path: Path) -> bytes | None:
+    if not path.exists():
+        return None
+    return path.read_bytes()
+
+
+def _restore_repo_file(path: Path, baseline: bytes | None) -> tuple[bool, str]:
+    try:
+        if baseline is None:
+            if path.exists():
+                path.unlink()
+                return True, "removed generated file without baseline"
+            return True, "skipped: baseline missing and file absent"
+
+        current = path.read_bytes() if path.exists() else None
+        if current == baseline:
+            return True, "already matches baseline"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(baseline)
+        return True, "restored file to baseline"
+    except Exception as exc:  # pragma: no cover
+        return False, f"restore failed: {exc}"
+
+
 def _find_balanced_segment(text: str, start_idx: int, open_char: str, close_char: str) -> tuple[int, str]:
     depth = 1
     idx = start_idx
@@ -253,6 +277,45 @@ def _extract_case_return(source: str, case_name: str) -> float | None:
         return None
 
 
+def _extract_case_return_dict(source: str, case_token: str) -> dict[str, float] | None:
+    pattern = re.compile(
+        rf"{re.escape(case_token)}\s*:\s*\n\s*return\s*\{{(?P<body>.*?)\n\s*\}}",
+        re.DOTALL,
+    )
+    match = pattern.search(source)
+    if not match:
+        return None
+    body = match.group("body")
+    parsed: dict[str, float] = {}
+    for kv in re.finditer(r'"(?P<key>[^"]+)"\s*:\s*(?P<value>[0-9]+(?:\.[0-9]+)?)', body):
+        key = kv.group("key")
+        try:
+            parsed[key] = float(kv.group("value"))
+        except ValueError:
+            continue
+    return parsed
+
+
+def _extract_case_return_color(source: str, case_token: str) -> tuple[float, float, float, float] | None:
+    pattern = re.compile(
+        rf"{re.escape(case_token)}\s*:\s*\n\s*return\s+Color\((?P<rgba>[^\)]*)\)",
+        re.DOTALL,
+    )
+    match = pattern.search(source)
+    if not match:
+        return None
+    raw_parts = [part.strip() for part in match.group("rgba").split(",")]
+    if len(raw_parts) < 4:
+        return None
+    values: list[float] = []
+    for part in raw_parts[:4]:
+        try:
+            values.append(float(part))
+        except ValueError:
+            return None
+    return values[0], values[1], values[2], values[3]
+
+
 def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
     path = repo_root / "godot-client" / "scripts" / "map" / "unit_view_layer.gd"
     source = path.read_text(encoding="utf-8")
@@ -269,8 +332,20 @@ def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, s
     ordered = battle > tile_control > logistics
     positive = logistics > 0.0
     frame_filter_ok = 'kind == "battle" or kind == "tile_control" or kind == "logistics"' in source
+    normalize_hook_ok = "_normalize_replay_engage_kind(" in source and "_register_replay_engage_kind(" in source
+    unknown_record_ok = "_replay_engage_unknown_kind_count" in source and "_replay_engage_unknown_kind_samples" in source
+    direction_metrics_ok = "_replay_engage_direction_direct_hits" in source and "_replay_engage_direction_fallback_hits" in source
+    frame_metrics_snapshot_ok = "_update_replay_engage_metrics_snapshot(" in source and 'set_meta("replay_engage_metrics"' in source
 
-    ok = ordered and positive and frame_filter_ok
+    ok = (
+        ordered
+        and positive
+        and frame_filter_ok
+        and normalize_hook_ok
+        and unknown_record_ok
+        and direction_metrics_ok
+        and frame_metrics_snapshot_ok
+    )
     detail = "unit view engage intensity contract passed" if ok else "unit view engage intensity contract failed"
     return ok, detail, {
         "file": str(path),
@@ -280,7 +355,338 @@ def _validate_unit_view_layer_engage_intensity(repo_root: Path) -> tuple[bool, s
         "ordered": ordered,
         "positive": positive,
         "frameFilterIncludesKinds": frame_filter_ok,
+        "normalizeHookOk": normalize_hook_ok,
+        "unknownRecordOk": unknown_record_ok,
+        "directionMetricsOk": direction_metrics_ok,
+        "frameMetricsSnapshotOk": frame_metrics_snapshot_ok,
     }
+
+
+def _validate_replay_engage_kind_contract(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
+    rules_path = repo_root / "shared" / "domain" / "rules.ts"
+    unit_view_path = repo_root / "godot-client" / "scripts" / "map" / "unit_view_layer.gd"
+    rules_source = rules_path.read_text(encoding="utf-8")
+    unit_view_source = unit_view_path.read_text(encoding="utf-8")
+
+    required_rule_tokens = (
+        "const ENGAGE_REPLAY_HIGHLIGHT_KIND_WHITELIST",
+        "function normalizeEngageReplayHighlightKind(",
+        "function createEngageReplayHighlight(",
+        "engageKindDowngradedFrom",
+    )
+    missing_rule_tokens = [token for token in required_rule_tokens if token not in rules_source]
+
+    raw_engage_create_calls: list[int] = []
+    rule_lines = rules_source.splitlines()
+    for idx, line in enumerate(rule_lines, start=1):
+        if "createReplayHighlight(" not in line:
+            continue
+        if "function createReplayHighlight(" in line:
+            continue
+        window = "\n".join(rule_lines[idx - 1 : idx + 8])
+        if "'battle'" in window or "'tile_control'" in window or "'logistics'" in window:
+            raw_engage_create_calls.append(idx)
+
+    required_unit_view_tokens = (
+        "const ENGAGE_KIND_FALLBACK",
+        "const KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS",
+        "func _normalize_replay_engage_kind(",
+        "func _register_replay_engage_kind(",
+    )
+    missing_unit_view_tokens = [token for token in required_unit_view_tokens if token not in unit_view_source]
+
+    ok = not missing_rule_tokens and not raw_engage_create_calls and not missing_unit_view_tokens
+    detail = "replay engage kind contract passed" if ok else "replay engage kind contract failed"
+    return ok, detail, {
+        "rulesPath": str(rules_path),
+        "unitViewPath": str(unit_view_path),
+        "missingRuleTokens": missing_rule_tokens,
+        "rawEngageCreateReplayCallLines": raw_engage_create_calls,
+        "missingUnitViewTokens": missing_unit_view_tokens,
+    }
+
+
+def _validate_unit_marker_engage_profile_contract(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
+    path = repo_root / "godot-client" / "scripts" / "map" / "unit_marker.gd"
+    source = path.read_text(encoding="utf-8")
+
+    case_tokens = {
+        "battle": "ENGAGE_KIND_BATTLE",
+        "tile_control": "ENGAGE_KIND_TILE_CONTROL",
+        "logistics": "ENGAGE_KIND_LOGISTICS",
+    }
+    required_profile_keys = (
+        "boost",
+        "preScale",
+        "peakScale",
+        "preDuration",
+        "burstDuration",
+        "settleDuration",
+        "push",
+    )
+
+    profile_values: dict[str, dict[str, float]] = {}
+    missing_profile_cases: list[str] = []
+    missing_profile_keys: dict[str, list[str]] = {}
+    for kind, token in case_tokens.items():
+        parsed = _extract_case_return_dict(source, token)
+        if parsed is None:
+            missing_profile_cases.append(kind)
+            continue
+        profile_values[kind] = parsed
+        missing_keys = [key for key in required_profile_keys if key not in parsed]
+        if missing_keys:
+            missing_profile_keys[kind] = missing_keys
+
+    accent_colors: dict[str, tuple[float, float, float, float]] = {}
+    missing_accent_cases: list[str] = []
+    for kind, token in case_tokens.items():
+        parsed = _extract_case_return_color(source, token)
+        if parsed is None:
+            missing_accent_cases.append(kind)
+            continue
+        accent_colors[kind] = parsed
+
+    normalize_default_ok = (
+        re.search(
+            r"func\s+_normalize_engage_kind\(kind:\s*String\)\s*->\s*String:\s*"
+            r".*?match\s+kind:\s*.*?_\s*:\s*\n\s*return\s+ENGAGE_KIND_BATTLE",
+            source,
+            re.DOTALL,
+        )
+        is not None
+    )
+
+    boost_ordered = False
+    push_ordered = False
+    peak_scale_ordered = False
+    settle_duration_escalates = False
+    if all(kind in profile_values for kind in case_tokens):
+        battle_profile = profile_values["battle"]
+        tile_control_profile = profile_values["tile_control"]
+        logistics_profile = profile_values["logistics"]
+        boost_ordered = (
+            battle_profile.get("boost", 0.0)
+            > tile_control_profile.get("boost", 0.0)
+            > logistics_profile.get("boost", 0.0)
+            > 0.0
+        )
+        push_ordered = (
+            battle_profile.get("push", 0.0)
+            > tile_control_profile.get("push", 0.0)
+            > logistics_profile.get("push", 0.0)
+            > 0.0
+        )
+        peak_scale_ordered = (
+            battle_profile.get("peakScale", 0.0)
+            > tile_control_profile.get("peakScale", 0.0)
+            > logistics_profile.get("peakScale", 0.0)
+            > 0.0
+        )
+        settle_duration_escalates = (
+            battle_profile.get("settleDuration", 0.0)
+            < tile_control_profile.get("settleDuration", 0.0)
+            < logistics_profile.get("settleDuration", 0.0)
+        )
+
+    battle_red_dominant = False
+    tile_control_warm = False
+    logistics_cool = False
+    if all(kind in accent_colors for kind in case_tokens):
+        battle_rgba = accent_colors["battle"]
+        tile_control_rgba = accent_colors["tile_control"]
+        logistics_rgba = accent_colors["logistics"]
+        battle_red_dominant = battle_rgba[0] > battle_rgba[2]
+        tile_control_warm = tile_control_rgba[0] >= tile_control_rgba[1] > tile_control_rgba[2]
+        logistics_cool = logistics_rgba[2] > logistics_rgba[0]
+
+    ok = (
+        not missing_profile_cases
+        and not missing_profile_keys
+        and not missing_accent_cases
+        and normalize_default_ok
+        and boost_ordered
+        and push_ordered
+        and peak_scale_ordered
+        and settle_duration_escalates
+        and battle_red_dominant
+        and tile_control_warm
+        and logistics_cool
+    )
+    detail = "unit marker engage profile contract passed" if ok else "unit marker engage profile contract failed"
+    return ok, detail, {
+        "file": str(path),
+        "missingProfileCases": missing_profile_cases,
+        "missingProfileKeys": missing_profile_keys,
+        "missingAccentCases": missing_accent_cases,
+        "normalizeDefaultOk": normalize_default_ok,
+        "boostOrdered": boost_ordered,
+        "pushOrdered": push_ordered,
+        "peakScaleOrdered": peak_scale_ordered,
+        "settleDurationEscalates": settle_duration_escalates,
+        "battleRedDominant": battle_red_dominant,
+        "tileControlWarm": tile_control_warm,
+        "logisticsCool": logistics_cool,
+        "profiles": profile_values,
+        "accentColors": accent_colors,
+    }
+
+
+def _load_json_manifest(path: Path) -> tuple[Any | None, str | None]:
+    if not path.exists():
+        return None, f"missing file: {path}"
+    try:
+        return json.loads(path.read_text(encoding="utf-8")), None
+    except json.JSONDecodeError as exc:
+        return None, f"json parse failed: {path} ({exc})"
+
+
+def _validate_theme_manifest_contract(repo_root: Path) -> tuple[bool, str, dict[str, Any]]:
+    manifests_root = repo_root / "godot-client" / "assets" / "themes" / "slgclient" / "manifests"
+    unit_manifest_path = manifests_root / "unit_frames_manifest.json"
+    overlay_manifest_path = manifests_root / "overlay_frames_manifest.json"
+    asset_manifest_path = manifests_root / "slgclient_asset_manifest.json"
+
+    errors: list[str] = []
+    details: dict[str, Any] = {
+        "unitManifestPath": str(unit_manifest_path),
+        "overlayManifestPath": str(overlay_manifest_path),
+        "assetManifestPath": str(asset_manifest_path),
+    }
+
+    unit_manifest, unit_err = _load_json_manifest(unit_manifest_path)
+    if unit_err is not None:
+        errors.append(unit_err)
+    overlay_manifest, overlay_err = _load_json_manifest(overlay_manifest_path)
+    if overlay_err is not None:
+        errors.append(overlay_err)
+    asset_manifest, asset_err = _load_json_manifest(asset_manifest_path)
+    if asset_err is not None:
+        errors.append(asset_err)
+
+    expected_directions = {"r", "ru", "u", "lu", "l", "ld", "d", "rd"}
+    missing_directions: list[str] = []
+    empty_direction_frames: list[str] = []
+    invalid_direction_frames: list[str] = []
+    if isinstance(unit_manifest, dict):
+        directions = unit_manifest.get("directions", {})
+        if not isinstance(directions, dict):
+            errors.append("unit_frames_manifest directions must be an object")
+            directions = {}
+        details["unitDirectionCount"] = len(directions)
+        for direction in sorted(expected_directions):
+            frame_list = directions.get(direction)
+            if not isinstance(frame_list, list):
+                missing_directions.append(direction)
+                continue
+            if len(frame_list) == 0:
+                empty_direction_frames.append(direction)
+                continue
+            invalid_frame = any(
+                not isinstance(frame, dict) or str(frame.get("texturePath", "")).strip() == "" for frame in frame_list
+            )
+            if invalid_frame:
+                invalid_direction_frames.append(direction)
+        details["unitFrameCountsByDirection"] = {
+            direction: len(directions.get(direction, [])) if isinstance(directions.get(direction), list) else 0
+            for direction in sorted(expected_directions)
+        }
+    else:
+        if unit_manifest is not None:
+            errors.append("unit_frames_manifest must be an object")
+    if missing_directions:
+        errors.append(f"unit_frames_manifest missing directions: {', '.join(missing_directions)}")
+    if empty_direction_frames:
+        errors.append(f"unit_frames_manifest has empty frame arrays: {', '.join(empty_direction_frames)}")
+    if invalid_direction_frames:
+        errors.append(f"unit_frames_manifest has invalid frame entries: {', '.join(invalid_direction_frames)}")
+
+    required_overlay_prefix_groups = (
+        ("land_ground_",),
+        ("land_1_",),
+        ("land_2_",),
+        ("land_3_",),
+        ("home_defend",),
+        ("flag_blue_", "out_flag_blue_"),
+        ("flag_red_", "out_flag_red_"),
+        ("hill1", "hill2", "hill3", "hill4", "hill5"),
+        ("water_edge_", "water_"),
+        ("sand_edge_", "sand_"),
+    )
+    missing_overlay_prefix_groups: list[str] = []
+    overlay_frame_count = 0
+    if isinstance(overlay_manifest, dict):
+        overlay_frames = overlay_manifest.get("frames", {})
+        if not isinstance(overlay_frames, dict):
+            errors.append("overlay_frames_manifest frames must be an object")
+            overlay_frames = {}
+        overlay_keys = list(overlay_frames.keys())
+        overlay_frame_count = len(overlay_keys)
+        details["overlayFrameCount"] = overlay_frame_count
+        for group in required_overlay_prefix_groups:
+            if not any(any(key.startswith(prefix) for prefix in group) for key in overlay_keys):
+                missing_overlay_prefix_groups.append(" | ".join(group))
+    else:
+        if overlay_manifest is not None:
+            errors.append("overlay_frames_manifest must be an object")
+    if overlay_frame_count <= 0:
+        errors.append("overlay_frames_manifest has no frames")
+    if missing_overlay_prefix_groups:
+        errors.append(
+            "overlay_frames_manifest missing required frame prefix groups: "
+            + ", ".join(missing_overlay_prefix_groups)
+        )
+
+    exchange_manifest_exists = False
+    exchange_stats_ok = False
+    if isinstance(asset_manifest, dict):
+        exchange_bundle = asset_manifest.get("exchangeBundle", {})
+        if not isinstance(exchange_bundle, dict):
+            errors.append("slgclient_asset_manifest exchangeBundle must be an object")
+            exchange_bundle = {}
+        manifest_rel = str(exchange_bundle.get("manifestPath", "")).strip()
+        if manifest_rel == "":
+            errors.append("slgclient_asset_manifest exchangeBundle.manifestPath is empty")
+        else:
+            exchange_manifest_path = repo_root / manifest_rel
+            exchange_manifest_exists = exchange_manifest_path.exists()
+            if not exchange_manifest_exists:
+                errors.append(f"exchange bundle manifest missing: {exchange_manifest_path}")
+            details["exchangeManifestPath"] = str(exchange_manifest_path)
+        stats = exchange_bundle.get("stats", {})
+        if not isinstance(stats, dict):
+            errors.append("slgclient_asset_manifest exchangeBundle.stats must be an object")
+            stats = {}
+        required_stats_groups = ("world", "units", "overlays", "manifests")
+        group_errors: list[str] = []
+        for group in required_stats_groups:
+            value = stats.get(group)
+            if not isinstance(value, dict):
+                group_errors.append(group)
+                continue
+            file_count = int(value.get("files", 0) or 0)
+            if file_count <= 0:
+                group_errors.append(group)
+        exchange_stats_ok = len(group_errors) == 0
+        if group_errors:
+            errors.append(f"exchange bundle stats missing or empty groups: {', '.join(group_errors)}")
+        details["exchangeStats"] = stats
+    else:
+        if asset_manifest is not None:
+            errors.append("slgclient_asset_manifest must be an object")
+
+    details["missingDirections"] = missing_directions
+    details["emptyDirectionFrames"] = empty_direction_frames
+    details["invalidDirectionFrames"] = invalid_direction_frames
+    details["missingOverlayPrefixGroups"] = missing_overlay_prefix_groups
+    details["exchangeManifestExists"] = exchange_manifest_exists
+    details["exchangeStatsOk"] = exchange_stats_ok
+
+    ok = len(errors) == 0
+    if errors:
+        details["errors"] = errors
+    detail = "theme manifest contract passed" if ok else f"theme manifest contract failed ({len(errors)} issue(s))"
+    return ok, detail, details
 
 
 def _validate_runtime_replay_highlights(
@@ -349,6 +755,179 @@ def _validate_runtime_replay_highlights(
         return True, "runtime replay highlight sanity skipped: no target highlight kinds", {"checkedHighlights": 0, "skipped": True}
 
     return True, "runtime replay highlight sanity passed", {"checkedHighlights": checked}
+
+
+def _collect_runtime_replay_engage_metrics(world_payload: Any) -> dict[str, Any]:
+    target_kinds = ("battle", "tile_control", "logistics")
+    known_non_engage = {"enemy_turn", "alliance_turn", "intel", "planning"}
+    metrics: dict[str, Any] = {
+        "kindCounts": {kind: 0 for kind in target_kinds},
+        "unknownDowngradedKindCount": 0,
+        "unknownDowngradedKindSamples": [],
+        "engageHighlightTotal": 0,
+        "engageAnchoredHighlightTotal": 0,
+        "directionDirectCount": 0,
+        "directionFallbackCount": 0,
+        "estimatedTriggerCount": 0,
+        "frameSample": [],
+        "replayCount": 0,
+        "frameCount": 0,
+    }
+    if not isinstance(world_payload, dict):
+        return metrics
+
+    history = world_payload.get("history", {})
+    if not isinstance(history, dict):
+        return metrics
+    replays = history.get("executionReplays", [])
+    if not isinstance(replays, list):
+        return metrics
+
+    metrics["replayCount"] = len(replays)
+    for replay_idx, replay in enumerate(replays):
+        if not isinstance(replay, dict):
+            continue
+        frames = replay.get("frames", [])
+        if not isinstance(frames, list):
+            continue
+        metrics["frameCount"] += len(frames)
+        for frame_idx, frame in enumerate(frames):
+            if not isinstance(frame, dict):
+                continue
+            highlights = frame.get("highlights", [])
+            if not isinstance(highlights, list):
+                highlights = []
+
+            frame_kind_counts: dict[str, int] = {kind: 0 for kind in target_kinds}
+            frame_engage_highlights = 0
+            frame_anchored_highlights = 0
+            frame_unknown_downgraded = 0
+
+            for highlight in highlights:
+                if not isinstance(highlight, dict):
+                    continue
+                raw_kind = str(highlight.get("kind", "")).strip()
+                has_anchor = any(
+                    str(highlight.get(key, "")).strip() != ""
+                    for key in ("unitId", "tileId", "fromTileId", "toTileId")
+                )
+                normalized_kind = ""
+                if raw_kind in target_kinds:
+                    normalized_kind = raw_kind
+                elif raw_kind == "" or raw_kind in known_non_engage:
+                    normalized_kind = ""
+                elif has_anchor:
+                    normalized_kind = "tile_control"
+                    metrics["unknownDowngradedKindCount"] += 1
+                    frame_unknown_downgraded += 1
+                    if len(metrics["unknownDowngradedKindSamples"]) < 8 and raw_kind not in metrics["unknownDowngradedKindSamples"]:
+                        metrics["unknownDowngradedKindSamples"].append(raw_kind)
+
+                if normalized_kind == "":
+                    continue
+                metrics["kindCounts"][normalized_kind] += 1
+                frame_kind_counts[normalized_kind] += 1
+                metrics["engageHighlightTotal"] += 1
+                frame_engage_highlights += 1
+
+                if has_anchor:
+                    metrics["engageAnchoredHighlightTotal"] += 1
+                    frame_anchored_highlights += 1
+
+                from_tile_id = str(highlight.get("fromTileId", "")).strip()
+                to_tile_id = str(highlight.get("toTileId", "")).strip()
+                if from_tile_id != "" and to_tile_id != "" and from_tile_id != to_tile_id:
+                    metrics["directionDirectCount"] += 1
+                else:
+                    metrics["directionFallbackCount"] += 1
+
+            frame_fallback_targets = 0
+            if frame_engage_highlights == 0:
+                order_states = frame.get("orderStates", [])
+                if isinstance(order_states, list):
+                    seen_units: set[str] = set()
+                    for order_state in order_states:
+                        if not isinstance(order_state, dict):
+                            continue
+                        status = str(order_state.get("status", "")).strip()
+                        if status not in {"running", "completed", "failed"}:
+                            continue
+                        unit_id = str(order_state.get("unitId", "")).strip()
+                        if unit_id == "" or unit_id in seen_units:
+                            continue
+                        seen_units.add(unit_id)
+                        if len(seen_units) >= 4:
+                            break
+                    frame_fallback_targets = len(seen_units)
+                if frame_fallback_targets > 0:
+                    metrics["kindCounts"]["tile_control"] += frame_fallback_targets
+                    frame_kind_counts["tile_control"] += frame_fallback_targets
+                    metrics["directionFallbackCount"] += frame_fallback_targets
+
+            metrics["estimatedTriggerCount"] += frame_anchored_highlights + frame_fallback_targets
+            if (
+                frame_engage_highlights > 0
+                or frame_fallback_targets > 0
+                or frame_unknown_downgraded > 0
+            ) and len(metrics["frameSample"]) < 24:
+                metrics["frameSample"].append(
+                    {
+                        "replayIndex": replay_idx,
+                        "frameIndex": frame_idx,
+                        "kindCounts": frame_kind_counts,
+                        "engageHighlights": frame_engage_highlights,
+                        "anchoredHighlights": frame_anchored_highlights,
+                        "fallbackTargets": frame_fallback_targets,
+                        "unknownDowngraded": frame_unknown_downgraded,
+                    }
+                )
+    return metrics
+
+
+def _validate_runtime_replay_engage_consistency(
+    world_payload: Any,
+    *,
+    require_target_highlights: bool = False,
+) -> tuple[bool, str, dict[str, Any]]:
+    metrics_first = _collect_runtime_replay_engage_metrics(world_payload)
+    metrics_second = _collect_runtime_replay_engage_metrics(world_payload)
+    deterministic = json.dumps(metrics_first, sort_keys=True) == json.dumps(metrics_second, sort_keys=True)
+
+    kind_counts = metrics_first.get("kindCounts", {})
+    kind_total = (
+        int(kind_counts.get("battle", 0))
+        + int(kind_counts.get("tile_control", 0))
+        + int(kind_counts.get("logistics", 0))
+    )
+    active_kinds = sum(1 for key in ("battle", "tile_control", "logistics") if int(kind_counts.get(key, 0)) > 0)
+    estimated_triggers = int(metrics_first.get("estimatedTriggerCount", 0))
+    unknown_downgraded = int(metrics_first.get("unknownDowngradedKindCount", 0))
+    direction_direct = int(metrics_first.get("directionDirectCount", 0))
+    direction_fallback = int(metrics_first.get("directionFallbackCount", 0))
+    engage_highlights = int(metrics_first.get("engageHighlightTotal", 0))
+
+    if not require_target_highlights and metrics_first.get("replayCount", 0) == 0:
+        return True, "runtime replay engage consistency skipped: no executionReplays", {
+            **metrics_first,
+            "deterministic": deterministic,
+            "skipped": True,
+        }
+
+    has_engage_data = kind_total > 0 and estimated_triggers > 0
+    variety_ok = active_kinds >= 2 if require_target_highlights else True
+    direction_metrics_ok = (direction_direct + direction_fallback) >= engage_highlights
+    unknown_ok = unknown_downgraded == 0
+    ok = deterministic and has_engage_data and variety_ok and direction_metrics_ok and unknown_ok
+
+    detail = "runtime replay engage consistency passed" if ok else "runtime replay engage consistency failed"
+    return ok, detail, {
+        **metrics_first,
+        "deterministic": deterministic,
+        "hasEngageData": has_engage_data,
+        "varietyOk": variety_ok,
+        "directionMetricsOk": direction_metrics_ok,
+        "unknownDowngradedKindsOk": unknown_ok,
+    }
 
 
 def _run_template_replay_seed(repo_root: Path, base_url: str, report_path: Path) -> tuple[bool, str, dict[str, Any]]:
@@ -438,6 +1017,8 @@ def main() -> int:
     godot_exe = _resolve_godot_exe(args.godot_exe)
     godot_path = args.godot_path
     repo_root = Path(__file__).resolve().parents[2]
+    tactical_skills_path = repo_root / "server" / "src" / "config" / "tactical_skills.json"
+    tactical_skills_baseline = _snapshot_repo_file(tactical_skills_path)
 
     steps: list[dict[str, Any]] = []
     started_at = _now_iso()
@@ -619,6 +1200,20 @@ def main() -> int:
     )
 
     t = time.time()
+    replay_consistency_ok, replay_consistency_detail, replay_consistency_extra = _validate_runtime_replay_engage_consistency(
+        runtime_world_payload,
+        require_target_highlights=args.require_runtime_replay,
+    )
+    _append_step(
+        steps,
+        "replay-engage-consistency-contract",
+        t,
+        replay_consistency_ok,
+        replay_consistency_detail,
+        replay_consistency_extra,
+    )
+
+    t = time.time()
     map_layout = _http_json("GET", f"{base_url}/api/world/map-layout?scope={args.map_scope}")
     if int(map_layout.get("status", -1)) == 403 and args.map_scope == "full":
         effective_map_scope = "bootstrap"
@@ -697,6 +1292,17 @@ def main() -> int:
     )
 
     t = time.time()
+    replay_engage_kind_ok, replay_engage_kind_detail, replay_engage_kind_extra = _validate_replay_engage_kind_contract(repo_root)
+    _append_step(
+        steps,
+        "replay-engage-kind-contract",
+        t,
+        replay_engage_kind_ok,
+        replay_engage_kind_detail,
+        replay_engage_kind_extra,
+    )
+
+    t = time.time()
     unit_view_ok, unit_view_detail, unit_view_extra = _validate_unit_view_layer_engage_intensity(repo_root)
     _append_step(
         steps,
@@ -705,6 +1311,28 @@ def main() -> int:
         unit_view_ok,
         unit_view_detail,
         unit_view_extra,
+    )
+
+    t = time.time()
+    unit_marker_ok, unit_marker_detail, unit_marker_extra = _validate_unit_marker_engage_profile_contract(repo_root)
+    _append_step(
+        steps,
+        "unitmarker-engage-profile-contract",
+        t,
+        unit_marker_ok,
+        unit_marker_detail,
+        unit_marker_extra,
+    )
+
+    t = time.time()
+    theme_manifest_ok, theme_manifest_detail, theme_manifest_extra = _validate_theme_manifest_contract(repo_root)
+    _append_step(
+        steps,
+        "theme-manifest-contract",
+        t,
+        theme_manifest_ok,
+        theme_manifest_detail,
+        theme_manifest_extra,
     )
 
     if token:
@@ -719,6 +1347,17 @@ def main() -> int:
             {"status": leave.get("status")},
         )
 
+    t = time.time()
+    restore_tactical_ok, restore_tactical_detail = _restore_repo_file(tactical_skills_path, tactical_skills_baseline)
+    _append_step(
+        steps,
+        "restore-tactical-skills-config",
+        t,
+        restore_tactical_ok,
+        restore_tactical_detail,
+        {"path": str(tactical_skills_path)},
+    )
+
     required = {
         "health",
         "runtime",
@@ -727,8 +1366,13 @@ def main() -> int:
         "map-layout",
         "godot-headless",
         "replay-highlight-runtime-sanity",
+        "replay-engage-consistency-contract",
         "replay-highlight-anchor-contract",
+        "replay-engage-kind-contract",
         "unitview-engage-intensity-contract",
+        "unitmarker-engage-profile-contract",
+        "theme-manifest-contract",
+        "restore-tactical-skills-config",
     }
     overall_ok = True
     for step in steps:

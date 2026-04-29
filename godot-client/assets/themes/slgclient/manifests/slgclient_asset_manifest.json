@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "theme": "slgclient",
-  "importedAt": "2026-04-11T04:21:15+00:00",
+  "importedAt": "2026-04-12T18:04:29+00:00",
   "source": {
     "repo": "https://github.com/llr104/slgclient",
     "commit": "767065453e358abc1b463f9396079d8026d0baf4",
@@ -11,7 +11,12 @@
     "current": "godot-client/assets/themes/slgclient/current",
     "replacements": "godot-client/assets/themes/slgclient/replacements",
     "manifests": "godot-client/assets/themes/slgclient/manifests",
-    "exchangeBundle": "godot-client/assets/themes/slgclient/replacements/exchange_bundle"
+    "generalpic": "godot-client/assets/themes/slgclient/current/generalpic",
+    "generalpicManifest": "godot-client/assets/themes/slgclient/manifests/generalpic_manifest.json",
+    "ui": "godot-client/assets/themes/slgclient/current/ui",
+    "uiManifest": "godot-client/assets/themes/slgclient/manifests/ui_manifest.json",
+    "exchangeBundle": "godot-client/assets/themes/slgclient/replacements/exchange_bundle",
+    "uiThemeTokens": "godot-client/assets/themes/slgclient/manifests/ui_theme_tokens.json"
   },
   "world": {
     "tmxPath": "res://assets/themes/slgclient/current/world/map.tmx",
@@ -19,98 +24,8 @@
       {
         "name": "map.tmx",
         "path": "godot-client/assets/themes/slgclient/current/world/map.tmx",
-        "bytes": 486951,
-        "sha256": "298d8d60139ecf444d33973b2c13a1a010a5ee161e50a1522174aa49504dc79b"
-      },
-      {
-        "name": "land.tsx",
-        "path": "godot-client/assets/themes/slgclient/current/world/land.tsx",
-        "bytes": 224,
-        "sha256": "b3c1d0dba65b57954e21c8e71a62bc99f9dd3ab97fd9d25c85a603bcfbbd6c82"
-      },
-      {
-        "name": "hill.tsx",
-        "path": "godot-client/assets/themes/slgclient/current/world/hill.tsx",
-        "bytes": 227,
-        "sha256": "f9e9ed11cc10a509e0b7e96f4fc604516a418bf00fb145ab0438c9ea4886227e"
-      },
-      {
-        "name": "water_edge_1.tsx",
-        "path": "godot-client/assets/themes/slgclient/current/world/water_edge_1.tsx",
-        "bytes": 241,
-        "sha256": "5eda2237b982e5c09846f840dcd273debb19e22ad70448820d2ac7f15ff31cc5"
-      },
-      {
-        "name": "water_edge_3.tsx",
-        "path": "godot-client/assets/themes/slgclient/current/world/water_edge_3.tsx",
-        "bytes": 241,
-        "sha256": "f616f27eab497b58e14013f587a738eec4df4e66bf350f7530b819eb2b4209f2"
-      },
-      {
-        "name": "land.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/land.png",
-        "bytes": 197908,
-        "sha256": "840529dcdced6e0441c1e7bc006fcb8039307ffd22121c3b534f9de3bfa3baa2"
-      },
-      {
-        "name": "hill.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/hill.png",
-        "bytes": 2367812,
-        "sha256": "7a4ad3eb86a1afabbfb9f300cb09a328a7f20523977ad92d968d089fddec6c0f"
-      },
-      {
-        "name": "hill.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/hill.plist",
-        "bytes": 9326,
-        "sha256": "de08e8736ea0bd0124fa6918b5ae6a845c842914a72ecc09e1277b6388369074"
-      },
-      {
-        "name": "water_edge_1.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/water_edge_1.png",
-        "bytes": 375440,
-        "sha256": "135be64d33a07c3508b3ba5384e944b7183e0cd7cf9127e844d33fb0b459653c"
-      },
-      {
-        "name": "water_edge_1.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/water_edge_1.plist",
-        "bytes": 13405,
-        "sha256": "6033bb76af70f01187923328618b1e36152afa155efabfcb287026f8c6ece390"
-      },
-      {
-        "name": "water_edge_3.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/water_edge_3.png",
-        "bytes": 491418,
-        "sha256": "e7b68178ec0a126e8ff49b95d3cc3b3036b762e145fe2e2f9a07da8eb9b20d70"
-      },
-      {
-        "name": "water_edge_3.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/water_edge_3.plist",
-        "bytes": 13418,
-        "sha256": "e1db3c7ad927752de5ae98ee687b8e337f412cbf902b9d78e30d9c4e2ba2678b"
-      },
-      {
-        "name": "sand_edge_1.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/sand_edge_1.png",
-        "bytes": 475657,
-        "sha256": "b31b649d5a91abd7fde0a65831b688472d39736c28a900bc20c3478e1bf51b4f"
-      },
-      {
-        "name": "sand_edge_1.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/sand_edge_1.plist",
-        "bytes": 13396,
-        "sha256": "51c29a5d760cab0028bd66cbf0c53c1f7b81a4cd8dbc111368cf4c98e7a73197"
-      },
-      {
-        "name": "sand_edge_3.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/sand_edge_3.png",
-        "bytes": 475086,
-        "sha256": "faf737d8d09304f959b9c46caff8b835edf688832844ce3da063eb3f9891a7e0"
-      },
-      {
-        "name": "sand_edge_3.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/sand_edge_3.plist",
-        "bytes": 13394,
-        "sha256": "8298b09b950f5c39f4cd8c5d31b38c3589b67e647193ef5ea24ae8e38f3d6a11"
+        "bytes": 80316,
+        "sha256": "c239535206e3028a7090eb446b455c36a910587ce792fdb6a673ed21c90548be"
       },
       {
         "name": "map_qibing.png",
@@ -129,30 +44,6 @@
         "path": "godot-client/assets/themes/slgclient/current/world/map_qibing.plist.meta",
         "bytes": 74252,
         "sha256": "7532f6d4380dd9c02fffb88ca430a83002f6502d5bc167d6a8724c45855b7e8b"
-      },
-      {
-        "name": "map_tiles.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/map_tiles.png",
-        "bytes": 356775,
-        "sha256": "4046394092dab2384bacb613f5394950f65ae4517bbfe77e7229eea595ef7569"
-      },
-      {
-        "name": "map_tiles.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/map_tiles.plist",
-        "bytes": 8277,
-        "sha256": "fa7589ee953f74c219f5a20bef9446c07f9df94832626dae3bd762f78e4166bc"
-      },
-      {
-        "name": "map_res.png",
-        "path": "godot-client/assets/themes/slgclient/current/world/map_res.png",
-        "bytes": 831369,
-        "sha256": "36cfdbd5b8c25b97164fef51592bc1ad8e54d73f00b02f79bb80439b86038f60"
-      },
-      {
-        "name": "map_res.plist",
-        "path": "godot-client/assets/themes/slgclient/current/world/map_res.plist",
-        "bytes": 14901,
-        "sha256": "3cc49e08a44f1b40e328918f73f84a08f287d288ad59fa38d4ad16ed5fd2c6ba"
       },
       {
         "name": "cityComponent.png",
@@ -177,6 +68,4060 @@
         "path": "godot-client/assets/themes/slgclient/current/world/component_outside.plist",
         "bytes": 27703,
         "sha256": "9125dfcdd20ad335a195b44b1aa38df4b141840338922f79698643196827b98f"
+      }
+    ]
+  },
+  "generalpic": {
+    "sourceRepo": "https://github.com/llr104/slgclient",
+    "sourceRoot": "tmp/third_party/slgclient/assets/resources/generalpic",
+    "targetRoot": "godot-client/assets/themes/slgclient/current/generalpic",
+    "selectedIds": [
+      1,
+      2,
+      100001,
+      100002,
+      100003,
+      100004,
+      100005,
+      100006,
+      100007,
+      100008,
+      100009,
+      100010,
+      100011,
+      100013,
+      100015,
+      100016,
+      100017,
+      100019,
+      100020,
+      100021,
+      100022,
+      100023,
+      100024,
+      100025,
+      100026,
+      100027,
+      100028,
+      100029,
+      100030,
+      100031,
+      100032,
+      100033,
+      100034,
+      100035,
+      100036,
+      100037,
+      100038,
+      100039,
+      100040,
+      100041,
+      100042,
+      100043,
+      100044,
+      100045,
+      100046,
+      100047,
+      100048,
+      100049,
+      100050,
+      100051,
+      100052,
+      100053,
+      100054,
+      100055,
+      100056,
+      100057,
+      100058,
+      100059,
+      100060,
+      100062,
+      100063,
+      100064,
+      100065,
+      100066,
+      100067,
+      100068,
+      100069,
+      100070,
+      100071,
+      100072,
+      100073,
+      100074,
+      100075,
+      100076,
+      100077,
+      100078,
+      100079,
+      100080,
+      100081,
+      100083,
+      100084,
+      100085,
+      100086,
+      100087,
+      100088,
+      100089,
+      100090,
+      100091,
+      100092,
+      100093,
+      100094,
+      100095,
+      100096,
+      100097,
+      100098,
+      100099,
+      100100,
+      100101,
+      100102,
+      100103,
+      100104,
+      100105,
+      100106,
+      100107,
+      100108,
+      100109,
+      100110,
+      100111,
+      100113,
+      100114,
+      100115,
+      100116,
+      100117,
+      100118,
+      100119,
+      100120,
+      100121,
+      100122,
+      100123,
+      100124,
+      100125,
+      100126,
+      100127,
+      100128,
+      100129,
+      100130,
+      100131,
+      100132,
+      100133,
+      100134,
+      100136,
+      100137,
+      100138,
+      100139,
+      100140,
+      100141,
+      100142,
+      100143,
+      100144,
+      100145,
+      100146,
+      100147,
+      100148,
+      100149,
+      100150,
+      100151,
+      100152,
+      100153,
+      100154,
+      100155,
+      100156,
+      100157,
+      100158,
+      100159,
+      100160,
+      100161,
+      100162,
+      100163,
+      100164,
+      100165,
+      100166,
+      100167,
+      100168,
+      100169,
+      100170,
+      100171,
+      100172,
+      100173,
+      100174,
+      100175,
+      100176,
+      100177,
+      100178,
+      100179,
+      100180,
+      100181,
+      100182,
+      100183,
+      100184,
+      100185,
+      100186,
+      100187,
+      100188,
+      100189,
+      100190,
+      100191,
+      100192,
+      100193,
+      100194,
+      100195,
+      100196,
+      100197,
+      100198,
+      100199,
+      100200,
+      100201,
+      100202,
+      100203,
+      100204,
+      100205,
+      100206,
+      100207,
+      100208,
+      100209,
+      100210,
+      100211,
+      100212,
+      100213,
+      100214,
+      100215,
+      100216,
+      100217,
+      100218,
+      100219,
+      100220,
+      100221,
+      100222,
+      100223,
+      100224,
+      100225,
+      100226,
+      100227,
+      100228,
+      100229,
+      100230,
+      100231,
+      100232,
+      100233,
+      100234,
+      100239,
+      100240,
+      100241,
+      100242,
+      100243,
+      100245,
+      100246,
+      100247,
+      100248,
+      100249,
+      100253,
+      100254,
+      100255,
+      100256,
+      100257,
+      100258,
+      100264,
+      100265,
+      100266,
+      100267,
+      100268,
+      100269,
+      100270,
+      100271,
+      100272,
+      100276,
+      100277,
+      100279,
+      100280,
+      100281,
+      100282,
+      100283,
+      100284,
+      100285,
+      100286,
+      100287,
+      100288,
+      100310,
+      100314,
+      100321,
+      100326,
+      100329,
+      100330,
+      100331,
+      100334,
+      100335,
+      100337,
+      100338,
+      100339,
+      100340,
+      100342,
+      100343,
+      100344,
+      100345,
+      100346,
+      100347,
+      100348,
+      100351,
+      100352,
+      100353,
+      100354,
+      100355,
+      100358,
+      100359,
+      100361,
+      100362,
+      100363,
+      100364,
+      100365,
+      100366,
+      100367,
+      100368,
+      100369,
+      100370,
+      100371,
+      100372,
+      100377,
+      100378,
+      100379,
+      100396,
+      100398,
+      100403,
+      100405,
+      100406,
+      100414,
+      100420,
+      100421,
+      100424,
+      100426,
+      100430,
+      100435,
+      100437,
+      100439,
+      100442,
+      100443,
+      100449,
+      100450,
+      100451,
+      100452,
+      100454,
+      100455,
+      100456,
+      100457,
+      100458,
+      100459,
+      100460,
+      100461,
+      100462,
+      100463,
+      100464,
+      100465,
+      100466,
+      100467,
+      100468,
+      100469,
+      100470,
+      100471,
+      100472,
+      100473,
+      100474,
+      100475,
+      100476,
+      100477,
+      100478,
+      100479,
+      100480,
+      100481,
+      100482,
+      100483,
+      100484,
+      100485,
+      100486,
+      100487,
+      100488,
+      100489,
+      100490,
+      100491,
+      100492,
+      100493,
+      100494,
+      100495,
+      100496,
+      100497,
+      100498,
+      100502,
+      100503,
+      100506,
+      100507,
+      100508,
+      100519,
+      100520,
+      100521,
+      100522,
+      100523,
+      100524,
+      100525,
+      100526,
+      100528,
+      100529,
+      100532,
+      100533,
+      100534,
+      100535,
+      100536,
+      100538,
+      100539,
+      100540,
+      100543,
+      100545,
+      100546,
+      100547,
+      100548,
+      100549,
+      100550,
+      100551,
+      100552,
+      100553,
+      100554,
+      100555,
+      100556,
+      100557,
+      100558,
+      100560,
+      100562,
+      100563,
+      100564,
+      100574,
+      100575,
+      100578,
+      100582,
+      100583,
+      100585,
+      100586,
+      100587,
+      100588,
+      100589,
+      100590,
+      100591,
+      100592,
+      100593,
+      100594,
+      100595,
+      100596,
+      100597,
+      100598,
+      100599,
+      100600,
+      100601,
+      100602,
+      110001,
+      110311,
+      110411,
+      110500,
+      110501,
+      110502,
+      110503,
+      110504,
+      110505,
+      120001
+    ],
+    "selectedIdCount": 448,
+    "specialFiles": [
+      "head_wrap.png"
+    ],
+    "fileCount": 449,
+    "files": [
+      {
+        "cfgId": 1,
+        "name": "card_1.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_1.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_1.png",
+        "bytes": 328044,
+        "sha256": "66f5638f534db0083f8ca853a7b53469fb4de0dcabb5bda473fe9008d6797caf"
+      },
+      {
+        "cfgId": 2,
+        "name": "card_2.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_2.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_2.png",
+        "bytes": 69005,
+        "sha256": "c1be7b3bd6efe952df4db13f0bf2ae72a0bdbef8f6e64ad29889badb7927f014"
+      },
+      {
+        "cfgId": 100001,
+        "name": "card_100001.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100001.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100001.png",
+        "bytes": 330763,
+        "sha256": "aa01bf6220feaec2e57f8b304b85c6119876ad6a665cee6a065c6a23ac5172d0"
+      },
+      {
+        "cfgId": 100002,
+        "name": "card_100002.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100002.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100002.png",
+        "bytes": 349675,
+        "sha256": "36e329522f8f7e60aa673d8c88b3fcc75aa8719e9e50c084d8b406484d30b234"
+      },
+      {
+        "cfgId": 100003,
+        "name": "card_100003.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100003.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100003.png",
+        "bytes": 374010,
+        "sha256": "659912871d794f06c9d64fb7f8e10dabc1c6a0870de72ad2d781fb1925379a88"
+      },
+      {
+        "cfgId": 100004,
+        "name": "card_100004.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100004.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100004.png",
+        "bytes": 344047,
+        "sha256": "df7a89c0c4e67df1bff79927195674776c2a49a3325289018f3d39ba44150bc5"
+      },
+      {
+        "cfgId": 100005,
+        "name": "card_100005.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100005.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100005.png",
+        "bytes": 349497,
+        "sha256": "9567cf764361ee7e14a0ee90ed1ab44dd7edd27f7c46a4ea31d04be9b5dd1180"
+      },
+      {
+        "cfgId": 100006,
+        "name": "card_100006.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100006.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100006.png",
+        "bytes": 351609,
+        "sha256": "908916fbc80547bc82ac7bb8f195e1bcc0abe9c395bdd65f19c67654940a2b08"
+      },
+      {
+        "cfgId": 100007,
+        "name": "card_100007.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100007.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100007.png",
+        "bytes": 337804,
+        "sha256": "7fb7298097b25d8ccf5cb2259f7d82e2184cbcb32c7cf9ad2313a0a0f3357531"
+      },
+      {
+        "cfgId": 100008,
+        "name": "card_100008.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100008.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100008.png",
+        "bytes": 299033,
+        "sha256": "f79fcfa606b2a7ae7a818f221cf504b908309ae5cf7d1e24f280a00eb721c8a7"
+      },
+      {
+        "cfgId": 100009,
+        "name": "card_100009.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100009.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100009.png",
+        "bytes": 390589,
+        "sha256": "1062aa017bed0583f007206bf4558a624d68fdcf201d95a18562202e703b9aaa"
+      },
+      {
+        "cfgId": 100010,
+        "name": "card_100010.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100010.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100010.png",
+        "bytes": 382660,
+        "sha256": "2adceeb507d0719e010c5eaceb82e23f4be250d9efee69f9b86d5d62ce843bd5"
+      },
+      {
+        "cfgId": 100011,
+        "name": "card_100011.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100011.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100011.png",
+        "bytes": 380685,
+        "sha256": "b4316164e2c77bbc4dfcf58ad5e90eb768ab059283079a4c4745810c0bbc58c3"
+      },
+      {
+        "cfgId": 100013,
+        "name": "card_100013.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100013.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100013.png",
+        "bytes": 365574,
+        "sha256": "9d363cefb1d767fba6c3b8ead14af555d59ec9e19f31bed15c6e93bb8bbbb3d3"
+      },
+      {
+        "cfgId": 100015,
+        "name": "card_100015.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100015.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100015.png",
+        "bytes": 363142,
+        "sha256": "3310914a247b66524af250993d38edc8fe36025e99c83bc9a7d7ee6000a7fc2d"
+      },
+      {
+        "cfgId": 100016,
+        "name": "card_100016.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100016.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100016.png",
+        "bytes": 355668,
+        "sha256": "76fe6ad380611ba87aeac79d84dba416fcaebdd162f5d507c768fab5c05c3205"
+      },
+      {
+        "cfgId": 100017,
+        "name": "card_100017.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100017.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100017.png",
+        "bytes": 315993,
+        "sha256": "9f208b58e2ebcf9279c22603bc3e68a83bc4198356ebbcb0951aac2734d37248"
+      },
+      {
+        "cfgId": 100019,
+        "name": "card_100019.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100019.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100019.png",
+        "bytes": 349488,
+        "sha256": "c69cc6a5bfd4d71cfc3937d954b6661bfb3c7a8df099256e9361e429b8ec0a64"
+      },
+      {
+        "cfgId": 100020,
+        "name": "card_100020.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100020.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100020.png",
+        "bytes": 354714,
+        "sha256": "6aba9418c71b024d1670aea5d4e3c3271a3c29486714ae89acb96b406c708122"
+      },
+      {
+        "cfgId": 100021,
+        "name": "card_100021.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100021.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100021.png",
+        "bytes": 385672,
+        "sha256": "34d4a5b83226282abd128724958cb1a8cd8ce0c6d6ac883b46b4f3a0fecbe299"
+      },
+      {
+        "cfgId": 100022,
+        "name": "card_100022.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100022.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100022.png",
+        "bytes": 373316,
+        "sha256": "be4b8ddbec40cedcc53fa88644d2e09a21b3303a11edb2fc26fbc32c6c49fa2d"
+      },
+      {
+        "cfgId": 100023,
+        "name": "card_100023.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100023.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100023.png",
+        "bytes": 393055,
+        "sha256": "6f9fc36364c8b70ce4e9da3b4a480ec6f29b343d095933f35b63b0bdc8f3c0a9"
+      },
+      {
+        "cfgId": 100024,
+        "name": "card_100024.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100024.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100024.png",
+        "bytes": 255611,
+        "sha256": "d27f7b681de546097a80846ee64ed9a55872fbb6ff204b85d488dd00b9e10366"
+      },
+      {
+        "cfgId": 100025,
+        "name": "card_100025.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100025.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100025.png",
+        "bytes": 385985,
+        "sha256": "2f967e7fc90ed8bb4345f5d1923eded959eb8c9b480e79c678b8a6238d6772f0"
+      },
+      {
+        "cfgId": 100026,
+        "name": "card_100026.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100026.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100026.png",
+        "bytes": 344780,
+        "sha256": "81f638ec493a0fd7db0d47ba46155930dabeaeded9a88db4942623e0129fd5fd"
+      },
+      {
+        "cfgId": 100027,
+        "name": "card_100027.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100027.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100027.png",
+        "bytes": 338994,
+        "sha256": "7ef62c69cee79c7d5b005b3ce7bff7addc712948dd3e6e74b1097f4bfeb9178d"
+      },
+      {
+        "cfgId": 100028,
+        "name": "card_100028.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100028.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100028.png",
+        "bytes": 386958,
+        "sha256": "4d6876d3d6399373dd014b08b89325d1045341608d791d81c002a64697a06611"
+      },
+      {
+        "cfgId": 100029,
+        "name": "card_100029.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100029.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100029.png",
+        "bytes": 362999,
+        "sha256": "af77f3295b863ab6a78bc80d6c97700fe9d07242b5e455128c665aaacef04524"
+      },
+      {
+        "cfgId": 100030,
+        "name": "card_100030.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100030.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100030.png",
+        "bytes": 328533,
+        "sha256": "16c082cac242f464ad3301d06349c4c8560f7e78a219599097ea0d7f30e4e734"
+      },
+      {
+        "cfgId": 100031,
+        "name": "card_100031.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100031.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100031.png",
+        "bytes": 329301,
+        "sha256": "5459e2a1183186976f6f782acfa55c1a3f2ad01cad644b09018a48734d86d3bb"
+      },
+      {
+        "cfgId": 100032,
+        "name": "card_100032.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100032.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100032.png",
+        "bytes": 398096,
+        "sha256": "5d229824366f9c3e66ee678d9f013a766bbf6e2a6399b2ff6df57aa2ade3c33b"
+      },
+      {
+        "cfgId": 100033,
+        "name": "card_100033.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100033.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100033.png",
+        "bytes": 388413,
+        "sha256": "e4fc88041e3b8b5824b4b71ffe946bd57b7234d1dfefcae273dd61312298253c"
+      },
+      {
+        "cfgId": 100034,
+        "name": "card_100034.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100034.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100034.png",
+        "bytes": 317258,
+        "sha256": "1a59a9b01ff5a112d8c908231c5ad96985fe25b26ba5e471e42b21d9ee1c99d3"
+      },
+      {
+        "cfgId": 100035,
+        "name": "card_100035.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100035.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100035.png",
+        "bytes": 302173,
+        "sha256": "9572099858c9ad6c96b89218f06d5d16fbad06e396cecf0c5871187387a5c8bb"
+      },
+      {
+        "cfgId": 100036,
+        "name": "card_100036.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100036.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100036.png",
+        "bytes": 343252,
+        "sha256": "04310e8bf8a001cb947b383c3ae0d5e706d6e36f745745859fe303be7d8b073d"
+      },
+      {
+        "cfgId": 100037,
+        "name": "card_100037.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100037.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100037.png",
+        "bytes": 324136,
+        "sha256": "864df82d8dcca22760fd134ef103fa1d8058c4834f0e3c7f38fa6a38f8a27ffc"
+      },
+      {
+        "cfgId": 100038,
+        "name": "card_100038.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100038.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100038.png",
+        "bytes": 322689,
+        "sha256": "de3d33ed842f370cfd063aa09affc2d7c56feaa76bcf08933453d78ad1eea954"
+      },
+      {
+        "cfgId": 100039,
+        "name": "card_100039.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100039.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100039.png",
+        "bytes": 313970,
+        "sha256": "d841b71a72c5b8bbe34788b519f3105486afebfb5d2749060ea2330c24e05333"
+      },
+      {
+        "cfgId": 100040,
+        "name": "card_100040.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100040.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100040.png",
+        "bytes": 296996,
+        "sha256": "79e010a590e77234b4362db5abba93ca0c60245fb7307018cf0d41860b95ebb7"
+      },
+      {
+        "cfgId": 100041,
+        "name": "card_100041.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100041.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100041.png",
+        "bytes": 356195,
+        "sha256": "78cae09fca2ae7359db708c409f8fb657612d10a7ea99d62dabfa410fd885c6e"
+      },
+      {
+        "cfgId": 100042,
+        "name": "card_100042.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100042.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100042.png",
+        "bytes": 373424,
+        "sha256": "f6a98b4ef071eeaa071cfeaf5373bb8f66b973385fb48913d1260bf82440d730"
+      },
+      {
+        "cfgId": 100043,
+        "name": "card_100043.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100043.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100043.png",
+        "bytes": 348272,
+        "sha256": "ef3dbe3fdf208dd31fd806d3305943f65336178ce602832b7b0541d79b2d68b3"
+      },
+      {
+        "cfgId": 100044,
+        "name": "card_100044.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100044.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100044.png",
+        "bytes": 390753,
+        "sha256": "8d0131f16fac072ba24847d266cd743e476b05e0a0fbfabf2bcbcf3902f7e5fc"
+      },
+      {
+        "cfgId": 100045,
+        "name": "card_100045.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100045.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100045.png",
+        "bytes": 334939,
+        "sha256": "5ee5e86b9e5fbcacfac996f0c04cfafdb061a23d90c2f5d37e8b1d2572687a4c"
+      },
+      {
+        "cfgId": 100046,
+        "name": "card_100046.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100046.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100046.png",
+        "bytes": 335788,
+        "sha256": "911cb27b467c526cbdcd06521611f043626a2c2d8d6ecd3c60e76248b623eff5"
+      },
+      {
+        "cfgId": 100047,
+        "name": "card_100047.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100047.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100047.png",
+        "bytes": 374594,
+        "sha256": "41191958c3ad68b8d87120436fd69976e323bbcae05519f6fba6f4eb9b454e99"
+      },
+      {
+        "cfgId": 100048,
+        "name": "card_100048.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100048.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100048.png",
+        "bytes": 276000,
+        "sha256": "086be1d005e9d7356a485c669b72972fb413b36fe346fbebee98aa2439569228"
+      },
+      {
+        "cfgId": 100049,
+        "name": "card_100049.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100049.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100049.png",
+        "bytes": 370443,
+        "sha256": "98f22ce111b99c90aff15f588ccf5b6fd35af21b225cd044e79ee3db18ec59a8"
+      },
+      {
+        "cfgId": 100050,
+        "name": "card_100050.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100050.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100050.png",
+        "bytes": 353410,
+        "sha256": "30816515ae794a6e03f748077b86c6075afeebdafa077324c6fcbe33d69c1710"
+      },
+      {
+        "cfgId": 100051,
+        "name": "card_100051.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100051.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100051.png",
+        "bytes": 345381,
+        "sha256": "2e4f95633025f68290fbe36e340cee990511fabda8f6c6a916f230fea49f4030"
+      },
+      {
+        "cfgId": 100052,
+        "name": "card_100052.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100052.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100052.png",
+        "bytes": 315984,
+        "sha256": "b1b3ad2a5f69547dd688ab63c9878939db7ae5bcb75212c6a738d2fe7cef4a21"
+      },
+      {
+        "cfgId": 100053,
+        "name": "card_100053.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100053.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100053.png",
+        "bytes": 369229,
+        "sha256": "f218784206e63a5ddae6fe65875c5df116fbb94e8f41053eaf97dbc88853c80c"
+      },
+      {
+        "cfgId": 100054,
+        "name": "card_100054.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100054.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100054.png",
+        "bytes": 352086,
+        "sha256": "46c32bf85c26ac1e1ad5148534d3e95ec5f5b8c5ee1bb6111b4125ddd1b8a7a2"
+      },
+      {
+        "cfgId": 100055,
+        "name": "card_100055.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100055.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100055.png",
+        "bytes": 314076,
+        "sha256": "36fdb54d9e52598d00c64754040552f827500da13bd9d85f622b4a1eff26863e"
+      },
+      {
+        "cfgId": 100056,
+        "name": "card_100056.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100056.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100056.png",
+        "bytes": 374661,
+        "sha256": "59b0409bd11c3d14cab5e5b45919af612d9ff855ee255c696b5e8f6f03c044b1"
+      },
+      {
+        "cfgId": 100057,
+        "name": "card_100057.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100057.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100057.png",
+        "bytes": 378590,
+        "sha256": "cf7fb139231b2872bc91c9f48e9845ad6066cc6a0ef32e64b2e05e7c27a440e8"
+      },
+      {
+        "cfgId": 100058,
+        "name": "card_100058.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100058.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100058.png",
+        "bytes": 367986,
+        "sha256": "342061e1922709d2f47781ce9fbbf43e6f0fc0494ccbc50a43143a7e2c7c8d5e"
+      },
+      {
+        "cfgId": 100059,
+        "name": "card_100059.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100059.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100059.png",
+        "bytes": 316830,
+        "sha256": "0861c7c8fe40ac60054a940158d348482974c4c459db814a7b30477e3e81a7e5"
+      },
+      {
+        "cfgId": 100060,
+        "name": "card_100060.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100060.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100060.png",
+        "bytes": 333839,
+        "sha256": "71dbc79edbf8d0f24d8e2d52e27dc231ee8e3fe49bca0088ea521f5555d498ac"
+      },
+      {
+        "cfgId": 100062,
+        "name": "card_100062.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100062.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100062.png",
+        "bytes": 370066,
+        "sha256": "7318963a1f8cbf0f8846e483094d0272bf2d1b681feb3540ef3d86e063df2b71"
+      },
+      {
+        "cfgId": 100063,
+        "name": "card_100063.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100063.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100063.png",
+        "bytes": 352813,
+        "sha256": "97acce5335e8c0c5100e0e42e508e5b7248655951117e2670d672ee67c6b4f4f"
+      },
+      {
+        "cfgId": 100064,
+        "name": "card_100064.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100064.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100064.png",
+        "bytes": 341384,
+        "sha256": "7cbe956bb790d229a1d53bd9535aa13d26a69a698f3d6c92def10dcc1f9e092a"
+      },
+      {
+        "cfgId": 100065,
+        "name": "card_100065.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100065.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100065.png",
+        "bytes": 379168,
+        "sha256": "9d9f650432a3878103e4d113abdd80fe3e3907d6dcb981800cb1b1f9fe9d23a8"
+      },
+      {
+        "cfgId": 100066,
+        "name": "card_100066.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100066.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100066.png",
+        "bytes": 411341,
+        "sha256": "8cb1cf48da57a8032fc8780fa450e23b60c1828768a41ba60a8c9588f7bd8ac6"
+      },
+      {
+        "cfgId": 100067,
+        "name": "card_100067.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100067.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100067.png",
+        "bytes": 317474,
+        "sha256": "93b822b67c6e1e95ef4f9a9abaee8b0aa419fbd9cb809b3b3e16b3296d1d0cf7"
+      },
+      {
+        "cfgId": 100068,
+        "name": "card_100068.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100068.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100068.png",
+        "bytes": 329484,
+        "sha256": "f69150bd61df2d2d52329ae17cbe7c9087259d2842925808cef9a8b75f3ef2d0"
+      },
+      {
+        "cfgId": 100069,
+        "name": "card_100069.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100069.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100069.png",
+        "bytes": 301648,
+        "sha256": "d251e1400b3bcc5a76929dded8976a3a14ffdf5847c52f0ea02633df14b885a0"
+      },
+      {
+        "cfgId": 100070,
+        "name": "card_100070.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100070.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100070.png",
+        "bytes": 320833,
+        "sha256": "2aec47d5fe8b26d6a89769ae499eb6d202864c14cc5ff21cad48e4eea2c330b2"
+      },
+      {
+        "cfgId": 100071,
+        "name": "card_100071.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100071.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100071.png",
+        "bytes": 324974,
+        "sha256": "13922c15f6bc24f071b89ecfc2ca4b525df7e367da8d2c0b5cd5423168c9af24"
+      },
+      {
+        "cfgId": 100072,
+        "name": "card_100072.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100072.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100072.png",
+        "bytes": 337882,
+        "sha256": "0ec8979dce37ea7443610a8441e753601d955cff88404e2f9c69f1fa9e4a6a8f"
+      },
+      {
+        "cfgId": 100073,
+        "name": "card_100073.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100073.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100073.png",
+        "bytes": 349019,
+        "sha256": "0ece920c283b52e1b6818c7c76ca8c51ec17b20d0856f2453f63351fcff1d88b"
+      },
+      {
+        "cfgId": 100074,
+        "name": "card_100074.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100074.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100074.png",
+        "bytes": 424855,
+        "sha256": "4a37c9753c35372a56d8cfbd9e64d8676224803075b8704bb8a0ad786ad4a711"
+      },
+      {
+        "cfgId": 100075,
+        "name": "card_100075.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100075.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100075.png",
+        "bytes": 367832,
+        "sha256": "a986f9544e2b1989e38f283620cc84351ddb7b33206ac526b8760f6ac691c4a6"
+      },
+      {
+        "cfgId": 100076,
+        "name": "card_100076.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100076.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100076.png",
+        "bytes": 387718,
+        "sha256": "80623f8b2fe72db840f0a22fd8c4989c790924161230964e95dede5aaa8d2c05"
+      },
+      {
+        "cfgId": 100077,
+        "name": "card_100077.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100077.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100077.png",
+        "bytes": 313265,
+        "sha256": "2d59d96b6f705e3dca5d5aef00a47a5be5dda8f169b5f003cb6f1fc94bf0b492"
+      },
+      {
+        "cfgId": 100078,
+        "name": "card_100078.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100078.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100078.png",
+        "bytes": 323460,
+        "sha256": "a7b7ae79eeda7e901b5a5ae1a2b003f61d82e91b53595d0130312db8e2894dcd"
+      },
+      {
+        "cfgId": 100079,
+        "name": "card_100079.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100079.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100079.png",
+        "bytes": 409117,
+        "sha256": "ee1725db97dc5722184bf5378c2ffc7283e70af4a7ac232bd33cc0a49c2674b4"
+      },
+      {
+        "cfgId": 100080,
+        "name": "card_100080.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100080.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100080.png",
+        "bytes": 363372,
+        "sha256": "ab9ab128ad2c1e4bd41c69b8246fce6c418d54a61bd129ef46c0099b1dbb4adc"
+      },
+      {
+        "cfgId": 100081,
+        "name": "card_100081.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100081.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100081.png",
+        "bytes": 362063,
+        "sha256": "6a4a1a5734fb14ab2fb3a96bdee32886d2be97be8a6934b5618631d291d4c347"
+      },
+      {
+        "cfgId": 100083,
+        "name": "card_100083.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100083.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100083.png",
+        "bytes": 329991,
+        "sha256": "c0bbb71ad80b97ea5a9f7f578ae4c50b5ec026cf26b9f1be6fb4640ae4ae2667"
+      },
+      {
+        "cfgId": 100084,
+        "name": "card_100084.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100084.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100084.png",
+        "bytes": 342769,
+        "sha256": "202aa708722c5ae8ad02c90da1e9dcdc9207d44193c1d975c79957723c29a44e"
+      },
+      {
+        "cfgId": 100085,
+        "name": "card_100085.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100085.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100085.png",
+        "bytes": 404466,
+        "sha256": "df3ee0c5b1c0e0b406b1494225bd545e9ab42101b191fb7bb6ef7b56461e4cae"
+      },
+      {
+        "cfgId": 100086,
+        "name": "card_100086.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100086.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100086.png",
+        "bytes": 356609,
+        "sha256": "303e86777bd9552f7e9c90022a0b6b0a8debb3926d0351312c251db12ac59aed"
+      },
+      {
+        "cfgId": 100087,
+        "name": "card_100087.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100087.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100087.png",
+        "bytes": 361629,
+        "sha256": "55dc3d72c876983f6360f318eedc8f431dbd5a8a8fb3e092819bc5149ff79f28"
+      },
+      {
+        "cfgId": 100088,
+        "name": "card_100088.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100088.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100088.png",
+        "bytes": 411334,
+        "sha256": "20261ed2dbebc1d043e5e36a606cfd24c99e605248e6ea2cf64ae0b9f43eca0b"
+      },
+      {
+        "cfgId": 100089,
+        "name": "card_100089.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100089.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100089.png",
+        "bytes": 367377,
+        "sha256": "7912ca2875422d15230a872b379d191e017cd8a089d941675a9069576b03f5ef"
+      },
+      {
+        "cfgId": 100090,
+        "name": "card_100090.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100090.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100090.png",
+        "bytes": 413479,
+        "sha256": "dfb186bec54fe82fa8c73e85d94c2499cea03b878e95bbc006ec505979179c68"
+      },
+      {
+        "cfgId": 100091,
+        "name": "card_100091.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100091.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100091.png",
+        "bytes": 382165,
+        "sha256": "fb7b305f92fb8252d94873a5cb5f97ace0621b390c87dff5e9b17de37635faaa"
+      },
+      {
+        "cfgId": 100092,
+        "name": "card_100092.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100092.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100092.png",
+        "bytes": 296443,
+        "sha256": "fb95b26b97252ec47fb37eeb4776bd3d53a225ab0d5d8e8250c73b3673bfe83f"
+      },
+      {
+        "cfgId": 100093,
+        "name": "card_100093.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100093.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100093.png",
+        "bytes": 306953,
+        "sha256": "f5e358d869070675b0decb445e27eadf2038020b1c2e4058c12a2f90b97d926e"
+      },
+      {
+        "cfgId": 100094,
+        "name": "card_100094.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100094.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100094.png",
+        "bytes": 364870,
+        "sha256": "ff2a54c5e6960efa6f6cd8dcc4fce00a7cb3ad0e28440dde6578a0b1ec85ba34"
+      },
+      {
+        "cfgId": 100095,
+        "name": "card_100095.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100095.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100095.png",
+        "bytes": 331435,
+        "sha256": "5943a6c799e55ab6cdcabf58584f45381becc4f0985f8e32135d7675bcca2e99"
+      },
+      {
+        "cfgId": 100096,
+        "name": "card_100096.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100096.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100096.png",
+        "bytes": 343861,
+        "sha256": "81e5085e01d22f66195920a333a4b924fabcb112debdd0090357fa8d4be97b35"
+      },
+      {
+        "cfgId": 100097,
+        "name": "card_100097.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100097.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100097.png",
+        "bytes": 340926,
+        "sha256": "f720902dfb56b8bc8078e6a963cf101992e2efbba73e7389cf4590062213f047"
+      },
+      {
+        "cfgId": 100098,
+        "name": "card_100098.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100098.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100098.png",
+        "bytes": 334989,
+        "sha256": "3adfc72b2553268590e23fa479aac83cbeda526eaeb730f6789493bfcbb15d0a"
+      },
+      {
+        "cfgId": 100099,
+        "name": "card_100099.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100099.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100099.png",
+        "bytes": 374622,
+        "sha256": "a9aa6e4bcfde3c53917dcd452773a8a7507615a98f9a22f430d94e1e45db8811"
+      },
+      {
+        "cfgId": 100100,
+        "name": "card_100100.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100100.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100100.png",
+        "bytes": 365886,
+        "sha256": "03b8f44caed7f7c8bf741c4058c5c947a224e1108b9b568d3ad7a6aa79997b9e"
+      },
+      {
+        "cfgId": 100101,
+        "name": "card_100101.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100101.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100101.png",
+        "bytes": 333557,
+        "sha256": "15be3f58ef5cfb46987a9e202ba46d0aab7baa9eb9f290853d0299fd74f36ea6"
+      },
+      {
+        "cfgId": 100102,
+        "name": "card_100102.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100102.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100102.png",
+        "bytes": 317315,
+        "sha256": "b30dc9e8a9a62fa4622569f0ff54c75dfe484e17168fd0a05882e062f34a8281"
+      },
+      {
+        "cfgId": 100103,
+        "name": "card_100103.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100103.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100103.png",
+        "bytes": 309270,
+        "sha256": "0087fad6ea353eb762ec5914f98094925a09fe97383643a343defaeb5b8ed80e"
+      },
+      {
+        "cfgId": 100104,
+        "name": "card_100104.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100104.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100104.png",
+        "bytes": 333429,
+        "sha256": "c27fa7218ed093570cba6b87c88ab7d0496a9cfa301f9d6b2e47de677784d865"
+      },
+      {
+        "cfgId": 100105,
+        "name": "card_100105.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100105.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100105.png",
+        "bytes": 307002,
+        "sha256": "16448c6b5a2cac44f96f31d64962ac6021aaecb4ea2d9890151299e2bfc2e439"
+      },
+      {
+        "cfgId": 100106,
+        "name": "card_100106.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100106.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100106.png",
+        "bytes": 335251,
+        "sha256": "b2a2bada981804e691cde13097159d406f3d87211a835cd34e48c5b73dfe046f"
+      },
+      {
+        "cfgId": 100107,
+        "name": "card_100107.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100107.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100107.png",
+        "bytes": 372178,
+        "sha256": "8761d8882e837399de36d3ca7006a29992150149f0441906b8ea5deebdc1447e"
+      },
+      {
+        "cfgId": 100108,
+        "name": "card_100108.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100108.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100108.png",
+        "bytes": 348460,
+        "sha256": "ccd71c1aef1d831602af3ddb7fbc2310862d526861addad1291c3d7da5b88c03"
+      },
+      {
+        "cfgId": 100109,
+        "name": "card_100109.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100109.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100109.png",
+        "bytes": 306950,
+        "sha256": "fb28d40c469a2a03ceac3e0ef9309caff4a730415c5f1e4af768fcfaff10bf30"
+      },
+      {
+        "cfgId": 100110,
+        "name": "card_100110.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100110.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100110.png",
+        "bytes": 377017,
+        "sha256": "8590b83a95367bc8ec0fb91fa996e3ef6cac054dc9031bb2257d9dcd6e7a2209"
+      },
+      {
+        "cfgId": 100111,
+        "name": "card_100111.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100111.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100111.png",
+        "bytes": 352848,
+        "sha256": "c688474bc8c3912e5076ccc98bb525b473fe99bd750d999c232a7a05023b2200"
+      },
+      {
+        "cfgId": 100113,
+        "name": "card_100113.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100113.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100113.png",
+        "bytes": 338606,
+        "sha256": "c65d5005a474dddc798abb8614051f5c25f89fbe302fedd47b0a0e744030ba04"
+      },
+      {
+        "cfgId": 100114,
+        "name": "card_100114.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100114.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100114.png",
+        "bytes": 388243,
+        "sha256": "e796086597714f491643f003963e6aa2cd5ec3973c5ee3f297d2d0b20161fdcf"
+      },
+      {
+        "cfgId": 100115,
+        "name": "card_100115.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100115.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100115.png",
+        "bytes": 341664,
+        "sha256": "a4354b783e0e3d6327c5e64e85181852c72bea72fcb47f4f30a38f6c28e10b48"
+      },
+      {
+        "cfgId": 100116,
+        "name": "card_100116.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100116.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100116.png",
+        "bytes": 353500,
+        "sha256": "f277f7d6251fec02eeadc02afeee4b27038352875b40538f6f8c4a8228f4237b"
+      },
+      {
+        "cfgId": 100117,
+        "name": "card_100117.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100117.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100117.png",
+        "bytes": 324791,
+        "sha256": "ee57eed62be9260b85af6c261722e4926918e13a951eb4da824ff1958246b6e6"
+      },
+      {
+        "cfgId": 100118,
+        "name": "card_100118.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100118.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100118.png",
+        "bytes": 367618,
+        "sha256": "8168fb48f441f7d8dd2202784d32359a686a51e3786025936893ce4c60df8ccb"
+      },
+      {
+        "cfgId": 100119,
+        "name": "card_100119.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100119.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100119.png",
+        "bytes": 361806,
+        "sha256": "8716ac8739010e8bb20750012ff92da5e1790d5ed57588a3f8b9b56280af6716"
+      },
+      {
+        "cfgId": 100120,
+        "name": "card_100120.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100120.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100120.png",
+        "bytes": 325158,
+        "sha256": "5a0891e6489769c15c5769b4c16940e386308e90df57457303a721e5141c29b1"
+      },
+      {
+        "cfgId": 100121,
+        "name": "card_100121.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100121.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100121.png",
+        "bytes": 319328,
+        "sha256": "5b6204b988a9e8031afcaa8c71d2e92393ece51829217f642e90321e9e80d387"
+      },
+      {
+        "cfgId": 100122,
+        "name": "card_100122.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100122.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100122.png",
+        "bytes": 379027,
+        "sha256": "c68f28f61cddda84d72042fe152a8fe699ea05fb2df46ad404ab88d1b0f5452e"
+      },
+      {
+        "cfgId": 100123,
+        "name": "card_100123.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100123.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100123.png",
+        "bytes": 355253,
+        "sha256": "98f22d98d9607b64b19b140bc0aece415c2bccbf4ed8b99af01df0235a96d79d"
+      },
+      {
+        "cfgId": 100124,
+        "name": "card_100124.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100124.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100124.png",
+        "bytes": 335960,
+        "sha256": "3f07cf8faa0dcf33ffda826d622b1a867276b64bacbb45a0a6dec81931de93bc"
+      },
+      {
+        "cfgId": 100125,
+        "name": "card_100125.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100125.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100125.png",
+        "bytes": 314864,
+        "sha256": "68430ce9ff127e2e1a812fef3123a8d9c83b09e166d67b037b8bb44cc704e7d3"
+      },
+      {
+        "cfgId": 100126,
+        "name": "card_100126.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100126.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100126.png",
+        "bytes": 365856,
+        "sha256": "61a23c2618326d50cbb2d1a7cc2e93a6634ede26925a8503f9e00c0dde7ee3b3"
+      },
+      {
+        "cfgId": 100127,
+        "name": "card_100127.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100127.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100127.png",
+        "bytes": 415326,
+        "sha256": "0aaccf94c1a0c333d88804ebb954307635f02c9dee9dee1ead63b9b34723700d"
+      },
+      {
+        "cfgId": 100128,
+        "name": "card_100128.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100128.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100128.png",
+        "bytes": 325680,
+        "sha256": "a75d58699c306e546c5845f392151aafb3176d52db8d6393c7f44e6b5ed064f4"
+      },
+      {
+        "cfgId": 100129,
+        "name": "card_100129.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100129.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100129.png",
+        "bytes": 349156,
+        "sha256": "3d8e4de272f4368a622ec878a09d8f2f19d8471e2833b7aca7b29ebdac64952e"
+      },
+      {
+        "cfgId": 100130,
+        "name": "card_100130.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100130.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100130.png",
+        "bytes": 330108,
+        "sha256": "a7ce8176fac2325b11dda87b3e2276bf3ef771110a15296dce6ade24de4bb9db"
+      },
+      {
+        "cfgId": 100131,
+        "name": "card_100131.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100131.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100131.png",
+        "bytes": 326514,
+        "sha256": "99aae021bfeb0f00c9cbc8448e3edc40fce5767e57e361fb2e966cc2604d8e93"
+      },
+      {
+        "cfgId": 100132,
+        "name": "card_100132.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100132.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100132.png",
+        "bytes": 283860,
+        "sha256": "bc99d191dc17f46c263f60bf2e6b861377dc49f9ace877c482f8cace9593129b"
+      },
+      {
+        "cfgId": 100133,
+        "name": "card_100133.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100133.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100133.png",
+        "bytes": 347553,
+        "sha256": "b84220915459d1baa06948e9c910446f29fc21ee7e6f46c335dfdc9e5f2ef558"
+      },
+      {
+        "cfgId": 100134,
+        "name": "card_100134.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100134.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100134.png",
+        "bytes": 366210,
+        "sha256": "40eb1f6fb87573af26cf4712ebded3683e2d6ea4561a972fd1ea50d9c13a492e"
+      },
+      {
+        "cfgId": 100136,
+        "name": "card_100136.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100136.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100136.png",
+        "bytes": 325127,
+        "sha256": "fc7ccb56920fd1cd763377655ade4ca7fec350bf17a3fa4e0cb9c151567ccb65"
+      },
+      {
+        "cfgId": 100137,
+        "name": "card_100137.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100137.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100137.png",
+        "bytes": 306556,
+        "sha256": "1647699e5be3e010d7d4e66c7ed94c01a343fe0980fb16e8f1bb553b602f84d9"
+      },
+      {
+        "cfgId": 100138,
+        "name": "card_100138.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100138.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100138.png",
+        "bytes": 340558,
+        "sha256": "ef71332a66156fbcc1fc1f0c04c49cf66ff88338d68609384d436074f3f407e0"
+      },
+      {
+        "cfgId": 100139,
+        "name": "card_100139.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100139.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100139.png",
+        "bytes": 336374,
+        "sha256": "deee000edf092d009c5f6e4e7c752626d8a95a0ca141ae3ef3626b985731e6a3"
+      },
+      {
+        "cfgId": 100140,
+        "name": "card_100140.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100140.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100140.png",
+        "bytes": 395257,
+        "sha256": "72b80f85212378a0dae30384cd809cfb019dab472ab829028319375e4d4bce30"
+      },
+      {
+        "cfgId": 100141,
+        "name": "card_100141.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100141.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100141.png",
+        "bytes": 415929,
+        "sha256": "f80f89d497c839b7b07732090f501805b6e6840041ae30a0e5128825e2d9d8e4"
+      },
+      {
+        "cfgId": 100142,
+        "name": "card_100142.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100142.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100142.png",
+        "bytes": 340809,
+        "sha256": "f013c672624109d9456d06606b2e9a370da0667997a7b9433764cb38f4d83ef7"
+      },
+      {
+        "cfgId": 100143,
+        "name": "card_100143.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100143.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100143.png",
+        "bytes": 296219,
+        "sha256": "146f85eb23fae3adee45a80f2a992dbebf10f895883f32fcdc58e39e363ad692"
+      },
+      {
+        "cfgId": 100144,
+        "name": "card_100144.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100144.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100144.png",
+        "bytes": 335722,
+        "sha256": "903af131655aa1523171b7c5cab6bcffd4869f0435666fcf6c71b9b447e045d4"
+      },
+      {
+        "cfgId": 100145,
+        "name": "card_100145.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100145.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100145.png",
+        "bytes": 341993,
+        "sha256": "e0c2d675e10ea33058211237d59bf714fcc9dd935fef7957fca16ddd7dd8e841"
+      },
+      {
+        "cfgId": 100146,
+        "name": "card_100146.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100146.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100146.png",
+        "bytes": 280590,
+        "sha256": "43127a686846e3911884fef78fd35aaadebd43fccd374864d90c4f34306f0b71"
+      },
+      {
+        "cfgId": 100147,
+        "name": "card_100147.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100147.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100147.png",
+        "bytes": 356358,
+        "sha256": "7432fa5c2390829d526184f38d29cd01d37ec0425387b2a266771cd35a5985b0"
+      },
+      {
+        "cfgId": 100148,
+        "name": "card_100148.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100148.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100148.png",
+        "bytes": 368375,
+        "sha256": "11935f61ea7cbf675677f5903d9db225c17bde435f6bfe2e5879e2a34039b893"
+      },
+      {
+        "cfgId": 100149,
+        "name": "card_100149.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100149.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100149.png",
+        "bytes": 364543,
+        "sha256": "f923c4b0a618d8f003953ff224cd72a0f3926d202fc6c295de1afa9133671857"
+      },
+      {
+        "cfgId": 100150,
+        "name": "card_100150.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100150.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100150.png",
+        "bytes": 305363,
+        "sha256": "246f3e74501eae2cbba3922e0637ed10f2f50bdcd69fdc52391e0e29824b7c76"
+      },
+      {
+        "cfgId": 100151,
+        "name": "card_100151.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100151.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100151.png",
+        "bytes": 348329,
+        "sha256": "d556aa525e1b119980b5b0833de1536f48e48dccd0c6514285bd8ce78dea84bb"
+      },
+      {
+        "cfgId": 100152,
+        "name": "card_100152.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100152.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100152.png",
+        "bytes": 325309,
+        "sha256": "995f361f0037c78c475fd564402ea7959c47641c9088576eee1e8c171e5de346"
+      },
+      {
+        "cfgId": 100153,
+        "name": "card_100153.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100153.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100153.png",
+        "bytes": 314811,
+        "sha256": "032ae37c2b9a07c9b839dca993da930d85bc803e9fddd7a330ce684844608874"
+      },
+      {
+        "cfgId": 100154,
+        "name": "card_100154.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100154.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100154.png",
+        "bytes": 341624,
+        "sha256": "e8177701b9cc5bab428b83e9db67e48a18c6caccd05fa9c24cdef5e8e3343d6d"
+      },
+      {
+        "cfgId": 100155,
+        "name": "card_100155.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100155.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100155.png",
+        "bytes": 334084,
+        "sha256": "3655a4326abe0af7936d6b438b4efb9aa8387c2897e341399bf573c0f7562882"
+      },
+      {
+        "cfgId": 100156,
+        "name": "card_100156.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100156.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100156.png",
+        "bytes": 350146,
+        "sha256": "abfce336c56bdec3e384f622daba475277edb44a3e929b4ed9aa1232727a333c"
+      },
+      {
+        "cfgId": 100157,
+        "name": "card_100157.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100157.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100157.png",
+        "bytes": 379309,
+        "sha256": "322c0de9d424d2e70bddda4996ba7d1ab26f543ff8003c31880ec607f062b75f"
+      },
+      {
+        "cfgId": 100158,
+        "name": "card_100158.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100158.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100158.png",
+        "bytes": 331364,
+        "sha256": "2fb2c8c1548e638cb5f1701c60587a9fa443028a7136199abf82d64816b79932"
+      },
+      {
+        "cfgId": 100159,
+        "name": "card_100159.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100159.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100159.png",
+        "bytes": 342473,
+        "sha256": "ef52497751cacf6c80f62cf963608aacd55e1a099eeb6056ae7a3b4790d03c60"
+      },
+      {
+        "cfgId": 100160,
+        "name": "card_100160.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100160.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100160.png",
+        "bytes": 292686,
+        "sha256": "49529bcd5fbad0ec33e0ecd4a797a9b212f5898f45730a432c2f7230c1b24855"
+      },
+      {
+        "cfgId": 100161,
+        "name": "card_100161.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100161.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100161.png",
+        "bytes": 301908,
+        "sha256": "8f7d788597c201646eaea069f59486dd8aa4ba36280dcf88e5e7d7ddd1426a5c"
+      },
+      {
+        "cfgId": 100162,
+        "name": "card_100162.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100162.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100162.png",
+        "bytes": 348225,
+        "sha256": "2db8b0563056e1569b2cb8d3a9398a231ac72bb8a21b554b421213d9b82ecb0b"
+      },
+      {
+        "cfgId": 100163,
+        "name": "card_100163.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100163.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100163.png",
+        "bytes": 325563,
+        "sha256": "6a7ee00fd5c4ca24919af2c9f9d6ebc6bb1c351f9e9a82ad44513893451fa91d"
+      },
+      {
+        "cfgId": 100164,
+        "name": "card_100164.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100164.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100164.png",
+        "bytes": 334218,
+        "sha256": "9b9e6f49724e7a0dfd97321dd2f9dcf460289e20bc3c2114fb37993dffc0cba2"
+      },
+      {
+        "cfgId": 100165,
+        "name": "card_100165.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100165.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100165.png",
+        "bytes": 321672,
+        "sha256": "e3528c1758687806b38ac2950ff22feaafcec1a9b4e9d50fa787d65b40af79ca"
+      },
+      {
+        "cfgId": 100166,
+        "name": "card_100166.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100166.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100166.png",
+        "bytes": 339627,
+        "sha256": "618256585537f292f9ef2eaf1794816f6604ad3f110f38a63a9340d4ffe1bb28"
+      },
+      {
+        "cfgId": 100167,
+        "name": "card_100167.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100167.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100167.png",
+        "bytes": 334935,
+        "sha256": "1b5f4c0a124cb51f6104f0f002e002f62a527a9848c86a2880e2186d78adcd77"
+      },
+      {
+        "cfgId": 100168,
+        "name": "card_100168.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100168.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100168.png",
+        "bytes": 324269,
+        "sha256": "bcc99f28397bbd0b66bee6185c4958577ea7f847aff42c84462abef9afccd6c5"
+      },
+      {
+        "cfgId": 100169,
+        "name": "card_100169.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100169.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100169.png",
+        "bytes": 289094,
+        "sha256": "af5341dfdf478830b7a385bf037ad187f8865c96dbc062628a3e927ee4013068"
+      },
+      {
+        "cfgId": 100170,
+        "name": "card_100170.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100170.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100170.png",
+        "bytes": 242669,
+        "sha256": "bd633e7c44e879f0d8672778b8f02686036c84647da886f18d9a983d2a17becc"
+      },
+      {
+        "cfgId": 100171,
+        "name": "card_100171.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100171.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100171.png",
+        "bytes": 289872,
+        "sha256": "5167415ddb313d5a67b06b15a8efb4a456c9bb2e393a717e35bec906550e5531"
+      },
+      {
+        "cfgId": 100172,
+        "name": "card_100172.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100172.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100172.png",
+        "bytes": 264757,
+        "sha256": "4a41c3ce1ecca93f9a628517f9e854709b06b639cde872fc3fdf60dfe5ad3e44"
+      },
+      {
+        "cfgId": 100173,
+        "name": "card_100173.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100173.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100173.png",
+        "bytes": 338090,
+        "sha256": "5bc7ff3c0917b1bb81bcff39323f849541c8226c697387db456005f9e3b28a1e"
+      },
+      {
+        "cfgId": 100174,
+        "name": "card_100174.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100174.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100174.png",
+        "bytes": 328232,
+        "sha256": "de3a494cf8bd8326374544ff2f42c8702803adfc7e83e85b7aa31a95ded4270d"
+      },
+      {
+        "cfgId": 100175,
+        "name": "card_100175.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100175.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100175.png",
+        "bytes": 298415,
+        "sha256": "4a09369d823de074bb928f4108162163144d4606ef01b024c31108af65518fda"
+      },
+      {
+        "cfgId": 100176,
+        "name": "card_100176.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100176.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100176.png",
+        "bytes": 315433,
+        "sha256": "92c7784fdbde45613d311b6ff755af0dce18cffc25163765c28423ec11983d6d"
+      },
+      {
+        "cfgId": 100177,
+        "name": "card_100177.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100177.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100177.png",
+        "bytes": 271877,
+        "sha256": "ea1b99496896d078b45aee15832b43e8c7759ba4bfa96216ebb89cf20f95d257"
+      },
+      {
+        "cfgId": 100178,
+        "name": "card_100178.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100178.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100178.png",
+        "bytes": 325578,
+        "sha256": "5678d4fb43da8f7f85a1c6f32dbeb4a86f1193d77ece198be9b32cbd2e7cff6d"
+      },
+      {
+        "cfgId": 100179,
+        "name": "card_100179.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100179.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100179.png",
+        "bytes": 359199,
+        "sha256": "cbfff3bcd4afc62fbac9f85d82b51fb0b061e82d43062de2356d0180d668c840"
+      },
+      {
+        "cfgId": 100180,
+        "name": "card_100180.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100180.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100180.png",
+        "bytes": 305812,
+        "sha256": "eff3b725bf3f856df46d5a6130647ea1f7972c4f431671e7163bd6b9af857a37"
+      },
+      {
+        "cfgId": 100181,
+        "name": "card_100181.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100181.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100181.png",
+        "bytes": 374664,
+        "sha256": "a8c32a9d3b93a11b69d3660d0d200606a2d7d68e58646cedaed69dcee84b31f4"
+      },
+      {
+        "cfgId": 100182,
+        "name": "card_100182.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100182.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100182.png",
+        "bytes": 351491,
+        "sha256": "fdab59c3d938c3664030f7f87ecdd83f70b7512128d6e48b554763fdec93b813"
+      },
+      {
+        "cfgId": 100183,
+        "name": "card_100183.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100183.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100183.png",
+        "bytes": 340074,
+        "sha256": "cce315acd098789e33e9495bdb6aaec933e9477c1b47790349651d58c9e3a74b"
+      },
+      {
+        "cfgId": 100184,
+        "name": "card_100184.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100184.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100184.png",
+        "bytes": 386248,
+        "sha256": "1799c8b119f1a3796849e5dfe708a157b054e1ec84479efc4c8df4785c8b2aab"
+      },
+      {
+        "cfgId": 100185,
+        "name": "card_100185.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100185.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100185.png",
+        "bytes": 317189,
+        "sha256": "4c8166cad8716b9842ab2a0041076b49f0955b001e8e95d080199099390d6ef4"
+      },
+      {
+        "cfgId": 100186,
+        "name": "card_100186.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100186.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100186.png",
+        "bytes": 359207,
+        "sha256": "32cfbbe6ca09df6d15ae360f22e4418387df7c92229ddd4d378b0fb513dd17e7"
+      },
+      {
+        "cfgId": 100187,
+        "name": "card_100187.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100187.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100187.png",
+        "bytes": 380368,
+        "sha256": "4a74552c1ade87c27e470def94da12a0079c327950153f2d3eea41e3cda895a3"
+      },
+      {
+        "cfgId": 100188,
+        "name": "card_100188.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100188.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100188.png",
+        "bytes": 384775,
+        "sha256": "f04ed9122ceeaa7f5591dd85efe74d20d061a3cc3a9f3b66e12ed75f165f1a20"
+      },
+      {
+        "cfgId": 100189,
+        "name": "card_100189.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100189.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100189.png",
+        "bytes": 321611,
+        "sha256": "ee1031c61e8be639b00134fd8bb14f5993c51e6cd05d0765e624fea7ca95529c"
+      },
+      {
+        "cfgId": 100190,
+        "name": "card_100190.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100190.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100190.png",
+        "bytes": 349943,
+        "sha256": "57ebe3702e35c6a3852ee87290e073d8a5c855591f65214518542a03ce3e4871"
+      },
+      {
+        "cfgId": 100191,
+        "name": "card_100191.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100191.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100191.png",
+        "bytes": 294621,
+        "sha256": "34b0f4e97b7fa4c8add58c35193ea063c6f475e1a3ec7830b42832cda96b90c4"
+      },
+      {
+        "cfgId": 100192,
+        "name": "card_100192.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100192.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100192.png",
+        "bytes": 376185,
+        "sha256": "0c92450449156cf2b971dbdd6e40f400c511529ed18107b3c198f3135864a9ac"
+      },
+      {
+        "cfgId": 100193,
+        "name": "card_100193.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100193.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100193.png",
+        "bytes": 367211,
+        "sha256": "510f00a688b2cfcd125fa819d7a60d1f7b02e87d9f00b21e645919ebee3d3d7c"
+      },
+      {
+        "cfgId": 100194,
+        "name": "card_100194.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100194.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100194.png",
+        "bytes": 391996,
+        "sha256": "b2c9ec83ab184cece098881f0f1a08fb3c715d73f6db9822f84d9a454f8de7a8"
+      },
+      {
+        "cfgId": 100195,
+        "name": "card_100195.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100195.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100195.png",
+        "bytes": 378220,
+        "sha256": "38820f308ae0933143fcc54f6091de50bdd01cfc7c3a1cebbe2ab45c768b9e82"
+      },
+      {
+        "cfgId": 100196,
+        "name": "card_100196.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100196.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100196.png",
+        "bytes": 306103,
+        "sha256": "d19d741bccf009aa847ecf1e9e8aef869ae0b55b065f43bae7cc1109c18a9c3b"
+      },
+      {
+        "cfgId": 100197,
+        "name": "card_100197.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100197.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100197.png",
+        "bytes": 333391,
+        "sha256": "c311a7a8b3927367864a81075dd8398ce1c3caa668f6b033837b5326fb91c182"
+      },
+      {
+        "cfgId": 100198,
+        "name": "card_100198.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100198.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100198.png",
+        "bytes": 325275,
+        "sha256": "40ec88a283e6b28b0f92fbde0bde063a90431f7fdff22945cdfdb8c3953a6e61"
+      },
+      {
+        "cfgId": 100199,
+        "name": "card_100199.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100199.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100199.png",
+        "bytes": 320662,
+        "sha256": "77c64314b0f977f56ef26c73009e25d89405145720e4b74634494381e301b6c4"
+      },
+      {
+        "cfgId": 100200,
+        "name": "card_100200.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100200.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100200.png",
+        "bytes": 280703,
+        "sha256": "40a6ba7328bc28a7d702bc5c7f79269871f8b826374cfaa837601042e3622858"
+      },
+      {
+        "cfgId": 100201,
+        "name": "card_100201.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100201.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100201.png",
+        "bytes": 347141,
+        "sha256": "956c540e3f0a4ca79c7d2dcf864ccd6fd91ec3f783a238245278f695c7f089ab"
+      },
+      {
+        "cfgId": 100202,
+        "name": "card_100202.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100202.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100202.png",
+        "bytes": 361945,
+        "sha256": "1805faff13b2e7b1a6ca28ceca06f45215ac477e2b03d66c673d423f9e7440dd"
+      },
+      {
+        "cfgId": 100203,
+        "name": "card_100203.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100203.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100203.png",
+        "bytes": 333952,
+        "sha256": "859301214d874c57986c5b5e032eeba1387a078f245115b7c7a8f66d9439cb91"
+      },
+      {
+        "cfgId": 100204,
+        "name": "card_100204.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100204.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100204.png",
+        "bytes": 338379,
+        "sha256": "d9b5f38b7187f6546c7f28128f09ae840ce8a41dda3f667e56b956ccc95ee737"
+      },
+      {
+        "cfgId": 100205,
+        "name": "card_100205.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100205.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100205.png",
+        "bytes": 339150,
+        "sha256": "16f917c4a1cfadbaf570dc1bad44202acaaf215f0aad6afda3ecf45f0201a9f4"
+      },
+      {
+        "cfgId": 100206,
+        "name": "card_100206.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100206.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100206.png",
+        "bytes": 357580,
+        "sha256": "35d442c8c9373a9b21c103a8dc9ae1eaad90ef628bc4b3f45792b51d55eb294f"
+      },
+      {
+        "cfgId": 100207,
+        "name": "card_100207.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100207.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100207.png",
+        "bytes": 341659,
+        "sha256": "e522636df9724ce6503b6c0c615293a74efd65e50e928669d40e4556aa949062"
+      },
+      {
+        "cfgId": 100208,
+        "name": "card_100208.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100208.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100208.png",
+        "bytes": 347722,
+        "sha256": "7eb7ea957b7c5f26bea5e9d737c05cd09e8e4384806fc21401e7d15dcb5959ce"
+      },
+      {
+        "cfgId": 100209,
+        "name": "card_100209.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100209.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100209.png",
+        "bytes": 336024,
+        "sha256": "3c92007221c7b870f6b34527a56ab39402f6564513424c1df5ff916774493c4e"
+      },
+      {
+        "cfgId": 100210,
+        "name": "card_100210.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100210.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100210.png",
+        "bytes": 347790,
+        "sha256": "92eea8153f4645bd9b00fbc06fb4b7ca120ae5fb4bed5f062647d94a9f2a66ee"
+      },
+      {
+        "cfgId": 100211,
+        "name": "card_100211.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100211.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100211.png",
+        "bytes": 338640,
+        "sha256": "4c17e859df9f8112815178ef755f6fb5b8bd7c7fada69a08bee95aa8bce3fd74"
+      },
+      {
+        "cfgId": 100212,
+        "name": "card_100212.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100212.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100212.png",
+        "bytes": 314453,
+        "sha256": "5edd3ce08c6fb3e7d7a670c730c89243b9b1220daeeaaea8708c59787e0e10fc"
+      },
+      {
+        "cfgId": 100213,
+        "name": "card_100213.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100213.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100213.png",
+        "bytes": 321697,
+        "sha256": "64c2aea681ea3906934c606b9a7ea52986aafaa64a7f410104c5180601b74934"
+      },
+      {
+        "cfgId": 100214,
+        "name": "card_100214.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100214.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100214.png",
+        "bytes": 326111,
+        "sha256": "12efa83115c44c330fbf7681c00c493784a14b5cb1edafc27971358f1078b158"
+      },
+      {
+        "cfgId": 100215,
+        "name": "card_100215.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100215.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100215.png",
+        "bytes": 358391,
+        "sha256": "8c218aaf50ee0ef006977a5e473e9dd3284800404fccb57e3072d8ed6893c6cc"
+      },
+      {
+        "cfgId": 100216,
+        "name": "card_100216.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100216.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100216.png",
+        "bytes": 305732,
+        "sha256": "370ae52381a5b6e2c3a2bd9512e03be40b996b6391b2c5c8b61efd2ffcac5225"
+      },
+      {
+        "cfgId": 100217,
+        "name": "card_100217.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100217.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100217.png",
+        "bytes": 287086,
+        "sha256": "64747fa57ce6dd3cc6c3a2332b5465365b5f12ecd8ba92426a2e2e822bf09bd3"
+      },
+      {
+        "cfgId": 100218,
+        "name": "card_100218.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100218.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100218.png",
+        "bytes": 365110,
+        "sha256": "7f735ce4674216cd772ea48f6584d1a2cc3c1a72348d0f61263dad30b653dd9d"
+      },
+      {
+        "cfgId": 100219,
+        "name": "card_100219.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100219.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100219.png",
+        "bytes": 292029,
+        "sha256": "87479469ad6e92214a6c04e6ff2157b28f3365bccad56bcdc8c8777c40b4acbd"
+      },
+      {
+        "cfgId": 100220,
+        "name": "card_100220.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100220.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100220.png",
+        "bytes": 340937,
+        "sha256": "e55a8e935bbde6857b62ab0650083be721eca366d9e149557e1c7c97acec9b43"
+      },
+      {
+        "cfgId": 100221,
+        "name": "card_100221.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100221.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100221.png",
+        "bytes": 362956,
+        "sha256": "32d54494602a51f357dc977a69b72200a8e0b00129c5782c41bc0989b6c9e638"
+      },
+      {
+        "cfgId": 100222,
+        "name": "card_100222.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100222.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100222.png",
+        "bytes": 311125,
+        "sha256": "55e9bbcfa68d00bb0babbce2ba711a378e9ea9762eabfe4b45470de50b8b0f39"
+      },
+      {
+        "cfgId": 100223,
+        "name": "card_100223.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100223.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100223.png",
+        "bytes": 355316,
+        "sha256": "31a1d5df8935d8043c182581130e5829a5b6bca6118f1cdffa03710dae7b48cd"
+      },
+      {
+        "cfgId": 100224,
+        "name": "card_100224.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100224.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100224.png",
+        "bytes": 335488,
+        "sha256": "c32ba6f435f44d83ae34ddce8b9dd07037763ce85f22cc762525d55c0fc4a6c1"
+      },
+      {
+        "cfgId": 100225,
+        "name": "card_100225.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100225.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100225.png",
+        "bytes": 366370,
+        "sha256": "c7ae64a6477e27dcbf2b03cd9e0ff1162cce91e59d65b585c6ece318fcef2947"
+      },
+      {
+        "cfgId": 100226,
+        "name": "card_100226.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100226.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100226.png",
+        "bytes": 280427,
+        "sha256": "30a8645d0a710da50d5fd122a89649c6bcbeef170f66b036622cb8224b9e8145"
+      },
+      {
+        "cfgId": 100227,
+        "name": "card_100227.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100227.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100227.png",
+        "bytes": 303271,
+        "sha256": "c046d3c9a01a337c761b2568180319f0d2f8a4d16226d119c3c58ce24077fd70"
+      },
+      {
+        "cfgId": 100228,
+        "name": "card_100228.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100228.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100228.png",
+        "bytes": 370391,
+        "sha256": "c4a18888a17a0b6bbdaae928c90a20e9c28613062847f1689f5171f9dbc001ff"
+      },
+      {
+        "cfgId": 100229,
+        "name": "card_100229.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100229.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100229.png",
+        "bytes": 347933,
+        "sha256": "89d7f34c98655124415eef551b22adddf0b143adbc0f486c14425da2afce7464"
+      },
+      {
+        "cfgId": 100230,
+        "name": "card_100230.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100230.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100230.png",
+        "bytes": 317141,
+        "sha256": "6f5c1c7b015fee6925c39aaada63308297ea24531ddb0bd61c56d1438b1c2bd6"
+      },
+      {
+        "cfgId": 100231,
+        "name": "card_100231.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100231.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100231.png",
+        "bytes": 370465,
+        "sha256": "58ed28197be1df2de8020fd480307d5f73c6ada2ab640cbe4df6c5e3d03673d3"
+      },
+      {
+        "cfgId": 100232,
+        "name": "card_100232.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100232.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100232.png",
+        "bytes": 303060,
+        "sha256": "ff6a27a87536e4a80ea1461f68ba3de527d4cc344a3454ae9bc9eb6d3cab5d03"
+      },
+      {
+        "cfgId": 100233,
+        "name": "card_100233.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100233.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100233.png",
+        "bytes": 265237,
+        "sha256": "052756da096bbe6097e3557993a27248e880f64c088493876b2d27da8078c676"
+      },
+      {
+        "cfgId": 100234,
+        "name": "card_100234.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100234.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100234.png",
+        "bytes": 326122,
+        "sha256": "ffd28c28453dcaacceeaeb4282d2bfd194734719caa38156fc4057d2b5653412"
+      },
+      {
+        "cfgId": 100239,
+        "name": "card_100239.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100239.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100239.png",
+        "bytes": 334084,
+        "sha256": "3655a4326abe0af7936d6b438b4efb9aa8387c2897e341399bf573c0f7562882"
+      },
+      {
+        "cfgId": 100240,
+        "name": "card_100240.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100240.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100240.png",
+        "bytes": 277394,
+        "sha256": "caa1b3a26f4403a9363bc9efc519c01af97ce3f36c4798dea894ddc9f396ec62"
+      },
+      {
+        "cfgId": 100241,
+        "name": "card_100241.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100241.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100241.png",
+        "bytes": 370363,
+        "sha256": "7962bc84054ce206c7d0c4642e975a8a561d7d26536e7c1fca094a049ad2126b"
+      },
+      {
+        "cfgId": 100242,
+        "name": "card_100242.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100242.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100242.png",
+        "bytes": 351905,
+        "sha256": "b04fd828c4930942db94e5e53de2c824d5c7d237f4ecdbbbd8ccacfa03e10670"
+      },
+      {
+        "cfgId": 100243,
+        "name": "card_100243.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100243.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100243.png",
+        "bytes": 299124,
+        "sha256": "dc6a272cbc572c6d44aa830ad16ee4c87401504bf28910a08e61e5e4234be3d0"
+      },
+      {
+        "cfgId": 100245,
+        "name": "card_100245.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100245.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100245.png",
+        "bytes": 392799,
+        "sha256": "7dca15f45ab2b52254a76a49fe087edd96144bbc087d363c00ac00746cb87338"
+      },
+      {
+        "cfgId": 100246,
+        "name": "card_100246.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100246.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100246.png",
+        "bytes": 324832,
+        "sha256": "8680cdd14cb8cd892ddcd382f5c29782221186e3844a3e97887e9e6cc74f73a2"
+      },
+      {
+        "cfgId": 100247,
+        "name": "card_100247.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100247.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100247.png",
+        "bytes": 332415,
+        "sha256": "7af1e5b9930d7267572e53ae5a3ced06e3e53e9e55c1fb08c49de68b92d9c70d"
+      },
+      {
+        "cfgId": 100248,
+        "name": "card_100248.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100248.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100248.png",
+        "bytes": 328275,
+        "sha256": "43854a3583d9f06fbb7f804fc49fb189855c5a2055d347e9d96909c398aea08c"
+      },
+      {
+        "cfgId": 100249,
+        "name": "card_100249.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100249.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100249.png",
+        "bytes": 271801,
+        "sha256": "921511e20bc6266e1c1ffa61c9395045d248ca3bb1e131945c948c3766e7b234"
+      },
+      {
+        "cfgId": 100253,
+        "name": "card_100253.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100253.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100253.png",
+        "bytes": 334935,
+        "sha256": "1b5f4c0a124cb51f6104f0f002e002f62a527a9848c86a2880e2186d78adcd77"
+      },
+      {
+        "cfgId": 100254,
+        "name": "card_100254.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100254.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100254.png",
+        "bytes": 311793,
+        "sha256": "6281c6070254eea300a4da96140b0414d13dd14a2df71ac94a8df5ae4fe6f97b"
+      },
+      {
+        "cfgId": 100255,
+        "name": "card_100255.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100255.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100255.png",
+        "bytes": 350555,
+        "sha256": "97022f8d2715895ed2608c9651de47b16e8709960658b5df2ccc2f6043c7c0b6"
+      },
+      {
+        "cfgId": 100256,
+        "name": "card_100256.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100256.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100256.png",
+        "bytes": 295542,
+        "sha256": "97639be5c105d3221037a379de59aafda8671fffc7c0e46ed061c657dd927ed3"
+      },
+      {
+        "cfgId": 100257,
+        "name": "card_100257.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100257.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100257.png",
+        "bytes": 309414,
+        "sha256": "46c06aedcce8a2a7c324a7c0ea735105d65c311f348b01ca6be02e3b4e74959f"
+      },
+      {
+        "cfgId": 100258,
+        "name": "card_100258.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100258.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100258.png",
+        "bytes": 313845,
+        "sha256": "23e77e43a4be1d238b5fa5d9589d80289c1b3633b08d060c023a1068135b0a8d"
+      },
+      {
+        "cfgId": 100264,
+        "name": "card_100264.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100264.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100264.png",
+        "bytes": 340809,
+        "sha256": "f013c672624109d9456d06606b2e9a370da0667997a7b9433764cb38f4d83ef7"
+      },
+      {
+        "cfgId": 100265,
+        "name": "card_100265.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100265.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100265.png",
+        "bytes": 338789,
+        "sha256": "f1bffaac9e00b60c4ad692bc18614b18cbddb361dd716bbf7eabe0521b7e9797"
+      },
+      {
+        "cfgId": 100266,
+        "name": "card_100266.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100266.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100266.png",
+        "bytes": 336892,
+        "sha256": "f802e37a893a50187d3f753d224a3b331e2c2c05cb98488abb84a71a0e348ff6"
+      },
+      {
+        "cfgId": 100267,
+        "name": "card_100267.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100267.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100267.png",
+        "bytes": 371597,
+        "sha256": "91e144f5c11ba18a714ec37b7f061eb9d29b67d526eb8ff3fe6883adf45834dc"
+      },
+      {
+        "cfgId": 100268,
+        "name": "card_100268.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100268.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100268.png",
+        "bytes": 373557,
+        "sha256": "942e2dc9c3b4932def390e7fd313b26901d0a1898cd3ebbfb39e249d76195333"
+      },
+      {
+        "cfgId": 100269,
+        "name": "card_100269.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100269.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100269.png",
+        "bytes": 358807,
+        "sha256": "21bce9e7875a23272df2e1da6870f1aeaef07ac1bc364e2d83fd0bc75b6faf63"
+      },
+      {
+        "cfgId": 100270,
+        "name": "card_100270.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100270.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100270.png",
+        "bytes": 301348,
+        "sha256": "b5324bd90a9b488f02ffa40afe02d31de3e3f5c96f29b105842649d60951cf14"
+      },
+      {
+        "cfgId": 100271,
+        "name": "card_100271.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100271.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100271.png",
+        "bytes": 303070,
+        "sha256": "526aefae4c436db55c73066f5d1bd1f13897362f695bf851f47bd8480b88a15b"
+      },
+      {
+        "cfgId": 100272,
+        "name": "card_100272.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100272.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100272.png",
+        "bytes": 360448,
+        "sha256": "f849ee234712f4a71545fb704af64aa2c4e5464c9f732644c24db8b87348c882"
+      },
+      {
+        "cfgId": 100276,
+        "name": "card_100276.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100276.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100276.png",
+        "bytes": 325680,
+        "sha256": "a75d58699c306e546c5845f392151aafb3176d52db8d6393c7f44e6b5ed064f4"
+      },
+      {
+        "cfgId": 100277,
+        "name": "card_100277.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100277.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100277.png",
+        "bytes": 304623,
+        "sha256": "52718a578efc7e83dc68dcb3eb09ac58a4b33491f692518456e58b98afbfdae0"
+      },
+      {
+        "cfgId": 100279,
+        "name": "card_100279.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100279.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100279.png",
+        "bytes": 351300,
+        "sha256": "8b0daf631157e6273c8fefe130b5bafc97db667561688fd0a34e7c51a0ccc641"
+      },
+      {
+        "cfgId": 100280,
+        "name": "card_100280.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100280.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100280.png",
+        "bytes": 316842,
+        "sha256": "dda2db666117114230d51cae7e874af74a52dc491f744dd1f0d7f2d141438a2f"
+      },
+      {
+        "cfgId": 100281,
+        "name": "card_100281.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100281.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100281.png",
+        "bytes": 305589,
+        "sha256": "a7e011aef8d98b0b542407c65c2c865c86fd1ee8066efdee734bc02d942c40cc"
+      },
+      {
+        "cfgId": 100282,
+        "name": "card_100282.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100282.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100282.png",
+        "bytes": 358267,
+        "sha256": "ddc4381f16947fa696bc6069732cc4a1ce1789a0f72d3af41b6eb47994227c97"
+      },
+      {
+        "cfgId": 100283,
+        "name": "card_100283.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100283.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100283.png",
+        "bytes": 343127,
+        "sha256": "c1aa25e5dd5246ad1c0a53fb8d51220b08c134148ebdff12cb67d9815d3966e4"
+      },
+      {
+        "cfgId": 100284,
+        "name": "card_100284.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100284.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100284.png",
+        "bytes": 326661,
+        "sha256": "0ff404d0a47bb306c8f2301b6c99b997d84db7d21df02892d893332c6e5070e6"
+      },
+      {
+        "cfgId": 100285,
+        "name": "card_100285.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100285.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100285.png",
+        "bytes": 335825,
+        "sha256": "0f82e4e495c2901a768c509b20b6b355b8e9f882dce50ce6e159a92b7c46ae02"
+      },
+      {
+        "cfgId": 100286,
+        "name": "card_100286.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100286.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100286.png",
+        "bytes": 319437,
+        "sha256": "09d5f14faefe2e7969ca088a63de941a5fb4a2d796f18e6009900185d3dfd159"
+      },
+      {
+        "cfgId": 100287,
+        "name": "card_100287.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100287.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100287.png",
+        "bytes": 365387,
+        "sha256": "c6692af535575feccea72470100763e6859824e4208c665ccd4fadc75a78bbbe"
+      },
+      {
+        "cfgId": 100288,
+        "name": "card_100288.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100288.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100288.png",
+        "bytes": 341738,
+        "sha256": "fb05beae4c9ddd24d2d9d9bbbf3ff78f1132342c12e11bc4169fa364130fabd9"
+      },
+      {
+        "cfgId": 100310,
+        "name": "card_100310.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100310.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100310.png",
+        "bytes": 311214,
+        "sha256": "07a2feaf53bd77b1863e31a4f46d2a3c43cbaf7c0992fd75c619602267d303f3"
+      },
+      {
+        "cfgId": 100314,
+        "name": "card_100314.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100314.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100314.png",
+        "bytes": 303623,
+        "sha256": "969cba0d182297a72872b0f2794739af43f734d11c5e96d9add8e538f83670bf"
+      },
+      {
+        "cfgId": 100321,
+        "name": "card_100321.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100321.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100321.png",
+        "bytes": 393270,
+        "sha256": "498b469898d1a7fd986135143a10bf9fce95b20e4fcbc75a8d3389c34092f6fd"
+      },
+      {
+        "cfgId": 100326,
+        "name": "card_100326.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100326.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100326.png",
+        "bytes": 334830,
+        "sha256": "4fe093f4fc14b21232813b608056f2f63e98d12b585d93feee4828a1f542f95e"
+      },
+      {
+        "cfgId": 100329,
+        "name": "card_100329.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100329.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100329.png",
+        "bytes": 388513,
+        "sha256": "f7d20ba0c5320dabe60a38994b39faa27ed949dc7e2a3b399d196bfa7fd19a3e"
+      },
+      {
+        "cfgId": 100330,
+        "name": "card_100330.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100330.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100330.png",
+        "bytes": 318105,
+        "sha256": "23a38f158574fb711fb5aac7190b84b04cf82271189ccca419c73ef96dbb030e"
+      },
+      {
+        "cfgId": 100331,
+        "name": "card_100331.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100331.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100331.png",
+        "bytes": 333056,
+        "sha256": "52edcc01febabf3f968690cbc7529848b3e6c0a41d8cf47c7352ae86fb84ee11"
+      },
+      {
+        "cfgId": 100334,
+        "name": "card_100334.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100334.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100334.png",
+        "bytes": 308923,
+        "sha256": "75dcf124126ce09fefe6887cbfba3fe2a753a76661b73bc113e24ed4f5e40704"
+      },
+      {
+        "cfgId": 100335,
+        "name": "card_100335.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100335.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100335.png",
+        "bytes": 262263,
+        "sha256": "03bbeb567d6d38448d56c43c50533fa3086997cd29f09ccb20e9d2a5be190596"
+      },
+      {
+        "cfgId": 100337,
+        "name": "card_100337.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100337.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100337.png",
+        "bytes": 379420,
+        "sha256": "b0486ce5c321a931a91cb8737906fbfcce896de7049359cdc08ffbf2b21acaae"
+      },
+      {
+        "cfgId": 100338,
+        "name": "card_100338.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100338.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100338.png",
+        "bytes": 367710,
+        "sha256": "7b7974a3dd5b1e499612d7c2bff0b4deccce0331af190fbe474a62819bb12bcc"
+      },
+      {
+        "cfgId": 100339,
+        "name": "card_100339.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100339.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100339.png",
+        "bytes": 366375,
+        "sha256": "b9c2ecbf789a243fba9a8b3ed63484ad9adf99f33947bfb7877cb6aa185c92c1"
+      },
+      {
+        "cfgId": 100340,
+        "name": "card_100340.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100340.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100340.png",
+        "bytes": 354041,
+        "sha256": "c888e8043a809333715f3d69c7c29657e8a3e1450c9ac48d87e847ac57fab0b5"
+      },
+      {
+        "cfgId": 100342,
+        "name": "card_100342.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100342.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100342.png",
+        "bytes": 370105,
+        "sha256": "12a276cb1c708a2154927e15d630a0533384b181ae3f49382156b05cd16af56d"
+      },
+      {
+        "cfgId": 100343,
+        "name": "card_100343.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100343.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100343.png",
+        "bytes": 387602,
+        "sha256": "127d4d4ddfc1d67f26e46c271bb6c889bb6a566f3b9bb90ccc019a3ba5a84330"
+      },
+      {
+        "cfgId": 100344,
+        "name": "card_100344.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100344.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100344.png",
+        "bytes": 368324,
+        "sha256": "8d05ed9c6147e3baf7c19de2d3b55f81dffd4bd80d0314803399eff110eee8cb"
+      },
+      {
+        "cfgId": 100345,
+        "name": "card_100345.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100345.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100345.png",
+        "bytes": 349802,
+        "sha256": "e3a2a6474c9376efec0e522609c98d90fad1a0156de9df7e117b997affef2915"
+      },
+      {
+        "cfgId": 100346,
+        "name": "card_100346.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100346.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100346.png",
+        "bytes": 358793,
+        "sha256": "ced874339cc9c6ac894030054a53e8ee8874f74c56764c179ebf34f33a73a2c5"
+      },
+      {
+        "cfgId": 100347,
+        "name": "card_100347.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100347.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100347.png",
+        "bytes": 378972,
+        "sha256": "3d78c1779b7955837eb0c317d98b0ae0156ebeb00590f77a60dd2375f497c706"
+      },
+      {
+        "cfgId": 100348,
+        "name": "card_100348.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100348.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100348.png",
+        "bytes": 324480,
+        "sha256": "a5badb1e8381a5b3124a6536d02f6c3fe193ef8345545f1323b2808d00fd31b6"
+      },
+      {
+        "cfgId": 100351,
+        "name": "card_100351.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100351.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100351.png",
+        "bytes": 300479,
+        "sha256": "3a18e9d6eafb44ad9a84eb8e5fa4d942dda00f10537adb5c25488ee2ee70e055"
+      },
+      {
+        "cfgId": 100352,
+        "name": "card_100352.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100352.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100352.png",
+        "bytes": 369526,
+        "sha256": "5a384071e37de91722f777c2dd09bb5db703dae680808833363899dcf8fc982e"
+      },
+      {
+        "cfgId": 100353,
+        "name": "card_100353.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100353.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100353.png",
+        "bytes": 325262,
+        "sha256": "d37ac8a614d935b28c6da8640daeb4d8563cedaf1fe1b24b456aeb8a2839e0e8"
+      },
+      {
+        "cfgId": 100354,
+        "name": "card_100354.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100354.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100354.png",
+        "bytes": 348358,
+        "sha256": "91b81572847c88c6261bd58c14dd9021c67291bb1243b4122ed99cc5e045a6ba"
+      },
+      {
+        "cfgId": 100355,
+        "name": "card_100355.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100355.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100355.png",
+        "bytes": 340789,
+        "sha256": "84b4e00d55fa09e9a952adf014976fa2dc8797133b8fdc3f2e37ff9c920f9877"
+      },
+      {
+        "cfgId": 100358,
+        "name": "card_100358.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100358.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100358.png",
+        "bytes": 339513,
+        "sha256": "6ac5c506c41809f6aa811e5ababc3a509ed325238c98c4b96e47c838168fc73a"
+      },
+      {
+        "cfgId": 100359,
+        "name": "card_100359.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100359.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100359.png",
+        "bytes": 347043,
+        "sha256": "c564b1def4f6ccccad57cb8266d4261164ad4176e44f3d88c3f979512234e3d7"
+      },
+      {
+        "cfgId": 100361,
+        "name": "card_100361.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100361.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100361.png",
+        "bytes": 321275,
+        "sha256": "f7f6de05a3d2aea15b03d814f4e1aae67b6a64adf0f744259993abd1040413a6"
+      },
+      {
+        "cfgId": 100362,
+        "name": "card_100362.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100362.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100362.png",
+        "bytes": 339016,
+        "sha256": "4b9c62038cb9c02454b2e39bcb1e956fb70bddf156bc90487f0cd27d8362255b"
+      },
+      {
+        "cfgId": 100363,
+        "name": "card_100363.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100363.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100363.png",
+        "bytes": 321275,
+        "sha256": "f7f6de05a3d2aea15b03d814f4e1aae67b6a64adf0f744259993abd1040413a6"
+      },
+      {
+        "cfgId": 100364,
+        "name": "card_100364.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100364.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100364.png",
+        "bytes": 326116,
+        "sha256": "7aaec2165b716647b21ae43e7b08c7dc1e318bc1e4bc78af77e9e65ee4084cc4"
+      },
+      {
+        "cfgId": 100365,
+        "name": "card_100365.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100365.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100365.png",
+        "bytes": 339016,
+        "sha256": "4b9c62038cb9c02454b2e39bcb1e956fb70bddf156bc90487f0cd27d8362255b"
+      },
+      {
+        "cfgId": 100366,
+        "name": "card_100366.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100366.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100366.png",
+        "bytes": 335764,
+        "sha256": "9b302772f2d04ba9fe839815d02caffef0b77fa4c652f92bf3b8f8325050c277"
+      },
+      {
+        "cfgId": 100367,
+        "name": "card_100367.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100367.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100367.png",
+        "bytes": 326116,
+        "sha256": "7aaec2165b716647b21ae43e7b08c7dc1e318bc1e4bc78af77e9e65ee4084cc4"
+      },
+      {
+        "cfgId": 100368,
+        "name": "card_100368.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100368.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100368.png",
+        "bytes": 321275,
+        "sha256": "f7f6de05a3d2aea15b03d814f4e1aae67b6a64adf0f744259993abd1040413a6"
+      },
+      {
+        "cfgId": 100369,
+        "name": "card_100369.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100369.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100369.png",
+        "bytes": 341742,
+        "sha256": "5ca66473cdcd82a3f3ba06ed31bae551f56c93ad64e88f8d7c0afe6f396455de"
+      },
+      {
+        "cfgId": 100370,
+        "name": "card_100370.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100370.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100370.png",
+        "bytes": 325414,
+        "sha256": "e0b44a308bcf8ab19e4c73078127b6ef668f5997430725ecbb8f2ba8d319570e"
+      },
+      {
+        "cfgId": 100371,
+        "name": "card_100371.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100371.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100371.png",
+        "bytes": 344751,
+        "sha256": "cc1562e7b7f68e9f200445d7e392539db8e2225519ca419a0ab96eecafc26de8"
+      },
+      {
+        "cfgId": 100372,
+        "name": "card_100372.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100372.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100372.png",
+        "bytes": 341021,
+        "sha256": "3305c5e62a80034a736cf68e38f0c6b5f55f99dbf53e1cf98b8ae1c75ef858e4"
+      },
+      {
+        "cfgId": 100377,
+        "name": "card_100377.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100377.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100377.png",
+        "bytes": 350075,
+        "sha256": "a6ef7f2019e3d760b7093efacc9479f9ad5b41259ef23df0f9b96fd236ec1b55"
+      },
+      {
+        "cfgId": 100378,
+        "name": "card_100378.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100378.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100378.png",
+        "bytes": 353481,
+        "sha256": "5281eb50fd6538b3f3397c043a538fa2a2616e341f4aade9c307e66618b248bd"
+      },
+      {
+        "cfgId": 100379,
+        "name": "card_100379.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100379.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100379.png",
+        "bytes": 295547,
+        "sha256": "5c0cb7c6acf2a896652d70f27628073605ca082931def2a4d1dd020e5ee093e4"
+      },
+      {
+        "cfgId": 100396,
+        "name": "card_100396.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100396.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100396.png",
+        "bytes": 292833,
+        "sha256": "a91e992bb52a2343fa3009b9cdaa9e813a863ced0a5eca6e29001106543c4751"
+      },
+      {
+        "cfgId": 100398,
+        "name": "card_100398.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100398.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100398.png",
+        "bytes": 314152,
+        "sha256": "618fba6475b607377acd977198cbff1ad0fde8e6eab3b95b49c667745fc4ae09"
+      },
+      {
+        "cfgId": 100403,
+        "name": "card_100403.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100403.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100403.png",
+        "bytes": 313114,
+        "sha256": "52ec0434678e0e39ae79a7c86e8b639e57682ece750855d3710da9b25e45f57c"
+      },
+      {
+        "cfgId": 100405,
+        "name": "card_100405.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100405.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100405.png",
+        "bytes": 305722,
+        "sha256": "9b7acf6a46110492d1e3dc05ee84e604812a5e2885a261f71d02380202484568"
+      },
+      {
+        "cfgId": 100406,
+        "name": "card_100406.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100406.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100406.png",
+        "bytes": 288363,
+        "sha256": "f4ee488ca0b83c7f8c0f93e40bfca7adb4f108582ed78fc0502a467a7228a3ed"
+      },
+      {
+        "cfgId": 100414,
+        "name": "card_100414.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100414.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100414.png",
+        "bytes": 331287,
+        "sha256": "f52e5e92d45c4b87036a6a1add7cb4317acd61a05c5f8ee50ad0d88aaaf83bd9"
+      },
+      {
+        "cfgId": 100420,
+        "name": "card_100420.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100420.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100420.png",
+        "bytes": 352046,
+        "sha256": "3eeb5ace09da329682b8d122008c617b8f0d230213a62aa9a4f52bd728550d75"
+      },
+      {
+        "cfgId": 100421,
+        "name": "card_100421.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100421.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100421.png",
+        "bytes": 353517,
+        "sha256": "0e76c11bbf50d8c192024e34a2745509d840226c0480da7f60cdb6597b605191"
+      },
+      {
+        "cfgId": 100424,
+        "name": "card_100424.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100424.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100424.png",
+        "bytes": 319958,
+        "sha256": "491a70e579a0db74e17c7aa83a569065d8fc7733224c55911781eb4369b172b2"
+      },
+      {
+        "cfgId": 100426,
+        "name": "card_100426.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100426.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100426.png",
+        "bytes": 323177,
+        "sha256": "0490992682ec0b724a1816ca8cd8f6b7d9628be2119011d7077e28e92bc43775"
+      },
+      {
+        "cfgId": 100430,
+        "name": "card_100430.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100430.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100430.png",
+        "bytes": 363749,
+        "sha256": "0ce8a7eb17b306c99932bdc06acf658931d1849155f4d9447177a88aee6507d1"
+      },
+      {
+        "cfgId": 100435,
+        "name": "card_100435.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100435.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100435.png",
+        "bytes": 400359,
+        "sha256": "f6805a96f02588a1e7e874dc2d5bab4c90fdfd62baf91e8177c09203ed1b344b"
+      },
+      {
+        "cfgId": 100437,
+        "name": "card_100437.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100437.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100437.png",
+        "bytes": 325538,
+        "sha256": "cacc8f44732e39ad4fa407675ca16537d5c2eb0999ec7222b1a851cc22e504fa"
+      },
+      {
+        "cfgId": 100439,
+        "name": "card_100439.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100439.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100439.png",
+        "bytes": 333403,
+        "sha256": "adfde46e09c91ad0c146fee1791eda4c4af71f6622ee0958d2768e9972b793a0"
+      },
+      {
+        "cfgId": 100442,
+        "name": "card_100442.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100442.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100442.png",
+        "bytes": 364385,
+        "sha256": "3d4a1d54679d015f081aa88b4e934baaa03734e1c6292e93dd152402770fcaa1"
+      },
+      {
+        "cfgId": 100443,
+        "name": "card_100443.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100443.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100443.png",
+        "bytes": 359223,
+        "sha256": "b788a7f0190a341569daaf8f7ed3139cc294d7d9673e71bee845574d1b361280"
+      },
+      {
+        "cfgId": 100449,
+        "name": "card_100449.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100449.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100449.png",
+        "bytes": 378038,
+        "sha256": "2fe0e571262ef13b0cc386de2d5a57f4c22350aa5f8f3262fc58c3010b93586f"
+      },
+      {
+        "cfgId": 100450,
+        "name": "card_100450.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100450.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100450.png",
+        "bytes": 373870,
+        "sha256": "cecb3f6aa2e5085e4c62340a6a67c3acbd4480a5ea338f767a40de864ce14e10"
+      },
+      {
+        "cfgId": 100451,
+        "name": "card_100451.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100451.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100451.png",
+        "bytes": 345824,
+        "sha256": "450133fbd33e23f46a736a6f551462ad0130ffd71a393de3b571fdb72360b34c"
+      },
+      {
+        "cfgId": 100452,
+        "name": "card_100452.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100452.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100452.png",
+        "bytes": 363189,
+        "sha256": "fd3598a96d82b85b9e52b66725fea0b71788f3e4eff30e45bedd8b17f16e8b24"
+      },
+      {
+        "cfgId": 100454,
+        "name": "card_100454.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100454.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100454.png",
+        "bytes": 327026,
+        "sha256": "2f7e3a6ae3135f06f0017dba56b889ee6470576a7dbed0158dd0ccaab335af6e"
+      },
+      {
+        "cfgId": 100455,
+        "name": "card_100455.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100455.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100455.png",
+        "bytes": 331693,
+        "sha256": "ed098a1e3b47aa2f927c78b91fb4aa228657c4f90a418e54b4de849b7fad61f2"
+      },
+      {
+        "cfgId": 100456,
+        "name": "card_100456.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100456.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100456.png",
+        "bytes": 302256,
+        "sha256": "0b73fb662a01ea3a86829103401abe341e50f197a261e5683bbbee5fa6c5e7a7"
+      },
+      {
+        "cfgId": 100457,
+        "name": "card_100457.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100457.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100457.png",
+        "bytes": 327026,
+        "sha256": "2f7e3a6ae3135f06f0017dba56b889ee6470576a7dbed0158dd0ccaab335af6e"
+      },
+      {
+        "cfgId": 100458,
+        "name": "card_100458.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100458.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100458.png",
+        "bytes": 331693,
+        "sha256": "ed098a1e3b47aa2f927c78b91fb4aa228657c4f90a418e54b4de849b7fad61f2"
+      },
+      {
+        "cfgId": 100459,
+        "name": "card_100459.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100459.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100459.png",
+        "bytes": 302256,
+        "sha256": "0b73fb662a01ea3a86829103401abe341e50f197a261e5683bbbee5fa6c5e7a7"
+      },
+      {
+        "cfgId": 100460,
+        "name": "card_100460.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100460.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100460.png",
+        "bytes": 348670,
+        "sha256": "8f441bb4c5af033e079009196c0c8957930436eb1c5518c22207e518e99108d8"
+      },
+      {
+        "cfgId": 100461,
+        "name": "card_100461.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100461.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100461.png",
+        "bytes": 320617,
+        "sha256": "a0d5de0d641c019d337b731e4f463daf3ae1aa4f074e617c55080c7500831594"
+      },
+      {
+        "cfgId": 100462,
+        "name": "card_100462.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100462.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100462.png",
+        "bytes": 349211,
+        "sha256": "3667c90f5701847fa7afe20900b0fcb5eff59781acbb7be3a1ba2f9bd5d6fcc9"
+      },
+      {
+        "cfgId": 100463,
+        "name": "card_100463.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100463.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100463.png",
+        "bytes": 320617,
+        "sha256": "a0d5de0d641c019d337b731e4f463daf3ae1aa4f074e617c55080c7500831594"
+      },
+      {
+        "cfgId": 100464,
+        "name": "card_100464.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100464.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100464.png",
+        "bytes": 317440,
+        "sha256": "b5a7caa14c2a927a83a452ba1d51c06c34d59cb1e9e9b634f81d6d7e51539549"
+      },
+      {
+        "cfgId": 100465,
+        "name": "card_100465.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100465.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100465.png",
+        "bytes": 346618,
+        "sha256": "11bbfeb147726f24b8495298ad0497441d3f7a2c7ea5c0c5863a32746767ee24"
+      },
+      {
+        "cfgId": 100466,
+        "name": "card_100466.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100466.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100466.png",
+        "bytes": 317440,
+        "sha256": "b5a7caa14c2a927a83a452ba1d51c06c34d59cb1e9e9b634f81d6d7e51539549"
+      },
+      {
+        "cfgId": 100467,
+        "name": "card_100467.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100467.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100467.png",
+        "bytes": 317440,
+        "sha256": "b5a7caa14c2a927a83a452ba1d51c06c34d59cb1e9e9b634f81d6d7e51539549"
+      },
+      {
+        "cfgId": 100468,
+        "name": "card_100468.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100468.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100468.png",
+        "bytes": 335080,
+        "sha256": "315c6f9ac28d802e8615cd223c23f1bbaf99993d58b1c110b9bfa218925a84fe"
+      },
+      {
+        "cfgId": 100469,
+        "name": "card_100469.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100469.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100469.png",
+        "bytes": 320617,
+        "sha256": "a0d5de0d641c019d337b731e4f463daf3ae1aa4f074e617c55080c7500831594"
+      },
+      {
+        "cfgId": 100470,
+        "name": "card_100470.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100470.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100470.png",
+        "bytes": 330801,
+        "sha256": "8d6a2bba5eadae0401cfdcf2c4ad81f1ae52c5a2c4a2cb41692057d80fa240a7"
+      },
+      {
+        "cfgId": 100471,
+        "name": "card_100471.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100471.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100471.png",
+        "bytes": 340838,
+        "sha256": "717b56a09653d2ceebad8178a643e96ec2b050bca486f368153f0223485a44dc"
+      },
+      {
+        "cfgId": 100472,
+        "name": "card_100472.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100472.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100472.png",
+        "bytes": 324281,
+        "sha256": "7bf93da24030186f99154838343a0d99ddd903a0a9f8f1fdb2c1b997c9f867ac"
+      },
+      {
+        "cfgId": 100473,
+        "name": "card_100473.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100473.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100473.png",
+        "bytes": 354322,
+        "sha256": "6713c79327ad363a85815cda60178dee15489ecd8d9d2ecde5f711acc979edd9"
+      },
+      {
+        "cfgId": 100474,
+        "name": "card_100474.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100474.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100474.png",
+        "bytes": 331927,
+        "sha256": "46213090cda87a49723b5401c37a3344d8dd6c583da13276789f075c6b255e35"
+      },
+      {
+        "cfgId": 100475,
+        "name": "card_100475.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100475.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100475.png",
+        "bytes": 341535,
+        "sha256": "487a6123e10f6de51797bda9b7ac9e6e70908f2e2c533ccc90fbe82a15eb6ed1"
+      },
+      {
+        "cfgId": 100476,
+        "name": "card_100476.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100476.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100476.png",
+        "bytes": 343672,
+        "sha256": "a0546030ca1b41fbe11df71f1aff088313cb9ea62ef4a719ed7a78bcf469c47f"
+      },
+      {
+        "cfgId": 100477,
+        "name": "card_100477.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100477.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100477.png",
+        "bytes": 311439,
+        "sha256": "ab6578413a09b5d3c63fee01d5ea18d57344a6a7848605b96e3a82535aedca7a"
+      },
+      {
+        "cfgId": 100478,
+        "name": "card_100478.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100478.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100478.png",
+        "bytes": 328848,
+        "sha256": "1e2695c162af951f6b2bbc83beab5f92b49b9b09ec647540bd4fee32f6fc8a51"
+      },
+      {
+        "cfgId": 100479,
+        "name": "card_100479.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100479.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100479.png",
+        "bytes": 289132,
+        "sha256": "2193341cff873d6c9f72ce7a10c4507bbccc88a6d2e67b81219d1c19a7c4eaf5"
+      },
+      {
+        "cfgId": 100480,
+        "name": "card_100480.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100480.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100480.png",
+        "bytes": 307732,
+        "sha256": "0aaa6cb7b0a767cc316be72a6f11e24a66dfc7ca2bfcfc902777f2512e69e5e4"
+      },
+      {
+        "cfgId": 100481,
+        "name": "card_100481.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100481.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100481.png",
+        "bytes": 359111,
+        "sha256": "99eef6f7a79ba2d33ffff2e9ef53ad2567b1358c071efe290d68a57f849ebbe9"
+      },
+      {
+        "cfgId": 100482,
+        "name": "card_100482.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100482.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100482.png",
+        "bytes": 415421,
+        "sha256": "1717fe61caf42ed6a26f50aca137d2ff52c9b69aa69b9ff7775cf1a5da40b0d2"
+      },
+      {
+        "cfgId": 100483,
+        "name": "card_100483.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100483.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100483.png",
+        "bytes": 381013,
+        "sha256": "651a76844c1b689275b65397b07658ca5e87f843060b6fc4ce81e7a26580edb4"
+      },
+      {
+        "cfgId": 100484,
+        "name": "card_100484.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100484.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100484.png",
+        "bytes": 388375,
+        "sha256": "2329ab548047a8425249892623f4b851adc2a0dbbf8ecbeac30e3759ca39cd30"
+      },
+      {
+        "cfgId": 100485,
+        "name": "card_100485.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100485.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100485.png",
+        "bytes": 335102,
+        "sha256": "0e87c78638d07f69c32e6b2f5c9fb910c16640782c8c43d6a66f5ba70546ad05"
+      },
+      {
+        "cfgId": 100486,
+        "name": "card_100486.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100486.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100486.png",
+        "bytes": 359118,
+        "sha256": "e5eb44d75d3e883c9a8adad36906568b9d22314b66ec9ab69aa0559234cb67f9"
+      },
+      {
+        "cfgId": 100487,
+        "name": "card_100487.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100487.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100487.png",
+        "bytes": 339812,
+        "sha256": "32eca9e89b6bfaa5c4cbb52366e81d33a66f2479821479325ed0391b27927f35"
+      },
+      {
+        "cfgId": 100488,
+        "name": "card_100488.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100488.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100488.png",
+        "bytes": 359090,
+        "sha256": "77228c7827790a036ad5762a688ffbbce252c75026c40056f58189634f6bb533"
+      },
+      {
+        "cfgId": 100489,
+        "name": "card_100489.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100489.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100489.png",
+        "bytes": 356108,
+        "sha256": "8516ed737105584d83f36fddaf4371843f4695c4aaf11e29139538db6d7838e2"
+      },
+      {
+        "cfgId": 100490,
+        "name": "card_100490.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100490.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100490.png",
+        "bytes": 323984,
+        "sha256": "e2b779ca7429391adce1bee80ee3c3e019a132b32e7f944659645d6edecfdac1"
+      },
+      {
+        "cfgId": 100491,
+        "name": "card_100491.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100491.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100491.png",
+        "bytes": 368098,
+        "sha256": "898bc4a29989b77674d80e1c5316541d38b967367e696d5c1f6f2fea12cdcb4e"
+      },
+      {
+        "cfgId": 100492,
+        "name": "card_100492.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100492.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100492.png",
+        "bytes": 351769,
+        "sha256": "29e9e7f0a9fd106eae567d3c8bd6137ac6e5cc3532f9311371dbb4aba71543ad"
+      },
+      {
+        "cfgId": 100493,
+        "name": "card_100493.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100493.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100493.png",
+        "bytes": 361022,
+        "sha256": "404e6969976603fa94f36445ed3136f1c671fa72c8d2849bba489c578f3aeac2"
+      },
+      {
+        "cfgId": 100494,
+        "name": "card_100494.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100494.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100494.png",
+        "bytes": 333495,
+        "sha256": "039605ee6323c52d13dc5cc2ddfab5577b479b000fac221e82ce89f6db543012"
+      },
+      {
+        "cfgId": 100495,
+        "name": "card_100495.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100495.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100495.png",
+        "bytes": 379121,
+        "sha256": "4957115f8737fe9cb69a8eb69ef9906141e0bdb7637d82feead7c2bd02044717"
+      },
+      {
+        "cfgId": 100496,
+        "name": "card_100496.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100496.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100496.png",
+        "bytes": 331865,
+        "sha256": "61c631e989593f08efc38fad37c8fa7340f4b440271169fa6aee1e525beba706"
+      },
+      {
+        "cfgId": 100497,
+        "name": "card_100497.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100497.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100497.png",
+        "bytes": 349778,
+        "sha256": "e2ea9ac4bebf267df3ccf3481b75ed81bfc54fb9e528088c393b538a9296e647"
+      },
+      {
+        "cfgId": 100498,
+        "name": "card_100498.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100498.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100498.png",
+        "bytes": 324656,
+        "sha256": "3ba31abd0c373f04d5ead4c599dbd7439c42f263c8099c405b84dd755b189fd1"
+      },
+      {
+        "cfgId": 100502,
+        "name": "card_100502.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100502.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100502.png",
+        "bytes": 375017,
+        "sha256": "abc7414bc68694154a522c1bd95b9b9e6644a409e1fa11ce883069bc6c74f81b"
+      },
+      {
+        "cfgId": 100503,
+        "name": "card_100503.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100503.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100503.png",
+        "bytes": 361437,
+        "sha256": "eca0ad83bd803055e118969cd1e4969e788bdb0ad95726f8849809bf473804e4"
+      },
+      {
+        "cfgId": 100506,
+        "name": "card_100506.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100506.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100506.png",
+        "bytes": 362300,
+        "sha256": "880215fcad5c38f26750d421725232591a2de4a73a1b91cfabd05fa1d20dc1ca"
+      },
+      {
+        "cfgId": 100507,
+        "name": "card_100507.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100507.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100507.png",
+        "bytes": 373904,
+        "sha256": "cd59877b83fa433c07a9fa6ede882b4aee043d720dffc198dcd743a37fee2490"
+      },
+      {
+        "cfgId": 100508,
+        "name": "card_100508.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100508.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100508.png",
+        "bytes": 343717,
+        "sha256": "e574bfdac4ff56542637e95b9f19828cbb8c9198f7cf9a10d1a4d2e26a966dd1"
+      },
+      {
+        "cfgId": 100519,
+        "name": "card_100519.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100519.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100519.png",
+        "bytes": 379844,
+        "sha256": "25bd398bcc0851287a2501094848ff15b4f02f30760c4f91c4090fc4c3ebb0e2"
+      },
+      {
+        "cfgId": 100520,
+        "name": "card_100520.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100520.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100520.png",
+        "bytes": 297160,
+        "sha256": "a0bcb6fc14b88a6321dcfc2e81c5a38ddc99d1627223f8d61d8e3b6f049dcf96"
+      },
+      {
+        "cfgId": 100521,
+        "name": "card_100521.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100521.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100521.png",
+        "bytes": 348846,
+        "sha256": "85fa22318a3a91119a2dcbad36069bacee7fcb1747236285678903d6aa63af46"
+      },
+      {
+        "cfgId": 100522,
+        "name": "card_100522.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100522.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100522.png",
+        "bytes": 295030,
+        "sha256": "12582e0aa792e385f07c1ee78706461331a6702ae2a3e50f6cb624c54ca9ddd9"
+      },
+      {
+        "cfgId": 100523,
+        "name": "card_100523.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100523.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100523.png",
+        "bytes": 345967,
+        "sha256": "1576fad2acecd79064616a3e6657eaddc0ac2da39f0f6ecc9f91e4bf9801086f"
+      },
+      {
+        "cfgId": 100524,
+        "name": "card_100524.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100524.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100524.png",
+        "bytes": 345510,
+        "sha256": "be0a7bf2bc91269fa1a8bc8bf12df8bd5ec517b92c964c6ddce3ebb67ed3b4a1"
+      },
+      {
+        "cfgId": 100525,
+        "name": "card_100525.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100525.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100525.png",
+        "bytes": 348798,
+        "sha256": "98e21cd6477da42602b7d5494af11e7f73daffa977bd933c957261c834c77f2f"
+      },
+      {
+        "cfgId": 100526,
+        "name": "card_100526.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100526.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100526.png",
+        "bytes": 284379,
+        "sha256": "c371fe5ce7cc0f93b1839fbf27dbeeeb01896445b2d4e6496b55284eaaf43323"
+      },
+      {
+        "cfgId": 100528,
+        "name": "card_100528.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100528.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100528.png",
+        "bytes": 372898,
+        "sha256": "08d0b30dfbf7c1fc58c121aff15434e733fcaae2f6ff5277325ba6b201eff043"
+      },
+      {
+        "cfgId": 100529,
+        "name": "card_100529.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100529.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100529.png",
+        "bytes": 301290,
+        "sha256": "9da1a6b0300ee6ac8f13f2d8ac3798bc8049f069d1b2f2e4a59d4e3666bada87"
+      },
+      {
+        "cfgId": 100532,
+        "name": "card_100532.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100532.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100532.png",
+        "bytes": 291036,
+        "sha256": "89f02de5b3f3ce0871882d80f9507339da8d5d94836ee1c9f9eb6ac8c48c0131"
+      },
+      {
+        "cfgId": 100533,
+        "name": "card_100533.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100533.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100533.png",
+        "bytes": 401216,
+        "sha256": "dce4ca6051fb8c7102322b20ee0958798b556fa2233ebc952b8bc8ae3fbd700f"
+      },
+      {
+        "cfgId": 100534,
+        "name": "card_100534.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100534.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100534.png",
+        "bytes": 294238,
+        "sha256": "0322ce03c065883c49c14b8d1cb1ae2c11df5c7bc0cd397fc865da65d543a816"
+      },
+      {
+        "cfgId": 100535,
+        "name": "card_100535.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100535.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100535.png",
+        "bytes": 304244,
+        "sha256": "4803498a602bd9f6a27793a9d3862613c4677889c3466c13d22a9c10a7ca7bbc"
+      },
+      {
+        "cfgId": 100536,
+        "name": "card_100536.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100536.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100536.png",
+        "bytes": 310512,
+        "sha256": "967c8e095b283d93b422d5d5689a3f334898575775b472978388c560ddd53bb9"
+      },
+      {
+        "cfgId": 100538,
+        "name": "card_100538.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100538.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100538.png",
+        "bytes": 328693,
+        "sha256": "a10e63b7e90105154ab8839de414a616188a672c3ab2d7dd59c0e2f0f8464433"
+      },
+      {
+        "cfgId": 100539,
+        "name": "card_100539.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100539.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100539.png",
+        "bytes": 328251,
+        "sha256": "cfdf720247010c05318431e807358a0081b68bdfafd073bf00ade7321b4ba1ff"
+      },
+      {
+        "cfgId": 100540,
+        "name": "card_100540.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100540.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100540.png",
+        "bytes": 332189,
+        "sha256": "9a130775284d699b412469fefa7b7dc84c7e0d7c382522d9d72f9b0e6024c846"
+      },
+      {
+        "cfgId": 100543,
+        "name": "card_100543.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100543.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100543.png",
+        "bytes": 290042,
+        "sha256": "e47f79727eceae3cce491f006ee8698c8c2599b865446e433c4b84c9f6ae5c08"
+      },
+      {
+        "cfgId": 100545,
+        "name": "card_100545.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100545.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100545.png",
+        "bytes": 314849,
+        "sha256": "d393793dfb994e694c8a3333f10931bfd9d87e57a06bdf8440cfbe1512705e3a"
+      },
+      {
+        "cfgId": 100546,
+        "name": "card_100546.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100546.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100546.png",
+        "bytes": 340905,
+        "sha256": "d84aefdfc252ba6b7ad7a3ed4d2007c9c75fb0b278aaee8dcec8668141d459c2"
+      },
+      {
+        "cfgId": 100547,
+        "name": "card_100547.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100547.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100547.png",
+        "bytes": 310576,
+        "sha256": "58840d7a15f3a83143115123380020dd700d2053554679d7320c1811590101e8"
+      },
+      {
+        "cfgId": 100548,
+        "name": "card_100548.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100548.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100548.png",
+        "bytes": 327035,
+        "sha256": "b81ed304a2675238b19a61113e81f28a8128e884b2b8a9dd2a2cc0e209c3795d"
+      },
+      {
+        "cfgId": 100549,
+        "name": "card_100549.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100549.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100549.png",
+        "bytes": 278819,
+        "sha256": "ce1109d0210413b83d03a9028f06376f94721443b9a462fe6a666f66d305af48"
+      },
+      {
+        "cfgId": 100550,
+        "name": "card_100550.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100550.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100550.png",
+        "bytes": 320192,
+        "sha256": "4289d57316ccaed275822e3a09abac02573b4eae19c1cb9b24b596f85e6cd2a4"
+      },
+      {
+        "cfgId": 100551,
+        "name": "card_100551.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100551.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100551.png",
+        "bytes": 372676,
+        "sha256": "270a5697b54e67475a56ada0f709291e1398a9239f28112b7cec85e94bf1a066"
+      },
+      {
+        "cfgId": 100552,
+        "name": "card_100552.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100552.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100552.png",
+        "bytes": 369645,
+        "sha256": "f73ded0e1bced58240f41e9d1e1e193083c22104fc2595329742a89ab9824335"
+      },
+      {
+        "cfgId": 100553,
+        "name": "card_100553.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100553.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100553.png",
+        "bytes": 308162,
+        "sha256": "411e5595a30441d1b51720ab47f5062ec7c7a0e5e78afd0c7e635e4774116afb"
+      },
+      {
+        "cfgId": 100554,
+        "name": "card_100554.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100554.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100554.png",
+        "bytes": 348776,
+        "sha256": "787f7b274b78211806ce0e02dfbb0b88825fc7dbfe990a3e259b88360b0809b0"
+      },
+      {
+        "cfgId": 100555,
+        "name": "card_100555.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100555.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100555.png",
+        "bytes": 287143,
+        "sha256": "e21aaf74860a63f717c6549a69fe596ff07a469c6ec040bb0c0237eb860cdcac"
+      },
+      {
+        "cfgId": 100556,
+        "name": "card_100556.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100556.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100556.png",
+        "bytes": 342567,
+        "sha256": "905e2da1f4ff7394303c32df8f159e2e4ad97e27f9bb8a860917b983597d92a2"
+      },
+      {
+        "cfgId": 100557,
+        "name": "card_100557.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100557.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100557.png",
+        "bytes": 343001,
+        "sha256": "f3c0db77dce2ee73b79918af729d3022e1a6283497b8223775d166f4f9c7d3c4"
+      },
+      {
+        "cfgId": 100558,
+        "name": "card_100558.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100558.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100558.png",
+        "bytes": 355052,
+        "sha256": "53d5e12ca1de6ec6c7b51e009415a000e8998a0021309d0f6f3db8c2dc0b08d5"
+      },
+      {
+        "cfgId": 100560,
+        "name": "card_100560.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100560.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100560.png",
+        "bytes": 336448,
+        "sha256": "c54679c8b16d3c82df24edfd0e69eec9cc7178c5bec672c57a0a20831adc8ce4"
+      },
+      {
+        "cfgId": 100562,
+        "name": "card_100562.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100562.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100562.png",
+        "bytes": 296619,
+        "sha256": "f87b775989621fcec9cacd7fb48d3f115b618f13416631d667160c48d90c71cb"
+      },
+      {
+        "cfgId": 100563,
+        "name": "card_100563.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100563.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100563.png",
+        "bytes": 123763,
+        "sha256": "94a88e8bac40c699cf3dd625e6f57e2739b9603fcb7f217983933dbda981f526"
+      },
+      {
+        "cfgId": 100564,
+        "name": "card_100564.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100564.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100564.png",
+        "bytes": 158828,
+        "sha256": "01e98e6762b60f7dde21756a949cb8d392c168f11489b79aa270e95cf9064db1"
+      },
+      {
+        "cfgId": 100574,
+        "name": "card_100574.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100574.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100574.png",
+        "bytes": 334453,
+        "sha256": "52728b046c537b9bb43fc7ecd72c3d351866f2a109ce86b88e279cdea7a7d902"
+      },
+      {
+        "cfgId": 100575,
+        "name": "card_100575.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100575.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100575.png",
+        "bytes": 339959,
+        "sha256": "180063d3502a538942940d12ac6087593a452d6710e9cce1c8d6eddf8152541c"
+      },
+      {
+        "cfgId": 100578,
+        "name": "card_100578.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100578.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100578.png",
+        "bytes": 303780,
+        "sha256": "3abb2e1772dcc739642ec7fd5e8520ed578048ddd4628bf9f47880651ef71ed6"
+      },
+      {
+        "cfgId": 100582,
+        "name": "card_100582.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100582.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100582.png",
+        "bytes": 247634,
+        "sha256": "2b5fa57d6b97db38992e8ecb61833befc635fbd9a643d37dcf24b4d42db30f60"
+      },
+      {
+        "cfgId": 100583,
+        "name": "card_100583.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100583.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100583.png",
+        "bytes": 316096,
+        "sha256": "ac2452fa37ec3ba77b807431b36eac519da017f45e0797bfb0897ab8dc3263f5"
+      },
+      {
+        "cfgId": 100585,
+        "name": "card_100585.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100585.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100585.png",
+        "bytes": 316296,
+        "sha256": "07717d9df5eadf5a2662f23c285e5cc9cc06dc805cc59206d3fd4e2c97e7045c"
+      },
+      {
+        "cfgId": 100586,
+        "name": "card_100586.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100586.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100586.png",
+        "bytes": 318582,
+        "sha256": "11d94da0442547c8ae82ee15ee717648068c729f86ed61a76308a01e7cad290b"
+      },
+      {
+        "cfgId": 100587,
+        "name": "card_100587.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100587.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100587.png",
+        "bytes": 337853,
+        "sha256": "cab8c3976c564df00ccd9c08d869eb1a40f74ef108561d6a2c8d6ac48f4dc70e"
+      },
+      {
+        "cfgId": 100588,
+        "name": "card_100588.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100588.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100588.png",
+        "bytes": 407877,
+        "sha256": "a87d20033ccf5acd54f050f5fc53f60f7cbd01956c7b9bdffbcc70a4d030799a"
+      },
+      {
+        "cfgId": 100589,
+        "name": "card_100589.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100589.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100589.png",
+        "bytes": 316634,
+        "sha256": "31af950b3f5351e9171ce4b8c4536525ec17e19f778efcd9c3fe53b712d5e090"
+      },
+      {
+        "cfgId": 100590,
+        "name": "card_100590.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100590.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100590.png",
+        "bytes": 303620,
+        "sha256": "1244a18bdb6f749fe95d8b102430e7f9591ac07ee05bb25aa311e9f273378120"
+      },
+      {
+        "cfgId": 100591,
+        "name": "card_100591.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100591.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100591.png",
+        "bytes": 314748,
+        "sha256": "e46223a2c069a7ef5a12a376f66e84759c6c63af8703020e38eead81ec589f74"
+      },
+      {
+        "cfgId": 100592,
+        "name": "card_100592.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100592.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100592.png",
+        "bytes": 359172,
+        "sha256": "80d9938ffb1836a309830cbc716a816c1f39b61477b1f6534856831b0c0a6e0d"
+      },
+      {
+        "cfgId": 100593,
+        "name": "card_100593.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100593.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100593.png",
+        "bytes": 353727,
+        "sha256": "cbaa0c45e747d5fdd40a6084fa6e622679342b23ab18d829b98cfda51df42e60"
+      },
+      {
+        "cfgId": 100594,
+        "name": "card_100594.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100594.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100594.png",
+        "bytes": 285004,
+        "sha256": "9dc317c11eb7500ce689a588a7375fb3fb61f7a3c1e55157b28f1bf78e6777fe"
+      },
+      {
+        "cfgId": 100595,
+        "name": "card_100595.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100595.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100595.png",
+        "bytes": 297879,
+        "sha256": "30a4941d676265cc8fa65fcc03865cb48205c14e6bcc10c26661b88510befcfb"
+      },
+      {
+        "cfgId": 100596,
+        "name": "card_100596.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100596.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100596.png",
+        "bytes": 279967,
+        "sha256": "0b10aec8725e4ab32a7ea7256364a1f89e092750040a3436421a542b619fd9cb"
+      },
+      {
+        "cfgId": 100597,
+        "name": "card_100597.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100597.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100597.png",
+        "bytes": 306114,
+        "sha256": "349fac470d3b648f35ca3d880d75b85b6466bcc50137a7269d48622d94ba1f6c"
+      },
+      {
+        "cfgId": 100598,
+        "name": "card_100598.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100598.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100598.png",
+        "bytes": 283159,
+        "sha256": "0fa70d1c7ec3ffa7de4b8eca8b5be92fd595bac65c53f3334eb5ad6dd7adb0dd"
+      },
+      {
+        "cfgId": 100599,
+        "name": "card_100599.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100599.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100599.png",
+        "bytes": 315118,
+        "sha256": "54430baa344b47518771891b31baa7f049db21a006b1126bcaaeb1eb0462fe55"
+      },
+      {
+        "cfgId": 100600,
+        "name": "card_100600.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100600.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100600.png",
+        "bytes": 257227,
+        "sha256": "8067ec235c13c1a2b5e10a28cf7d2c65ad03d37ab79526181e6cbb55c6431a29"
+      },
+      {
+        "cfgId": 100601,
+        "name": "card_100601.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100601.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100601.png",
+        "bytes": 308363,
+        "sha256": "3fb9f45500272c6e121d108534a6bd5be309a9752415ce053a0303f359f03c5a"
+      },
+      {
+        "cfgId": 100602,
+        "name": "card_100602.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_100602.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_100602.png",
+        "bytes": 310754,
+        "sha256": "15811fed422eeae2efcb44e1bda1230707cd4049795676e294a262291c91b2ca"
+      },
+      {
+        "cfgId": 110001,
+        "name": "card_110001.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110001.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110001.png",
+        "bytes": 127013,
+        "sha256": "52cda55258ae85f061cc7ca8efae4beec7dbcf930572c42105928501ef363ddd"
+      },
+      {
+        "cfgId": 110311,
+        "name": "card_110311.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110311.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110311.png",
+        "bytes": 342894,
+        "sha256": "3e40b309856ef415f16872411a510d92cbe6fb49ca623cc1b6cd09f1bcc29928"
+      },
+      {
+        "cfgId": 110411,
+        "name": "card_110411.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110411.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110411.png",
+        "bytes": 349329,
+        "sha256": "8492247ec8a56ba30e0f3d0bbefa30246e261419416c39f65c25b90735362842"
+      },
+      {
+        "cfgId": 110500,
+        "name": "card_110500.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110500.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110500.png",
+        "bytes": 315066,
+        "sha256": "74521f652c0e61d024ea6a030b79002f63601c744c9e93d1b0e0a44f2734c442"
+      },
+      {
+        "cfgId": 110501,
+        "name": "card_110501.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110501.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110501.png",
+        "bytes": 311709,
+        "sha256": "59804bf4a9d9aa13148163260ea55acf7429b7ea55461e69c3f8cc62710c5c5e"
+      },
+      {
+        "cfgId": 110502,
+        "name": "card_110502.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110502.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110502.png",
+        "bytes": 295641,
+        "sha256": "efcf216771dfeafb92c0593f22426a62d068c944129a02e56590f8f848a77238"
+      },
+      {
+        "cfgId": 110503,
+        "name": "card_110503.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110503.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110503.png",
+        "bytes": 291148,
+        "sha256": "decfa92d674b44529abbdd6f2b1d9839280de1f4ada50bed7a2e9f4862a62ae6"
+      },
+      {
+        "cfgId": 110504,
+        "name": "card_110504.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110504.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110504.png",
+        "bytes": 355798,
+        "sha256": "aa3ec0c8157819ac174aca0db4dc6c2ef2e09079365393ec3e0328555aad9723"
+      },
+      {
+        "cfgId": 110505,
+        "name": "card_110505.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_110505.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_110505.png",
+        "bytes": 278230,
+        "sha256": "f6e39d6749b4f4f2a0d9f0b02d5a6aadeb243df7a234bbb430b124b77eadcefc"
+      },
+      {
+        "cfgId": 120001,
+        "name": "card_120001.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/card_120001.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/card_120001.png",
+        "bytes": 266429,
+        "sha256": "bfe2531e568e07a59ed5504dc4e4b7b2989e61636afa426621f612c950248d3d"
+      },
+      {
+        "name": "head_wrap.png",
+        "path": "godot-client/assets/themes/slgclient/current/generalpic/head_wrap.png",
+        "sourcePath": "tmp/third_party/slgclient/assets/resources/generalpic/head_wrap.png",
+        "bytes": 9229,
+        "sha256": "cdbc2ce38ed2eb4082708db4e739bc07512bbb4b568a69e3c6292967ae9c3a18",
+        "special": true
       }
     ]
   },
@@ -207,69 +4152,6 @@
     },
     "atlases": [
       {
-        "name": "map_tiles",
-        "plist": "map_tiles.plist",
-        "png": "map_tiles.png",
-        "category": "resource",
-        "sourceFrameCount": 13,
-        "selectedFrameCount": 9,
-        "extractedFrameCount": 9
-      },
-      {
-        "name": "map_res",
-        "plist": "map_res.plist",
-        "png": "map_res.png",
-        "category": "resource",
-        "sourceFrameCount": 25,
-        "selectedFrameCount": 25,
-        "extractedFrameCount": 25
-      },
-      {
-        "name": "hill",
-        "plist": "hill.plist",
-        "png": "hill.png",
-        "category": "terrain",
-        "sourceFrameCount": 15,
-        "selectedFrameCount": 15,
-        "extractedFrameCount": 15
-      },
-      {
-        "name": "water_edge_1",
-        "plist": "water_edge_1.plist",
-        "png": "water_edge_1.png",
-        "category": "edge",
-        "sourceFrameCount": 26,
-        "selectedFrameCount": 26,
-        "extractedFrameCount": 26
-      },
-      {
-        "name": "water_edge_3",
-        "plist": "water_edge_3.plist",
-        "png": "water_edge_3.png",
-        "category": "edge",
-        "sourceFrameCount": 26,
-        "selectedFrameCount": 26,
-        "extractedFrameCount": 26
-      },
-      {
-        "name": "sand_edge_1",
-        "plist": "sand_edge_1.plist",
-        "png": "sand_edge_1.png",
-        "category": "edge",
-        "sourceFrameCount": 26,
-        "selectedFrameCount": 26,
-        "extractedFrameCount": 26
-      },
-      {
-        "name": "sand_edge_3",
-        "plist": "sand_edge_3.plist",
-        "png": "sand_edge_3.png",
-        "category": "edge",
-        "sourceFrameCount": 26,
-        "selectedFrameCount": 26,
-        "extractedFrameCount": 26
-      },
-      {
         "name": "city_component",
         "plist": "cityComponent.plist",
         "png": "cityComponent.png",
@@ -289,25 +4171,47 @@
       }
     ]
   },
+  "ui": {
+    "manifestPath": "godot-client/assets/themes/slgclient/manifests/ui_manifest.json",
+    "themeTokensPath": "godot-client/assets/themes/slgclient/manifests/ui_theme_tokens.json",
+    "targetRoot": "godot-client/assets/themes/slgclient/current/ui",
+    "preservedRoots": [],
+    "prunedOldUi": true,
+    "hudV1Removed": true,
+    "fileCount": 20,
+    "folderCounts": {
+      "root": 16,
+      "skill": 4
+    },
+    "extensionCounts": {
+      ".png": 4,
+      ".import": 8,
+      ".svg": 8
+    }
+  },
   "exchangeBundle": {
     "bundleRoot": "godot-client/assets/themes/slgclient/replacements/exchange_bundle",
     "manifestPath": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/exchange_bundle_manifest.json",
     "stats": {
       "world": {
-        "files": 27,
-        "bytes": 14310406
+        "files": 11,
+        "bytes": 8248265
+      },
+      "generalpic": {
+        "files": 898,
+        "bytes": 150867146
       },
       "units": {
-        "files": 80,
-        "bytes": 524032
+        "files": 160,
+        "bytes": 607091
       },
       "overlays": {
-        "files": 204,
-        "bytes": 4876185
+        "files": 124,
+        "bytes": 1709243
       },
       "manifests": {
-        "files": 3,
-        "bytes": 179878
+        "files": 4,
+        "bytes": 423947
       }
     }
   }

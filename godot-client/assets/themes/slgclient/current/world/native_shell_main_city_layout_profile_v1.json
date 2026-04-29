@@ -1,0 +1,419 @@
+{
+  "profile_id": "native_shell_main_city_layout_profile_v1",
+  "schema_version": 1,
+  "purpose": "Main city visual layout profile for native_slg_shell center stage. 5x5 is the visual shell; only the inner 3x3 is the active building grid.",
+  "readable_name": "主城 5x5 视觉壳 / 3x3 功能核心",
+  "coordinate_system": {
+    "origin": "top-left visual grid cell",
+    "x_range": [0, 4],
+    "y_range": [0, 4],
+    "center_slot": [2, 2],
+    "tile_footprint_px": [240, 240],
+    "asset_canvas_px": [384, 384],
+    "asset_anchor": "bottom-center footprint center"
+  },
+  "city_grid_projection": {
+    "type": "isometric_2_to_1",
+    "tile_width": 60,
+    "tile_height": 30,
+    "origin": [150, 36],
+    "elevation_scale": 1,
+    "anchor_rule": "center",
+    "z_sort_rule": {
+      "type": "grid_sum_then_x",
+      "base_z_index": 10,
+      "sort_step": 10,
+      "x_step": 1,
+      "flat_layers": ["foundation", "continuous_city_wall_ring"],
+      "layer_offsets": {
+        "foundation": -10,
+        "continuous_city_wall_ring": -8,
+        "breathing": 0,
+        "reserved_plot": 10,
+        "city_gate": 18,
+        "corner_tower": 18,
+        "active_building": 20
+      }
+    }
+  },
+  "grid": {
+    "visual_grid": {
+      "columns": 5,
+      "rows": 5,
+      "cell_size": [42, 24],
+      "preview_size": [300, 180],
+      "meaning": "Visual shell used for composition, wall ring, gates, reserved plots, and breathing room."
+    },
+    "active_grid": {
+      "columns": 3,
+      "rows": 3,
+      "origin_slot": [1, 1],
+      "meaning": "The only first-phase clickable and upgradeable city-building slots."
+    }
+  },
+  "debug_labels": {
+    "enabled_by_default": false,
+    "rule": "Chinese names are for tooling and debug overlays only. Runtime UI should read copy from native shell copy/profile sources."
+  },
+  "asset_slots": {
+    "Armory_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "武库",
+      "placeholder_token": "武",
+      "texture_path": "res://assets/themes/slgclient/current/world/armory_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "Barracks_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "兵营",
+      "placeholder_token": "兵",
+      "texture_path": "res://assets/themes/slgclient/current/world/barracks_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "Granary_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "粮仓",
+      "placeholder_token": "粮",
+      "texture_path": "res://assets/themes/slgclient/current/world/granary_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "Stable_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "马厩",
+      "placeholder_token": "马",
+      "texture_path": "res://assets/themes/slgclient/current/world/stable_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "CityHall_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "城主府",
+      "placeholder_token": "府",
+      "texture_path": "res://assets/themes/slgclient/current/world/city_hall_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [72, 72],
+      "display_offset": [0, 1]
+    },
+    "MainCityFoundation_Base_v1": {
+      "slot_kind": "foundation",
+      "display_name_zh": "主城底盘",
+      "placeholder_token": "基",
+      "texture_path": "res://assets/themes/slgclient/current/world/main_city_foundation_base_v1.png",
+      "anchor": "center",
+      "display_size": [306, 176],
+      "display_offset": [0, 8],
+      "stretch_mode": 0
+    },
+    "Warehouse_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "仓库",
+      "placeholder_token": "仓",
+      "texture_path": "res://assets/themes/slgclient/current/world/warehouse_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "Workshop_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "工坊",
+      "placeholder_token": "工",
+      "texture_path": "res://assets/themes/slgclient/current/world/workshop_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "DrillGround_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "校场",
+      "placeholder_token": "校",
+      "texture_path": "res://assets/themes/slgclient/current/world/drill_ground_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "Residence_Base_v1": {
+      "slot_kind": "active_building",
+      "display_name_zh": "民居",
+      "placeholder_token": "民",
+      "texture_path": "res://assets/themes/slgclient/current/world/residence_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [66, 66],
+      "display_offset": [0, 1]
+    },
+    "CornerWatchtower_Base_v1": {
+      "slot_kind": "corner_tower",
+      "display_name_zh": "望楼",
+      "placeholder_token": "角",
+      "texture_path": "res://assets/themes/slgclient/current/world/corner_watchtower_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [56, 56],
+      "display_offset": [0, 1]
+    },
+    "CityGate_Base_v1": {
+      "slot_kind": "city_gate",
+      "display_name_zh": "城门",
+      "placeholder_token": "门",
+      "texture_path": "res://assets/themes/slgclient/current/world/city_gate_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [60, 60],
+      "display_offset": [0, 1]
+    },
+    "CityWallRing_Profile_v1": {
+      "slot_kind": "continuous_city_wall_ring",
+      "display_name_zh": "连续城墙",
+      "placeholder_token": "墙",
+      "texture_path": "res://assets/themes/slgclient/current/world/city_wall_ring_profile_v1.png",
+      "anchor": "center",
+      "display_size": [292, 160],
+      "display_offset": [0, 9],
+      "stretch_mode": 0
+    },
+    "ConstructionPlot_Base_v1": {
+      "slot_kind": "reserved_plot",
+      "display_name_zh": "预留地",
+      "placeholder_token": "预",
+      "texture_path": "res://assets/themes/slgclient/current/world/construction_plot_base_v1.png",
+      "anchor": "bottom_center",
+      "display_size": [54, 54],
+      "display_offset": [0, 1]
+    },
+    "Market_Base_v1": {
+      "slot_kind": "later_expansion",
+      "display_name_zh": "市集",
+      "placeholder_token": "市",
+      "texture_path": ""
+    },
+    "RecruitHall_Base_v1": {
+      "slot_kind": "later_expansion",
+      "display_name_zh": "招募所",
+      "placeholder_token": "募",
+      "texture_path": ""
+    },
+    "Academy_Base_v1": {
+      "slot_kind": "later_expansion",
+      "display_name_zh": "书院",
+      "placeholder_token": "书",
+      "texture_path": ""
+    },
+    "Infirmary_Base_v1": {
+      "slot_kind": "later_expansion",
+      "display_name_zh": "医馆",
+      "placeholder_token": "医",
+      "texture_path": ""
+    }
+  },
+  "active_core_slots": [
+    {
+      "slot_id": "core_nw",
+      "grid": [1, 1],
+      "slot_kind": "active_building",
+      "building_id": "armory",
+      "asset_id": "Armory_Base_v1",
+      "display_name_zh": "武库",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_n",
+      "grid": [2, 1],
+      "slot_kind": "active_building",
+      "building_id": "barracks",
+      "asset_id": "Barracks_Base_v1",
+      "display_name_zh": "兵营",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_ne",
+      "grid": [3, 1],
+      "slot_kind": "active_building",
+      "building_id": "granary",
+      "asset_id": "Granary_Base_v1",
+      "display_name_zh": "粮仓",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_w",
+      "grid": [1, 2],
+      "slot_kind": "active_building",
+      "building_id": "stable",
+      "asset_id": "Stable_Base_v1",
+      "display_name_zh": "马厩",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_center",
+      "grid": [2, 2],
+      "slot_kind": "active_building",
+      "building_id": "city_hall",
+      "asset_id": "CityHall_Base_v1",
+      "display_name_zh": "城主府",
+      "state": "primary"
+    },
+    {
+      "slot_id": "core_e",
+      "grid": [3, 2],
+      "slot_kind": "active_building",
+      "building_id": "warehouse",
+      "asset_id": "Warehouse_Base_v1",
+      "display_name_zh": "仓库",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_sw",
+      "grid": [1, 3],
+      "slot_kind": "active_building",
+      "building_id": "workshop",
+      "asset_id": "Workshop_Base_v1",
+      "display_name_zh": "工坊",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_s",
+      "grid": [2, 3],
+      "slot_kind": "active_building",
+      "building_id": "drill_ground",
+      "asset_id": "DrillGround_Base_v1",
+      "display_name_zh": "校场",
+      "state": "available"
+    },
+    {
+      "slot_id": "core_se",
+      "grid": [3, 3],
+      "slot_kind": "active_building",
+      "building_id": "residence",
+      "asset_id": "Residence_Base_v1",
+      "display_name_zh": "民居",
+      "state": "available"
+    }
+  ],
+  "visual_shell": {
+    "foundation": {
+      "slot_kind": "foundation",
+      "asset_id": "MainCityFoundation_Base_v1",
+      "display_name_zh": "主城底盘",
+      "grid": [2, 2]
+    },
+    "perimeter": {
+      "slot_kind": "continuous_city_wall_ring",
+      "asset_id": "CityWallRing_Profile_v1",
+      "display_name_zh": "连续城墙",
+      "grid": [2, 2],
+      "rule": "The wall is one connected perimeter layer around the 5x5 footprint, not 16 separated wall-slot cards."
+    },
+    "corner_slots": [
+      {
+        "slot_id": "corner_nw",
+        "grid": [0, 0],
+        "slot_kind": "corner_tower",
+        "asset_id": "CornerWatchtower_Base_v1",
+        "display_name_zh": "西北望楼",
+        "state": "decorative"
+      },
+      {
+        "slot_id": "corner_ne",
+        "grid": [4, 0],
+        "slot_kind": "corner_tower",
+        "asset_id": "CornerWatchtower_Base_v1",
+        "display_name_zh": "东北望楼",
+        "state": "decorative"
+      },
+      {
+        "slot_id": "corner_sw",
+        "grid": [0, 4],
+        "slot_kind": "corner_tower",
+        "asset_id": "CornerWatchtower_Base_v1",
+        "display_name_zh": "西南望楼",
+        "state": "decorative"
+      },
+      {
+        "slot_id": "corner_se",
+        "grid": [4, 4],
+        "slot_kind": "corner_tower",
+        "asset_id": "CornerWatchtower_Base_v1",
+        "display_name_zh": "东南望楼",
+        "state": "decorative"
+      }
+    ],
+    "gate_slots": [
+      {
+        "slot_id": "gate_n",
+        "grid": [2, 0],
+        "slot_kind": "city_gate",
+        "asset_id": "CityGate_Base_v1",
+        "display_name_zh": "北门",
+        "state": "decorative"
+      },
+      {
+        "slot_id": "gate_s",
+        "grid": [2, 4],
+        "slot_kind": "city_gate",
+        "asset_id": "CityGate_Base_v1",
+        "display_name_zh": "南门",
+        "state": "decorative"
+      }
+    ],
+    "reserved_slots": [
+      {
+        "slot_id": "reserve_w",
+        "grid": [0, 2],
+        "slot_kind": "reserved_plot",
+        "asset_id": "ConstructionPlot_Base_v1",
+        "display_name_zh": "西侧预留地",
+        "state": "locked_or_future"
+      },
+      {
+        "slot_id": "reserve_e",
+        "grid": [4, 2],
+        "slot_kind": "reserved_plot",
+        "asset_id": "ConstructionPlot_Base_v1",
+        "display_name_zh": "东侧预留地",
+        "state": "locked_or_future"
+      }
+    ],
+    "breathing_slots": [
+      [1, 0],
+      [3, 0],
+      [0, 1],
+      [4, 1],
+      [0, 3],
+      [4, 3],
+      [1, 4],
+      [3, 4]
+    ]
+  },
+  "excluded_from_first_phase_core": [
+    {
+      "building_id": "market",
+      "asset_id": "Market_Base_v1",
+      "reason": "Keep as expansion content. Current geometry needs another pass before it becomes a stable active-core asset."
+    },
+    {
+      "building_id": "recruit_hall",
+      "asset_id": "RecruitHall_Base_v1",
+      "reason": "Useful later, but not required for the first 3x3 core."
+    },
+    {
+      "building_id": "academy",
+      "asset_id": "Academy_Base_v1",
+      "reason": "Useful later, but overlaps with policy/research systems that are not part of this shell pass."
+    },
+    {
+      "building_id": "infirmary",
+      "asset_id": "Infirmary_Base_v1",
+      "reason": "Useful later as recovery/hospital content, but not required for this first shell layout."
+    }
+  ],
+  "must_not_include": [
+    "runtime HUD nodes",
+    "AI player logic",
+    "server/shared gameplay rules",
+    "web prototype layout",
+    "world map resource-tile definitions"
+  ]
+}

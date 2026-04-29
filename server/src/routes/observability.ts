@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import type { CivilMemoryObservabilityResponse } from '../../../shared/contracts/game'
 import {
+  getAiRuntimeObservabilitySnapshot,
   getNarrativeEvents,
   getNationalAgendaSnapshot,
   getSaveSlotsArchiveCatalog,
@@ -20,6 +21,7 @@ import { getMemoryProviderDiagnostics } from '../agents/memory/MemoryStore'
 import { civilMemoryObservabilityResponseSchema } from '../../../shared/schemas/civilMemory'
 import { getWebSocketStats } from '../ws/GameWebSocket'
 import { worldEventsResponseSchema } from '../../../shared/schemas/history'
+import { aiRuntimeObservabilityResponseSchema } from '../../../shared/schemas/observability'
 
 type SaveSlotPayload = {
   slotId?: string
@@ -127,6 +129,19 @@ export function handleWorldEventsStreamRoute(req: IncomingMessage, res: ServerRe
   req.on('error', cleanup)
 }
 
+export function handleAiRuntimeObservabilityRoute(req: IncomingMessage, res: ServerResponse) {
+  const requestUrl = new URL(req.url ?? '/', `http://${req.headers.host ?? '127.0.0.1'}`)
+  const eventLimit = Number(requestUrl.searchParams.get('eventLimit') ?? '24')
+  const factionId = requestUrl.searchParams.get('factionId')?.trim() || undefined
+  const payload = aiRuntimeObservabilityResponseSchema.parse(
+    getAiRuntimeObservabilitySnapshot({
+      factionId,
+      eventLimit,
+    }),
+  )
+  writeJson(res, 200, payload)
+}
+
 export function handleNarrativeEventsRoute(req: IncomingMessage, res: ServerResponse) {
   const requestUrl = new URL(req.url ?? '/', `http://${req.headers.host ?? '127.0.0.1'}`)
   const limit = Number(requestUrl.searchParams.get('limit') ?? '200')
@@ -156,12 +171,16 @@ export function handleCivilMemoryRoute(req: IncomingMessage, res: ServerResponse
   const tickFrom = tickFromRaw ? Number(tickFromRaw) : undefined
   const tickToRaw = requestUrl.searchParams.get('tickTo')
   const tickTo = tickToRaw ? Number(tickToRaw) : undefined
+  const factionId = requestUrl.searchParams.get('factionId')?.trim() || undefined
+  const relatedId = requestUrl.searchParams.get('relatedId')?.trim() || undefined
 
   const snapshot = getCivilMemorySnapshot({
     limit,
     type,
     tickFrom: Number.isFinite(tickFrom) ? tickFrom : undefined,
     tickTo: Number.isFinite(tickTo) ? tickTo : undefined,
+    factionId,
+    relatedId,
   })
 
   const responsePayload: CivilMemoryObservabilityResponse = {

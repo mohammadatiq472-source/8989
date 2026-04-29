@@ -7,12 +7,41 @@ This folder hosts the Godot rewrite client.
 - Godot: `D:\Apps\Godot\Godot_v4.6.2-stable_win64_console.exe`
 - Backend running at `http://127.0.0.1:8787`
 
+## Current Mainline
+
+Current production mainline is no longer `UI Preview Sandbox` first.
+
+- Formal Godot runtime entry remains `godot-client/project.godot -> run/main_scene="res://scenes/app/main.tscn"`.
+- Current first-cut objective is `原生 SLG 主壳 / 主城页 / 大地图入口`.
+- `UI Preview Sandbox` now serves as side-line reference and validation tooling, not the default product entry.
+- If the task is product-facing, prefer `main.tscn` and only read preview docs/tools when you explicitly need bridge references or screenshot regression.
+
+## First Read
+
+- [../README.md](../README.md)
+- [../docs/AGENTS_EXECUTION_CURRENT_2026_04.md](../docs/AGENTS_EXECUTION_CURRENT_2026_04.md)
+- [../docs/NATIVE_SLG_MAINLINE_INDEX.md](../docs/NATIVE_SLG_MAINLINE_INDEX.md)
+- [../docs/NATIVE_SLG_COMPONENT_ARCHITECTURE.md](../docs/NATIVE_SLG_COMPONENT_ARCHITECTURE.md)
+- [../docs/AI_QUICK_NAV_INDEX_2026_04_10.md](../docs/AI_QUICK_NAV_INDEX_2026_04_10.md)
+- [../CODEX.md](../CODEX.md)
+
 ## Week 1 Entry Commands
 
-- Headless smoke:
-  - `D:\Apps\Godot\Godot_v4.6.2-stable_win64_console.exe --headless --path godot-client`
+- Editor vs runtime:
+  - `Godot Engine` window = editor
+  - `SLG Commander Godot Client (DEBUG)` window = running client
+  - repository root is `8989/`, but the Godot project root is `8989/godot-client/`
 - Open editor:
-  - `D:\Apps\Godot\Godot_v4.6.2-stable_win64.exe --path godot-client`
+  - `Start-Godot-Editor.cmd`
+  - `npm run godot:editor`
+- Run the mainline client window:
+  - `Start-Godot-Mainline-Debug.cmd`
+  - `npm run godot:mainline:runtime`
+- Headless smoke:
+  - `Start-Godot-Headless-Smoke.cmd`
+  - `npm run godot:headless:smoke`
+- If Godot auto-detection fails:
+  - set `GODOT_EDITOR_EXE` or `GODOT_CONSOLE_EXE` and rerun the launcher
 - Week 1 gate (W1-C13):
   - `npm run gate:godot:week1`
   - strict default (CI/验收口径): `--no-allow-stale-runtime-schema`
@@ -29,6 +58,96 @@ This folder hosts the Godot rewrite client.
   - `npm run godot:ops:cli -- template-replay --scenario baseline_v1 --report-path tmp/gates/ai_ops_template_replay_latest.json`
   - `npm run godot:ops:cli -- world-action --action queuePlanExecution --payload-json "{\"factionId\":\"player\"}"`
   - `npm run godot:ops:cli -- bootstrap-chain --output tmp/gates/godot_ops_bootstrap_latest.json`
+
+## UI Preview Sandbox
+
+This section is bridge-only. Do not treat it as the canonical product entry.
+
+Purpose:
+
+1. Provide a reusable, click-first sandbox for UI iteration without touching `main.tscn` or `main.gd`.
+2. Keep preview stories visible to both humans and AI windows through a single formal scene entry.
+3. Produce reproducible screenshot evidence under `tmp/screenshots/ui_preview_sandbox/`.
+
+Formal entry commands:
+
+- Launch sandbox:
+  - `scripts\run_python.cmd godot-client\tools\run_ui_preview_sandbox.py`
+- Validate sandbox and capture story screenshots:
+  - `scripts\run_python.cmd godot-client\tools\validate_ui_preview_sandbox.py`
+- Run screenshot regression against the embedded baseline hashes:
+  - `npm run godot:ui:preview:regress`
+- Direct Godot launch:
+  - `scripts\run_python.cmd scripts\launch_godot.py --mode runtime --scene res://scenes/dev/ui_preview_sandbox.tscn`
+
+Capture mode:
+
+- The formal validation/regression chain now enables `presentation capture mode` automatically.
+- In this mode the sandbox sidebar stays hidden, and map preview stories hide the Info, Story, and Controls docks so screenshots contain product UI only.
+- Manual preview entrypoints keep the developer UI visible unless you invoke the validation/regression chain.
+
+Editor workflow:
+
+- Godot editor now loads a right-side `UI Preview` dock from `res://addons/ui_preview_sandbox/plugin.cfg`.
+- Use `Open Sandbox Scene` to jump to the canonical preview scene.
+- Use `Play Selected Story` to run the selected story without touching `main.tscn`.
+- Inside the sandbox, switch `Fixture` / `Backend` data sources per story from the sidebar.
+- For live backend preview, start `npm run start` first and then switch the story source to `Backend`.
+
+Story addition rules:
+
+1. Keep `res://scenes/dev/ui_preview_sandbox.tscn` as the canonical preview entry and keep story selection driven by `godot-client/data/ui_preview/stories/stories_manifest.json`.
+2. Add a new story by creating its preview scene and payload under `godot-client/scenes/dev/stories/` and `godot-client/data/ui_preview/stories/`, then register it in `stories_manifest.json`.
+3. Register `defaultSourceMode` and `dataSources` in `stories_manifest.json` so the story can be switched between `fixture` and any supported live adapter modes.
+4. The validator now captures stories in manifest order, so a registered story is automatically exercised and screenshot-tested from the same formal entry.
+5. Keep payload-level `dataSource` metadata aligned with the manifest contract so both humans and AI windows can see which source is active.
+6. Keep story/capture outputs under `tmp/screenshots/ui_preview_sandbox/` so humans and agents can diff the same evidence.
+7. Do not route sandbox preview flows through `main.tscn`, `main.gd`, or server bootstrapping.
+
+Current story packs:
+
+- Core UI: `hud_token`, `observability`, `panel_stack`
+- Map Preview Pack: `map_surface`, `map_zoom_hover`, `map_overlay`, `map_units`
+- Map Macro Pack: `province_layer`, `warzone_layer`, `nation_layer`
+- Macro navigation chain: `map_surface -> province_layer -> warzone_layer -> nation_layer`
+
+Generalpic quick lookup:
+
+- Pack root: `godot-client/assets/themes/slgclient/current/generalpic/`
+- AI index: `godot-client/assets/themes/slgclient/manifests/generalpic_index.json`
+- Full pack manifest: `godot-client/assets/themes/slgclient/manifests/generalpic_manifest.json`
+
+`map_surface` now assembles reusable component scenes under `godot-client/scenes/dev/components/`:
+
+- `map_surface_top_strip.tscn`
+- `map_surface_command_dock.tscn`
+- `map_surface_right_info_stack.tscn`
+- `map_surface_action_dock.tscn`
+
+Screenshot validation output:
+
+- `tmp/screenshots/ui_preview_sandbox/preview_validation_report.json`
+- `tmp/screenshots/ui_preview_sandbox/01_hud_token_story.png`
+- `tmp/screenshots/ui_preview_sandbox/02_observability_story.png`
+- `tmp/screenshots/ui_preview_sandbox/03_panel_stack_story.png`
+- `tmp/screenshots/ui_preview_sandbox/04_map_surface_story.png`
+- `tmp/screenshots/ui_preview_sandbox/05_map_zoom_hover_story.png`
+- `tmp/screenshots/ui_preview_sandbox/06_map_overlay_story.png`
+- `tmp/screenshots/ui_preview_sandbox/07_map_units_story.png`
+- `tmp/screenshots/ui_preview_sandbox/08_province_layer_story.png`
+- `tmp/screenshots/ui_preview_sandbox/09_warzone_layer_story.png`
+- `tmp/screenshots/ui_preview_sandbox/10_nation_layer_story.png`
+- `tmp/screenshots/ui_preview_sandbox/driver_report.json`
+- `tmp/screenshots/ui_preview_sandbox/ui_preview_sandbox_regression_report.json`
+
+Regression report shape:
+
+- `command`: wrapper command identifier
+- `validationCommand`: exact validator invocation used for the capture run
+- `comparison`: hash comparison summary with `missing`, `unexpected`, `hashMismatches`, and `orderMismatch`
+- `steps.navigation_chain`: formal smoke result for the macro flow `map_surface -> province_layer -> warzone_layer -> nation_layer`
+- `artifacts`: validation report path, regression report path, and screenshot manifest
+- `conclusion`: `PASS` or `FAIL`
 
 ## AI CLI Control Surface (Week2+)
 

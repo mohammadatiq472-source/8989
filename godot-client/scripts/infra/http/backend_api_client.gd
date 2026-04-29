@@ -94,14 +94,71 @@ func join_session(faction_id: String, player_name: String) -> Dictionary:
 		},
 	)
 
+func post_session_autonomy(token: String, level: String) -> Dictionary:
+	return await request_json(
+		"POST",
+		"/api/session/autonomy",
+		{
+			"token": token,
+			"level": level,
+		},
+	)
+
 func get_world_summary() -> Dictionary:
 	return await request_json("GET", "/api/world?intelMode=sparse")
 
-func get_map_layout(scope: String = "full") -> Dictionary:
+func get_world_full_summary() -> Dictionary:
+	return await request_json("GET", "/api/world?intelMode=full")
+
+func get_unified_inbox(faction_id: String = "", governor_player_id: String = "") -> Dictionary:
+	var query_parts: Array = []
+	var normalized_faction_id := faction_id.strip_edges()
+	var normalized_governor_player_id := governor_player_id.strip_edges()
+	if normalized_faction_id != "":
+		query_parts.append("factionId=%s" % normalized_faction_id.uri_encode())
+	if normalized_governor_player_id != "":
+		query_parts.append("governorPlayerId=%s" % normalized_governor_player_id.uri_encode())
+	var query := ""
+	if not query_parts.is_empty():
+		query = "?%s" % "&".join(query_parts)
+	return await request_json("GET", "/api/inbox%s" % query)
+
+func claim_unified_inbox_item(item_id: String, faction_id: String = "", governor_player_id: String = "", include_world: bool = true, chat_ai_player_id: String = "") -> Dictionary:
+	var normalized_item_id := item_id.strip_edges()
+	if normalized_item_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_inbox_item_id",
+			"message": "Inbox item id is required.",
+		}
+	var payload := {
+		"itemId": normalized_item_id,
+		"includeWorld": include_world,
+	}
+	var normalized_faction_id := faction_id.strip_edges()
+	var normalized_governor_player_id := governor_player_id.strip_edges()
+	var normalized_chat_ai_player_id := chat_ai_player_id.strip_edges()
+	if normalized_faction_id != "":
+		payload["factionId"] = normalized_faction_id
+	if normalized_governor_player_id != "":
+		payload["governorPlayerId"] = normalized_governor_player_id
+	if normalized_chat_ai_player_id != "":
+		payload["chatAiPlayerId"] = normalized_chat_ai_player_id
+	return await request_json("POST", "/api/inbox/claim", payload)
+
+func get_map_layout(scope: String = "full", query_params: Dictionary = {}) -> Dictionary:
 	var normalized_scope := scope.strip_edges()
 	if normalized_scope == "":
 		normalized_scope = "bootstrap"
-	return await request_json("GET", "/api/world/map-layout?scope=%s" % normalized_scope)
+	var query_parts: Array = ["scope=%s" % normalized_scope.uri_encode()]
+	for key_variant in query_params.keys():
+		var key: String = str(key_variant).strip_edges()
+		var value: String = str(query_params.get(key_variant, "")).strip_edges()
+		if key == "" or value == "":
+			continue
+		query_parts.append("%s=%s" % [key.uri_encode(), value.uri_encode()])
+	return await request_json("GET", "/api/world/map-layout?%s" % "&".join(query_parts))
 
 func get_events(limit: int = 20) -> Dictionary:
 	var normalized_limit: int = maxi(1, limit)
@@ -110,6 +167,397 @@ func get_events(limit: int = 20) -> Dictionary:
 func get_civil_memory(limit: int = 20) -> Dictionary:
 	var normalized_limit: int = maxi(1, limit)
 	return await request_json("GET", "/api/civil-memory?limit=%d" % normalized_limit)
+
+func get_ai_players(faction_id: String = "", include_disabled: bool = false) -> Dictionary:
+	var query_parts: Array = []
+	var normalized_faction_id := faction_id.strip_edges()
+	if normalized_faction_id != "":
+		query_parts.append("factionId=%s" % normalized_faction_id.uri_encode())
+	if include_disabled:
+		query_parts.append("includeDisabled=true")
+	var query := ""
+	if not query_parts.is_empty():
+		query = "?%s" % "&".join(query_parts)
+	return await request_json("GET", "/api/ai/players%s" % query)
+
+func get_faction_config(faction_id: String) -> Dictionary:
+	var normalized_faction_id := faction_id.strip_edges()
+	if normalized_faction_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_faction_id",
+			"message": "Faction id is required.",
+		}
+	return await request_json("GET", "/api/faction/%s/config" % normalized_faction_id.uri_encode())
+
+func get_ai_player_action_catalog() -> Dictionary:
+	return await request_json("GET", "/api/ai/player-actions/catalog")
+
+func get_ai_player(ai_player_id: String) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	return await request_json("GET", "/api/ai/players/%s" % normalized_ai_player_id.uri_encode())
+
+func get_ai_player_development_plan(ai_player_id: String, goal_power: int = 4000) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	var normalized_goal_power: int = maxi(1, goal_power)
+	return await request_json(
+		"GET",
+		"/api/ai/players/%s/development-plan?goalPower=%d" % [
+			normalized_ai_player_id.uri_encode(),
+			normalized_goal_power,
+		]
+	)
+
+func get_ai_player_battle_reports(ai_player_id: String, limit: int = 5) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	var normalized_limit := maxi(1, limit)
+	return await request_json("GET", "/api/ai/players/%s/battle-reports?limit=%d" % [
+		normalized_ai_player_id.uri_encode(),
+		normalized_limit,
+	])
+
+func update_ai_player_profile(ai_player_id: String, display_name: String = "", avatar_id: String = "", avatar_image_path: String = "", updated_by: String = "") -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	var normalized_display_name := display_name.strip_edges()
+	var normalized_avatar_id := avatar_id.strip_edges()
+	var normalized_avatar_image_path := avatar_image_path.strip_edges()
+	var normalized_updated_by := updated_by.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	if normalized_updated_by == "":
+		normalized_updated_by = "godot_ai_panel"
+	var payload: Dictionary = {
+		"updatedBy": normalized_updated_by,
+	}
+	if normalized_display_name != "":
+		payload["displayName"] = normalized_display_name
+	if normalized_avatar_id != "":
+		payload["avatarId"] = normalized_avatar_id
+	if normalized_avatar_image_path != "":
+		payload["avatarImagePath"] = normalized_avatar_image_path
+	if payload.size() <= 1:
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_profile_update",
+			"message": "AI profile update requires a display name or avatar.",
+		}
+	return await request_json(
+		"POST",
+		"/api/ai/players/%s/profile" % normalized_ai_player_id.uri_encode(),
+		payload
+	)
+
+func update_ai_player_display_name(ai_player_id: String, display_name: String, updated_by: String) -> Dictionary:
+	var normalized_display_name := display_name.strip_edges()
+	if normalized_display_name == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_display_name",
+			"message": "AI display name is required.",
+		}
+	return await update_ai_player_profile(ai_player_id, normalized_display_name, "", "", updated_by)
+
+func upsert_ai_player_context_document(ai_player_id: String, title: String, content: String, kind: String = "identity", updated_by: String = "", source_file_name: String = "") -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	var normalized_title := title.strip_edges()
+	var normalized_content := content.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	if normalized_title == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_context_document_title",
+			"message": "AI context document title is required.",
+		}
+	if normalized_content == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_context_document_content",
+			"message": "AI context document content is required.",
+		}
+	var normalized_kind := kind.strip_edges()
+	if normalized_kind == "":
+		normalized_kind = "identity"
+	var normalized_updated_by := updated_by.strip_edges()
+	if normalized_updated_by == "":
+		normalized_updated_by = "godot_ai_panel"
+	var payload := {
+		"kind": normalized_kind,
+		"title": normalized_title,
+		"content": normalized_content,
+		"updatedBy": normalized_updated_by,
+	}
+	var normalized_source_file_name := source_file_name.strip_edges()
+	if normalized_source_file_name != "":
+		payload["sourceFileName"] = normalized_source_file_name
+	return await request_json(
+		"POST",
+		"/api/ai/players/%s/context-documents" % normalized_ai_player_id.uri_encode(),
+		payload
+	)
+
+func get_ai_player_receipts(ai_player_id: String, limit: int = 5) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	var normalized_limit := maxi(1, limit)
+	return await request_json("GET", "/api/ai/players/%s/receipts?limit=%d" % [
+		normalized_ai_player_id.uri_encode(),
+		normalized_limit,
+	])
+
+func get_ai_player_chat_messages(ai_player_id: String, limit: int = 20, reader_id: String = "", history_filter: String = "all", before_message_id: String = "") -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	var query_parts: Array = [
+		"limit=%d" % maxi(1, limit),
+	]
+	var normalized_reader_id := reader_id.strip_edges()
+	if normalized_reader_id != "":
+		query_parts.append("readerId=%s" % normalized_reader_id.uri_encode())
+	var normalized_filter := history_filter.strip_edges()
+	if normalized_filter != "" and normalized_filter != "all":
+		query_parts.append("filter=%s" % normalized_filter.uri_encode())
+	var normalized_before_message_id := before_message_id.strip_edges()
+	if normalized_before_message_id != "":
+		query_parts.append("beforeMessageId=%s" % normalized_before_message_id.uri_encode())
+	return await request_json("GET", "/api/ai/players/%s/chat/messages?%s" % [
+		normalized_ai_player_id.uri_encode(),
+		"&".join(query_parts),
+	])
+
+func get_ai_player_chat_read_cursor(ai_player_id: String, reader_id: String) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	var normalized_reader_id := reader_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	if normalized_reader_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_reader_id",
+			"message": "Chat reader id is required.",
+		}
+	return await request_json("GET", "/api/ai/players/%s/chat/read-cursor?readerId=%s" % [
+		normalized_ai_player_id.uri_encode(),
+		normalized_reader_id.uri_encode(),
+	])
+
+func update_ai_player_chat_read_cursor(ai_player_id: String, reader_id: String, read_message_count: int = -1, read_message_id: String = "") -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	var normalized_reader_id := reader_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	if normalized_reader_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_reader_id",
+			"message": "Chat reader id is required.",
+		}
+	var payload := {
+		"readerId": normalized_reader_id,
+	}
+	var normalized_message_id := read_message_id.strip_edges()
+	if read_message_count >= 0:
+		payload["readMessageCount"] = read_message_count
+	if normalized_message_id != "":
+		payload["readMessageId"] = normalized_message_id
+	return await request_json(
+		"POST",
+		"/api/ai/players/%s/chat/read-cursor" % normalized_ai_player_id.uri_encode(),
+		payload
+	)
+
+func send_ai_player_chat_message(ai_player_id: String, body: String, sender_id: String = "", sender_name: String = "总督", create_proposal: bool = true) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	var normalized_body := body.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	if normalized_body == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_chat_body",
+			"message": "Chat body is required.",
+		}
+	var payload := {
+		"body": normalized_body,
+		"senderName": sender_name,
+		"createProposal": create_proposal,
+	}
+	var normalized_sender_id := sender_id.strip_edges()
+	if normalized_sender_id != "":
+		payload["senderId"] = normalized_sender_id
+	return await request_json(
+		"POST",
+		"/api/ai/players/%s/chat/messages" % normalized_ai_player_id.uri_encode(),
+		payload
+	)
+
+func create_ai_player_chat_patrol_tick(ai_player_id: String, governor_player_id: String = "") -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	var payload := {}
+	var normalized_governor_player_id := governor_player_id.strip_edges()
+	if normalized_governor_player_id != "":
+		payload["governorPlayerId"] = normalized_governor_player_id
+	return await request_json(
+		"POST",
+		"/api/ai/players/%s/chat/patrol-tick" % normalized_ai_player_id.uri_encode(),
+		payload
+	)
+
+func create_ai_player_model_proposals(ai_player_id: String) -> Dictionary:
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	if normalized_ai_player_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_ai_player_id",
+			"message": "AI player id is required.",
+		}
+	return await request_json(
+		"POST",
+		"/api/ai/players/%s/model-proposals" % normalized_ai_player_id.uri_encode(),
+		{}
+	)
+
+func get_ai_player_proposals(ai_player_id: String = "", status: String = "", limit: int = 5) -> Dictionary:
+	var query_parts: Array = []
+	var normalized_ai_player_id := ai_player_id.strip_edges()
+	var normalized_status := status.strip_edges()
+	if normalized_ai_player_id != "":
+		query_parts.append("aiPlayerId=%s" % normalized_ai_player_id.uri_encode())
+	if normalized_status != "":
+		query_parts.append("status=%s" % normalized_status.uri_encode())
+	query_parts.append("limit=%d" % maxi(1, limit))
+	return await request_json("GET", "/api/ai/players/proposals?%s" % "&".join(query_parts))
+
+func get_ai_player_proposal(proposal_id: String) -> Dictionary:
+	var normalized_proposal_id := proposal_id.strip_edges()
+	if normalized_proposal_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_proposal_id",
+			"message": "AI proposal id is required.",
+		}
+	return await request_json("GET", "/api/ai/players/proposals/%s" % normalized_proposal_id.uri_encode())
+
+func create_ai_player_proposal(ai_player_id: String, action: String, args: Dictionary, reason: String, source: String = "human") -> Dictionary:
+	return await request_json(
+		"POST",
+		"/api/ai/players/proposals",
+		{
+			"aiPlayerId": ai_player_id,
+			"action": action,
+			"source": source,
+			"reason": reason,
+			"args": args,
+		}
+	)
+
+func approve_ai_player_proposal(proposal_id: String, approved_by: String) -> Dictionary:
+	var normalized_proposal_id := proposal_id.strip_edges()
+	if normalized_proposal_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_proposal_id",
+			"message": "AI proposal id is required.",
+		}
+	return await request_json(
+		"POST",
+		"/api/ai/players/proposals/%s/approve" % normalized_proposal_id.uri_encode(),
+		{"approvedBy": approved_by}
+	)
+
+func execute_ai_player_proposal(proposal_id: String, executed_by: String, include_world: bool = false) -> Dictionary:
+	var normalized_proposal_id := proposal_id.strip_edges()
+	if normalized_proposal_id == "":
+		return {
+			"ok": false,
+			"status": -1,
+			"error": "missing_proposal_id",
+			"message": "AI proposal id is required.",
+		}
+	return await request_json(
+		"POST",
+		"/api/ai/players/proposals/%s/execute" % normalized_proposal_id.uri_encode(),
+		{
+			"executedBy": executed_by,
+			"includeWorld": include_world,
+		}
+	)
 
 func post_world_action(action: String, payload: Dictionary = {}, include_world: bool = true) -> Dictionary:
 	var request_payload: Dictionary = {
@@ -123,6 +571,17 @@ func post_world_action(action: String, payload: Dictionary = {}, include_world: 
 		"POST",
 		"/api/world/action?includeWorld=%s" % include_world_query,
 		request_payload,
+	)
+
+func claim_governor_resource_inbox(faction_id: String, governor_player_id: String, transfer_id: String, include_world: bool = true) -> Dictionary:
+	return await post_world_action(
+		"claimGovernorResourceInbox",
+		{
+			"factionId": faction_id,
+			"governorPlayerId": governor_player_id,
+			"transferId": transfer_id,
+		},
+		include_world
 	)
 
 func advance_tick(include_world: bool = true) -> Dictionary:

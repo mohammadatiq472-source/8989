@@ -1,22 +1,40 @@
 import type { IncomingMessage, ServerResponse } from 'node:http'
 import { parseWorldActionRequest } from '../../../shared/schemas/worldAction'
 import {
+  allianceHelpAction,
   appendPlanningJobHistoryAction,
   advanceTickAction,
+  claimGovernorResourceInboxAction,
   clearPlanExecutionAction,
   deployReserveHeroAction,
+  gatherAiResourceTileAction,
   getWorldMapLayout,
   getWorldSummary,
+  healTroopAction,
+  issueClaimableRewardAction,
   moveUnitAction,
+  occupyTileAction,
+  promoteCityBuildingAction,
+  promoteTroopFacilityBuildingAction,
+  rewardClaimAction,
+  recruitProspectHeroAction,
+  setAiResourceTransferPolicyAction,
+  setAiContextFocusAction,
+  setGeneralActiveHeroAction,
+  setGeneralTacticAction,
+  transferFactionResourcesToGovernorAction,
   upgradeCityAction,
   upgradeCityTechAction,
   queuePlanExecutionAction,
+  queueAiAgendaActionAction,
   previewGeneralDirectivesAction,
   previewDomainAgendaAction,
   previewNationalAgendaAction,
   previewCourtSessionAction,
   queryCivilMemoryAction,
   queueTacticalOverrideAction,
+  enqueueAffairAction,
+  setRecruitSelectedPoolAction,
   updateAllianceDirectiveAction,
 } from '../application/world/WorldService'
 import { isHttpBodyError, readJsonBody, writeJson } from './http'
@@ -91,6 +109,35 @@ export async function handleWorldActionRoute(
       case 'queryCivilMemory':
         writeJson(res, 200, queryCivilMemoryAction(request.payload, includeWorld))
         return
+      case 'setGeneralActiveHero':
+        writeJson(res, 200, setGeneralActiveHeroAction(request.payload.heroId, includeWorld, request.payload.factionId))
+        return
+      case 'setGeneralTactic':
+        writeJson(
+          res,
+          200,
+          setGeneralTacticAction(
+            request.payload.heroId,
+            request.payload.tacticId,
+            includeWorld,
+            request.payload.factionId,
+          ),
+        )
+        return
+      case 'queueAiAgendaAction':
+        writeJson(res, 200, queueAiAgendaActionAction(request.payload.agendaActionId, includeWorld, request.payload.factionId))
+        return
+      case 'setAiContextFocus':
+        writeJson(
+          res,
+          200,
+          setAiContextFocusAction(
+            request.payload.contextFocusId as 'focus_city' | 'focus_troop' | 'focus_alliance',
+            includeWorld,
+            request.payload.factionId,
+          ),
+        )
+        return
       case 'advanceTick':
         writeJson(res, 200, await advanceTickAction(includeWorld))
         return
@@ -131,6 +178,19 @@ export async function handleWorldActionRoute(
           upgradeCityTechAction(request.payload.tileId, request.payload.techId, includeWorld, request.payload.factionId),
         )
         return
+      case 'promoteCityBuilding':
+        writeJson(
+          res,
+          200,
+          promoteCityBuildingAction(
+            request.payload.cityId,
+            request.payload.groupId,
+            request.payload.buildingId,
+            includeWorld,
+            request.payload.factionId,
+          ),
+        )
+        return
       case 'queueTacticalOverride':
         writeJson(
           res,
@@ -150,6 +210,80 @@ export async function handleWorldActionRoute(
           res,
           200,
           updateAllianceDirectiveAction(request.payload.regionId, request.payload.stance, includeWorld),
+        )
+        return
+      case 'allianceHelp':
+        writeJson(
+          res,
+          200,
+          allianceHelpAction(request.payload.regionId, includeWorld, request.payload.factionId),
+        )
+        return
+      case 'claimReward':
+        writeJson(
+          res,
+          200,
+          rewardClaimAction(request.payload?.rewardId, includeWorld, request.payload?.factionId),
+        )
+        return
+      case 'issueClaimableReward':
+        writeJson(res, 200, issueClaimableRewardAction(request.payload, includeWorld))
+        return
+      case 'transferFactionResourcesToGovernor':
+        writeJson(res, 200, transferFactionResourcesToGovernorAction(request.payload, includeWorld))
+        return
+      case 'setAiResourceTransferPolicy':
+        writeJson(res, 200, setAiResourceTransferPolicyAction(request.payload, includeWorld))
+        return
+      case 'claimGovernorResourceInbox':
+        writeJson(res, 200, claimGovernorResourceInboxAction(request.payload, includeWorld))
+        return
+      case 'gatherAiResourceTile':
+        writeJson(res, 200, gatherAiResourceTileAction(request.payload, includeWorld))
+        return
+      case 'occupyTile':
+        writeJson(res, 200, occupyTileAction(request.payload, includeWorld))
+        return
+      case 'healTroop':
+        writeJson(res, 200, healTroopAction(request.payload, includeWorld))
+        return
+      case 'promoteTroopFacilityBuilding':
+        writeJson(
+          res,
+          200,
+          promoteTroopFacilityBuildingAction(
+            request.payload.unitId,
+            request.payload.facilityId,
+            request.payload.buildingId,
+            includeWorld,
+            request.payload.factionId,
+          ),
+        )
+        return
+      case 'setRecruitSelectedPool':
+        writeJson(
+          res,
+          200,
+          setRecruitSelectedPoolAction(request.payload.poolId, includeWorld, request.payload.factionId),
+        )
+        return
+      case 'recruitProspectHero':
+        writeJson(
+          res,
+          200,
+          recruitProspectHeroAction(
+            includeWorld,
+            request.payload.factionId,
+            request.payload.count ?? 1,
+            request.payload.poolId ?? 'pool_standard',
+          ),
+        )
+        return
+      case 'enqueueAffair':
+        writeJson(
+          res,
+          200,
+          enqueueAffairAction(request.payload.cityId, request.payload.affairId, includeWorld, request.payload.factionId),
         )
         return
       default:

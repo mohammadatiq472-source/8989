@@ -1,0 +1,331 @@
+[gd_scene format=3 uid="uid://dlhrot7yl0e0s"]
+
+[ext_resource type="Script" uid="uid://bc40r7u7ydo2m" path="res://scripts/ui/native_slg_shell.gd" id="1_native_shell"]
+[ext_resource type="Resource" path="res://scenes/ui/native_shell_chrome_profile_fallback.tres" id="2_shell_chrome_profile"]
+
+[node name="NativeShell" type="Control" unique_id=1612101270]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_native_shell")
+chrome_profile_catalog = ExtResource("2_shell_chrome_profile")
+
+[node name="Backdrop" type="ColorRect" parent="." unique_id=1100893276]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="TopStrip" type="PanelContainer" parent="." unique_id=577967997]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+grow_horizontal = 2
+
+[node name="TopMargin" type="MarginContainer" parent="TopStrip" unique_id=987806233]
+layout_mode = 2
+
+[node name="TopRow" type="HBoxContainer" parent="TopStrip/TopMargin" unique_id=930872770]
+layout_mode = 2
+
+[node name="ProfileBadge" type="Label" parent="TopStrip/TopMargin/TopRow" unique_id=1775725743]
+layout_mode = 2
+
+[node name="ResourceStrip" type="Label" parent="TopStrip/TopMargin/TopRow" unique_id=1803925150]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Actions" type="HBoxContainer" parent="TopStrip/TopMargin/TopRow" unique_id=698043503]
+layout_mode = 2
+
+[node name="PremiumCurrencyRow" type="HBoxContainer" parent="TopStrip/TopMargin/TopRow/Actions" unique_id=1629958672]
+layout_mode = 2
+
+[node name="JadeCurrencyBadge" type="Button" parent="TopStrip/TopMargin/TopRow/Actions/PremiumCurrencyRow" unique_id=1294824729]
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+flat = true
+
+[node name="CopperCurrencyBadge" type="Button" parent="TopStrip/TopMargin/TopRow/Actions/PremiumCurrencyRow" unique_id=205355036]
+layout_mode = 2
+focus_mode = 0
+mouse_filter = 2
+flat = true
+
+[node name="ModeToggleButton" type="Button" parent="TopStrip/TopMargin/TopRow/Actions" unique_id=551906012]
+layout_mode = 2
+
+[node name="LeftRail" type="PanelContainer" parent="." unique_id=104960205]
+layout_mode = 1
+
+[node name="LeftMargin" type="MarginContainer" parent="LeftRail" unique_id=697968498]
+layout_mode = 2
+
+[node name="LeftColumn" type="VBoxContainer" parent="LeftRail/LeftMargin" unique_id=1279247868]
+layout_mode = 2
+
+[node name="TaskHeaderRow" type="HBoxContainer" parent="LeftRail/LeftMargin/LeftColumn" unique_id=1007633099]
+layout_mode = 2
+
+[node name="TaskIcon" type="TextureRect" parent="LeftRail/LeftMargin/LeftColumn/TaskHeaderRow" unique_id=460113923]
+layout_mode = 2
+stretch_mode = 5
+
+[node name="TaskTitle" type="Label" parent="LeftRail/LeftMargin/LeftColumn/TaskHeaderRow" unique_id=1754066547]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TaskBody" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=1519933605]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="TaskHint" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=109196898]
+visible = false
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="CityStateTitle" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=715471679]
+layout_mode = 2
+
+[node name="CityStateSummary" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=2098902323]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="CityTechSummary" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=1181772344]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="InteriorQuickLinks" type="HBoxContainer" parent="LeftRail/LeftMargin/LeftColumn" unique_id=789390569]
+layout_mode = 2
+
+[node name="MarketQuickLinkButton" type="Button" parent="LeftRail/LeftMargin/LeftColumn/InteriorQuickLinks" unique_id=1206728754]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TaxQuickLinkButton" type="Button" parent="LeftRail/LeftMargin/LeftColumn/InteriorQuickLinks" unique_id=2047544708]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="PolicyQuickLinkButton" type="Button" parent="LeftRail/LeftMargin/LeftColumn/InteriorQuickLinks" unique_id=163773881]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AffairsQuickLinkButton" type="Button" parent="LeftRail/LeftMargin/LeftColumn/InteriorQuickLinks" unique_id=1160764704]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="TroopSectionTitle" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=415776775]
+layout_mode = 2
+
+[node name="TroopSummary" type="Label" parent="LeftRail/LeftMargin/LeftColumn" unique_id=945861876]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="TroopSlotScroll" type="ScrollContainer" parent="LeftRail/LeftMargin/LeftColumn" unique_id=711237884]
+custom_minimum_size = Vector2(0, 156)
+layout_mode = 2
+clip_contents = true
+
+[node name="TroopSlotList" type="VBoxContainer" parent="LeftRail/LeftMargin/LeftColumn/TroopSlotScroll" unique_id=2077121386]
+layout_mode = 2
+
+[node name="TroopSlot01Button" type="Button" parent="LeftRail/LeftMargin/LeftColumn/TroopSlotScroll/TroopSlotList" unique_id=536753984]
+layout_mode = 2
+
+[node name="TroopSlot02Button" type="Button" parent="LeftRail/LeftMargin/LeftColumn/TroopSlotScroll/TroopSlotList" unique_id=1197232851]
+layout_mode = 2
+
+[node name="TroopSlot03Button" type="Button" parent="LeftRail/LeftMargin/LeftColumn/TroopSlotScroll/TroopSlotList" unique_id=1015238056]
+layout_mode = 2
+
+[node name="TroopSlot04Button" type="Button" parent="LeftRail/LeftMargin/LeftColumn/TroopSlotScroll/TroopSlotList" unique_id=380470674]
+layout_mode = 2
+
+[node name="TroopSlot05Button" type="Button" parent="LeftRail/LeftMargin/LeftColumn/TroopSlotScroll/TroopSlotList" unique_id=640263789]
+layout_mode = 2
+
+[node name="RightContext" type="PanelContainer" parent="." unique_id=63573131]
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+grow_horizontal = 0
+
+[node name="RightMargin" type="MarginContainer" parent="RightContext" unique_id=1772948449]
+layout_mode = 2
+
+[node name="RightColumn" type="VBoxContainer" parent="RightContext/RightMargin" unique_id=734276095]
+layout_mode = 2
+
+[node name="ContextTitle" type="Label" parent="RightContext/RightMargin/RightColumn" unique_id=640733150]
+layout_mode = 2
+
+[node name="ContextBody" type="Label" parent="RightContext/RightMargin/RightColumn" unique_id=1669226564]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="ContextSlotList" type="VBoxContainer" parent="RightContext/RightMargin/RightColumn" unique_id=122045031]
+layout_mode = 2
+
+[node name="ContextSlot01Panel" type="PanelContainer" parent="RightContext/RightMargin/RightColumn/ContextSlotList" unique_id=171680115]
+layout_mode = 2
+
+[node name="SlotMargin" type="MarginContainer" parent="RightContext/RightMargin/RightColumn/ContextSlotList/ContextSlot01Panel" unique_id=1449200921]
+layout_mode = 2
+
+[node name="SlotLabel" type="Label" parent="RightContext/RightMargin/RightColumn/ContextSlotList/ContextSlot01Panel/SlotMargin" unique_id=947420879]
+layout_mode = 2
+
+[node name="ContextSlot02Panel" type="PanelContainer" parent="RightContext/RightMargin/RightColumn/ContextSlotList" unique_id=865059701]
+layout_mode = 2
+
+[node name="SlotMargin" type="MarginContainer" parent="RightContext/RightMargin/RightColumn/ContextSlotList/ContextSlot02Panel" unique_id=1038983151]
+layout_mode = 2
+
+[node name="SlotLabel" type="Label" parent="RightContext/RightMargin/RightColumn/ContextSlotList/ContextSlot02Panel/SlotMargin" unique_id=626777282]
+layout_mode = 2
+
+[node name="ContextSlot03Panel" type="PanelContainer" parent="RightContext/RightMargin/RightColumn/ContextSlotList" unique_id=1965206755]
+layout_mode = 2
+
+[node name="SlotMargin" type="MarginContainer" parent="RightContext/RightMargin/RightColumn/ContextSlotList/ContextSlot03Panel" unique_id=96114425]
+layout_mode = 2
+
+[node name="SlotLabel" type="Label" parent="RightContext/RightMargin/RightColumn/ContextSlotList/ContextSlot03Panel/SlotMargin" unique_id=827008537]
+layout_mode = 2
+
+[node name="CenterStage" type="PanelContainer" parent="." unique_id=878037213]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="StageMargin" type="MarginContainer" parent="CenterStage" unique_id=366154821]
+layout_mode = 2
+
+[node name="StageColumn" type="VBoxContainer" parent="CenterStage/StageMargin" unique_id=791447946]
+layout_mode = 2
+
+[node name="ModeBadge" type="Label" parent="CenterStage/StageMargin/StageColumn" unique_id=1583843951]
+layout_mode = 2
+
+[node name="StageTitle" type="Label" parent="CenterStage/StageMargin/StageColumn" unique_id=882061659]
+layout_mode = 2
+
+[node name="StageBody" type="Label" parent="CenterStage/StageMargin/StageColumn" unique_id=989192514]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="CityFocus" type="Label" parent="CenterStage/StageMargin/StageColumn" unique_id=1597858778]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="CityEntryGrid" type="GridContainer" parent="CenterStage/StageMargin/StageColumn" unique_id=722238620]
+layout_mode = 2
+columns = 5
+
+[node name="InteriorEntryButton" type="Button" parent="CenterStage/StageMargin/StageColumn/CityEntryGrid" unique_id=1193564885]
+layout_mode = 2
+
+[node name="RecruitEntryButton" type="Button" parent="CenterStage/StageMargin/StageColumn/CityEntryGrid" unique_id=66510839]
+layout_mode = 2
+
+[node name="GeneralsEntryButton" type="Button" parent="CenterStage/StageMargin/StageColumn/CityEntryGrid" unique_id=2106648737]
+layout_mode = 2
+
+[node name="AllianceEntryButton" type="Button" parent="CenterStage/StageMargin/StageColumn/CityEntryGrid" unique_id=589068055]
+layout_mode = 2
+
+[node name="AiHubEntryButton" type="Button" parent="CenterStage/StageMargin/StageColumn/CityEntryGrid" unique_id=991705659]
+layout_mode = 2
+
+[node name="EntryStatus" type="Label" parent="CenterStage/StageMargin/StageColumn" unique_id=1373446136]
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="ModeHint" type="Label" parent="CenterStage/StageMargin/StageColumn" unique_id=586821379]
+visible = false
+layout_mode = 2
+autowrap_mode = 3
+
+[node name="BottomNav" type="PanelContainer" parent="." unique_id=391250606]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="BottomMargin" type="MarginContainer" parent="BottomNav" unique_id=243935221]
+layout_mode = 2
+
+[node name="BottomRow" type="HBoxContainer" parent="BottomNav/BottomMargin" unique_id=2115514428]
+layout_mode = 2
+
+[node name="MainNav" type="VBoxContainer" parent="BottomNav/BottomMargin/BottomRow" unique_id=1272331184]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="UtilityRow" type="HBoxContainer" parent="BottomNav/BottomMargin/BottomRow/MainNav" unique_id=1270177127]
+layout_mode = 2
+
+[node name="MailButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/UtilityRow" unique_id=57472199]
+layout_mode = 2
+flat = true
+
+[node name="ActivityButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/UtilityRow" unique_id=1552376026]
+layout_mode = 2
+flat = true
+
+[node name="HelpButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/UtilityRow" unique_id=655848304]
+layout_mode = 2
+flat = true
+
+[node name="NavButtons" type="HBoxContainer" parent="BottomNav/BottomMargin/BottomRow/MainNav" unique_id=1339304482]
+layout_mode = 2
+
+[node name="GeneralsButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=1502553194]
+layout_mode = 2
+
+[node name="InteriorButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=536912580]
+layout_mode = 2
+
+[node name="AllianceButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=2026900993]
+layout_mode = 2
+
+[node name="WarButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=1013849029]
+visible = false
+layout_mode = 2
+
+[node name="AiHubButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=823946212]
+layout_mode = 2
+
+[node name="ChatButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=1392740661]
+layout_mode = 2
+
+[node name="RecruitButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=343154065]
+layout_mode = 2
+
+[node name="BagButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=1882466132]
+visible = false
+layout_mode = 2
+
+[node name="SettingsButton" type="Button" parent="BottomNav/BottomMargin/BottomRow/MainNav/NavButtons" unique_id=627205428]
+visible = false
+layout_mode = 2
+
+[node name="WorldEntryHint" type="Label" parent="BottomNav/BottomMargin/BottomRow/MainNav" unique_id=1061476192]
+layout_mode = 2
+autowrap_mode = 3

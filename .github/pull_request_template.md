@@ -35,6 +35,49 @@
 <result #2>
 ```
 
+## Gate Trio 失败摘要（CI/PR）
+
+> 当 `ai-trio-gate` 失败时，请从 workflow 的 Step Summary 复制 **PR Failure Summary Template** 到下方并补充实际动作。
+<!-- ai-trio-auto-comment: auto -->
+> 默认开启 `Failure/High-Risk` 自动评论；若需人工覆盖，请把上方注释改成 `<!-- ai-trio-auto-comment: manual -->`。
+
+```markdown
+### Gate Trio Failure Snapshot
+- summaryRunId:
+- overallPassed:
+- staleDetected:
+- staleCount:
+- highestSeverity:
+- primaryRecommendation:
+- prAutoCommentStatus:
+- prAutoCommentReason:
+- prAutoCommentOutcome:
+
+#### freshnessTriage.items (stale first)
+| checkName | severity | overdueSec | componentRefreshCommand |
+| --- | --- | --- | --- |
+| | | | |
+
+#### Next Actions
+1.
+2.
+3.
+```
+
+> 若 Step Summary 出现 `PR Auto Prompt (Failure/High-Risk)`，请将其复制到下方并明确是否已执行 `immediateAction`。
+
+```markdown
+⚠️ ai-trio-gate 自动提示（Failure/High-Risk）：
+- summaryRunId:
+- highestSeverity:
+- highRiskChecks:
+- immediateAction:
+- actionStatus: executed / pending
+- autoCommentReconcileStatus: posted / updated / skipped / failed
+- autoCommentReconcileReason: created_new / updated_existing / manual_override / fork_permission_restricted / permission_denied / no_high_risk_prompt / not_pull_request / ...
+- autoCommentOutcome: auto_comment_posted / auto_comment_updated / auto_comment_skipped:<reason> / auto_comment_failed:<reason>
+```
+
 ## 回滚与风险
 
 - 回滚命令/步骤：

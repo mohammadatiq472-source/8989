@@ -1,0 +1,209 @@
+{
+  "schemaVersion": 1,
+  "theme": "slgclient",
+  "importedAt": "2026-04-12T18:04:29+00:00",
+  "source": {
+    "repo": "https://github.com/llr104/slgclient",
+    "commit": "767065453e358abc1b463f9396079d8026d0baf4",
+    "root": "tmp/third_party/slgclient/assets/texure/ui"
+  },
+  "target": {
+    "root": "godot-client/assets/themes/slgclient/current/ui",
+    "preservedRoots": [],
+    "prunedOldUi": true,
+    "prunedAt": "2026-04-28T10:15:21.845963+00:00",
+    "policy": "old slgclient UI root/btn/tactics/hud_v1 assets removed; only native_shell_* generated assets and skill_type_*.svg remain"
+  },
+  "fileCount": 20,
+  "folderCounts": {
+    "root": 16,
+    "skill": 4
+  },
+  "extensionCounts": {
+    ".png": 4,
+    ".import": 8,
+    ".svg": 8
+  },
+  "files": [
+    {
+      "name": "native_shell_main_nav_button_base_v1.png",
+      "relativePath": "native_shell_main_nav_button_base_v1.png",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_base_v1.png",
+      "topLevelFolder": "root",
+      "extension": ".png",
+      "bytes": 54647,
+      "sha256": "ca586eaf13e5dd394826e4d40e1b16e775bf178d304b3a00cb09272041065e4a"
+    },
+    {
+      "name": "native_shell_main_nav_button_base_v1.png.import",
+      "relativePath": "native_shell_main_nav_button_base_v1.png.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_base_v1.png.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1047,
+      "sha256": "c8f695cc630d3580b98fb1846c6071bc7515da40381fe8678a648d759b4b5c43"
+    },
+    {
+      "name": "native_shell_main_nav_button_base_v1.svg",
+      "relativePath": "native_shell_main_nav_button_base_v1.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_base_v1.svg",
+      "topLevelFolder": "root",
+      "extension": ".svg",
+      "bytes": 4266,
+      "sha256": "fe691a7be43a849d119b0c4fbff88280cd23a801888427a54f75b1f7afb5897e"
+    },
+    {
+      "name": "native_shell_main_nav_button_base_v1.svg.import",
+      "relativePath": "native_shell_main_nav_button_base_v1.svg.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_base_v1.svg.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1144,
+      "sha256": "10e2fca67ac43ead7e3a201ecd4d141077ee5c623e1d9afe1e3c1f8e501d4f92"
+    },
+    {
+      "name": "native_shell_main_nav_button_pressed_v1.png",
+      "relativePath": "native_shell_main_nav_button_pressed_v1.png",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_pressed_v1.png",
+      "topLevelFolder": "root",
+      "extension": ".png",
+      "bytes": 52084,
+      "sha256": "d2a03946ef4e07ab536f745c90e969955f62b39d2e417eca91399d61938349ab"
+    },
+    {
+      "name": "native_shell_main_nav_button_pressed_v1.png.import",
+      "relativePath": "native_shell_main_nav_button_pressed_v1.png.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_pressed_v1.png.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1056,
+      "sha256": "61b48d46e97d4b93ebfae4febeedfa5df7a3d9ece298aeaeb4e73e44ce1a9703"
+    },
+    {
+      "name": "native_shell_main_nav_button_pressed_v1.svg",
+      "relativePath": "native_shell_main_nav_button_pressed_v1.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_pressed_v1.svg",
+      "topLevelFolder": "root",
+      "extension": ".svg",
+      "bytes": 4443,
+      "sha256": "5c3f8705a6711e70cd25d828fe99dd1e1ab2977cf8d3566614155abcd60bf77e"
+    },
+    {
+      "name": "native_shell_main_nav_button_pressed_v1.svg.import",
+      "relativePath": "native_shell_main_nav_button_pressed_v1.svg.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_pressed_v1.svg.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1153,
+      "sha256": "35214ef56ce3f483d8809e367aa1e35628e8226df9db575ee44502edbfdeb727"
+    },
+    {
+      "name": "native_shell_main_nav_button_selected_v1.png",
+      "relativePath": "native_shell_main_nav_button_selected_v1.png",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_selected_v1.png",
+      "topLevelFolder": "root",
+      "extension": ".png",
+      "bytes": 69303,
+      "sha256": "ddfbdbed33fa22bd428a3f185ca8bc20e095a1800ea65adaef77e7bfd05612a4"
+    },
+    {
+      "name": "native_shell_main_nav_button_selected_v1.png.import",
+      "relativePath": "native_shell_main_nav_button_selected_v1.png.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_selected_v1.png.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1059,
+      "sha256": "c82f9f820a4b2d28c2c856f0c914dcbc67a0838d73b4a1faa689732a3071c544"
+    },
+    {
+      "name": "native_shell_main_nav_button_selected_v1.svg",
+      "relativePath": "native_shell_main_nav_button_selected_v1.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_selected_v1.svg",
+      "topLevelFolder": "root",
+      "extension": ".svg",
+      "bytes": 5119,
+      "sha256": "1fcf2fc2c4da3302a9e9ae8131a83b71938242c37dd39cdb5bcfca0cc2589e82"
+    },
+    {
+      "name": "native_shell_main_nav_button_selected_v1.svg.import",
+      "relativePath": "native_shell_main_nav_button_selected_v1.svg.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_main_nav_button_selected_v1.svg.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1155,
+      "sha256": "58862ad2eb8518bf4101a9035928fc48351ac08eff94cd82a1d67d4a3bf28b11"
+    },
+    {
+      "name": "native_shell_troop_row_base_v1.png",
+      "relativePath": "native_shell_troop_row_base_v1.png",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_troop_row_base_v1.png",
+      "topLevelFolder": "root",
+      "extension": ".png",
+      "bytes": 25427,
+      "sha256": "8c114efdc6fb41506979613a729e0a164b276e183c6fd851d9a7ab17c1a19d6d"
+    },
+    {
+      "name": "native_shell_troop_row_base_v1.png.import",
+      "relativePath": "native_shell_troop_row_base_v1.png.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_troop_row_base_v1.png.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1029,
+      "sha256": "7bd7c8f928f6ceda68dcd9ac181e0d8a4a0053c091d035e33b5d48cff5b74336"
+    },
+    {
+      "name": "native_shell_troop_row_base_v1.svg",
+      "relativePath": "native_shell_troop_row_base_v1.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_troop_row_base_v1.svg",
+      "topLevelFolder": "root",
+      "extension": ".svg",
+      "bytes": 5925,
+      "sha256": "967ea4ca5360db8efdc89ce5d7527c30404cd4475517cc8ea7290d4763b26960"
+    },
+    {
+      "name": "native_shell_troop_row_base_v1.svg.import",
+      "relativePath": "native_shell_troop_row_base_v1.svg.import",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/native_shell_troop_row_base_v1.svg.import",
+      "topLevelFolder": "root",
+      "extension": ".import",
+      "bytes": 1126,
+      "sha256": "2be602dd218a230f071927a7391c340124420e790681a8f795f5120ecc977f81"
+    },
+    {
+      "name": "skill_type_active.svg",
+      "relativePath": "skill/skill_type_active.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/skill/skill_type_active.svg",
+      "topLevelFolder": "skill",
+      "extension": ".svg",
+      "bytes": 308,
+      "sha256": "f799e2cadcbfd0be5a16dcc25de3e6d86805d0faeb23388f04d9bdfef892b391"
+    },
+    {
+      "name": "skill_type_chase.svg",
+      "relativePath": "skill/skill_type_chase.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/skill/skill_type_chase.svg",
+      "topLevelFolder": "skill",
+      "extension": ".svg",
+      "bytes": 565,
+      "sha256": "a76ed9ab8fd28e0ee91cf24b9093af16dee8d13a5c3dd5cec8be2f257b82ede4"
+    },
+    {
+      "name": "skill_type_command.svg",
+      "relativePath": "skill/skill_type_command.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/skill/skill_type_command.svg",
+      "topLevelFolder": "skill",
+      "extension": ".svg",
+      "bytes": 508,
+      "sha256": "453eb47b87e53dfa50f5735045fc12fcb30159d8b160731c52b53d1758a3db18"
+    },
+    {
+      "name": "skill_type_passive.svg",
+      "relativePath": "skill/skill_type_passive.svg",
+      "targetPath": "godot-client/assets/themes/slgclient/current/ui/skill/skill_type_passive.svg",
+      "topLevelFolder": "skill",
+      "extension": ".svg",
+      "bytes": 466,
+      "sha256": "747e9b4ffa69b75b0d1c33ca3791a67cdf784f636e379d295b7177826555a188"
+    }
+  ]
+}

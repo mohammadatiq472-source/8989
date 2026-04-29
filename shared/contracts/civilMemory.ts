@@ -46,6 +46,8 @@ export type CivilMemoryQuery = {
   type?: CivilMemoryEventType
   tickFrom?: number
   tickTo?: number
+  factionId?: string
+  relatedId?: string
 }
 
 export type CivilMemoryQueryResponse = {

@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "theme": "slgclient",
+  "retired": true,
+  "retiredAt": "2026-04-28T10:15:21.845963+00:00",
+  "reason": "hud_v1 old-derived textures were removed from the asset pool; godot-client/scripts/ui/ui_theme_tokens.gd still has built-in stale references for window 1 to replace.",
+  "tokens": {},
+  "removedTexturePaths": [
+    "res://assets/themes/slgclient/current/ui/hud_v1/bg_window_3.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/dialog_bg.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/toast_bg.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/btn_red_1.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/btn_yellow_1.png",
+    "res://assets/themes/slgclient/current/ui/hud_v1/btn_set.png"
+  ]
+}

@@ -26,7 +26,7 @@
 - 资产清单：`manifests/slgclient_asset_manifest.json`
 - 帧清单：`manifests/unit_frames_manifest.json`
 - 叠加帧清单：`manifests/overlay_frames_manifest.json`
-- 对外交换包：`replacements/exchange_bundle/*`（给 Gemini/Banana 等外部工具直接消费）
+- 对外交换包：`replacements/exchange_bundle/*`（给外部替换工具、索引工具或独立窗口直接消费）
 
 ## 3. 正式入口命令（可复现）
 
@@ -122,7 +122,7 @@ Resource/Home 参数化开关（`map_grid.gd` 导出参数）：
 
 用途：
 
-1. 给 Gemini/Banana 等工具统一提供“可直接替换”的输入目录。
+1. 给外部替换工具、索引工具和独立窗口统一提供“可直接替换”的输入目录。
 2. 通过 `exchange_bundle_manifest.json` 做版本戳/体积/文件数核对。
 3. 不改变当前 `current/` 运行入口，避免影响 strict 验收链。
 

@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/panel_tab_strip.gd" id="1_tab_strip"]
+
+[node name="PanelTabStrip" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 52)
+script = ExtResource("1_tab_strip")
+
+[node name="TabsMargin" type="MarginContainer" parent="."]
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="TabsRow" type="HBoxContainer" parent="TabsMargin"]
+theme_override_constants/separation = 8
+
+[node name="EmptyHint" type="Label" parent="TabsMargin"]
+visible = false
+text = ""
+autowrap_mode = 3

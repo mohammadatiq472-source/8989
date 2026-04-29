@@ -46,6 +46,27 @@ export type Tile = {
   landmarkName?: string
 }
 
+export type WorldResourceLevelWeight = {
+  level: number
+  weight: number
+}
+
+export type WorldResourceKindWeight = {
+  kind: ResourceKind
+  weight: number
+}
+
+export type WorldResourceGenerationMetadata = {
+  worldSeed: string
+  generationVersion: string
+  resourceTileDensityPermille: number
+  levelWeightTable: WorldResourceLevelWeight[]
+  kindWeightTable: WorldResourceKindWeight[]
+  generatedResourceTileCount: number
+  levelCounts: Record<string, number>
+  kindCounts: Record<ResourceKind, number>
+}
+
 export type MapRegion = {
   id: string
   name: string
@@ -187,15 +208,106 @@ export type FactionHeroCommand = {
   recentHeroId?: string
 }
 
+export type RewardBundle = {
+  food: number
+  ap: number
+}
+
+export type ResourceTransferBundle = {
+  food: number
+  wood: number
+  stone: number
+  iron: number
+}
+
 export type PveNode = {
   id: string
   name: string
   district: string
   tileId: string
   guardStrength: number
-  reward: { food: number; ap: number }
+  reward: RewardBundle
   cleared: boolean
   clearedByFaction?: string
+}
+
+export type ClaimableRewardSource = 'province_pve' | 'daily_welfare' | 'event_reward'
+
+export type ClaimableReward = {
+  id: string
+  source: ClaimableRewardSource
+  label: string
+  summary: string
+  reward: RewardBundle
+  createdTick: number
+  ledgerKey?: string
+  nodeId?: string
+  tileId?: string
+}
+
+export type DailyWelfareLedgerEntry = {
+  ledgerKey: string
+  rewardId: string
+  status: 'pending' | 'claimed'
+  issuedTick: number
+  claimedTick?: number
+}
+
+export type AiResourceAccount = {
+  aiPlayerId: string
+  governorPlayerId: string
+  factionId: FactionId
+  resources: ResourceTransferBundle
+  updatedTick: number
+}
+
+export type AiResourceGatherClaim = {
+  id: string
+  aiPlayerId: string
+  unitId: string
+  tileId: string
+  factionId: FactionId
+  resourceKind: ResourceKind
+  resourceLevel: number
+  resources: ResourceTransferBundle
+  createdTick: number
+}
+
+export type AiResourceTransferQuotaState = {
+  aiPlayerId: string
+  governorPlayerId: string
+  factionId: FactionId
+  windowStartedTick: number
+  windowEndsTick: number
+  dailyQuotaTotal: number
+  transferredTotal: number
+  transferredResources: ResourceTransferBundle
+  lastTransferTick?: number
+  cooldownUntilTick?: number
+}
+
+export type AiResourceTransferPolicyState = {
+  dailyQuotaTotal?: number
+  dailyWindowTicks?: number
+  cooldownTicks?: number
+}
+
+export type GovernorResourceTransfer = {
+  id: string
+  sourceAiPlayerId: string
+  sourceFactionId: FactionId
+  governorPlayerId: string
+  resources: ResourceTransferBundle
+  reason: string
+  approvedBy: string
+  status: 'pending'
+  createdTick: number
+}
+
+export type GovernorResourceInbox = {
+  governorPlayerId: string
+  pendingTransfers: GovernorResourceTransfer[]
+  totalPendingResources: ResourceTransferBundle
 }
 
 /** AI 玩家分组：势力内的指挥官角色，管辖最多 3 支部队（实现同势力飞地协作） */
@@ -220,6 +332,164 @@ export type FactionAiQuota = {
   lastGrowthTick?: number
 }
 
+export type SlgTroopFacilityBuildingState = {
+  level: number
+  statusText: string
+  updatedTick: number
+  description?: string
+}
+
+export type SlgTroopFacilityState = Record<string, Record<string, SlgTroopFacilityBuildingState>>
+
+export type SlgCityBuildingState = {
+  level: number
+  statusText: string
+  updatedTick: number
+  description?: string
+}
+
+export type SlgCityBuildingGroupState = Record<string, SlgCityBuildingState>
+
+export type SlgRecruitResultState = {
+  id: string
+  heroId: string
+  heroName: string
+  poolId: string
+  drawMode: 'single' | 'multi'
+  updatedTick: number
+}
+
+export type SlgRecruitState = {
+  selectedPoolId?: string
+  drawCount?: number
+  lastDrawMode?: 'single' | 'multi' | 'none'
+  lastResults?: SlgRecruitResultState[]
+  updatedTick?: number
+}
+
+export type SlgGeneralDirectivePreviewState = {
+  heroId?: string
+  tacticId?: string
+  source?: string
+  sourceActionId?: string
+  accepted?: number
+  rejected?: number
+  status?: string
+  executionState?: string
+  summary?: string
+  warnings?: string[]
+  effectLines?: string[]
+  nextSteps?: string[]
+  templateId?: string
+  affectedUnitIds?: string[]
+  targetUnitId?: string
+  targetTileId?: string
+  updatedTick?: number
+  updatedWorldVersion?: number
+}
+
+export type SlgGeneralTacticalSkillSlotState = {
+  innateSkillId: string
+  equippedSkillIds: string[]
+  updatedTick?: number
+  updatedWorldVersion?: number
+}
+
+export type SlgGeneralState = {
+  activeHeroId?: string
+  deploymentAnchorTileId?: string
+  tacticByHeroId?: Record<string, string>
+  /** Authoritative runtime skill-slot state consumed by battle formulas. */
+  tacticalSkillSlotsByHeroId?: Record<string, SlgGeneralTacticalSkillSlotState>
+  // Legacy compatibility mirror. Prefer directivePreviewByHeroId[activeHeroId] when available.
+  directivePreviewHeroId?: string
+  // Legacy compatibility mirror. Prefer the hero-level map for long-term state.
+  directivePreview?: SlgGeneralDirectivePreviewState
+  // Authoritative hero-level directive previews.
+  directivePreviewByHeroId?: Record<string, SlgGeneralDirectivePreviewState>
+  updatedTick?: number
+}
+
+export type SlgAiContextMemorySummary = {
+  focusId?: string
+  relatedId?: string
+  lines?: string[]
+  updatedTick?: number
+}
+
+export type SlgAiAgendaState = {
+  source: string
+  summary?: string
+  options?: {
+    actionId: string
+    intent?: string
+    label: string
+    summary?: string
+    priority?: string
+    targetTileId?: string
+    targetUnitIds?: string[]
+    supportingAiPlayerIds?: string[]
+    evidenceRefs?: string[]
+    supportCount: number
+    recommendedFollowups?: string[]
+  }[]
+  // Legacy mirror arrays kept only for older readers. New readers should consume options[] directly.
+  optionActionIds?: string[]
+  optionLabels?: string[]
+  optionTargetTileIds?: string[]
+  optionSupportCounts?: number[]
+  targetTileId?: string
+  targetUnitIds?: string[]
+  executionRequestId?: string
+  recommendedFollowups?: string[]
+  updatedTick?: number
+  updatedWorldVersion?: number
+}
+
+export type SlgAiExecutionState = {
+  status: 'idle' | 'queued' | 'running'
+  activeOrderCount: number
+  queuedOrderCount: number
+  runningOrderCount: number
+  actionPointsRemaining: number
+  foodRemaining: number
+  requestId?: string
+  basedOnWorldVersion?: number
+  reviewAtTick?: number
+  strategicCommand?: string
+  source?: PlanSource
+  updatedTick: number
+  updatedWorldVersion: number
+}
+
+export type SlgAiState = {
+  autonomyLevel?: string
+  controlMode?: string
+  contextFocusId?: string
+  contextMemorySummary?: SlgAiContextMemorySummary
+  agenda?: SlgAiAgendaState
+  execution?: SlgAiExecutionState
+  lastAgendaActionId?: string
+  updatedTick?: number
+  updatedWorldVersion?: number
+}
+
+export type SlgAffairQueueEntryState = {
+  id: string
+  statusText: string
+  updatedTick: number
+  description?: string
+}
+
+export type SlgFactionDomainState = {
+  troopFacilitiesByUnit?: Record<string, SlgTroopFacilityState>
+  cityBuildingGroupsByCity?: Record<string, Record<string, SlgCityBuildingGroupState>>
+  affairsQueueByCity?: Record<string, SlgAffairQueueEntryState[]>
+  recruitStateByFaction?: Record<string, SlgRecruitState>
+  generalStateByFaction?: Record<string, SlgGeneralState>
+  aiStateByFaction?: Record<string, SlgAiState>
+}
+
 export type FactionState = {
   id: FactionId
   food: number
@@ -238,6 +508,20 @@ export type FactionState = {
   recruitCooldown?: number
   /** 累计征兵次数 */
   recruitedTotal?: number
+  /** 待领取奖励（当前先承载开荒 PVE 等明确后端 authority 的奖励来源） */
+  claimableRewards?: ClaimableReward[]
+  /** 每日福利发放账本；领取后仍保留，防止跨会话重复发放 */
+  dailyWelfareLedgerByKey?: Record<string, DailyWelfareLedgerEntry>
+  /** AI 玩家独立资源子账户（用于后续资源地/建筑树产出与受治理资源输送） */
+  aiResourceAccounts?: Record<string, AiResourceAccount>
+  /** AI 资源地一次性采集记录；key = tileId，防止同一资源地重复入账 */
+  aiResourceGatherClaims?: Record<string, AiResourceGatherClaim>
+  /** AI 玩家资源输送每日额度/冷却状态；key = aiPlayerId */
+  aiResourceTransferQuotaByAiPlayer?: Record<string, AiResourceTransferQuotaState>
+  /** AI 玩家资源输送规则配置；由后端 authority 消费，UI 不做本地判定 */
+  aiResourceTransferPolicy?: AiResourceTransferPolicyState
+  /** 总督待领取资源收件箱；只由后端 authority 写入，UI 不直接结算 */
+  governorResourceInboxes?: Record<string, GovernorResourceInbox>
   /** 势力内 AI 玩家分组（每玩家管辖3支部队，支持飞地协作） */
   aiPlayers?: AIPlayer[]
   /** 势力内 AI 玩家配额（服务端权威计算：初始配额 + 扩容进度 + 上限） */
@@ -258,6 +542,7 @@ export type WorldState = {
     connections: Record<string, string[]>
     regions: MapRegion[]
     overlays: MapContinuousOverlays
+    resourceGeneration?: WorldResourceGenerationMetadata
   }
   factions: Record<FactionId, FactionState>
   alliance: AllianceState
@@ -272,6 +557,8 @@ export type WorldState = {
   luoyangSiegeProgress?: Record<string, number>
   /** 非洛阳城池围城进度。key = `${factionId}:${tileId}`，value = 已完成的持续围攻 tick 数 */
   citySiegeProgress?: Record<string, number>
+  /** 原生 SLG 前端补充域：部队设施、政务队列等最小权威状态 */
+  slgDomainState?: SlgFactionDomainState
 }
 
 export type WorldMapLayoutTile = Omit<Tile, 'owner' | 'enemyPressure'>
@@ -285,6 +572,7 @@ export type WorldMapLayout = {
   connections: Record<string, string[]>
   regions: MapRegion[]
   overlays: MapContinuousOverlays
+  resourceGeneration?: WorldResourceGenerationMetadata
 }
 
 export type WorldSummary = Omit<WorldState, 'map'> & {
@@ -295,6 +583,7 @@ export type WorldSummary = Omit<WorldState, 'map'> & {
     tileStateMode: 'full' | 'delta'
     baseWorldVersion?: number
     tileStates: WorldMapTileState[]
+    resourceGeneration?: WorldResourceGenerationMetadata
   }
   intelSyncMode?: 'full' | 'delta'
   intelBaseWorldVersion?: number
@@ -385,6 +674,37 @@ export type WorldActionRequest =
         type?: CivilMemoryEventType
         tickFrom?: number
         tickTo?: number
+        factionId?: FactionId
+        relatedId?: string
+      }
+    }
+  | {
+      action: 'setGeneralTactic'
+      payload: {
+        factionId?: FactionId
+        heroId: string
+        tacticId: 'assault' | 'guard' | 'logistics'
+      }
+    }
+  | {
+      action: 'setGeneralActiveHero'
+      payload: {
+        factionId?: FactionId
+        heroId: string
+      }
+    }
+    | {
+      action: 'queueAiAgendaAction'
+      payload: {
+        factionId?: FactionId
+        agendaActionId: 'agenda_expand' | 'agenda_support' | 'agenda_stabilize' | 'agenda_recover' | 'agenda_redeploy'
+      }
+    }
+  | {
+      action: 'setAiContextFocus'
+      payload: {
+        factionId?: FactionId
+        contextFocusId: string
       }
     }
   | {
@@ -428,6 +748,15 @@ export type WorldActionRequest =
       }
     }
   | {
+      action: 'promoteCityBuilding'
+      payload: {
+        factionId?: FactionId
+        cityId: string
+        groupId: string
+        buildingId: string
+      }
+    }
+  | {
       action: 'queueTacticalOverride'
       payload: {
         factionId?: FactionId
@@ -444,6 +773,118 @@ export type WorldActionRequest =
         stance: AllianceStance
       }
     }
+  | {
+      action: 'allianceHelp'
+      payload: {
+        factionId?: FactionId
+        regionId: string
+      }
+    }
+  | {
+      action: 'claimReward'
+      payload?: {
+        factionId?: FactionId
+        rewardId?: string
+      }
+    }
+  | {
+      action: 'issueClaimableReward'
+      payload: {
+        factionId?: FactionId
+        rewardId?: string
+        ledgerKey?: string
+        source: 'daily_welfare' | 'event_reward'
+        label?: string
+        summary?: string
+        reward: RewardBundle
+      }
+    }
+  | {
+      action: 'transferFactionResourcesToGovernor'
+      payload: {
+        sourceFactionId: FactionId
+        sourceAiPlayerId: string
+        governorPlayerId: string
+        resources: Partial<ResourceTransferBundle>
+        reason: string
+        approvedBy: string
+      }
+    }
+  | {
+      action: 'setAiResourceTransferPolicy'
+      payload: {
+        factionId?: FactionId
+        dailyQuotaTotal?: number
+        dailyWindowTicks?: number
+        cooldownTicks?: number
+      }
+    }
+  | {
+      action: 'claimGovernorResourceInbox'
+      payload: {
+        factionId?: FactionId
+        governorPlayerId: string
+        transferId?: string
+      }
+    }
+  | {
+      action: 'gatherAiResourceTile'
+      payload: {
+        factionId?: FactionId
+        aiPlayerId: string
+        unitId: string
+        tileId: string
+      }
+    }
+  | {
+      action: 'occupyTile'
+      payload: {
+        factionId?: FactionId
+        aiPlayerId: string
+        unitId: string
+        tileId: string
+      }
+    }
+  | {
+      action: 'healTroop'
+      payload: {
+        factionId?: FactionId
+        aiPlayerId: string
+        unitId: string
+      }
+    }
+  | {
+      action: 'promoteTroopFacilityBuilding'
+      payload: {
+        factionId?: FactionId
+        unitId: string
+        facilityId: string
+        buildingId: string
+      }
+    }
+  | {
+      action: 'setRecruitSelectedPool'
+      payload: {
+        factionId?: FactionId
+        poolId: string
+      }
+    }
+  | {
+      action: 'recruitProspectHero'
+      payload: {
+        factionId?: FactionId
+        count?: number
+        poolId?: string
+      }
+    }
+  | {
+      action: 'enqueueAffair'
+      payload: {
+        factionId?: FactionId
+        cityId: string
+        affairId: string
+      }
+    }
 
 export type WorldActionResponse = {
   ok: boolean
@@ -451,7 +892,16 @@ export type WorldActionResponse = {
   tick: number
   world?: WorldState
   message?: string
+  failureCode?: string
+  requestId?: string
   unitId?: string
+  heroId?: string
+  heroIds?: string[]
+  heroNames?: string[]
+  tacticId?: string
+  contextFocusId?: string
+  relatedId?: string
+  execution?: SlgAiExecutionState
   domainAgenda?: DomainAgenda
   domainCommMetrics?: DomainCommMetricsSnapshot
   domainMessages?: BusMessage[]

@@ -117,7 +117,8 @@ export type MapContinuousPath = {
   nodes: MapPathNode[]
 }
 
-export type CityFootprintTier = 'single_1' | 'small_2x2' | 'medium_3x3' | 'mega_4x4'
+export type CityFootprintTiles = 9 | 25 | 49 | 81
+export type CityFootprintTier = 'city_3x3' | 'city_5x5' | 'city_7x7' | 'city_9x9'
 export type CityCamp = 'human_controlled' | 'autonomous' | 'neutral'
 export type CityTechTrackId = 'governance' | 'logistics' | 'defense' | 'recruitment'
 export type CityTechLevels = Record<CityTechTrackId, number>
@@ -131,9 +132,9 @@ export type MapCityCluster = {
   district?: string
   owner: TileOwner
   camp: CityCamp
-  footprintTiles: 1 | 4 | 9 | 16
+  footprintTiles: CityFootprintTiles
   footprintTier: CityFootprintTier
-  upgradeCapTiles: 1 | 4 | 9 | 16
+  upgradeCapTiles: CityFootprintTiles
   isUpgradeable: boolean
   techLevels: CityTechLevels
 }

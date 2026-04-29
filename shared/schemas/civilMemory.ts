@@ -49,6 +49,26 @@ export const civilMemoryQuerySchema = z.object({
   type: civilMemoryEventTypeSchema.optional(),
   tickFrom: z.number().int().nonnegative().optional(),
   tickTo: z.number().int().nonnegative().optional(),
+  factionId: z.string().min(1).max(64).optional(),
+  relatedId: z.string().min(1).max(128).optional(),
+})
+
+export const memoryProviderRequestedSchema = z.enum(['mem0', 'in_memory'])
+export const memoryProviderActiveSchema = z.enum(['mem0', 'in_memory', 'unknown'])
+export const memoryProviderLifecycleSchema = z.enum(['uninitialized', 'ready', 'degraded'])
+
+export const memoryProviderObservabilitySchema = z.object({
+  requestedProvider: memoryProviderRequestedSchema,
+  activeProvider: memoryProviderActiveSchema,
+  lifecycle: memoryProviderLifecycleSchema,
+  downgraded: z.boolean(),
+  reason: z.string().min(1).optional(),
+  updatedAt: z.string().min(1),
+})
+
+export const civilMemoryObservabilityResponseSchema = z.object({
+  items: z.array(civilMemoryEntrySchema),
+  memoryProvider: memoryProviderObservabilitySchema,
 })
 
 export const memoryProviderRequestedSchema = z.enum(['mem0', 'in_memory'])

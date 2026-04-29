@@ -1,12 +1,17 @@
 import { dirname, join } from 'node:path'
 
-const WORLD_PERSIST_ROOT = join(process.cwd(), 'tmp')
+function resolveWorldPersistRoot(): string {
+  const configured = process.env.WORLD_PERSIST_ROOT?.trim()
+  return configured && configured.length > 0 ? configured : join(process.cwd(), 'tmp')
+}
 
-export const WORLD_STATE_PERSIST_PATH = buildWorldPersistencePath('world_snapshot.json')
-export const NARRATIVE_PERSIST_PATH = buildWorldPersistencePath('narrative_events.json')
+export const WORLD_STATE_PERSIST_PATH =
+  process.env.WORLD_STATE_PERSIST_PATH?.trim() || buildWorldPersistencePath('world_snapshot.json')
+export const NARRATIVE_PERSIST_PATH =
+  process.env.NARRATIVE_PERSIST_PATH?.trim() || buildWorldPersistencePath('narrative_events.json')
 
 export function buildWorldPersistencePath(fileName: string): string {
-  return join(WORLD_PERSIST_ROOT, fileName)
+  return join(resolveWorldPersistRoot(), fileName)
 }
 
 export function getWorldStatePersistDir(): string {

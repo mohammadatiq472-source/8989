@@ -62,3 +62,7 @@ Required read order:
 - 若历史口径与现行口径冲突，以现行执行版为准。
 - 若文档口径与代码实现冲突，以“可验证代码事实 + 正式入口验证”结论为准。
 
+### 并行工作树入口（多窗口协作）
+
+- 快速入口：`WORKTREE_PARALLEL_QUICKSTART_2026_04_11.md`
+- 提示词减噪治理：`docs/AI_PROMPT_CONTEXT_GOVERNANCE_2026_04_11.md`

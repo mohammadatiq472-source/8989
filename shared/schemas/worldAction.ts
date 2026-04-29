@@ -8,6 +8,17 @@ const allianceStanceSchema = z.enum(['hold', 'support', 'harass', 'expand'])
 const executionEnqueueModeSchema = z.enum(['replace', 'append', 'reject_if_active'])
 const tacticalTemplateIdSchema = z.enum(['rally', 'harass', 'withdraw', 'breakthrough', 'sweep', 'garrison'])
 const cityTechTrackIdSchema = z.enum(['governance', 'logistics', 'defense', 'recruitment'])
+const generalTacticIdSchema = z.enum(['assault', 'guard', 'logistics'])
+const aiAgendaActionIdSchema = z.enum(['agenda_expand', 'agenda_support', 'agenda_stabilize', 'agenda_recover', 'agenda_redeploy'])
+const resourceTransferBundleSchema = z.object({
+  food: z.number().int().positive().optional(),
+  wood: z.number().int().positive().optional(),
+  stone: z.number().int().positive().optional(),
+  iron: z.number().int().positive().optional(),
+}).strict().refine(
+  (value) => Object.values(value).some((amount) => typeof amount === 'number' && amount > 0),
+  { message: 'at least one positive resource amount is required' },
+)
 
 const generalDirectiveSchema = z.object({
   generalId: z.string().min(1),
@@ -94,7 +105,38 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
       type: civilMemoryEventTypeSchema.optional(),
       tickFrom: z.number().int().nonnegative().optional(),
       tickTo: z.number().int().nonnegative().optional(),
+      factionId: factionIdSchema.optional(),
+      relatedId: z.string().min(1).max(128).optional(),
     }).optional(),
+  }),
+  z.object({
+    action: z.literal('setGeneralTactic'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      heroId: z.string().min(1).max(128),
+      tacticId: generalTacticIdSchema,
+    }),
+  }),
+  z.object({
+    action: z.literal('setGeneralActiveHero'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      heroId: z.string().min(1).max(128),
+    }),
+  }),
+  z.object({
+    action: z.literal('queueAiAgendaAction'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      agendaActionId: aiAgendaActionIdSchema,
+    }),
+  }),
+  z.object({
+    action: z.literal('setAiContextFocus'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      contextFocusId: z.enum(['focus_city', 'focus_troop', 'focus_alliance']),
+    }),
   }),
   z.object({ action: z.literal('advanceTick') }),
   z.object({ action: z.literal('clearPlanExecution'), payload: z.object({ factionId: factionIdSchema.optional() }).optional() }),
@@ -130,6 +172,15 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
     }),
   }),
   z.object({
+    action: z.literal('promoteCityBuilding'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      cityId: z.string().min(1),
+      groupId: z.string().min(1),
+      buildingId: z.string().min(1),
+    }),
+  }),
+  z.object({
     action: z.literal('queueTacticalOverride'),
     payload: z.object({
       factionId: factionIdSchema.optional(),
@@ -144,6 +195,130 @@ export const worldActionRequestSchema = z.discriminatedUnion('action', [
     payload: z.object({
       regionId: z.string().min(1),
       stance: allianceStanceSchema,
+    }),
+  }),
+  z.object({
+    action: z.literal('allianceHelp'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      regionId: z.string().min(1),
+    }),
+  }),
+  z.object({
+    action: z.literal('claimReward'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      rewardId: z.string().min(1).max(128).optional(),
+    }).optional(),
+  }),
+  z.object({
+    action: z.literal('issueClaimableReward'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      rewardId: z.string().min(1).max(128).optional(),
+      ledgerKey: z.string().trim().min(1).max(160).optional(),
+      source: z.enum(['daily_welfare', 'event_reward']),
+      label: z.string().trim().min(1).max(80).optional(),
+      summary: z.string().trim().min(1).max(240).optional(),
+      reward: z.object({
+        food: z.number().int().nonnegative(),
+        ap: z.number().int().nonnegative(),
+      }).strict().refine(
+        (reward) => reward.food + reward.ap > 0,
+        { message: 'reward must include food or action points' },
+      ),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('transferFactionResourcesToGovernor'),
+    payload: z.object({
+      sourceFactionId: factionIdSchema,
+      sourceAiPlayerId: z.string().min(1).max(80),
+      governorPlayerId: z.string().min(1).max(80),
+      resources: resourceTransferBundleSchema,
+      reason: z.string().min(1).max(400),
+      approvedBy: z.string().min(1).max(80),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('setAiResourceTransferPolicy'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      dailyQuotaTotal: z.number().int().positive().max(10_000).optional(),
+      dailyWindowTicks: z.number().int().positive().max(365).optional(),
+      cooldownTicks: z.number().int().nonnegative().max(365).optional(),
+    }).strict().refine(
+      (value) =>
+        value.dailyQuotaTotal !== undefined ||
+        value.dailyWindowTicks !== undefined ||
+        value.cooldownTicks !== undefined,
+      { message: 'at least one resource transfer policy field is required' },
+    ),
+  }),
+  z.object({
+    action: z.literal('claimGovernorResourceInbox'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      governorPlayerId: z.string().min(1).max(80),
+      transferId: z.string().min(1).max(160).optional(),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('gatherAiResourceTile'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      aiPlayerId: z.string().min(1).max(80),
+      unitId: z.string().min(1).max(120),
+      tileId: z.string().min(1).max(120),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('occupyTile'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      aiPlayerId: z.string().min(1).max(80),
+      unitId: z.string().min(1).max(120),
+      tileId: z.string().min(1).max(120),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('healTroop'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      aiPlayerId: z.string().min(1).max(80),
+      unitId: z.string().min(1).max(120),
+    }).strict(),
+  }),
+  z.object({
+    action: z.literal('promoteTroopFacilityBuilding'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      unitId: z.string().min(1),
+      facilityId: z.string().min(1),
+      buildingId: z.string().min(1),
+    }),
+  }),
+  z.object({
+    action: z.literal('setRecruitSelectedPool'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      poolId: z.string().min(1).max(64),
+    }),
+  }),
+  z.object({
+    action: z.literal('recruitProspectHero'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      count: z.number().int().min(1).max(10).optional(),
+      poolId: z.string().min(1).max(64).optional(),
+    }),
+  }),
+  z.object({
+    action: z.literal('enqueueAffair'),
+    payload: z.object({
+      factionId: factionIdSchema.optional(),
+      cityId: z.string().min(1),
+      affairId: z.string().min(1),
     }),
   }),
 ])

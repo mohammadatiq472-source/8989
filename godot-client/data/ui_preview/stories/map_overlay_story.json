@@ -1,0 +1,99 @@
+{
+  "schemaVersion": 1,
+  "storyId": "map_overlay",
+  "title": "Map Overlay Story",
+  "description": "Overlay-heavy fixture for resources, cities, mountains, rivers, and faction color markers.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": ["fixture"]
+  },
+  "captureTargets": [
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/OverlayLegendPanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/OverlaySummaryPanel"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/OverlayLegendPanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/OverlaySummaryPanel"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "ridge",
+      "label": "Ridge",
+      "headline": "Map Overlay | ridge and river preview",
+      "scope": "preview_overlay_ridge",
+      "tick": 3072,
+      "worldVersion": 72,
+      "zoom": 0.54,
+      "hoverTileId": "city_home",
+      "hoverX": 2,
+      "hoverY": 3,
+      "accentColor": { "r": 0.89, "g": 0.82, "b": 0.50, "a": 1.0 },
+      "legendLines": [
+        "Overlay Legend",
+        "Mountain belt: top ridge continuity",
+        "River seam: center corridor cut",
+        "Home city + enemy city: faction markers"
+      ],
+      "summaryLines": [
+        "Summary",
+        "This state stresses home-city badges against ridge and river edges.",
+        "It should make overlay density readable without hiding the terrain stage."
+      ]
+    },
+    {
+      "id": "resource",
+      "label": "Resource",
+      "headline": "Map Overlay | resource emphasis",
+      "scope": "preview_overlay_resource",
+      "tick": 3078,
+      "worldVersion": 73,
+      "zoom": 0.62,
+      "hoverTileId": "res_iron_overlay",
+      "hoverX": 6,
+      "hoverY": 2,
+      "accentColor": { "r": 0.47, "g": 0.84, "b": 0.72, "a": 1.0 },
+      "legendLines": [
+        "Overlay Legend",
+        "Resource nodes: wood / stone / iron / grain",
+        "Different terrain families should keep their silhouette",
+        "Use this to judge icon density at mid zoom"
+      ],
+      "summaryLines": [
+        "Summary",
+        "The resource state is where overlay clutter shows up first.",
+        "Every node should still feel owned by the map, not pasted on top of it."
+      ]
+    },
+    {
+      "id": "homefront",
+      "label": "Homefront",
+      "headline": "Map Overlay | homefront ownership",
+      "scope": "preview_overlay_homefront",
+      "tick": 3086,
+      "worldVersion": 74,
+      "zoom": 0.70,
+      "hoverTileId": "city_enemy",
+      "hoverX": 7,
+      "hoverY": 3,
+      "accentColor": { "r": 0.92, "g": 0.42, "b": 0.42, "a": 1.0 },
+      "legendLines": [
+        "Overlay Legend",
+        "Faction ownership should read instantly",
+        "Home city badges must survive denser zoom",
+        "Enemy control should remain obvious without extra chrome"
+      ],
+      "summaryLines": [
+        "Summary",
+        "Use the homefront state to judge faction color and badge clarity.",
+        "This is the first pass before province and nation overlays are added."
+      ]
+    }
+  ]
+}

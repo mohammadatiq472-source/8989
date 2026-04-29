@@ -1,0 +1,1141 @@
+{
+  "schemaVersion": 1,
+  "storyId": "map_surface",
+  "title": "Map Surface Story",
+  "description": "Map-first product shell preview with slimmer side rails, a floating focus card, and a real bottom action band.",
+  "dataSource": {
+    "requestedMode": "fixture",
+    "effectiveMode": "fixture",
+    "fallbackUsed": false,
+    "availableModes": [
+      "fixture"
+    ]
+  },
+  "storyNavigation": {
+    "targetStoryId": "",
+    "buttonLabel": "宏观旧线已退役",
+    "buttonHint": "province / warzone / nation preview 旧线已退役；当前主线从 native shell 进入。",
+    "reason": "macro_preview_retired",
+    "title": "旧线已退役"
+  },
+  "captureTargets": [
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceTopBar",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceLeftRail",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceRightActionPanel",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceBottomBar",
+    "OverlayCanvas/OverlayRoot/StoryContentRoot/ProvinceEntryPanel"
+  ],
+  "validation": {
+    "kind": "ui_preview_story",
+    "captureTargets": [
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceTopBar",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceLeftRail",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceRightActionPanel",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/SurfaceBottomBar",
+      "OverlayCanvas/OverlayRoot/StoryContentRoot/ProvinceEntryPanel"
+    ],
+    "expectedStateCount": 3,
+    "requiresDistinctScreenshots": true
+  },
+  "states": [
+    {
+      "id": "macro_overview",
+      "label": "Macro Overview",
+      "headline": "地图主界面 | 洛阳总览",
+      "scope": "preview_surface_overview",
+      "districtName": "Luoyang Basin",
+      "stateId": "macro_overview",
+      "tick": 1024,
+      "worldVersion": 48,
+      "zoom": 0.44,
+      "hoverTileId": "city_luoyang",
+      "hoverX": 5,
+      "hoverY": 3,
+      "accentColor": {
+        "r": 0.35,
+        "g": 0.78,
+        "b": 0.68,
+        "a": 1.0
+      },
+      "roleName": "汉室前锋",
+      "rid": "RID-0001024",
+      "tokenCount": 128,
+      "resources": [
+        {
+          "key": "grain",
+          "label": "谷",
+          "value": 23000,
+          "capacity": 30000
+        },
+        {
+          "key": "wood",
+          "label": "木",
+          "value": 18200,
+          "capacity": 26000
+        },
+        {
+          "key": "iron",
+          "label": "铁",
+          "value": 11400,
+          "capacity": 18000
+        },
+        {
+          "key": "stone",
+          "label": "石",
+          "value": 9700,
+          "capacity": 14000
+        },
+        {
+          "key": "gold",
+          "label": "钱",
+          "value": 8600
+        }
+      ],
+      "yields": [
+        {
+          "key": "wood_yield",
+          "label": "木+",
+          "value": 210
+        },
+        {
+          "key": "iron_yield",
+          "label": "铁+",
+          "value": 94
+        },
+        {
+          "key": "stone_yield",
+          "label": "石+",
+          "value": 88
+        },
+        {
+          "key": "grain_yield",
+          "label": "谷+",
+          "value": 145
+        }
+      ],
+      "statusBadges": [
+        "司隶核心",
+        "邮件 3",
+        "同盟在线 42"
+      ],
+      "subheadline": "地图常驻入口与战区调度",
+      "selectedCommandLabel": "小地图",
+      "commandItems": [
+        {
+          "id": "mini_map",
+          "label": "小地图",
+          "detail": "定位州郡与当前焦点",
+          "badge": "图",
+          "hot": true
+        },
+        {
+          "id": "union",
+          "label": "联盟",
+          "detail": "申请、审核、联盟态势",
+          "badge": "3",
+          "hot": false
+        },
+        {
+          "id": "favorites",
+          "label": "收藏",
+          "detail": "常用城池、坐标与路线",
+          "badge": "12",
+          "hot": false
+        },
+        {
+          "id": "chat",
+          "label": "聊天",
+          "detail": "同盟频道、系统消息、队伍频道",
+          "badge": "新",
+          "hot": false
+        },
+        {
+          "id": "settings",
+          "label": "设置",
+          "detail": "地图、镜头、提示与快捷操作",
+          "badge": "局",
+          "hot": false
+        },
+        {
+          "id": "intel",
+          "label": "情报",
+          "detail": "战区摘要、风险与待办",
+          "badge": "HOT",
+          "hot": true
+        }
+      ],
+      "miniMap": {
+        "scopeLabel": "范围: 司隶·洛阳盆地",
+        "focusLabel": "焦点: 洛阳 / 虎牢方向",
+        "zoomLabel": "缩放: 44%"
+      },
+      "intelSummary": [
+        "虎牢方向斥候已回传，前线可视范围稳定。",
+        "同盟申请与战报提示集中在洛阳主城。",
+        "预览工作台保持地图常驻，不回主场景盲改。"
+      ],
+      "headerTitle": "右侧情报栈",
+      "headerSubtitle": "部队 / 城池 / 标记 切换，贴近原项目右侧信息结构。",
+      "summaryLine": "部队 3 | 城池 2 | 标记 3 | 当前: 部队",
+      "compactEmbed": true,
+      "rightInfoTabs": [
+        "armies",
+        "cities",
+        "tags"
+      ],
+      "activeRightTab": "armies",
+      "aiPlayerCard": {
+        "playerName": "青州锋线营",
+        "controlLabel": "AI托管",
+        "allianceName": "汉室前锋",
+        "cityName": "洛阳",
+        "strategyLabel": "稳健推进，先补线再压进。",
+        "personaLabel": "稳健推进，先补线再压进。",
+        "currentTaskLabel": "虎牢方向铺路与北门换防",
+        "memorySummary": "两支队伍已出城，一支留守补位。",
+        "squadSummary": "队伍 3 | 武将 9",
+        "detailButtonLabel": "查看"
+      },
+      "aiStatusOptions": [
+        {
+          "id": "executing",
+          "label": "接受执行",
+          "summary": "正在向虎牢方向铺路。",
+          "tone": "success"
+        },
+        {
+          "id": "pending",
+          "label": "迟疑确认",
+          "summary": "北门换防仍待主公确认。",
+          "tone": "warning"
+        },
+        {
+          "id": "adjust",
+          "label": "建议调整",
+          "summary": "建议先补北门再推东线。",
+          "tone": "warning"
+        },
+        {
+          "id": "report",
+          "label": "最新回报",
+          "summary": "两队已出城，一队留守补位。",
+          "tone": "info"
+        }
+      ],
+      "activeAiStatusId": "executing",
+      "aiPlayerPanel": {
+        "title": "AI 玩家位",
+        "playerName": "青州锋线营",
+        "controlLabel": "AI托管",
+        "allianceName": "汉室前锋",
+        "cityName": "洛阳",
+        "strategyLabel": "稳健推进，先补线再压进。",
+        "personaLabel": "稳健推进，先补线再压进。",
+        "loyaltyStyleLabel": "汉室优先 · 稳推型前线玩家",
+        "currentTaskLabel": "虎牢方向铺路与北门换防",
+        "memorySummary": "两支队伍已出城，一支留守补位。",
+        "squadCount": "3 支队伍",
+        "heroCount": "9 名武将",
+        "currentTarget": "虎牢方向铺路与北门换防",
+        "recentAction": "两支队伍已出城，一支留守补位。",
+        "detailSummary": "已收口为最小 AI 玩家前台，只保留身份、人设、任务、记忆与接令反馈。",
+        "detailActions": [
+          "查看队伍",
+          "查看武将",
+          "调整策略"
+        ]
+      },
+      "armyCards": [
+        {
+          "title": "先登营",
+          "subtitle": "洛阳城外前推队列。",
+          "status": "行军中",
+          "statusTone": "success",
+          "portraitId": "100001",
+          "location": "(32, 19)",
+          "metrics": [
+            "兵力 18.4K",
+            "士气 87",
+            "ETA 02:14"
+          ],
+          "chips": [
+            "先手压制",
+            "前线主攻"
+          ],
+          "footer": "编队稳定，前压节奏良好。"
+        },
+        {
+          "title": "河防军",
+          "subtitle": "负责渡口与护粮路线。",
+          "status": "待命",
+          "statusTone": "info",
+          "portraitId": "100003",
+          "location": "(18, 27)",
+          "metrics": [
+            "兵力 12.1K",
+            "补给 94%",
+            "巡逻 3 线"
+          ],
+          "chips": [
+            "护粮",
+            "河道监控"
+          ],
+          "footer": "需要在黄昏前补一次巡逻。"
+        },
+        {
+          "title": "预备矛阵",
+          "subtitle": "快速增援与反打编组。",
+          "status": "警戒",
+          "statusTone": "warning",
+          "portraitId": "100007",
+          "location": "(07, 09)",
+          "metrics": [
+            "兵力 9.8K",
+            "战备 高",
+            "命令 2"
+          ],
+          "chips": [
+            "机动",
+            "待命"
+          ],
+          "footer": "维持机动，等待下一轮指令。"
+        }
+      ],
+      "cityCards": [
+        {
+          "title": "洛阳",
+          "subtitle": "核心主城，征兵与仓储都在运转。",
+          "status": "核心",
+          "statusTone": "success",
+          "detail": "都城产能和同盟协同都集中在这里。",
+          "location": "(24, 16)",
+          "stateBlock": [
+            "等级 6",
+            "粮 23.0K",
+            "队列 4"
+          ],
+          "chips": [
+            "征兵",
+            "仓储",
+            "统帅"
+          ],
+          "footer": "核心城池需要持续保持在线状态。"
+        },
+        {
+          "title": "虎牢关",
+          "subtitle": "北线前沿关口。",
+          "status": "护盾",
+          "statusTone": "info",
+          "detail": "承担侦查回传与阻击压力。",
+          "location": "(11, 05)",
+          "stateBlock": [
+            "等级 4",
+            "驻军 7.2K",
+            "威胁 中"
+          ],
+          "chips": [
+            "防御",
+            "前哨"
+          ],
+          "footer": "需要补一次耐久和驻军。"
+        }
+      ],
+      "tagCards": [
+        {
+          "title": "前线压力",
+          "subtitle": "东侧敌军正在集结。",
+          "status": "警报",
+          "statusTone": "danger",
+          "detail": "需要优先派斥候和机动队确认推进节奏。",
+          "group": "战斗",
+          "owner": "指挥部",
+          "priority": "高",
+          "signals": "信号 6",
+          "chips": [
+            "18 格范围",
+            "升级中"
+          ],
+          "footer": "用于驱动底部动作栏与地图聚焦。"
+        },
+        {
+          "title": "补给走廊",
+          "subtitle": "粮线整体稳定，但有一段待维护。",
+          "status": "稳定",
+          "statusTone": "success",
+          "detail": "与城池 rail 联动展示补给状态。",
+          "group": "后勤",
+          "owner": "军需官",
+          "priority": "中",
+          "signals": "信号 2",
+          "chips": [
+            "覆盖 91%",
+            "维护"
+          ],
+          "footer": "保持主界面与后勤态势一致。"
+        },
+        {
+          "title": "联盟烽火",
+          "subtitle": "共享标记点，供盟友协同调度。",
+          "status": "已标记",
+          "statusTone": "warning",
+          "detail": "用于外交联动和集结提醒。",
+          "group": "外交",
+          "owner": "联盟",
+          "priority": "低",
+          "signals": "信号 1",
+          "chips": [
+            "共享",
+            "协同"
+          ],
+          "footer": "标记点会持续存在于右侧 rail。"
+        }
+      ],
+      "contextTitle": "地块动作坞 | 洛阳城外",
+      "contextSubtitle": "围绕行军 / 驻守 / 建造 / 占领 / 进入 / 标记 的 source-like 操作区。",
+      "primaryActions": [
+        "行军",
+        "驻守",
+        "建造"
+      ],
+      "secondaryActions": [
+        "占领",
+        "进入",
+        "标记"
+      ],
+      "shortcutActions": [
+        "扫荡",
+        "侦查",
+        "换防"
+      ],
+      "coordinateLabel": "坐标 | X:05 Y:03",
+      "zoomLabel": "缩放 | 0.44x"
+    },
+    {
+      "id": "expansion_alert",
+      "label": "Expansion Alert",
+      "headline": "地图主界面 | 虎牢扩张预警",
+      "scope": "preview_surface_expansion",
+      "districtName": "Tiger Gate Corridor",
+      "stateId": "expansion_alert",
+      "tick": 1031,
+      "worldVersion": 49,
+      "zoom": 0.5,
+      "hoverTileId": "city_hulao",
+      "hoverX": 7,
+      "hoverY": 2,
+      "accentColor": {
+        "r": 0.94,
+        "g": 0.66,
+        "b": 0.32,
+        "a": 1.0
+      },
+      "roleName": "前锋都督府",
+      "rid": "RID-0001024",
+      "tokenCount": 96,
+      "resources": [
+        {
+          "key": "grain",
+          "label": "谷",
+          "value": 20800,
+          "capacity": 30000
+        },
+        {
+          "key": "wood",
+          "label": "木",
+          "value": 16000,
+          "capacity": 26000
+        },
+        {
+          "key": "iron",
+          "label": "铁",
+          "value": 12100,
+          "capacity": 18000
+        },
+        {
+          "key": "stone",
+          "label": "石",
+          "value": 10400,
+          "capacity": 14000
+        },
+        {
+          "key": "gold",
+          "label": "钱",
+          "value": 7200
+        }
+      ],
+      "yields": [
+        {
+          "key": "wood_yield",
+          "label": "木+",
+          "value": 224
+        },
+        {
+          "key": "iron_yield",
+          "label": "铁+",
+          "value": 118
+        },
+        {
+          "key": "stone_yield",
+          "label": "石+",
+          "value": 96
+        },
+        {
+          "key": "grain_yield",
+          "label": "谷+",
+          "value": 136
+        }
+      ],
+      "statusBadges": [
+        "虎牢方向",
+        "扩张 3 队列",
+        "斥候在线"
+      ],
+      "subheadline": "扩张队列与战区调度告警",
+      "selectedCommandLabel": "情报",
+      "commandItems": [
+        {
+          "id": "mini_map",
+          "label": "小地图",
+          "detail": "切到虎牢关与外线视图",
+          "badge": "图",
+          "hot": true
+        },
+        {
+          "id": "union",
+          "label": "联盟",
+          "detail": "盟友烽火与驻守响应",
+          "badge": "5",
+          "hot": true
+        },
+        {
+          "id": "favorites",
+          "label": "收藏",
+          "detail": "记录新前哨与补给点",
+          "badge": "15",
+          "hot": false
+        },
+        {
+          "id": "chat",
+          "label": "聊天",
+          "detail": "战区频道与盟频高频跳动",
+          "badge": "新",
+          "hot": false
+        },
+        {
+          "id": "settings",
+          "label": "设置",
+          "detail": "前线提示与风险过滤",
+          "badge": "局",
+          "hot": false
+        },
+        {
+          "id": "intel",
+          "label": "情报",
+          "detail": "扩张路线、风险与支援需求",
+          "badge": "HOT",
+          "hot": true
+        }
+      ],
+      "miniMap": {
+        "scopeLabel": "范围: 虎牢关走廊",
+        "focusLabel": "焦点: 北门驻守 / 东线前哨",
+        "zoomLabel": "缩放: 50%"
+      },
+      "intelSummary": [
+        "扩张队列已排到第三梯次，前线道路保持畅通。",
+        "同盟烽火点需要 2 支驻守队列轮换。",
+        "右侧情报栈切到城池态，便于看关口与前哨。"
+      ],
+      "headerTitle": "右侧情报栈",
+      "headerSubtitle": "切到城池视图，检查关口与前线据点。",
+      "summaryLine": "部队 2 | 城池 3 | 标记 2 | 当前: 城池",
+      "compactEmbed": true,
+      "rightInfoTabs": [
+        "armies",
+        "cities",
+        "tags"
+      ],
+      "activeRightTab": "cities",
+      "aiPlayerCard": {
+        "playerName": "虎牢守备营",
+        "controlLabel": "AI托管",
+        "allianceName": "汉室前锋",
+        "cityName": "虎牢关",
+        "strategyLabel": "先稳后推",
+        "personaLabel": "守关优先，先稳耐久再谋扩张。",
+        "currentTaskLabel": "虎牢耐久与北门驻守顺序",
+        "memorySummary": "昨夜回撤一队后，北门粮道已稳住。",
+        "squadSummary": "队伍 2 | 武将 6",
+        "detailButtonLabel": "查看"
+      },
+      "aiStatusOptions": [
+        {
+          "id": "executing",
+          "label": "接受执行",
+          "summary": "正在补虎牢耐久并安排北门驻守。",
+          "tone": "success"
+        },
+        {
+          "id": "pending",
+          "label": "迟疑确认",
+          "summary": "扩张顺序仍待主公确认。",
+          "tone": "warning"
+        },
+        {
+          "id": "adjust",
+          "label": "建议调整",
+          "summary": "建议先补虎牢，再转一队去北门。",
+          "tone": "warning"
+        },
+        {
+          "id": "report",
+          "label": "最新回报",
+          "summary": "昨夜回撤一队后，北门粮道已稳住。",
+          "tone": "info"
+        }
+      ],
+      "activeAiStatusId": "adjust",
+      "aiPlayerPanelOpen": true,
+      "aiPlayerPanel": {
+        "title": "AI 玩家位",
+        "playerName": "虎牢守备营",
+        "controlLabel": "AI托管",
+        "allianceName": "汉室前锋",
+        "cityName": "虎牢关",
+        "squadCount": "2 支队伍",
+        "heroCount": "6 名武将",
+        "strategyLabel": "先稳后推",
+        "personaLabel": "守关优先，先稳耐久再谋扩张。",
+        "loyaltyStyleLabel": "关口优先 · 防御型守备玩家",
+        "currentTaskLabel": "虎牢耐久与北门驻守顺序",
+        "memorySummary": "昨夜回撤一队后，北门粮道已稳住。",
+        "currentTarget": "虎牢耐久与北门驻守顺序",
+        "recentAction": "一队补虎牢，一队留北门，粮道已恢复稳定。",
+        "detailSummary": "当前不宜直接猛推，先稳住关口再扩张更安全。",
+        "detailActions": [
+          "查看队伍",
+          "查看武将",
+          "调整策略"
+        ]
+      },
+      "armyCards": [
+        {
+          "title": "东线先遣",
+          "subtitle": "扩张方向的探路部队。",
+          "status": "推进",
+          "statusTone": "success",
+          "portraitId": "100011",
+          "location": "(44, 13)",
+          "metrics": [
+            "兵力 15.2K",
+            "斥候 3 组",
+            "ETA 01:22"
+          ],
+          "chips": [
+            "扩张",
+            "侦查"
+          ],
+          "footer": "需要先确保资源点视野。"
+        },
+        {
+          "title": "虎牢援军",
+          "subtitle": "准备补到北线的增援编组。",
+          "status": "集结",
+          "statusTone": "warning",
+          "portraitId": "100015",
+          "location": "(13, 08)",
+          "metrics": [
+            "兵力 11.6K",
+            "粮秣 88%",
+            "命令 1"
+          ],
+          "chips": [
+            "增援",
+            "机动"
+          ],
+          "footer": "尚未完成出征前补给。"
+        }
+      ],
+      "cityCards": [
+        {
+          "title": "陈留前营",
+          "subtitle": "东线扩张前进基地。",
+          "status": "开发中",
+          "statusTone": "warning",
+          "detail": "用于挂接资源区和扩张路线。",
+          "location": "(38, 14)",
+          "stateBlock": [
+            "等级 3",
+            "木 8.1K",
+            "建造 2"
+          ],
+          "chips": [
+            "扩张",
+            "开发"
+          ],
+          "footer": "先补齐仓储和防御后再继续铺路。"
+        },
+        {
+          "title": "洛阳",
+          "subtitle": "后方核心仍旧承担征兵。",
+          "status": "后勤核心",
+          "statusTone": "success",
+          "detail": "负责把兵力和资源送到东线。",
+          "location": "(24, 16)",
+          "stateBlock": [
+            "等级 6",
+            "征兵 2",
+            "辎重 满"
+          ],
+          "chips": [
+            "后勤",
+            "征兵"
+          ],
+          "footer": "后方效率是扩张速度上限。"
+        },
+        {
+          "title": "汜水据点",
+          "subtitle": "扩张通道的过渡节点。",
+          "status": "观察",
+          "statusTone": "info",
+          "detail": "承担临时驻守和路线衔接。",
+          "location": "(30, 10)",
+          "stateBlock": [
+            "等级 2",
+            "守军 3.4K",
+            "工事 41%"
+          ],
+          "chips": [
+            "过渡",
+            "路线"
+          ],
+          "footer": "需要提升耐久后再长期驻守。"
+        }
+      ],
+      "tagCards": [
+        {
+          "title": "扩张预警",
+          "subtitle": "东线开发速度高于驻防速度。",
+          "status": "提醒",
+          "statusTone": "warning",
+          "detail": "继续扩张前需要确认前营守备。",
+          "group": "开发",
+          "owner": "内政司",
+          "priority": "中",
+          "signals": "信号 3",
+          "chips": [
+            "扩张",
+            "守备缺口"
+          ],
+          "footer": "提醒左侧命令坞优先处理开发事务。"
+        },
+        {
+          "title": "粮线通畅",
+          "subtitle": "后方补给能跟上当前节奏。",
+          "status": "稳定",
+          "statusTone": "success",
+          "detail": "继续扩张不会立刻触发断粮风险。",
+          "group": "后勤",
+          "owner": "军需官",
+          "priority": "低",
+          "signals": "信号 1",
+          "chips": [
+            "补给",
+            "稳定"
+          ],
+          "footer": "保持两条城池线路即可。"
+        }
+      ],
+      "contextTitle": "地块动作坞 | 虎牢关北门",
+      "contextSubtitle": "围绕扩张、驻防、换防与标记的前线动作坞。",
+      "primaryActions": [
+        "驻守",
+        "建造",
+        "调兵"
+      ],
+      "secondaryActions": [
+        "占领",
+        "换防",
+        "标记"
+      ],
+      "shortcutActions": [
+        "侦查",
+        "征兵",
+        "补给"
+      ],
+      "coordinateLabel": "坐标 | X:07 Y:02",
+      "zoomLabel": "缩放 | 0.50x"
+    },
+    {
+      "id": "frontline_pressure",
+      "label": "Frontline Pressure",
+      "headline": "地图主界面 | 前线压力测试",
+      "scope": "preview_surface_frontline",
+      "districtName": "Frontline Belt",
+      "stateId": "frontline_pressure",
+      "tick": 1046,
+      "worldVersion": 50,
+      "zoom": 0.58,
+      "hoverTileId": "res_iron_01",
+      "hoverX": 10,
+      "hoverY": 5,
+      "accentColor": {
+        "r": 0.9,
+        "g": 0.38,
+        "b": 0.43,
+        "a": 1.0
+      },
+      "roleName": "前线战区",
+      "rid": "RID-0001024",
+      "tokenCount": 61,
+      "resources": [
+        {
+          "key": "grain",
+          "label": "谷",
+          "value": 17200,
+          "capacity": 30000
+        },
+        {
+          "key": "wood",
+          "label": "木",
+          "value": 12400,
+          "capacity": 26000
+        },
+        {
+          "key": "iron",
+          "label": "铁",
+          "value": 8100,
+          "capacity": 18000
+        },
+        {
+          "key": "stone",
+          "label": "石",
+          "value": 6800,
+          "capacity": 14000
+        },
+        {
+          "key": "gold",
+          "label": "钱",
+          "value": 5100
+        }
+      ],
+      "yields": [
+        {
+          "key": "wood_yield",
+          "label": "木+",
+          "value": 166
+        },
+        {
+          "key": "iron_yield",
+          "label": "铁+",
+          "value": 126
+        },
+        {
+          "key": "stone_yield",
+          "label": "石+",
+          "value": 74
+        },
+        {
+          "key": "grain_yield",
+          "label": "谷+",
+          "value": 119
+        }
+      ],
+      "statusBadges": [
+        "前线高压",
+        "医疗队列超载",
+        "补给延迟"
+      ],
+      "subheadline": "高压态下的地图壳稳定性检查",
+      "selectedCommandLabel": "聊天",
+      "commandItems": [
+        {
+          "id": "mini_map",
+          "label": "小地图",
+          "detail": "查看交战扇区与空缺点位",
+          "badge": "图",
+          "hot": true
+        },
+        {
+          "id": "union",
+          "label": "联盟",
+          "detail": "请求补防与集火支援",
+          "badge": "8",
+          "hot": true
+        },
+        {
+          "id": "favorites",
+          "label": "收藏",
+          "detail": "固定补给点与撤退线",
+          "badge": "18",
+          "hot": false
+        },
+        {
+          "id": "chat",
+          "label": "聊天",
+          "detail": "前线频道正在高频滚动",
+          "badge": "99+",
+          "hot": true
+        },
+        {
+          "id": "settings",
+          "label": "设置",
+          "detail": "镜头和提示降噪",
+          "badge": "局",
+          "hot": false
+        },
+        {
+          "id": "intel",
+          "label": "情报",
+          "detail": "高压环境下的实时摘要",
+          "badge": "HOT",
+          "hot": true
+        }
+      ],
+      "miniMap": {
+        "scopeLabel": "范围: 前线 Belt",
+        "focusLabel": "焦点: 铁矿岭 / 南侧补给线",
+        "zoomLabel": "缩放: 58%"
+      },
+      "intelSummary": [
+        "医疗和补给队列都在逼近阈值，需要保持界面可读。",
+        "右侧切到标记态，优先看风险点和撤退线。",
+        "动作坞保留建造/撤离/进入等主次按钮，验证压力下层级仍然清晰。"
+      ],
+      "headerTitle": "右侧情报栈",
+      "headerSubtitle": "切到标记视图，检查高压环境下的协同入口。",
+      "summaryLine": "部队 3 | 城池 2 | 标记 3 | 当前: 标记",
+      "compactEmbed": true,
+      "rightInfoTabs": [
+        "armies",
+        "cities",
+        "tags"
+      ],
+      "activeRightTab": "tags",
+      "aiPlayerCard": {
+        "playerName": "前线主战营",
+        "controlLabel": "AI托管",
+        "allianceName": "汉室前锋",
+        "cityName": "铁矿岭营垒",
+        "strategyLabel": "高压守线",
+        "personaLabel": "先守撤退线，再找反打窗口。",
+        "currentTaskLabel": "正面接敌与后撤路线保留",
+        "memorySummary": "医帐和粮线逼近阈值，侧翼已主动收缩。",
+        "squadSummary": "队伍 3 | 武将 8",
+        "detailButtonLabel": "查看"
+      },
+      "aiStatusOptions": [
+        {
+          "id": "executing",
+          "label": "接受执行",
+          "summary": "正在盯正面接敌和撤退线。",
+          "tone": "danger"
+        },
+        {
+          "id": "pending",
+          "label": "迟疑确认",
+          "summary": "是否继续强打仍待主公拍板。",
+          "tone": "warning"
+        },
+        {
+          "id": "adjust",
+          "label": "建议调整",
+          "summary": "建议先留撤离口，再决定是否强压。",
+          "tone": "warning"
+        },
+        {
+          "id": "report",
+          "label": "最新回报",
+          "summary": "医帐和粮线逼近阈值，侧翼已主动收缩。",
+          "tone": "info"
+        }
+      ],
+      "activeAiStatusId": "report",
+      "aiPlayerPanel": {
+        "title": "AI 玩家位",
+        "playerName": "前线主战营",
+        "controlLabel": "AI托管",
+        "allianceName": "汉室前锋",
+        "cityName": "铁矿岭营垒",
+        "squadCount": "3 支队伍",
+        "heroCount": "8 名武将",
+        "strategyLabel": "高压守线",
+        "personaLabel": "先守撤退线，再找反打窗口。",
+        "loyaltyStyleLabel": "战线优先 · 高压守线型玩家",
+        "currentTaskLabel": "正面接敌与后撤路线保留",
+        "memorySummary": "医帐和粮线逼近阈值，侧翼已主动收缩。",
+        "currentTarget": "正面接敌与后撤路线保留",
+        "recentAction": "主力继续顶线，侧翼机动队已收回到安全距离。",
+        "detailSummary": "这一路更适合稳住阵线，别把强压和追击绑成一条动作链。",
+        "detailActions": [
+          "查看队伍",
+          "查看武将",
+          "调整策略"
+        ]
+      },
+      "armyCards": [
+        {
+          "title": "前线主力",
+          "subtitle": "直接面对敌军集结区。",
+          "status": "鏖战前",
+          "statusTone": "danger",
+          "portraitId": "100021",
+          "location": "(47, 18)",
+          "metrics": [
+            "兵力 21.8K",
+            "士气 74",
+            "医帐 2"
+          ],
+          "chips": [
+            "主战",
+            "高压"
+          ],
+          "footer": "需要预留一支轮换部队。"
+        },
+        {
+          "title": "北翼护军",
+          "subtitle": "负责压住侧翼和山口。",
+          "status": "固守",
+          "statusTone": "info",
+          "portraitId": "100023",
+          "location": "(42, 09)",
+          "metrics": [
+            "兵力 10.7K",
+            "耐久 83%",
+            "箭塔 2"
+          ],
+          "chips": [
+            "侧翼",
+            "山口"
+          ],
+          "footer": "维持火力覆盖即可。"
+        },
+        {
+          "title": "机动骑队",
+          "subtitle": "随时补到突破口。",
+          "status": "待突击",
+          "statusTone": "warning",
+          "portraitId": "100027",
+          "location": "(35, 20)",
+          "metrics": [
+            "兵力 8.6K",
+            "机动 92",
+            "命令 3"
+          ],
+          "chips": [
+            "机动",
+            "反击"
+          ],
+          "footer": "等待敌军露出空档。"
+        }
+      ],
+      "cityCards": [
+        {
+          "title": "前线营垒",
+          "subtitle": "伤兵和辎重集散点。",
+          "status": "承压",
+          "statusTone": "danger",
+          "detail": "必须保持伤兵回流和补给不中断。",
+          "location": "(40, 17)",
+          "stateBlock": [
+            "耐久 62%",
+            "伤兵 1.8K",
+            "辎重 中"
+          ],
+          "chips": [
+            "战损",
+            "补给"
+          ],
+          "footer": "优先修复营垒耐久。"
+        },
+        {
+          "title": "虎牢关",
+          "subtitle": "继续承担北线防御缓冲。",
+          "status": "稳定",
+          "statusTone": "info",
+          "detail": "当前还能支撑主力战区的后撤路线。",
+          "location": "(11, 05)",
+          "stateBlock": [
+            "守军 7.2K",
+            "箭塔 3",
+            "耐久 88%"
+          ],
+          "chips": [
+            "后撤路线",
+            "关口"
+          ],
+          "footer": "仍然是后方最重要的门闸。"
+        }
+      ],
+      "tagCards": [
+        {
+          "title": "正面接敌",
+          "subtitle": "敌军前排已经压到主战线。",
+          "status": "高压",
+          "statusTone": "danger",
+          "detail": "地图主界面需要持续把这个标记放在最上层。",
+          "group": "战斗",
+          "owner": "战区指挥",
+          "priority": "高",
+          "signals": "信号 8",
+          "chips": [
+            "主战线",
+            "需支援"
+          ],
+          "footer": "用于驱动相机聚焦和底部出征动作。"
+        },
+        {
+          "title": "侧翼空窗",
+          "subtitle": "北翼出现短暂可反打窗口。",
+          "status": "机会",
+          "statusTone": "warning",
+          "detail": "机动骑队可以在 2 分钟内切入。",
+          "group": "战机",
+          "owner": "侦察司",
+          "priority": "中",
+          "signals": "信号 4",
+          "chips": [
+            "侧翼",
+            "可反击"
+          ],
+          "footer": "优先提示右侧 rail 和底部技能位。"
+        },
+        {
+          "title": "后撤路线",
+          "subtitle": "营垒到虎牢关的路线上仍可通行。",
+          "status": "可用",
+          "statusTone": "success",
+          "detail": "最坏情况下还能保证主力分段撤退。",
+          "group": "后勤",
+          "owner": "参军",
+          "priority": "中",
+          "signals": "信号 2",
+          "chips": [
+            "撤退",
+            "补给"
+          ],
+          "footer": "让地图 story 在高压态也保留恢复路径。"
+        }
+      ],
+      "contextTitle": "地块动作坞 | 铁矿岭",
+      "contextSubtitle": "围绕交战、撤离、进入与标记的高压动作坞。",
+      "primaryActions": [
+        "行军",
+        "驻守",
+        "建造"
+      ],
+      "secondaryActions": [
+        "撤离",
+        "进入",
+        "标记"
+      ],
+      "shortcutActions": [
+        "扫荡",
+        "侦查",
+        "换防"
+      ],
+      "coordinateLabel": "坐标 | X:10 Y:05",
+      "zoomLabel": "缩放 | 0.58x"
+    }
+  ]
+}

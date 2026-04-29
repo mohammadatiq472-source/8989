@@ -1,0 +1,7021 @@
+{
+  "schema": "world_cell_assets_manifest_v1",
+  "strategic_node_package": {
+    "id": "world_strategic_node_asset_pack_v1",
+    "finalized_at": "2026-04-28",
+    "scope": [
+      "player_city",
+      "ai_city",
+      "system_city",
+      "pass",
+      "fort",
+      "dock",
+      "resource"
+    ],
+    "state_semantics": {
+      "ownership_states": {
+        "neutral": {
+          "meaning": "No player or hostile faction ownership is asserted.",
+          "visual_contract": "Use the base composite without ownership tint.",
+          "geometry_policy": "Must not change anchor, footprint, fit_footprint, or source_anchor."
+        },
+        "own": {
+          "meaning": "Owned by the local player or friendly side.",
+          "visual_contract": "Friendly ownership is expressed by runtime tint/marker layers above the same asset.",
+          "geometry_policy": "Must not change anchor, footprint, fit_footprint, or source_anchor."
+        },
+        "enemy": {
+          "meaning": "Owned by an opposing side.",
+          "visual_contract": "Enemy ownership is expressed by runtime tint/marker layers above the same asset.",
+          "geometry_policy": "Must not change anchor, footprint, fit_footprint, or source_anchor."
+        }
+      },
+      "interaction_states": {
+        "selectable": {
+          "meaning": "The node can be targeted or inspected in the current interaction context.",
+          "visual_contract": "Selection/hover overlays render above the node and never replace the composite.",
+          "geometry_policy": "Must not change anchor, footprint, fit_footprint, or source_anchor."
+        },
+        "disabled": {
+          "meaning": "The node exists but is not actionable in the current interaction context.",
+          "visual_contract": "Disabled treatment is a runtime overlay or alpha modifier above the same asset.",
+          "geometry_policy": "Must not change anchor, footprint, fit_footprint, or source_anchor."
+        }
+      }
+    },
+    "naming_policy": {
+      "pass": {
+        "canonical_runtime_type": "pass",
+        "canonical_footprint_id": "pass_1x1",
+        "canonical_composite_ids": [
+          "world_node_pass_sw_v1",
+          "world_node_pass_se_v1"
+        ],
+        "display_aliases": [
+          "gate"
+        ],
+        "deprecated_ids": [
+          "world_node_gate_v1",
+          "gate_1x1"
+        ],
+        "rule": "Use pass in runtime ids, manifest ids, filenames, and tests. Gate is a display/product alias only."
+      }
+    },
+    "resource_policy": {
+      "mode": "external_resource_manifest_referenced_by_pack",
+      "resource_manifest_path": "resources/world_resource_assets_manifest_v1.json",
+      "footprint_contract_id": "resource_1x1",
+      "resource_kinds": [
+        "grain",
+        "wood",
+        "stone",
+        "iron"
+      ],
+      "resource_levels": [
+        "base",
+        "l01",
+        "l02",
+        "l03",
+        "l04",
+        "l05",
+        "l06",
+        "l07",
+        "l08",
+        "l09"
+      ],
+      "rule": "Resource land remains authored by the resource manifest and is included in this strategic package by reference, not duplicated as world_node_resource_* composites."
+    },
+    "geometry_invariants": {
+      "source_canvas": [
+        384,
+        384
+      ],
+      "projection": "isometric_2_to_1",
+      "anchor_rule": "bottom_center",
+      "runtime_tile_size": [
+        200,
+        100
+      ],
+      "strategic_node_fit_footprint": [
+        320,
+        160
+      ],
+      "default_building_fit_footprint": [
+        240,
+        120
+      ]
+    }
+  },
+  "source_canvas": [
+    384,
+    384
+  ],
+  "projection": {
+    "type": "isometric_2_to_1",
+    "runtime_tile_width": 200,
+    "runtime_tile_height": 100,
+    "anchor_rule": "bottom_center"
+  },
+  "defaults": {
+    "fit_footprint": [
+      240,
+      120
+    ],
+    "source_anchor": [
+      192,
+      300
+    ],
+    "anchor_rule": "bottom_center"
+  },
+  "frames": {
+    "academy_base_v1.png": {
+      "file": "academy_base_v1.png",
+      "svg": "academy_base_v1.svg",
+      "source": "Academy.tsx",
+      "asset_id": "Academy_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        290
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -230 384 384"
+    },
+    "armory_base_v1.png": {
+      "file": "armory_base_v1.png",
+      "svg": "armory_base_v1.svg",
+      "source": "Armory.tsx",
+      "asset_id": "Armory_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        300
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -240 384 384"
+    },
+    "barracks_base_v1.png": {
+      "file": "barracks_base_v1.png",
+      "svg": "barracks_base_v1.svg",
+      "source": "Barracks.tsx",
+      "asset_id": "Barracks_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        270
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -210 384 384"
+    },
+    "city_gate_base_v1.png": {
+      "file": "city_gate_base_v1.png",
+      "svg": "city_gate_base_v1.svg",
+      "source": "CityGate.tsx",
+      "asset_id": "CityGate_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        304
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -244 384 384"
+    },
+    "city_hall_base_v1.png": {
+      "file": "city_hall_base_v1.png",
+      "svg": "city_hall_base_v1.svg",
+      "source": "CityLordMansion.tsx",
+      "asset_id": "CityHall_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        320
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -260 384 384"
+    },
+    "city_wall_segment_base_v1.png": {
+      "file": "city_wall_segment_base_v1.png",
+      "svg": "city_wall_segment_base_v1.svg",
+      "source": "CityWallSegment.tsx",
+      "asset_id": "CityWallSegment_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        300
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -240 384 384"
+    },
+    "construction_plot_base_v1.png": {
+      "file": "construction_plot_base_v1.png",
+      "svg": "construction_plot_base_v1.svg",
+      "source": "ConstructionPlot.tsx",
+      "asset_id": "ConstructionPlot_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        280
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -220 384 384"
+    },
+    "corner_watchtower_base_v1.png": {
+      "file": "corner_watchtower_base_v1.png",
+      "svg": "corner_watchtower_base_v1.svg",
+      "source": "CornerWatchtower.tsx",
+      "asset_id": "CornerWatchtower_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        316
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -256 384 384"
+    },
+    "dock_base_v1.png": {
+      "file": "dock_base_v1.png",
+      "svg": "dock_base_v1.svg",
+      "source": "Dock.tsx",
+      "asset_id": "Dock_Base_v1",
+      "role": "dock",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "0 0 384 384"
+    },
+    "drill_ground_base_v1.png": {
+      "file": "drill_ground_base_v1.png",
+      "svg": "drill_ground_base_v1.svg",
+      "source": "DrillGround.tsx",
+      "asset_id": "DrillGround_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        240
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -180 384 384"
+    },
+    "fort_base_v1.png": {
+      "file": "fort_base_v1.png",
+      "svg": "fort_base_v1.svg",
+      "source": "Fort.tsx",
+      "asset_id": "Fort_Base_v1",
+      "role": "fort",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "0 0 384 384"
+    },
+    "granary_base_v1.png": {
+      "file": "granary_base_v1.png",
+      "svg": "granary_base_v1.svg",
+      "source": "Granary.tsx",
+      "asset_id": "Granary_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        290
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -230 384 384"
+    },
+    "infirmary_base_v1.png": {
+      "file": "infirmary_base_v1.png",
+      "svg": "infirmary_base_v1.svg",
+      "source": "Infirmary.tsx",
+      "asset_id": "Infirmary_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        280
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -220 384 384"
+    },
+    "market_base_v1.png": {
+      "file": "market_base_v1.png",
+      "svg": "market_base_v1.svg",
+      "source": "Market.tsx",
+      "asset_id": "Market_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        270
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -210 384 384"
+    },
+    "pass_sw_base_v1.png": {
+      "file": "pass_sw_base_v1.png",
+      "svg": "pass_sw_base_v1.svg",
+      "source": "Pass.tsx",
+      "asset_id": "Pass_SW_Base_v1",
+      "role": "pass",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "0 0 384 384"
+    },
+    "pass_se_base_v1.png": {
+      "file": "pass_se_base_v1.png",
+      "svg": "pass_se_base_v1.svg",
+      "source": "Pass.tsx",
+      "asset_id": "Pass_SE_Base_v1",
+      "role": "pass",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "0 0 384 384"
+    },
+    "recruit_hall_base_v1.png": {
+      "file": "recruit_hall_base_v1.png",
+      "svg": "recruit_hall_base_v1.svg",
+      "source": "RecruitHall.tsx",
+      "asset_id": "RecruitHall_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        280
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -220 384 384"
+    },
+    "residence_base_v1.png": {
+      "file": "residence_base_v1.png",
+      "svg": "residence_base_v1.svg",
+      "source": "Residence.tsx",
+      "asset_id": "Residence_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        270
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -210 384 384"
+    },
+    "stable_base_v1.png": {
+      "file": "stable_base_v1.png",
+      "svg": "stable_base_v1.svg",
+      "source": "Stable.tsx",
+      "asset_id": "Stable_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        280
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -220 384 384"
+    },
+    "warehouse_base_v1.png": {
+      "file": "warehouse_base_v1.png",
+      "svg": "warehouse_base_v1.svg",
+      "source": "Warehouse.tsx",
+      "asset_id": "Warehouse_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        295
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -235 384 384"
+    },
+    "workshop_base_v1.png": {
+      "file": "workshop_base_v1.png",
+      "svg": "workshop_base_v1.svg",
+      "source": "Workshop.tsx",
+      "asset_id": "Workshop_Base_v1",
+      "role": "building",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        240,
+        120
+      ],
+      "visual_fit_scale": 1,
+      "source_anchor": [
+        192,
+        290
+      ],
+      "anchor_rule": "bottom_center",
+      "view_box": "-192 -230 384 384"
+    },
+    "world_cell_city_ground_base_v1.png": {
+      "file": "world_cell_city_ground_base_v1.png",
+      "svg": "world_cell_city_ground_base_v1.svg",
+      "source": "generated world cell frame",
+      "asset_id": "world_cell_city_ground_base_v1",
+      "role": "city_ground_cell",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "world_cell_node_ground_base_v1.png": {
+      "file": "world_cell_node_ground_base_v1.png",
+      "svg": "world_cell_node_ground_base_v1.svg",
+      "source": "generated world cell frame",
+      "asset_id": "world_cell_node_ground_base_v1",
+      "role": "node_ground_cell",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "world_cell_city_wall_top_v1.png": {
+      "file": "world_cell_city_wall_top_v1.png",
+      "svg": "world_cell_city_wall_top_v1.svg",
+      "source": "generated world cell frame",
+      "asset_id": "world_cell_city_wall_top_v1",
+      "role": "city_wall_edge",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "world_cell_city_wall_bottom_v1.png": {
+      "file": "world_cell_city_wall_bottom_v1.png",
+      "svg": "world_cell_city_wall_bottom_v1.svg",
+      "source": "generated world cell frame",
+      "asset_id": "world_cell_city_wall_bottom_v1",
+      "role": "city_wall_edge",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "world_cell_city_wall_left_v1.png": {
+      "file": "world_cell_city_wall_left_v1.png",
+      "svg": "world_cell_city_wall_left_v1.svg",
+      "source": "generated world cell frame",
+      "asset_id": "world_cell_city_wall_left_v1",
+      "role": "city_wall_edge",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "world_cell_city_wall_right_v1.png": {
+      "file": "world_cell_city_wall_right_v1.png",
+      "svg": "world_cell_city_wall_right_v1.svg",
+      "source": "generated world cell frame",
+      "asset_id": "world_cell_city_wall_right_v1",
+      "role": "city_wall_edge",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "main_city_foundation_base_v1.png": {
+      "file": "main_city_foundation_base_v1.png",
+      "role": "foundation",
+      "source": "existing raster asset",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    },
+    "city_wall_ring_profile_v1.png": {
+      "file": "city_wall_ring_profile_v1.png",
+      "role": "city_wall",
+      "source": "existing raster asset",
+      "canvas": [
+        384,
+        384
+      ],
+      "fit_footprint": [
+        320,
+        160
+      ],
+      "source_anchor": [
+        192,
+        288
+      ],
+      "anchor_rule": "bottom_center"
+    }
+  },
+  "composites": {
+    "world_node_city_v1": {
+      "role": "city",
+      "footprint_contract_id": "player_city_3x3_initial",
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "render_mode": "layered_city",
+      "payload_stage_max": 1,
+      "layers": [
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.72,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "perimeter"
+        }
+      ],
+      "payload_slots": [
+        {
+          "slot_id": "slot_-1_-1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_0",
+          "slot_role": "hall",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "city_hall_base_v1.png",
+          "alpha": 1,
+          "scale": 0.74,
+          "offset": [
+            0,
+            -4
+          ]
+        },
+        {
+          "slot_id": "slot_1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "player_city",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "own",
+      "supported_ownership_states": [
+        "own"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_capital_v1": {
+      "role": "capital",
+      "footprint_contract_id": "ai_city_3x3_initial",
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "render_mode": "layered_city",
+      "payload_stage_max": 1,
+      "layers": [
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            0,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.98,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "perimeter"
+        }
+      ],
+      "payload_slots": [
+        {
+          "slot_id": "slot_-1_-1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_0",
+          "slot_role": "hall",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "city_hall_base_v1.png",
+          "alpha": 1,
+          "scale": 0.78,
+          "offset": [
+            0,
+            -5
+          ]
+        },
+        {
+          "slot_id": "slot_1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "ai_city",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "enemy",
+      "supported_ownership_states": [
+        "enemy",
+        "neutral"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_system_city_3x3_v1": {
+      "role": "system_city",
+      "footprint_contract_id": "system_city_l03_l04_3x3",
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "render_mode": "layered_city",
+      "payload_stage_max": 1,
+      "layers": [
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            0,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.97,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.74,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "perimeter"
+        }
+      ],
+      "payload_slots": [
+        {
+          "slot_id": "slot_-1_-1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_0",
+          "slot_role": "hall",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "city_hall_base_v1.png",
+          "alpha": 1,
+          "scale": 0.76,
+          "offset": [
+            0,
+            -5
+          ]
+        },
+        {
+          "slot_id": "slot_1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.34,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_1",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.35000000000000003,
+          "offset": [
+            0,
+            -8
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_system_city_5x5_v1": {
+      "role": "system_city",
+      "footprint_contract_id": "system_city_l05_l06_5x5",
+      "footprint_tiles": [
+        5,
+        5
+      ],
+      "render_mode": "layered_city",
+      "payload_stage_max": 2,
+      "layers": [
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            300,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            400,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            300,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -300,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -400,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -300,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            0,
+            -200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -400,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            100,
+            -150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -300,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            200,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -200,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            300,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -100,
+            150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            400,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            0,
+            200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            0,
+            -200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            400,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -100,
+            -150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            300,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -200,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            200,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -300,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            100,
+            150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            -400,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.76,
+          "scale": 1,
+          "offset": [
+            0,
+            200
+          ],
+          "layer_role": "perimeter"
+        }
+      ],
+      "payload_slots": [
+        {
+          "slot_id": "slot_-2_-2",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -2,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.33,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-2",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            2,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.33,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -1
+          ],
+          "activation_stage": 2,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "market_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -1
+          ],
+          "activation_stage": 2,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            0
+          ],
+          "activation_stage": 2,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_0",
+          "slot_role": "hall",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "city_hall_base_v1.png",
+          "alpha": 1,
+          "scale": 0.78,
+          "offset": [
+            0,
+            -5
+          ]
+        },
+        {
+          "slot_id": "slot_1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_0",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            0
+          ],
+          "activation_stage": 2,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            1
+          ],
+          "activation_stage": 2,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_1",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_1",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            1
+          ],
+          "activation_stage": 2,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_2",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -2,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.33,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_2",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "market_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_2",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.86,
+          "scale": 0.32,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_2",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            2,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.33,
+          "offset": [
+            0,
+            -8
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_system_city_7x7_v1": {
+      "role": "system_city",
+      "footprint_contract_id": "system_city_l07_l08_7x7",
+      "footprint_tiles": [
+        7,
+        7
+      ],
+      "render_mode": "layered_city",
+      "payload_stage_max": 3,
+      "layers": [
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            -300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            -250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            300,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            400,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            500,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            600,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            -250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            300,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            400,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            500,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            300,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            400,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -300,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            300,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -400,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -300,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            200,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -500,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -400,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -300,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            100,
+            250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -600,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -500,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -400,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -300,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -200,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            -100,
+            250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.96,
+          "scale": 1,
+          "offset": [
+            0,
+            300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            -300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -600,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            100,
+            -250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -500,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            200,
+            -200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -400,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            300,
+            -150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -300,
+            150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            400,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -200,
+            200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            500,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -100,
+            250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            600,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            -300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            600,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -100,
+            -250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            500,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -200,
+            -200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            400,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -300,
+            -150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            300,
+            150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -400,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            200,
+            200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -500,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            100,
+            250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            -600,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.78,
+          "scale": 1,
+          "offset": [
+            0,
+            300
+          ],
+          "layer_role": "perimeter"
+        }
+      ],
+      "payload_slots": [
+        {
+          "slot_id": "slot_-3_-3",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -3,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.31,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-3",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            3,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.31,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            -2
+          ],
+          "activation_stage": 3,
+          "frame": "market_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            -2
+          ],
+          "activation_stage": 3,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            -1
+          ],
+          "activation_stage": 3,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -1
+          ],
+          "activation_stage": 2,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -1
+          ],
+          "activation_stage": 2,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            -1
+          ],
+          "activation_stage": 3,
+          "frame": "market_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            0
+          ],
+          "activation_stage": 3,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            0
+          ],
+          "activation_stage": 2,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_0",
+          "slot_role": "hall",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "city_hall_base_v1.png",
+          "alpha": 1,
+          "scale": 0.8,
+          "offset": [
+            0,
+            -6
+          ]
+        },
+        {
+          "slot_id": "slot_1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_0",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            0
+          ],
+          "activation_stage": 2,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_0",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            0
+          ],
+          "activation_stage": 3,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            1
+          ],
+          "activation_stage": 3,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            1
+          ],
+          "activation_stage": 2,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_1",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_1",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            1
+          ],
+          "activation_stage": 2,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_1",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            1
+          ],
+          "activation_stage": 3,
+          "frame": "market_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            2
+          ],
+          "activation_stage": 3,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_2",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_2",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_2",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_2",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            2
+          ],
+          "activation_stage": 3,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_3",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -3,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.31,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_3",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_3",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_3",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_3",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_3",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.83,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_3",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            3,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.31,
+          "offset": [
+            0,
+            -8
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_system_city_9x9_v1": {
+      "role": "system_city",
+      "footprint_contract_id": "system_city_l09_9x9",
+      "footprint_tiles": [
+        9,
+        9
+      ],
+      "render_mode": "layered_city",
+      "payload_stage_max": 4,
+      "layers": [
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            -400
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            -350
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            -300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            300,
+            -250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            400,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            500,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            600,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            700,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            800,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            -350
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            -300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            -250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            300,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            400,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            500,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            600,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            700,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            -300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            -250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            300,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            400,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            500,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            600,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -300,
+            -250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            300,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            400,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            500,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -400,
+            -200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -300,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            300,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            400,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -500,
+            -150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -400,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -300,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            300,
+            250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -600,
+            -100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -500,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -400,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -300,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            200,
+            300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -700,
+            -50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -600,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -500,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -400,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -300,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            100,
+            350
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -800,
+            0
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -700,
+            50
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -600,
+            100
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -500,
+            150
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -400,
+            200
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -300,
+            250
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -200,
+            300
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            -100,
+            350
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_ground_base_v1.png",
+          "alpha": 0.95,
+          "scale": 1,
+          "offset": [
+            0,
+            400
+          ],
+          "layer_role": "base"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            0,
+            -400
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -800,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            100,
+            -350
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -700,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            200,
+            -300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -600,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            300,
+            -250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -500,
+            150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            400,
+            -200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -400,
+            200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            500,
+            -150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -300,
+            250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            600,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -200,
+            300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            700,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -100,
+            350
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_top_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            800,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_bottom_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            0,
+            400
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            0,
+            -400
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            800,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -100,
+            -350
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            700,
+            50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -200,
+            -300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            600,
+            100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -300,
+            -250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            500,
+            150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -400,
+            -200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            400,
+            200
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -500,
+            -150
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            300,
+            250
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -600,
+            -100
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            200,
+            300
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -700,
+            -50
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            100,
+            350
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_left_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            -800,
+            0
+          ],
+          "layer_role": "perimeter"
+        },
+        {
+          "frame": "world_cell_city_wall_right_v1.png",
+          "alpha": 0.8,
+          "scale": 1,
+          "offset": [
+            0,
+            400
+          ],
+          "layer_role": "perimeter"
+        }
+      ],
+      "payload_slots": [
+        {
+          "slot_id": "slot_-4_-4",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -4,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "market_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-4",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_-4",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            4,
+            -4
+          ],
+          "activation_stage": 4,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            -3
+          ],
+          "activation_stage": 4,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            -3
+          ],
+          "activation_stage": 3,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_-3",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            -3
+          ],
+          "activation_stage": 4,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            -2
+          ],
+          "activation_stage": 4,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            -2
+          ],
+          "activation_stage": 3,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "market_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -2
+          ],
+          "activation_stage": 2,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            -2
+          ],
+          "activation_stage": 3,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_-2",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            -2
+          ],
+          "activation_stage": 4,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            -1
+          ],
+          "activation_stage": 4,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            -1
+          ],
+          "activation_stage": 3,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            -1
+          ],
+          "activation_stage": 2,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            -1
+          ],
+          "activation_stage": 1,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            -1
+          ],
+          "activation_stage": 2,
+          "frame": "market_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            -1
+          ],
+          "activation_stage": 3,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_-1",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            -1
+          ],
+          "activation_stage": 4,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            0
+          ],
+          "activation_stage": 4,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            0
+          ],
+          "activation_stage": 3,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            0
+          ],
+          "activation_stage": 2,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_0",
+          "slot_role": "hall",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "city_hall_base_v1.png",
+          "alpha": 1,
+          "scale": 0.82,
+          "offset": [
+            0,
+            -6
+          ]
+        },
+        {
+          "slot_id": "slot_1_0",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            0
+          ],
+          "activation_stage": 1,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_0",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            0
+          ],
+          "activation_stage": 2,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_0",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            0
+          ],
+          "activation_stage": 3,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_0",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            0
+          ],
+          "activation_stage": 4,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            1
+          ],
+          "activation_stage": 4,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            1
+          ],
+          "activation_stage": 3,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            1
+          ],
+          "activation_stage": 2,
+          "frame": "market_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_1",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_1",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_1",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            1
+          ],
+          "activation_stage": 1,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_1",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            1
+          ],
+          "activation_stage": 2,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_1",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            1
+          ],
+          "activation_stage": 3,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_1",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            1
+          ],
+          "activation_stage": 4,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            2
+          ],
+          "activation_stage": 4,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            2
+          ],
+          "activation_stage": 3,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_2",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_2",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_2",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_2",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            2
+          ],
+          "activation_stage": 2,
+          "frame": "market_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_2",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            2
+          ],
+          "activation_stage": 3,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_2",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            2
+          ],
+          "activation_stage": 4,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_3",
+          "slot_role": "building",
+          "cell_offset": [
+            -4,
+            3
+          ],
+          "activation_stage": 4,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_3",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_3",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_3",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "recruit_hall_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_3",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "construction_plot_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_3",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "academy_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_3",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "barracks_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_3",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            3
+          ],
+          "activation_stage": 3,
+          "frame": "granary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_3",
+          "slot_role": "building",
+          "cell_offset": [
+            4,
+            3
+          ],
+          "activation_stage": 4,
+          "frame": "warehouse_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-4_4",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            -4,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-3_4",
+          "slot_role": "building",
+          "cell_offset": [
+            -3,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "drill_ground_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-2_4",
+          "slot_role": "building",
+          "cell_offset": [
+            -2,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "market_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_-1_4",
+          "slot_role": "building",
+          "cell_offset": [
+            -1,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "residence_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_0_4",
+          "slot_role": "building",
+          "cell_offset": [
+            0,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "stable_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_1_4",
+          "slot_role": "building",
+          "cell_offset": [
+            1,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "workshop_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_2_4",
+          "slot_role": "building",
+          "cell_offset": [
+            2,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "armory_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_3_4",
+          "slot_role": "building",
+          "cell_offset": [
+            3,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "infirmary_base_v1.png",
+          "alpha": 0.81,
+          "scale": 0.29,
+          "offset": [
+            0,
+            -8
+          ]
+        },
+        {
+          "slot_id": "slot_4_4",
+          "slot_role": "watchtower",
+          "cell_offset": [
+            4,
+            4
+          ],
+          "activation_stage": 4,
+          "frame": "corner_watchtower_base_v1.png",
+          "alpha": 0.9,
+          "scale": 0.3,
+          "offset": [
+            0,
+            -8
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_pass_sw_v1": {
+      "role": "pass",
+      "footprint_contract_id": "pass_1x1",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "render_mode": "payload_node",
+      "layers": [],
+      "payload_stage_max": 0,
+      "payload_slots": [
+        {
+          "slot_id": "pass_anchor",
+          "slot_role": "structure",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "pass_sw_base_v1.png",
+          "alpha": 1,
+          "scale": 0.86,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "pass",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": "strategic_node_package.naming_policy.pass",
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_pass_se_v1": {
+      "role": "pass",
+      "footprint_contract_id": "pass_1x1",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "render_mode": "payload_node",
+      "layers": [],
+      "payload_stage_max": 0,
+      "payload_slots": [
+        {
+          "slot_id": "pass_anchor",
+          "slot_role": "structure",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "pass_se_base_v1.png",
+          "alpha": 1,
+          "scale": 0.86,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "pass",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": "strategic_node_package.naming_policy.pass",
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_fort_v1": {
+      "role": "fort",
+      "footprint_contract_id": "fort_1x1",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "render_mode": "payload_node",
+      "layers": [],
+      "payload_stage_max": 0,
+      "payload_slots": [
+        {
+          "slot_id": "fort_anchor",
+          "slot_role": "structure",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "fort_base_v1.png",
+          "alpha": 1,
+          "scale": 0.86,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "fort",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "world_node_dock_v1": {
+      "role": "dock",
+      "footprint_contract_id": "dock_1x1",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "render_mode": "payload_node",
+      "layers": [],
+      "payload_stage_max": 0,
+      "payload_slots": [
+        {
+          "slot_id": "dock_anchor",
+          "slot_role": "structure",
+          "cell_offset": [
+            0,
+            0
+          ],
+          "activation_stage": 0,
+          "frame": "dock_base_v1.png",
+          "alpha": 1,
+          "scale": 0.86,
+          "offset": [
+            0,
+            0
+          ]
+        }
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "dock",
+      "state_semantics_ref": "strategic_node_package.state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    }
+  }
+}

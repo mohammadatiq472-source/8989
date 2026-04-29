@@ -1,0 +1,274 @@
+import assert from 'node:assert/strict'
+import {
+  buildSessionPersistPath,
+  getAvailablePort,
+  readArray,
+  readObject,
+  requestJson,
+  shutdownChild,
+  spawnBackend,
+  type TailState,
+  waitForHealth,
+} from './helpers/backendHarness'
+
+const EXECUTABLE_ACTIONS: Record<string, string> = {
+  city_upgrade: 'upgradeCity',
+  building_upgrade: 'promoteCityBuilding',
+  queue_fill_idle_slot: 'enqueueAffair',
+  research_start: 'upgradeCityTech',
+  troop_train: 'deployReserveHero',
+  troop_heal: 'healTroop',
+  recruit_pool_select: 'setRecruitSelectedPool',
+  recruit_commander: 'recruitProspectHero',
+  world_scout: 'queuePlanExecution',
+  march_move: 'moveUnit',
+  garrison_set: 'queueTacticalOverride',
+  resource_gather: 'gatherAiResourceTile',
+  tile_occupy: 'occupyTile',
+  troop_facility_upgrade: 'promoteTroopFacilityBuilding',
+  general_focus_set: 'setGeneralActiveHero',
+  formation_assign: 'setGeneralTactic',
+  threat_escape: 'queueAiAgendaAction',
+  alliance_help: 'allianceHelp',
+  resource_transfer_to_governor: 'transferFactionResourcesToGovernor',
+  reward_claim: 'claimReward',
+}
+
+const ACTION_WHITELIST = [...Object.keys(EXECUTABLE_ACTIONS), 'battle_report_read']
+
+const INVALID_PROPOSAL_CASES: Array<{
+  action: string
+  args: Record<string, unknown>
+  message: string
+}> = [
+  { action: 'research_start', args: { techId: 'invalid_track' }, message: 'research_start rejects unsupported techId' },
+  { action: 'building_upgrade', args: { groupId: 'invalid_group' }, message: 'building_upgrade rejects unsupported groupId' },
+  { action: 'queue_fill_idle_slot', args: { groupId: 'invalid_group' }, message: 'queue_fill_idle_slot rejects unsupported groupId' },
+  { action: 'march_move', args: { unitId: 123, targetTileId: 'tile_01' }, message: 'march_move rejects non-string unitId' },
+  { action: 'world_scout', args: { targetTileId: 123 }, message: 'world_scout rejects non-string targetTileId' },
+  { action: 'resource_gather', args: { unitId: 123, tileId: 'tile_01' }, message: 'resource_gather rejects non-string unitId' },
+  { action: 'tile_occupy', args: { unitId: 123, tileId: 'tile_01' }, message: 'tile_occupy rejects non-string unitId' },
+  { action: 'troop_heal', args: { unitId: 123 }, message: 'troop_heal rejects non-string unitId' },
+  { action: 'troop_train', args: { heroId: 123 }, message: 'troop_train rejects non-string heroId' },
+  {
+    action: 'troop_facility_upgrade',
+    args: { buildingId: 'invalid_building' },
+    message: 'troop_facility_upgrade rejects unsupported buildingId',
+  },
+  {
+    action: 'recruit_pool_select',
+    args: { poolId: 'invalid_pool' },
+    message: 'recruit_pool_select rejects unsupported poolId',
+  },
+  { action: 'recruit_commander', args: { count: 0 }, message: 'recruit_commander rejects out-of-range count' },
+  { action: 'garrison_set', args: { summary: 123 }, message: 'garrison_set rejects non-string summary' },
+  { action: 'general_focus_set', args: { heroId: 123 }, message: 'general_focus_set rejects non-string heroId' },
+  { action: 'formation_assign', args: { tacticId: 'invalid_tactic' }, message: 'formation_assign rejects tacticId' },
+  { action: 'threat_escape', args: { mode: 'invalid_mode' }, message: 'threat_escape rejects unsupported mode' },
+  { action: 'alliance_help', args: { regionId: 123 }, message: 'alliance_help rejects non-string regionId' },
+  {
+    action: 'resource_transfer_to_governor',
+    args: { resources: { food: 0 } },
+    message: 'resource_transfer_to_governor rejects non-positive resources',
+  },
+  { action: 'reward_claim', args: { rewardId: 123 }, message: 'reward_claim rejects non-string rewardId' },
+  { action: 'battle_report_read', args: { unexpected: 'field' }, message: 'empty-args actions reject stray args' },
+]
+
+async function run() {
+  const port = await getAvailablePort()
+  const baseUrl = `http://127.0.0.1:${port}`
+  const tail: TailState = { stdout: [], stderr: [] }
+  const aiPlayerPersistPath = buildSessionPersistPath('ai_player_http_core_governance_state')
+  const child = spawnBackend(port, tail, {
+    AI_PLAYER_GOVERNANCE_STATE_PATH: aiPlayerPersistPath,
+    SESSION_STATE_PERSIST_PATH: buildSessionPersistPath('ai_player_http_core_session_state'),
+    AI_PLAYER_RUNTIME_MODEL: '',
+    AI_PLAYER_RUNTIME_MODEL_BASE_URL: '',
+    AI_PLAYER_RUNTIME_MODEL_API_KEY: '',
+    LLM_RELAY_MODEL: '',
+    LLM_RELAY_URL: '',
+    LLM_RELAY_API_KEY: '',
+    LLM_RELAY_API_KEYS: '',
+    OPENAI_API_KEY: '',
+  })
+
+  try {
+    const health = await waitForHealth(baseUrl)
+    assert.ok(health, `backend did not become healthy\nstdout=${tail.stdout.join('\n')}\nstderr=${tail.stderr.join('\n')}`)
+    const healthPayload = readObject(health.data)
+    const persistence = readObject(healthPayload.persistence)
+    assert.equal(readObject(persistence.aiPlayerGovernance).enabled, true, 'health should expose AI player persistence')
+
+    const join = await requestJson(baseUrl, '/api/session/join', 'POST', {
+      factionId: 'player',
+      playerName: 'human_alpha',
+    })
+    assert.equal(join.status, 200, `session join failed: ${JSON.stringify(join.data)}`)
+
+    const catalog = await requestJson(baseUrl, '/api/ai/player-actions/catalog', 'GET')
+    assert.equal(catalog.status, 200, `catalog route failed: ${JSON.stringify(catalog.data)}`)
+    const catalogByAction = new Map(
+      readArray(readObject(catalog.data).catalog).map((item) => {
+        const entry = readObject(item)
+        return [String(entry.action), entry] as const
+      }),
+    )
+    for (const [action, worldAction] of Object.entries(EXECUTABLE_ACTIONS)) {
+      const entry = catalogByAction.get(action)
+      assert.ok(entry, `${action} should exist in AI player action catalog`)
+      assert.equal(entry.executableInV1, true, `${action} should be executable in v1`)
+      assert.equal(entry.mappedWorldAction, worldAction, `${action} should map to ${worldAction}`)
+    }
+
+    const registerAlpha = await requestJson(baseUrl, '/api/ai/players', 'POST', {
+      aiPlayerId: 'player_operator_alpha',
+      displayName: 'Player Operator Alpha',
+      governorPlayerId: 'human_alpha',
+      factionId: 'player',
+      actionWhitelist: ACTION_WHITELIST,
+    })
+    assert.equal(registerAlpha.status, 200, `register alpha failed: ${JSON.stringify(registerAlpha.data)}`)
+
+    const listPlayers = await requestJson(baseUrl, '/api/ai/players?governorPlayerId=human_alpha', 'GET')
+    assert.equal(listPlayers.status, 200, `list players failed: ${JSON.stringify(listPlayers.data)}`)
+    const players = readArray(readObject(listPlayers.data).items)
+    const playerAlphaRuntime = players.map((item) => readObject(item)).find((item) => item.aiPlayerId === 'player_operator_alpha')
+    assert.ok(playerAlphaRuntime, 'runtime list should include alpha AI player')
+    assert.equal(playerAlphaRuntime.autonomyLevel, 'L1_assigned', 'runtime should reflect SessionManager authority')
+    assert.equal(playerAlphaRuntime.controlMode, 'human_assigned', 'runtime should derive control mode from session authority')
+    assert.equal(playerAlphaRuntime.governorOnline, true, 'runtime should detect online governor through session roster')
+    assert.equal(playerAlphaRuntime.modelName, 'claude-sonnet-4-6')
+    assert.equal(playerAlphaRuntime.modelSource, 'default')
+    const playerAlphaModelStatus = readObject(playerAlphaRuntime.modelStatus)
+    assert.equal(playerAlphaModelStatus.activeModel, 'claude-sonnet-4-6')
+    assert.equal(playerAlphaModelStatus.activeProvider, 'xiamiapi.xyz')
+    assert.equal(playerAlphaModelStatus.source, 'default')
+    assert.equal(playerAlphaModelStatus.strictJsonOnlyCapable, true)
+    assert.equal(playerAlphaModelStatus.budgetTier, 'strict_action')
+    assert.equal(playerAlphaModelStatus.fallbackEnabled, false)
+    assert.equal(playerAlphaModelStatus.fallbackModel, null)
+    assert.equal(playerAlphaModelStatus.secretConfigured, false)
+    assert.equal(playerAlphaModelStatus.secretSource, null)
+    assert.equal('apiKeys' in playerAlphaModelStatus, false, 'runtime modelStatus must not expose raw apiKeys')
+
+    const runtimeBeforeProposal = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha', 'GET')
+    assert.equal(runtimeBeforeProposal.status, 200, 'get ai player runtime should return 200')
+    const runtimeBeforeProposalPayload = readObject(runtimeBeforeProposal.data)
+    assert.equal(readObject(runtimeBeforeProposalPayload.observability).factionId, 'player')
+    assert.equal(readObject(runtimeBeforeProposalPayload.persistence).path, aiPlayerPersistPath)
+    assert.deepEqual(
+      readObject(runtimeBeforeProposalPayload.modelStatus),
+      playerAlphaModelStatus,
+      'runtime detail should expose the same modelStatus read-model as list',
+    )
+
+    const renameAlpha = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha/profile', 'POST', {
+      displayName: '青州 AI 参谋',
+      avatarId: 'cai_wenji_fate_frontier_qin_v1',
+      avatarImagePath: 'res://assets/portraits/ai_chat/cai_wenji_fate_frontier_qin_v1_avatar_160.png',
+      updatedBy: 'human_alpha',
+    })
+    assert.equal(renameAlpha.status, 200, `rename alpha failed: ${JSON.stringify(renameAlpha.data)}`)
+    const renamedAlphaPlayer = readObject(readObject(renameAlpha.data).player)
+    assert.equal(renamedAlphaPlayer.displayName, '青州 AI 参谋')
+    assert.equal(renamedAlphaPlayer.avatarId, 'cai_wenji_fate_frontier_qin_v1')
+    assert.equal(renamedAlphaPlayer.avatarImagePath, 'res://assets/portraits/ai_chat/cai_wenji_fate_frontier_qin_v1_avatar_160.png')
+
+    const avatarOnlyUpdate = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha/profile', 'POST', {
+      avatarId: 'cao_cao_fate_v1',
+      avatarImagePath: 'res://assets/portraits/ai_chat/cao_cao_fate_v1_avatar_160.png',
+      updatedBy: 'human_alpha',
+    })
+    assert.equal(avatarOnlyUpdate.status, 200, `avatar profile update failed: ${JSON.stringify(avatarOnlyUpdate.data)}`)
+    const avatarOnlyPlayer = readObject(readObject(avatarOnlyUpdate.data).player)
+    assert.equal(avatarOnlyPlayer.displayName, '青州 AI 参谋')
+    assert.equal(avatarOnlyPlayer.avatarId, 'cao_cao_fate_v1')
+    assert.equal(avatarOnlyPlayer.avatarImagePath, 'res://assets/portraits/ai_chat/cao_cao_fate_v1_avatar_160.png')
+
+    const contextDocument = await requestJson(baseUrl, '/api/ai/players/player_operator_alpha/context-documents', 'POST', {
+      kind: 'skill',
+      title: '青州后勤官 SKLL',
+      content: '身份：后勤 AI。规则：只生成 proposal，移动、采集、征兵都等待后端回执。',
+      sourceFileName: 'qingzhou-logistics.skll',
+      updatedBy: 'human_alpha',
+    })
+    assert.equal(contextDocument.status, 200, `context document upsert failed: ${JSON.stringify(contextDocument.data)}`)
+    const contextDocumentPayload = readObject(contextDocument.data)
+    assert.equal(readObject(contextDocumentPayload.document).kind, 'skill')
+    const playerWithContext = readObject(contextDocumentPayload.player)
+    const contextDocuments = readArray(playerWithContext.contextDocuments)
+    assert.equal(contextDocuments.length, 1)
+    assert.equal(readObject(contextDocuments[0]).title, '青州后勤官 SKLL')
+
+    for (const testCase of INVALID_PROPOSAL_CASES) {
+      const invalidProposal = await requestJson(baseUrl, '/api/ai/players/proposals', 'POST', {
+        aiPlayerId: 'player_operator_alpha',
+        action: testCase.action,
+        source: 'mcp',
+        reason: `Core contract validation: ${testCase.message}`,
+        args: testCase.args,
+      })
+      assert.equal(invalidProposal.status, 422, testCase.message)
+    }
+
+    const nonExecutableProposal = await requestJson(baseUrl, '/api/ai/players/proposals', 'POST', {
+      aiPlayerId: 'player_operator_alpha',
+      action: 'battle_report_read',
+      source: 'mcp',
+      reason: 'Core contract validation: non-executable catalog actions should not create proposals',
+      args: {},
+    })
+    assert.equal(nonExecutableProposal.status, 400, 'non-executable catalog actions should be rejected at proposal creation')
+    assert.match(
+      String(readObject(nonExecutableProposal.data).error),
+      /not executable in v1/,
+      'non-executable proposal rejection should explain the v1 execution boundary',
+    )
+
+    const createProposal = await requestJson(baseUrl, '/api/ai/players/proposals', 'POST', {
+      aiPlayerId: 'player_operator_alpha',
+      action: 'recruit_pool_select',
+      source: 'mcp',
+      reason: 'Core HTTP contract execution smoke test',
+      args: {
+        poolId: 'pool_season',
+      },
+    })
+    assert.equal(createProposal.status, 200, `create proposal failed: ${JSON.stringify(createProposal.data)}`)
+    const proposal = readObject(readObject(createProposal.data).proposal)
+    const proposalId = String(proposal.proposalId)
+    assert.equal(proposal.status, 'pending_approval', 'proposal should require explicit approval in v1')
+    assert.deepEqual(proposal.args, { poolId: 'pool_season' }, 'proposal should preserve action-specific args')
+
+    const approveProposal = await requestJson(baseUrl, `/api/ai/players/proposals/${proposalId}/approve`, 'POST', {
+      approvedBy: 'human_alpha',
+    })
+    assert.equal(approveProposal.status, 200, `approve proposal failed: ${JSON.stringify(approveProposal.data)}`)
+
+    const executeProposal = await requestJson(baseUrl, `/api/ai/players/proposals/${proposalId}/execute`, 'POST', {
+      executedBy: 'human_alpha',
+      includeWorld: false,
+    })
+    assert.equal(executeProposal.status, 200, `execute proposal failed: ${JSON.stringify(executeProposal.data)}`)
+    const receipt = readObject(readObject(executeProposal.data).receipt)
+    assert.equal(receipt.ok, true, `receipt should report success: ${JSON.stringify(executeProposal.data)}`)
+    assert.equal(receipt.worldAction, 'setRecruitSelectedPool', 'receipt should preserve mapped world action')
+    assert.equal(receipt.failureCode, null, 'receipt should expose null failureCode on success')
+    assert.ok(readObject(receipt.execution), 'receipt should expose execution snapshot')
+    assert.deepEqual(
+      receipt.worldActionPayload,
+      { factionId: 'player', poolId: 'pool_season' },
+      'receipt should surface resolved action payload',
+    )
+
+    console.log('[ai_player_http_core_contract] all checks passed')
+  } finally {
+    await shutdownChild(child)
+  }
+}
+
+run().catch((error) => {
+  console.error('[ai_player_http_core_contract] failed:', error)
+  process.exitCode = 1
+})

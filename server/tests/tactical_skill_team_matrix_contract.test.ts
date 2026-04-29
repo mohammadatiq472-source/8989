@@ -153,7 +153,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
       && event.round === 1
   ))
   assert.ok(firstTeamActiveCommanderHitEvent)
-  assert.equal(firstTeamActiveCommanderHitEvent.damage, 1601)
+  assert.equal(firstTeamActiveCommanderHitEvent.damage, 1539)
   assert.ok(firstTeamActiveCommanderHitEvent.notes.includes('commanderTargetPressureTeamActiveDamageReduction-38%'))
   assert.ok(firstTeamActiveCommanderHitEvent.notes.includes('commanderTargetPressureTeamActiveDamageLevel=1'))
 
@@ -164,7 +164,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
       && event.round === 1
   ))
   assert.ok(firstTeamActiveNonCommanderHitEvent)
-  assert.equal(firstTeamActiveNonCommanderHitEvent.damage, 2619)
+  assert.equal(firstTeamActiveNonCommanderHitEvent.damage, 2517)
   assert.ok(!firstTeamActiveNonCommanderHitEvent.notes.some((note) => note.startsWith('commanderTargetPressure')))
 
   const secondCommanderStrikeEvent = report.events.find((event) => (
@@ -188,7 +188,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
       && event.round === 2
   ))
   assert.ok(secondTeamActiveCommanderHitEvent)
-  assert.equal(secondTeamActiveCommanderHitEvent.damage, 695)
+  assert.equal(secondTeamActiveCommanderHitEvent.damage, 667)
   assert.ok(secondTeamActiveCommanderHitEvent.notes.includes('commanderTargetPressureTeamActiveDamageReduction-68%'))
   assert.ok(secondTeamActiveCommanderHitEvent.notes.includes('commanderTargetPressureTeamActiveDamageLevel=2'))
 
@@ -198,7 +198,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
       && event.round === 2
   ))
   assert.ok(normalCommanderHitEvent)
-  assert.equal(normalCommanderHitEvent.damage, 2940)
+  assert.equal(normalCommanderHitEvent.damage, 2935)
   assert.ok(normalCommanderHitEvent.notes.includes('commanderTargetPressureNormalDamageReduction-12%'))
   assert.ok(normalCommanderHitEvent.notes.includes('commanderTargetPressureNormalDamageLevel=1'))
   assert.ok(normalCommanderHitEvent.notes.includes('commanderTargetPressurePostActiveDamageReduction-8%'))
@@ -224,7 +224,7 @@ function testCommanderProtectionReducesCommanderTargetActivation() {
   ))
   assert.ok(repeatedCommanderStrikeEvent)
   assert.equal(repeatedCommanderStrikeEvent.activated, true)
-  assert.equal(repeatedCommanderStrikeEvent.damage, 1592)
+  assert.equal(repeatedCommanderStrikeEvent.damage, 1581)
   assert.ok(repeatedCommanderStrikeEvent.notes.includes('commanderTargetDamageReduction-57%'))
   assert.ok(repeatedCommanderStrikeEvent.notes.includes('commanderTargetDamagePressureLevel=2'))
 }

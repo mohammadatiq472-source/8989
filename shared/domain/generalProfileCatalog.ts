@@ -59,6 +59,9 @@ type RawGeneralProfile = {
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const GENERAL_PROFILE_PATH = join(__dirname, '../../godot-client/data/ui/general_profile_preview.json')
 const GENERAL_SKILL_LIBRARY_PATH = join(__dirname, '../../godot-client/data/ui/general_skill_library_preview.json')
+export const TACTICAL_GENERAL_MAX_LEVEL = 50
+export const TACTICAL_GENERAL_BASE_STRENGTH = 5_000
+export const TACTICAL_GENERAL_STRENGTH_PER_LEVEL = 100
 
 let generalProfileCache: Record<string, GeneralProfileCatalogEntry> | null = null
 let generalSkillCache: Record<string, GeneralSkillCatalogEntry> | null = null
@@ -112,6 +115,14 @@ export function getGeneralSkillCatalogEntry(skillId: string): GeneralSkillCatalo
   return entry
 }
 
+export function resolveTacticalStrengthFromGeneralLevel(level: number): number {
+  if (!Number.isFinite(level)) {
+    throw new Error('general level must be a finite number')
+  }
+  const boundedLevel = Math.max(1, Math.min(TACTICAL_GENERAL_MAX_LEVEL, Math.trunc(level)))
+  return TACTICAL_GENERAL_BASE_STRENGTH + boundedLevel * TACTICAL_GENERAL_STRENGTH_PER_LEVEL
+}
+
 export function buildTacticalCombatantFromGeneralCatalog(
   heroId: string,
   equippedSkillIds: string[],
@@ -134,7 +145,7 @@ export function buildTacticalCombatantFromGeneralCatalog(
     heroName: profile.name,
     troopType: profile.troopType,
     stats: { ...profile.attributes },
-    strength: overrides.strength ?? profile.soldierCurrent,
+    strength: overrides.strength ?? Math.min(profile.soldierCurrent, resolveTacticalStrengthFromGeneralLevel(profile.level)),
     mobility: overrides.mobility ?? defaultMobility(profile.troopType),
     supply: overrides.supply ?? 5,
     innateSkillId: profile.innateSkill.id,

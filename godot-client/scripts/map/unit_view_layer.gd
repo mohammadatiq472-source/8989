@@ -1,6 +1,7 @@
 extends Node2D
 
 const UnitMarkerScript = preload("res://scripts/map/unit_marker.gd")
+const AIMapIntentMarkerScript = preload("res://scripts/map/ai_map_intent_marker.gd")
 const FactionVisualsScript = preload("res://scripts/map/faction_visuals.gd")
 const ENGAGE_KIND_BATTLE: String = "battle"
 const ENGAGE_KIND_TILE_CONTROL: String = "tile_control"
@@ -22,6 +23,8 @@ const KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS: Array[String] = [
 	"intel",
 	"planning",
 ]
+const AI_MAP_INTENT_MARKER_LIMIT: int = 12
+const AI_MAP_RESOURCE_STATE_MARKER_LIMIT: int = 24
 
 @export var map_grid_path: NodePath = NodePath("../MapGrid")
 @export var marker_radius: float = 4.0
@@ -31,6 +34,7 @@ const KNOWN_NON_ENGAGE_HIGHLIGHT_KINDS: Array[String] = [
 var _map_grid: Node
 var _tile_positions_by_id: Dictionary = {}
 var _markers_by_unit_id: Dictionary = {}
+var _ai_map_markers_by_key: Dictionary = {}
 var _prev_units_by_id: Dictionary = {}
 var _seen_replay_frame_ids: Dictionary = {}
 var _seen_replay_frame_order: Array = []
@@ -61,10 +65,12 @@ func _ready() -> void:
 
 func _on_view_transform_changed(_view_state: Dictionary) -> void:
 	_sync_marker_positions()
+	_sync_ai_map_visual_positions()
 
 func _on_map_layout_updated(next_map_layout: Dictionary) -> void:
 	_rebuild_tile_positions(next_map_layout)
 	_sync_marker_positions()
+	_sync_ai_map_visuals(WorldStore.world)
 
 func _on_world_updated(next_world: Dictionary) -> void:
 	if next_world.is_empty():
@@ -132,6 +138,7 @@ func _on_world_updated(next_world: Dictionary) -> void:
 
 	_trigger_engage_from_replay_frames(next_world, next_units_by_id)
 	_prev_units_by_id = next_units_by_id
+	_sync_ai_map_visuals(next_world)
 
 func _rebuild_tile_positions(next_map_layout: Dictionary) -> void:
 	_tile_positions_by_id = {}
@@ -173,6 +180,7 @@ func _ensure_marker(unit_id: String, unit: Dictionary) -> Node2D:
 
 	var marker := Node2D.new()
 	marker.name = "UnitMarker_%s" % unit_id
+	marker.z_index = 4
 	marker.set_script(UnitMarkerScript)
 	add_child(marker)
 	_markers_by_unit_id[unit_id] = marker
@@ -186,13 +194,17 @@ func _update_marker_style(marker: Node2D, unit: Dictionary) -> void:
 	marker.set("radius", marker_radius)
 	marker.call("set_faction_color", _resolve_faction_color(faction_id))
 	if marker.has_method("set_identity_kind"):
-		marker.call("set_identity_kind", _resolve_identity_kind(faction_id))
+		marker.call("set_identity_kind", _resolve_identity_kind(unit))
 
 func _resolve_unit_faction_id(unit: Dictionary) -> String:
 	var faction_id: String = str(unit.get("faction", unit.get("factionId", ""))).strip_edges()
 	return faction_id
 
-func _resolve_identity_kind(faction_id: String) -> String:
+func _resolve_identity_kind(unit: Dictionary) -> String:
+	var ai_player_id: String = str(unit.get("aiPlayerId", "")).strip_edges()
+	if ai_player_id != "":
+		return IDENTITY_KIND_AI
+	var faction_id: String = _resolve_unit_faction_id(unit)
 	var normalized_faction: String = faction_id.strip_edges().to_lower()
 	if normalized_faction in NEUTRAL_FACTION_HINTS:
 		return IDENTITY_KIND_NEUTRAL
@@ -235,6 +247,178 @@ func _sync_marker_positions() -> void:
 		var unit: Dictionary = _prev_units_by_id[unit_id] as Dictionary
 		var target_position: Vector2 = _resolve_unit_position(unit, marker.position)
 		_set_marker_position(marker, target_position)
+
+func _sync_ai_map_visuals(world_payload: Dictionary) -> void:
+	if world_payload.is_empty():
+		for marker_variant in _ai_map_markers_by_key.values():
+			if marker_variant is Node2D:
+				(marker_variant as Node2D).queue_free()
+		_ai_map_markers_by_key.clear()
+		return
+
+	var desired_markers: Dictionary = {}
+	_collect_ai_intent_markers(desired_markers)
+	_collect_ai_resource_state_markers(world_payload, desired_markers)
+
+	for key_variant in _ai_map_markers_by_key.keys():
+		var key := str(key_variant)
+		if desired_markers.has(key):
+			continue
+		var stale_marker: Node2D = _ai_map_markers_by_key[key] as Node2D
+		if stale_marker != null:
+			stale_marker.queue_free()
+		_ai_map_markers_by_key.erase(key)
+
+	for key_variant in desired_markers.keys():
+		var key := str(key_variant)
+		var marker_meta: Dictionary = desired_markers[key] as Dictionary
+		var tile_id := str(marker_meta.get("tileId", "")).strip_edges()
+		if tile_id == "":
+			continue
+		var marker := _ensure_ai_map_marker(
+			key,
+			str(marker_meta.get("kind", "intent")),
+			str(marker_meta.get("status", "pending"))
+		)
+		if marker == null:
+			continue
+		marker.set_meta("tile_id", tile_id)
+		marker.position = _resolve_tile_marker_position(tile_id, marker.position)
+
+func _sync_ai_map_visual_positions() -> void:
+	for key_variant in _ai_map_markers_by_key.keys():
+		var key := str(key_variant)
+		var marker: Node2D = _ai_map_markers_by_key[key] as Node2D
+		if marker == null or not marker.has_meta("tile_id"):
+			continue
+		var tile_id := str(marker.get_meta("tile_id")).strip_edges()
+		marker.position = _resolve_tile_marker_position(tile_id, marker.position)
+
+func _collect_ai_intent_markers(markers: Dictionary) -> void:
+	var ai_state: Dictionary = WorldStore.get_ai_state(_resolve_human_faction_id())
+	var proposal_items: Array = ai_state.get("playerRuntimeProposalItems", []) as Array
+	var intent_marker_count := 0
+	for proposal_variant in proposal_items:
+		if intent_marker_count >= AI_MAP_INTENT_MARKER_LIMIT:
+			break
+		if not (proposal_variant is Dictionary):
+			continue
+		var proposal: Dictionary = proposal_variant as Dictionary
+		var status := str(proposal.get("status", "")).strip_edges()
+		if status != "pending_approval" and status != "approved":
+			continue
+		var action := str(proposal.get("action", "")).strip_edges()
+		if action != "march_move" and action != "tile_occupy" and action != "resource_gather":
+			continue
+		var args: Dictionary = proposal.get("args", {}) as Dictionary
+		var tile_id := _resolve_tile_id_from_ai_payload(args)
+		if tile_id == "":
+			continue
+		var proposal_id := str(proposal.get("proposalId", proposal.get("id", ""))).strip_edges()
+		var key := "intent:%s:%s" % [action, proposal_id if proposal_id != "" else tile_id]
+		markers[key] = {
+			"kind": "intent",
+			"status": status,
+			"tileId": tile_id,
+		}
+		intent_marker_count += 1
+
+func _collect_ai_resource_state_markers(world_payload: Dictionary, markers: Dictionary) -> void:
+	var human_faction_id := _resolve_human_faction_id()
+	var faction_state := _read_world_faction_state(world_payload, human_faction_id)
+	var gathered_tile_count := 0
+	var raw_claims_variant: Variant = faction_state.get("aiResourceGatherClaims", {})
+	var raw_claims: Dictionary = (raw_claims_variant as Dictionary) if raw_claims_variant is Dictionary else {}
+	for claim_variant in raw_claims.values():
+		if not (claim_variant is Dictionary):
+			continue
+		var claim: Dictionary = claim_variant as Dictionary
+		var tile_id := str(claim.get("tileId", "")).strip_edges()
+		if tile_id == "":
+			continue
+		markers["gathered:%s" % tile_id] = {
+			"kind": "gathered",
+			"status": "claimed",
+			"tileId": tile_id,
+		}
+		gathered_tile_count += 1
+		if gathered_tile_count >= AI_MAP_RESOURCE_STATE_MARKER_LIMIT:
+			break
+
+	var map_payload: Dictionary = world_payload.get("map", {}) as Dictionary
+	var raw_tiles_variant: Variant = map_payload.get("tiles", [])
+	if not (raw_tiles_variant is Array):
+		return
+	var raw_tiles: Array = raw_tiles_variant as Array
+	var occupied_tile_count := 0
+	for tile_variant in raw_tiles:
+		if not (tile_variant is Dictionary):
+			continue
+		var tile: Dictionary = tile_variant as Dictionary
+		if str(tile.get("owner", "")).strip_edges().to_lower() != human_faction_id:
+			continue
+		var tile_type := str(tile.get("type", "")).strip_edges()
+		var resource_kind := str(tile.get("resourceKind", "")).strip_edges()
+		if tile_type != "resource" and resource_kind == "":
+			continue
+		var tile_id := str(tile.get("id", "")).strip_edges()
+		if tile_id == "":
+			continue
+		var key := "occupied:%s" % tile_id
+		if markers.has("gathered:%s" % tile_id):
+			continue
+		markers[key] = {
+			"kind": "occupied",
+			"status": "owned",
+			"tileId": tile_id,
+		}
+		occupied_tile_count += 1
+		if occupied_tile_count >= AI_MAP_RESOURCE_STATE_MARKER_LIMIT:
+			break
+
+func _ensure_ai_map_marker(key: String, kind: String, status: String) -> Node2D:
+	var marker: Node2D = null
+	if _ai_map_markers_by_key.has(key):
+		marker = _ai_map_markers_by_key[key] as Node2D
+	else:
+		marker = Node2D.new()
+		marker.name = "AIMapMarker_%s" % key.replace(":", "_")
+		marker.set_script(AIMapIntentMarkerScript)
+		add_child(marker)
+		_ai_map_markers_by_key[key] = marker
+	if marker != null and marker.has_method("set_visual_state"):
+		marker.call("set_visual_state", kind, status)
+	if marker != null:
+		marker.z_index = 1
+	return marker
+
+func _resolve_tile_id_from_ai_payload(payload: Dictionary) -> String:
+	for key in ["tileId", "targetTileId", "toTileId"]:
+		var tile_id := str(payload.get(key, "")).strip_edges()
+		if tile_id != "":
+			return tile_id
+	return ""
+
+func _read_world_faction_state(world_payload: Dictionary, faction_id: String) -> Dictionary:
+	var raw_factions: Variant = world_payload.get("factions", {})
+	if raw_factions is Dictionary:
+		var faction_state: Variant = (raw_factions as Dictionary).get(faction_id, {})
+		if faction_state is Dictionary:
+			return faction_state as Dictionary
+	return {}
+
+func _resolve_tile_marker_position(tile_id: String, fallback: Vector2) -> Vector2:
+	if tile_id == "" or not _tile_positions_by_id.has(tile_id):
+		return fallback
+	if _map_grid == null or not _map_grid.has_method("tile_to_screen_position"):
+		return fallback
+	var tile_coord: Vector2i = _tile_positions_by_id[tile_id] as Vector2i
+	var base_position: Vector2
+	if _map_grid.has_method("tile_id_to_screen_position"):
+		base_position = _map_grid.tile_id_to_screen_position(tile_id, tile_coord.x, tile_coord.y)
+	else:
+		base_position = _map_grid.tile_to_screen_position(tile_coord.x, tile_coord.y)
+	return base_position + Vector2(0.0, marker_vertical_offset - 4.0)
 
 func _set_marker_position(marker: Node2D, target_position: Vector2) -> void:
 	_cancel_marker_tween(marker)

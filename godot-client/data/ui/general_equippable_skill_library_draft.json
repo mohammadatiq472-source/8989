@@ -1,0 +1,268 @@
+{
+  "schema_version": "general_equippable_skill_library_draft_v1",
+  "scope": "Godot native UI draft; player-equippable skills only.",
+  "boundary": {
+    "innate_skill_source": "godot-client/data/ui/general_profile_preview.json -> hero_profiles[*].skills[0]",
+    "equipable_skill_source": "godot-client/data/ui/general_equippable_skill_library_draft.json -> skills[]",
+    "rule": "玩家可装配战法只进入可装配槽；不得直接写入武将主战法。"
+  },
+  "supported_grades": [
+    "S",
+    "A",
+    "B"
+  ],
+  "supported_types": [
+    "指挥",
+    "主动",
+    "被动",
+    "追击"
+  ],
+  "default_level": 1,
+  "max_level": 10,
+  "skills": [
+    {
+      "id": "equip_s_command_battle_banner",
+      "name": "军势旌旗",
+      "grade": "S",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合我军全体攻击+12%、速度+8%，主将额外获得1次规避。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军全体3名武将；我军主将",
+      "effect": "提升开局推进能力，并为主将提供一次规避保护。",
+      "attribute_effects": {
+        "force": "+12%",
+        "speed": "+8%"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "演武兑换",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "通过演武商店兑换 S 级指挥战法残卷后解锁。"
+    },
+    {
+      "id": "equip_s_active_fire_raid",
+      "name": "烈焰突袭",
+      "grade": "S",
+      "type": "主动",
+      "level": 1,
+      "description": "45%发动，对敌军群体2人造成160%谋略伤害，并附加燃烧2回合。",
+      "trigger": "战斗回合行动时有45%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "造成谋略伤害；燃烧每回合造成45%谋略伤害。",
+      "attribute_effects": {
+        "intelligence": "影响伤害"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "赛季卡池",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "通过赛季卡池或战法研究获得。"
+    },
+    {
+      "id": "equip_s_passive_fortified_mind",
+      "name": "固本守心",
+      "grade": "S",
+      "type": "被动",
+      "level": 1,
+      "description": "自身防御+14%、谋略+10%；首次受到控制时净化自身1个负面状态。",
+      "trigger": "战斗开始时自动生效；首次受到控制时触发净化。",
+      "target": "自身",
+      "effect": "提升自身生存与抗控能力。",
+      "attribute_effects": {
+        "command": "+14%",
+        "intelligence": "+10%"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "名将拆解",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "拆解指定防御型五星武将后解锁。"
+    },
+    {
+      "id": "equip_s_chase_rending_charge",
+      "name": "破阵追袭",
+      "grade": "S",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后40%发动，对目标追加150%攻击伤害；若目标防御低于自身，伤害率+35%。",
+      "trigger": "普通攻击后有40%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "追加攻击伤害，并对低防御目标造成更高伤害。",
+      "attribute_effects": {
+        "force": "影响伤害"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "军功商店",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "累计军功达到赛季阈值后兑换。"
+    },
+    {
+      "id": "equip_a_command_vanguard_order",
+      "name": "先登号令",
+      "grade": "A",
+      "type": "指挥",
+      "level": 1,
+      "description": "前2回合我军前锋攻击+10%、防御+8%。",
+      "trigger": "第1回合战斗开始时自动生效，持续2回合。",
+      "target": "我军前锋",
+      "effect": "强化前锋开局承伤与输出。",
+      "attribute_effects": {
+        "force": "+10%",
+        "command": "+8%"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "演武兑换",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "演武积分兑换 A 级指挥战法残卷后解锁。"
+    },
+    {
+      "id": "equip_a_active_crossbow_volley",
+      "name": "连弩齐射",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "40%发动，对敌军群体2人造成120%攻击伤害。",
+      "trigger": "战斗回合行动时有40%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "造成稳定群体攻击伤害。",
+      "attribute_effects": {
+        "force": "影响伤害"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "战法研究",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "研究任意弓兵输出型 A 级战法后解锁。"
+    },
+    {
+      "id": "equip_a_passive_reserve_guard",
+      "name": "守备整训",
+      "grade": "A",
+      "type": "被动",
+      "level": 1,
+      "description": "自身防御+12%；兵力低于50%时额外获得8%减伤。",
+      "trigger": "战斗开始时自动生效；兵力低于50%时触发额外减伤。",
+      "target": "自身",
+      "effect": "提升低兵力阶段的持续作战能力。",
+      "attribute_effects": {
+        "command": "+12%"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "内政任务",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "完成守备训练任务链后解锁。"
+    },
+    {
+      "id": "equip_a_chase_opportunistic_follow",
+      "name": "乘势追击",
+      "grade": "A",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后35%发动，对目标追加115%攻击伤害；目标处于负面状态时伤害率+25%。",
+      "trigger": "普通攻击后有35%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "对已有负面状态的目标造成更高追击伤害。",
+      "attribute_effects": {
+        "force": "影响伤害"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "军功商店",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "军功商店兑换 A 级追击战法残卷后解锁。"
+    },
+    {
+      "id": "equip_b_command_line_discipline",
+      "name": "行伍整肃",
+      "grade": "B",
+      "type": "指挥",
+      "level": 1,
+      "description": "前2回合我军全体防御+5%。",
+      "trigger": "第1回合战斗开始时自动生效，持续2回合。",
+      "target": "我军全体3名武将",
+      "effect": "提供低成本开局防御增益。",
+      "attribute_effects": {
+        "command": "+5%"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "新手任务",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "完成新手战法教学后解锁。"
+    },
+    {
+      "id": "equip_b_active_probe_attack",
+      "name": "试探攻势",
+      "grade": "B",
+      "type": "主动",
+      "level": 1,
+      "description": "35%发动，对敌军单体造成90%攻击伤害，并使其速度-5%，持续1回合。",
+      "trigger": "战斗回合行动时有35%概率发动。",
+      "target": "敌军单体武将",
+      "effect": "造成单体攻击伤害并短暂降低速度。",
+      "attribute_effects": {
+        "force": "影响伤害",
+        "speed": "-5%"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "新手任务",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "通关第1章战斗教学后解锁。"
+    },
+    {
+      "id": "equip_b_passive_field_medicine",
+      "name": "战地医护",
+      "grade": "B",
+      "type": "被动",
+      "level": 1,
+      "description": "每回合首次受到伤害后，恢复自身兵力，恢复率35%。",
+      "trigger": "每回合首次受到伤害后触发。",
+      "target": "自身",
+      "effect": "提供基础续航恢复。",
+      "attribute_effects": {
+        "intelligence": "影响恢复"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "内政任务",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "完成医馆建设或内政支援任务后解锁。"
+    },
+    {
+      "id": "equip_b_chase_counter_cut",
+      "name": "反手追斩",
+      "grade": "B",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后30%发动，对目标追加85%攻击伤害。",
+      "trigger": "普通攻击后有30%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "提供基础追加攻击伤害。",
+      "attribute_effects": {
+        "force": "影响伤害"
+      },
+      "source": {
+        "kind": "equipable_draft",
+        "pool": "新手任务",
+        "bind_rule": "仅进入玩家可装配战法槽"
+      },
+      "unlock_hint": "完成追击战法教学后解锁。"
+    }
+  ]
+}

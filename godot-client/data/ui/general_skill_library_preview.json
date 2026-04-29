@@ -1,0 +1,1805 @@
+{
+  "schema_version": "general_skill_library_preview_v1",
+  "scope": "Godot native UI preview; player-obtainable equippable general skills only.",
+  "boundary": {
+    "innate_skill_source": "godot-client/data/ui/general_profile_preview.json -> hero_profiles[*].skills[0]",
+    "skill_library_source": "godot-client/data/ui/general_skill_library_preview.json -> skills[]",
+    "rule": "玩家可获取、可装配通用战法只进入可装配槽；不得直接写入武将主战法。",
+    "slot_rule": "每名武将的第1个 skills[0] 仍是武将主战法，后续装配槽由 learnable_skill_slots 或正式 equipped_skill_slots 承接。"
+  },
+  "supported_grades": [
+    "S",
+    "A",
+    "B"
+  ],
+  "supported_types": [
+    "指挥",
+    "主动",
+    "被动",
+    "追击"
+  ],
+  "default_level": 1,
+  "max_level": 10,
+  "skills": [
+    {
+      "id": "lib_s_command_battle_banner",
+      "name": "军势旌旗",
+      "grade": "S",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合我军全体攻击+12%、速度+8%，主将额外获得1次规避。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军全体3名武将；我军主将",
+      "effect": "提升开局推进能力；主将首次受到主动或追击伤害时规避1次。",
+      "attribute_effects": {
+        "force": "+12%",
+        "speed": "+8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "开局全队增益",
+      "tags": [
+        "开局",
+        "全队",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_s_active_fire_raid",
+      "name": "烈焰突袭",
+      "grade": "S",
+      "type": "主动",
+      "level": 1,
+      "description": "45%发动，对敌军群体2人造成160%谋略伤害，并附加燃烧2回合。",
+      "trigger": "战斗回合行动时有45%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "立即造成160%谋略伤害；燃烧每回合造成45%谋略伤害，持续2回合。",
+      "attribute_effects": {
+        "intelligence": "伤害率160%；燃烧45%/回合"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "弓兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "谋略群体输出",
+      "tags": [
+        "谋略伤害",
+        "燃烧",
+        "群体"
+      ]
+    },
+    {
+      "id": "lib_s_passive_fortified_mind",
+      "name": "固本守心",
+      "grade": "S",
+      "type": "被动",
+      "level": 1,
+      "description": "自身防御+14%、谋略+10%；首次受到控制时净化自身1个负面状态。",
+      "trigger": "战斗开始时自动生效；首次受到控制时触发净化。",
+      "target": "自身",
+      "effect": "提升自身生存与抗控能力；每场战斗最多净化1次。",
+      "attribute_effects": {
+        "command": "+14%",
+        "intelligence": "+10%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "骑兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "防御抗控自保",
+      "tags": [
+        "抗控",
+        "自保",
+        "减伤"
+      ]
+    },
+    {
+      "id": "lib_s_chase_rending_charge",
+      "name": "破阵追袭",
+      "grade": "S",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后40%发动，对目标追加150%攻击伤害；若目标防御低于自身，伤害率+35%。",
+      "trigger": "普通攻击后有40%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "追加150%攻击伤害；满足破防条件时本次追击伤害率提升到185%。",
+      "attribute_effects": {
+        "force": "伤害率150%/185%",
+        "command": "比较双方防御"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "破防追击爆发",
+      "tags": [
+        "追击",
+        "破防",
+        "单体"
+      ]
+    },
+    {
+      "id": "lib_s_command_eight_gate_guard",
+      "name": "八门固守",
+      "grade": "S",
+      "type": "指挥",
+      "level": 1,
+      "description": "前4回合我军全体受到主动战法伤害-16%，并使敌军主动战法发动率-5%。",
+      "trigger": "第1回合战斗开始时自动生效，持续4回合。",
+      "target": "我军全体3名武将；敌军全体3名武将",
+      "effect": "压低敌军主动战法爆发，并提升己方前4回合稳定性。",
+      "attribute_effects": {
+        "command": "主动战法减伤16%",
+        "intelligence": "敌军发动率-5%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "主动压制减伤",
+      "tags": [
+        "减伤",
+        "控制",
+        "全队"
+      ]
+    },
+    {
+      "id": "lib_s_active_thunder_camp",
+      "name": "雷火连营",
+      "grade": "S",
+      "type": "主动",
+      "level": 1,
+      "description": "35%发动，准备1回合后对敌军全体造成190%谋略伤害，并使其防御-12%持续2回合。",
+      "trigger": "战斗回合行动时有35%概率发动；需要准备1回合。",
+      "target": "敌军全体3名武将",
+      "effect": "准备完成后造成全体谋略爆发；目标防御降低12%，持续2回合。",
+      "attribute_effects": {
+        "intelligence": "伤害率190%",
+        "command": "-12%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "弓兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "准备谋略爆发",
+      "tags": [
+        "准备",
+        "谋略伤害",
+        "破防"
+      ]
+    },
+    {
+      "id": "lib_a_command_vanguard_order",
+      "name": "先登号令",
+      "grade": "A",
+      "type": "指挥",
+      "level": 1,
+      "description": "前2回合我军前锋攻击+10%、防御+8%。",
+      "trigger": "第1回合战斗开始时自动生效，持续2回合。",
+      "target": "我军前锋",
+      "effect": "强化前锋开局承伤与输出。",
+      "attribute_effects": {
+        "force": "+10%",
+        "command": "+8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "开局攻防强化",
+      "tags": [
+        "开局",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_a_command_archer_drill",
+      "name": "弓阵整备",
+      "grade": "A",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合我军弓兵攻击+8%、谋略+8%，普通攻击伤害+6%。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军弓兵武将",
+      "effect": "提高弓兵队伍前三回合输出稳定性。",
+      "attribute_effects": {
+        "force": "+8%；普攻伤害+6%",
+        "intelligence": "+8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "弓兵普攻强化",
+      "tags": [
+        "弓兵",
+        "普攻",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_a_active_crossbow_volley",
+      "name": "连弩齐射",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "40%发动，对敌军群体2人造成120%攻击伤害。",
+      "trigger": "战斗回合行动时有40%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "造成稳定群体攻击伤害。",
+      "attribute_effects": {
+        "force": "伤害率120%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "群体攻击输出",
+      "tags": [
+        "弓兵",
+        "群体",
+        "攻击伤害"
+      ]
+    },
+    {
+      "id": "lib_a_active_feint_sweep",
+      "name": "佯攻扫营",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "45%发动，对敌军单体造成135%攻击伤害，并使其防御-10%持续2回合。",
+      "trigger": "战斗回合行动时有45%概率发动。",
+      "target": "敌军单体武将",
+      "effect": "先造成135%攻击伤害，再降低目标防御10%。",
+      "attribute_effects": {
+        "force": "伤害率135%",
+        "command": "-10%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "单体破防输出",
+      "tags": [
+        "单体",
+        "破防",
+        "主动"
+      ]
+    },
+    {
+      "id": "lib_a_passive_reserve_guard",
+      "name": "守备整训",
+      "grade": "A",
+      "type": "被动",
+      "level": 1,
+      "description": "自身防御+12%；兵力低于50%时额外获得8%减伤。",
+      "trigger": "战斗开始时自动生效；兵力低于50%时触发额外减伤。",
+      "target": "自身",
+      "effect": "提升低兵力阶段的持续作战能力。",
+      "attribute_effects": {
+        "command": "+12%；低兵力减伤8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "低兵力防守",
+      "tags": [
+        "低兵力",
+        "减伤",
+        "自保"
+      ]
+    },
+    {
+      "id": "lib_a_passive_calm_reserve",
+      "name": "静气养锐",
+      "grade": "A",
+      "type": "被动",
+      "level": 1,
+      "description": "第1到3回合自身造成伤害-8%；第4回合起自身造成伤害+18%。",
+      "trigger": "战斗开始后自动生效，按回合切换。",
+      "target": "自身",
+      "effect": "牺牲前3回合输出，换取第4回合后的持续增伤。",
+      "attribute_effects": {
+        "force": "前3回合-8%；第4回合起+18%",
+        "intelligence": "前3回合-8%；第4回合起+18%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "后期持续增伤",
+      "tags": [
+        "后发",
+        "增伤",
+        "谋略伤害"
+      ]
+    },
+    {
+      "id": "lib_a_chase_opportunistic_follow",
+      "name": "乘势追击",
+      "grade": "A",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后35%发动，对目标追加115%攻击伤害；目标处于负面状态时伤害率+25%。",
+      "trigger": "普通攻击后有35%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "对已有负面状态的目标造成更高追击伤害，最高140%伤害率。",
+      "attribute_effects": {
+        "force": "伤害率115%/140%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "负面联动追击",
+      "tags": [
+        "追击",
+        "控制",
+        "单体"
+      ]
+    },
+    {
+      "id": "lib_a_chase_swift_blade",
+      "name": "疾刃连击",
+      "grade": "A",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后30%发动，对目标追加95%攻击伤害；自身速度高于目标时再追加45%伤害。",
+      "trigger": "普通攻击后有30%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "速度占优时合计造成140%攻击伤害。",
+      "attribute_effects": {
+        "force": "伤害率95%/140%",
+        "speed": "比较双方速度"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "速度追击连击",
+      "tags": [
+        "速度",
+        "追击",
+        "连击"
+      ]
+    },
+    {
+      "id": "lib_a_active_benevolent_aid",
+      "name": "仁心救护",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "50%发动，恢复我军兵力最低2人，恢复率95%，并使其受到伤害-6%持续1回合。",
+      "trigger": "战斗回合行动时有50%概率发动。",
+      "target": "我军兵力最低2名武将",
+      "effect": "恢复2名友军兵力，并附加1回合轻量减伤。",
+      "attribute_effects": {
+        "intelligence": "恢复率95%",
+        "command": "受到伤害-6%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "恢复辅助减伤",
+      "tags": [
+        "恢复",
+        "减伤",
+        "全队"
+      ]
+    },
+    {
+      "id": "lib_a_command_iron_wall_line",
+      "name": "铁壁列阵",
+      "grade": "A",
+      "type": "指挥",
+      "level": 1,
+      "description": "战斗前4回合，我军步兵受到普通攻击伤害-14%，受到追击伤害-18%。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军步兵武将",
+      "effect": "提高步兵队伍抗追击和抗普攻能力。",
+      "attribute_effects": {
+        "command": "+14%；追击减伤10%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "步兵抗追击",
+      "tags": [
+        "步兵",
+        "减伤",
+        "开局"
+      ]
+    },
+    {
+      "id": "lib_b_command_line_discipline",
+      "name": "行伍整肃",
+      "grade": "B",
+      "type": "指挥",
+      "level": 1,
+      "description": "前2回合我军全体防御+5%。",
+      "trigger": "第1回合战斗开始时自动生效，持续2回合。",
+      "target": "我军全体3名武将",
+      "effect": "提供低成本开局防御增益。",
+      "attribute_effects": {
+        "command": "+5%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手全队防御",
+      "tags": [
+        "新手",
+        "减伤",
+        "全队"
+      ]
+    },
+    {
+      "id": "lib_b_command_marching_ration",
+      "name": "行军口粮",
+      "grade": "B",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合我军全体每回合恢复兵力，恢复率22%。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军全体3名武将",
+      "effect": "每回合开始时为全队提供一次低额恢复。",
+      "attribute_effects": {
+        "intelligence": "恢复率22%/回合"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手续航恢复",
+      "tags": [
+        "新手",
+        "恢复",
+        "全队"
+      ]
+    },
+    {
+      "id": "lib_b_active_probe_attack",
+      "name": "试探攻势",
+      "grade": "B",
+      "type": "主动",
+      "level": 1,
+      "description": "35%发动，对敌军单体造成90%攻击伤害，并使其速度-5%，持续1回合。",
+      "trigger": "战斗回合行动时有35%概率发动。",
+      "target": "敌军单体武将",
+      "effect": "造成单体攻击伤害并短暂降低速度。",
+      "attribute_effects": {
+        "force": "伤害率90%",
+        "speed": "-5%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手单体降速",
+      "tags": [
+        "新手",
+        "单体",
+        "降速"
+      ]
+    },
+    {
+      "id": "lib_b_active_smoke_arrow",
+      "name": "烟矢扰阵",
+      "grade": "B",
+      "type": "主动",
+      "level": 1,
+      "description": "30%发动，对敌军群体2人造成70%谋略伤害，并使其主动战法发动率-3%持续1回合。",
+      "trigger": "战斗回合行动时有30%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "造成小额谋略伤害并进行1回合轻量干扰。",
+      "attribute_effects": {
+        "intelligence": "伤害率70%；发动率-3%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "弓兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手谋略干扰",
+      "tags": [
+        "新手",
+        "控制",
+        "谋略伤害"
+      ]
+    },
+    {
+      "id": "lib_b_passive_field_medicine",
+      "name": "战地医护",
+      "grade": "B",
+      "type": "被动",
+      "level": 1,
+      "description": "每回合首次受到伤害后，恢复自身兵力，恢复率35%。",
+      "trigger": "每回合首次受到伤害后触发。",
+      "target": "自身",
+      "effect": "提供基础续航恢复；每回合最多触发1次。",
+      "attribute_effects": {
+        "intelligence": "恢复率35%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "骑兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "基础自恢复",
+      "tags": [
+        "恢复",
+        "自保",
+        "新手"
+      ]
+    },
+    {
+      "id": "lib_b_passive_wall_guard",
+      "name": "墙垒戒备",
+      "grade": "B",
+      "type": "被动",
+      "level": 1,
+      "description": "自身防御+7%；驻守或防守标签战斗中额外防御+5%。",
+      "trigger": "战斗开始时自动生效；防守场景额外生效。",
+      "target": "自身",
+      "effect": "基础防御提升7%；防守场景总计提升12%。",
+      "attribute_effects": {
+        "command": "+7%/+12%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "城防自保",
+      "tags": [
+        "减伤",
+        "自保",
+        "低成本"
+      ]
+    },
+    {
+      "id": "lib_b_chase_counter_cut",
+      "name": "反手追斩",
+      "grade": "B",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后30%发动，对目标追加85%攻击伤害。",
+      "trigger": "普通攻击后有30%概率发动。",
+      "target": "普通攻击目标",
+      "effect": "提供基础追加攻击伤害。",
+      "attribute_effects": {
+        "force": "伤害率85%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "基础追击输出",
+      "tags": [
+        "追击",
+        "新手",
+        "单体"
+      ]
+    },
+    {
+      "id": "lib_b_chase_quick_ride",
+      "name": "疾骑补击",
+      "grade": "B",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后35%概率对目标再造成55%攻击伤害；自身速度高于目标时概率+8%。",
+      "trigger": "普通攻击后有25%概率发动；骑兵装备时为30%。",
+      "target": "普通攻击目标",
+      "effect": "提供低成本追击输出，骑兵队伍使用时更稳定。",
+      "attribute_effects": {
+        "force": "伤害率75%",
+        "speed": "骑兵发动率+5%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "骑兵低成本追击",
+      "tags": [
+        "追击",
+        "骑兵",
+        "低成本"
+      ]
+    },
+    {
+      "id": "lib_s_command_lord_guard",
+      "name": "主将固护",
+      "grade": "S",
+      "type": "指挥",
+      "level": 1,
+      "description": "前4回合，我军主将受到伤害-18%；主将每回合首次受伤后，恢复我军兵力最低单体42%兵力。",
+      "trigger": "第1回合战斗开始时自动生效，持续4回合；恢复每回合最多1次。",
+      "target": "我军主将；我军兵力最低单体",
+      "effect": "保护主将并补足低兵力武将，适合护主与恢复主战法。",
+      "attribute_effects": {
+        "command": "主将受伤-18%",
+        "intelligence": "恢复率42%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "主将保护恢复",
+      "tags": [
+        "主将保护",
+        "减伤",
+        "恢复"
+      ]
+    },
+    {
+      "id": "lib_s_passive_deep_plan",
+      "name": "后谋蓄势",
+      "grade": "S",
+      "type": "被动",
+      "level": 1,
+      "description": "第4回合起，自身谋略伤害+28%；若本回合未发动主动战法，下回合主动战法发动率+7%。",
+      "trigger": "第4回合开始后常驻；发动率加成每回合结算1次。",
+      "target": "自身",
+      "effect": "强化后期谋略爆发，适合拖到第4回合后发力的主战法。",
+      "attribute_effects": {
+        "intelligence": "谋略伤害+28%",
+        "active_rate": "+7%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "后期谋略增伤",
+      "tags": [
+        "后发",
+        "谋略伤害",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_a_chase_chain_pressure",
+      "name": "连击压阵",
+      "grade": "A",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后40%概率对目标造成90%攻击伤害；若本回合已进行第2次普攻，伤害率额外+25%。",
+      "trigger": "普通攻击后判定；每回合最多触发2次。",
+      "target": "普通攻击目标",
+      "effect": "放大连击和额外普攻收益，适合普攻追击主战法。",
+      "attribute_effects": {
+        "force": "伤害率90%",
+        "combo_bonus": "+25%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "普攻连击追击",
+      "tags": [
+        "追击",
+        "普攻",
+        "连击"
+      ]
+    },
+    {
+      "id": "lib_a_active_finish_lord",
+      "name": "斩将乘势",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "40%发动，对敌军主将造成175%攻击伤害；若目标兵力低于50%，本次伤害+35%。",
+      "trigger": "行动时有40%概率发动。",
+      "target": "敌军主将",
+      "effect": "补足斩首爆发，适合单点强攻和收割主战法。",
+      "attribute_effects": {
+        "force": "伤害率175%",
+        "finish_bonus": "+35%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "主将斩首输出",
+      "tags": [
+        "主动",
+        "单体",
+        "攻击伤害"
+      ]
+    },
+    {
+      "id": "lib_a_passive_prepare_anchor",
+      "name": "稳阵蓄锋",
+      "grade": "A",
+      "type": "被动",
+      "level": 1,
+      "description": "自身准备战法期间受到伤害-22%；每场战斗首次受到控制时免疫1次，并使下一次准备战法伤害+18%。",
+      "trigger": "自身进入准备状态时生效；首次控制免疫每场战斗1次。",
+      "target": "自身",
+      "effect": "降低准备战法被打断风险，强化高倍率准备输出。",
+      "attribute_effects": {
+        "command": "准备受伤-22%",
+        "force": "准备伤害+18%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "准备保护增伤",
+      "tags": [
+        "准备",
+        "抗控",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_b_command_clear_order",
+      "name": "清令整军",
+      "grade": "B",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合，我军单体每回合首次获得负面状态时，有55%概率净化1个负面状态并恢复35%兵力。",
+      "trigger": "第1回合战斗开始时生效，持续3回合；每回合最多触发1次。",
+      "target": "我军获得负面状态的单体",
+      "effect": "提供低成本净化和小额恢复，适合抗控与恢复主战法。",
+      "attribute_effects": {
+        "cleanse_rate": "55%",
+        "heal_rate": "35%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "净化恢复过渡",
+      "tags": [
+        "新手",
+        "抗控",
+        "恢复"
+      ]
+    },
+    {
+      "id": "lib_s_command_unified_momentum",
+      "name": "众势并进",
+      "grade": "S",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合，我军全体主动战法发动率+6%，普攻伤害+12%，受到伤害-8%。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军全体3名武将",
+      "effect": "同时提高主动、普攻和生存收益，适合多核心队伍试搭。",
+      "attribute_effects": {
+        "active_rate": "+6%",
+        "normal_damage": "+12%",
+        "damage_taken": "-8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "全队混合增益",
+      "tags": [
+        "开局",
+        "全队",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_s_active_flooding_arrows",
+      "name": "江潮破阵",
+      "grade": "S",
+      "type": "主动",
+      "level": 1,
+      "description": "45%发动，对敌军群体2人造成170%谋略伤害，并使其防御-12%，持续2回合。",
+      "trigger": "战斗回合行动时有45%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "兼具谋略输出和破防，适合先压防再接攻击伤害。",
+      "attribute_effects": {
+        "intelligence": "伤害率170%",
+        "command": "防御-12%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "谋略破防群攻",
+      "tags": [
+        "谋略伤害",
+        "破防",
+        "群体"
+      ]
+    },
+    {
+      "id": "lib_s_passive_last_stand",
+      "name": "据险不退",
+      "grade": "S",
+      "type": "被动",
+      "level": 1,
+      "description": "自身兵力首次低于60%时，受到伤害-16%，并恢复自身50%兵力，持续2回合。",
+      "trigger": "每场战斗首次进入低兵力状态时触发。",
+      "target": "自身",
+      "effect": "提供低兵力保命窗口，适合反击、护主和后发体系试搭。",
+      "attribute_effects": {
+        "damage_taken": "-16%",
+        "heal_rate": "50%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "低兵力保命",
+      "tags": [
+        "低兵力",
+        "减伤",
+        "恢复"
+      ]
+    },
+    {
+      "id": "lib_s_chase_double_break",
+      "name": "双破追击",
+      "grade": "S",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后38%概率造成120%攻击伤害；目标有负面状态时，本次伤害+35%。",
+      "trigger": "普通攻击后判定，每回合最多触发2次。",
+      "target": "普通攻击目标",
+      "effect": "把破防、控制、降速等负面状态转成追击爆发。",
+      "attribute_effects": {
+        "force": "伤害率120%",
+        "debuff_bonus": "+35%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "负面追击爆发",
+      "tags": [
+        "追击",
+        "破防",
+        "单体"
+      ]
+    },
+    {
+      "id": "lib_s_command_clear_sky",
+      "name": "澄明军令",
+      "grade": "S",
+      "type": "指挥",
+      "level": 1,
+      "description": "前4回合，我军全体受到控制时有60%概率净化1个负面状态，且造成伤害+10%。",
+      "trigger": "第1回合战斗开始时自动生效，持续4回合。",
+      "target": "我军全体3名武将",
+      "effect": "降低控制干扰，同时保留输出推进能力。",
+      "attribute_effects": {
+        "cleanse_rate": "60%",
+        "damage": "+10%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "抗控全队增伤",
+      "tags": [
+        "抗控",
+        "全队",
+        "增伤"
+      ]
+    },
+    {
+      "id": "lib_a_command_rhythm_drill",
+      "name": "行阵节奏",
+      "grade": "A",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合，我军全体速度+10%，攻击+8%；第3回合结束后恢复我军单体35%兵力。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合；第3回合结束结算恢复。",
+      "target": "我军全体；我军兵力最低单体",
+      "effect": "提供开局速度和小额收束恢复，适合抢节奏队伍试搭。",
+      "attribute_effects": {
+        "speed": "+10%",
+        "force": "+8%",
+        "heal_rate": "35%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "开局速度恢复",
+      "tags": [
+        "开局",
+        "速度",
+        "恢复"
+      ]
+    },
+    {
+      "id": "lib_a_active_focus_fire",
+      "name": "集火军令",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "45%发动，对敌军兵力最低单体造成150%攻击伤害；目标兵力低于50%时伤害+25%。",
+      "trigger": "战斗回合行动时有45%概率发动。",
+      "target": "敌军兵力最低单体",
+      "effect": "帮助队伍集中击破低兵力目标，形成滚动优势。",
+      "attribute_effects": {
+        "force": "伤害率150%",
+        "finish_bonus": "+25%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "低兵力收割",
+      "tags": [
+        "主动",
+        "单体",
+        "攻击伤害"
+      ]
+    },
+    {
+      "id": "lib_a_active_poison_flame",
+      "name": "毒焰扰营",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "40%发动，对敌军群体2人造成110%谋略伤害，并附加燃烧2回合，每回合45%谋略伤害。",
+      "trigger": "战斗回合行动时有40%概率发动。",
+      "target": "敌军群体2名武将",
+      "effect": "补充持续谋略伤害，适合和破防、控制效果叠加试搭。",
+      "attribute_effects": {
+        "intelligence": "伤害率110%",
+        "burn_rate": "45%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "持续谋略扰营",
+      "tags": [
+        "谋略伤害",
+        "燃烧",
+        "群体"
+      ]
+    },
+    {
+      "id": "lib_a_passive_steady_recovery",
+      "name": "稳息回军",
+      "grade": "A",
+      "type": "被动",
+      "level": 1,
+      "description": "自身受到伤害后35%概率恢复45%兵力；若自身有负面状态，额外净化1个负面状态。",
+      "trigger": "自身每次受到伤害后判定，每回合最多触发1次。",
+      "target": "自身",
+      "effect": "提供持续自恢复和偶发净化，适合长线承伤试搭。",
+      "attribute_effects": {
+        "heal_rate": "45%",
+        "cleanse_count": "1"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "承伤自恢复",
+      "tags": [
+        "恢复",
+        "自保",
+        "抗控"
+      ]
+    },
+    {
+      "id": "lib_a_passive_counter_ready",
+      "name": "反击备势",
+      "grade": "A",
+      "type": "被动",
+      "level": 1,
+      "description": "受到普通攻击后45%概率反击85%攻击伤害；本回合自身受到普攻伤害-8%。",
+      "trigger": "自身受到普通攻击后判定，每回合最多触发2次。",
+      "target": "攻击者；自身",
+      "effect": "把承伤转成稳定反击，适合普攻密集环境试搭。",
+      "attribute_effects": {
+        "force": "反击伤害85%",
+        "normal_taken": "-8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "受击反击",
+      "tags": [
+        "普攻",
+        "减伤",
+        "攻击伤害"
+      ]
+    },
+    {
+      "id": "lib_a_chase_marked_cut",
+      "name": "标记追斩",
+      "grade": "A",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后40%概率造成100%攻击伤害；目标防御降低时，本次伤害+20%。",
+      "trigger": "普通攻击后判定，每回合最多触发2次。",
+      "target": "普通攻击目标",
+      "effect": "与破防类效果形成追击联动，适合攻击队试搭。",
+      "attribute_effects": {
+        "force": "伤害率100%",
+        "break_bonus": "+20%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "破防追击",
+      "tags": [
+        "追击",
+        "破防",
+        "单体"
+      ]
+    },
+    {
+      "id": "lib_a_chase_speed_snap",
+      "name": "迅影补刀",
+      "grade": "A",
+      "type": "追击",
+      "level": 1,
+      "description": "自身速度高于目标时，普通攻击后45%概率造成95%攻击伤害，并使目标速度-12%，持续1回合。",
+      "trigger": "普通攻击后判定，每回合最多触发2次。",
+      "target": "普通攻击目标",
+      "effect": "把速度优势转成追击和降速压制。",
+      "attribute_effects": {
+        "force": "伤害率95%",
+        "speed": "目标速度-12%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "速度追击降速",
+      "tags": [
+        "速度",
+        "追击",
+        "降速"
+      ]
+    },
+    {
+      "id": "lib_a_command_bow_cover",
+      "name": "弓步掩护",
+      "grade": "A",
+      "type": "指挥",
+      "level": 1,
+      "description": "前3回合，我军弓兵和步兵受到伤害-10%，主动战法发动率+4%。",
+      "trigger": "第1回合战斗开始时自动生效，持续3回合。",
+      "target": "我军弓兵和步兵武将",
+      "effect": "为弓步混编提供防守和主动战法稳定性。",
+      "attribute_effects": {
+        "damage_taken": "-10%",
+        "active_rate": "+4%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "弓步协同保护",
+      "tags": [
+        "弓兵",
+        "步兵",
+        "减伤"
+      ]
+    },
+    {
+      "id": "lib_a_active_break_morale",
+      "name": "破胆击",
+      "grade": "A",
+      "type": "主动",
+      "level": 1,
+      "description": "40%发动，对敌军单体造成160%攻击伤害，并使其主动战法发动率-8%，持续2回合。",
+      "trigger": "战斗回合行动时有40%概率发动。",
+      "target": "敌军单体武将",
+      "effect": "兼具单体输出和主动压制，适合补控制链。",
+      "attribute_effects": {
+        "force": "伤害率160%",
+        "active_rate": "-8%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "单体压制输出",
+      "tags": [
+        "主动",
+        "单体",
+        "控制"
+      ]
+    },
+    {
+      "id": "lib_b_command_trial_order",
+      "name": "试练军令",
+      "grade": "B",
+      "type": "指挥",
+      "level": 1,
+      "description": "前2回合，我军全体攻击+6%、防御+6%；第2回合结束后移除该效果。",
+      "trigger": "第1回合战斗开始时自动生效，持续2回合。",
+      "target": "我军全体3名武将",
+      "effect": "提供最基础的开局攻防增益，适合新手过渡。",
+      "attribute_effects": {
+        "force": "+6%",
+        "command": "+6%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手攻防过渡",
+      "tags": [
+        "新手",
+        "开局",
+        "全队"
+      ]
+    },
+    {
+      "id": "lib_b_active_short_strike",
+      "name": "短兵突击",
+      "grade": "B",
+      "type": "主动",
+      "level": 1,
+      "description": "45%发动，对敌军单体造成110%攻击伤害；若自身兵力高于70%，伤害+15%。",
+      "trigger": "战斗回合行动时有45%概率发动。",
+      "target": "敌军单体武将",
+      "effect": "低成本单体主动输出，适合早期攻击队补伤害。",
+      "attribute_effects": {
+        "force": "伤害率110%",
+        "high_hp_bonus": "+15%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手单体输出",
+      "tags": [
+        "新手",
+        "单体",
+        "攻击伤害"
+      ]
+    },
+    {
+      "id": "lib_b_active_mind_probe",
+      "name": "探谋扰敌",
+      "grade": "B",
+      "type": "主动",
+      "level": 1,
+      "description": "35%发动，对敌军单体造成90%谋略伤害，并使其速度-10%，持续2回合。",
+      "trigger": "战斗回合行动时有35%概率发动。",
+      "target": "敌军单体武将",
+      "effect": "低成本谋略干扰，适合早期弓步队补控制。",
+      "attribute_effects": {
+        "intelligence": "伤害率90%",
+        "speed": "-10%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "新手谋略降速",
+      "tags": [
+        "新手",
+        "谋略伤害",
+        "降速"
+      ]
+    },
+    {
+      "id": "lib_b_passive_minor_guard",
+      "name": "小阵固守",
+      "grade": "B",
+      "type": "被动",
+      "level": 1,
+      "description": "前3回合，自身受到伤害-8%；自身首次兵力低于50%时，额外恢复28%兵力。",
+      "trigger": "第1回合战斗开始时自动生效；低兵力恢复每场战斗1次。",
+      "target": "自身",
+      "effect": "提供基础减伤和低兵力兜底，适合新手承伤。",
+      "attribute_effects": {
+        "damage_taken": "-8%",
+        "heal_rate": "28%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "基础减伤兜底",
+      "tags": [
+        "减伤",
+        "低兵力",
+        "新手"
+      ]
+    },
+    {
+      "id": "lib_b_passive_battle_bandage",
+      "name": "简易包扎",
+      "grade": "B",
+      "type": "被动",
+      "level": 1,
+      "description": "第3回合起，每回合开始时恢复我军兵力最低单体28%兵力；每场战斗最多触发3次。",
+      "trigger": "第3回合开始后每回合判定。",
+      "target": "我军兵力最低单体",
+      "effect": "提供低成本后续恢复，适合拖回合试搭。",
+      "attribute_effects": {
+        "heal_rate": "28%",
+        "max_trigger": "3次"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "步兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "后续小额恢复",
+      "tags": [
+        "恢复",
+        "低成本",
+        "新手"
+      ]
+    },
+    {
+      "id": "lib_b_chase_follow_arrow",
+      "name": "随射补击",
+      "grade": "B",
+      "type": "追击",
+      "level": 1,
+      "description": "普通攻击后35%概率对目标造成70%攻击伤害；若目标速度低于自身，伤害+12%。",
+      "trigger": "普通攻击后判定，每回合最多触发2次。",
+      "target": "普通攻击目标",
+      "effect": "低成本追击补伤害，适合普攻队早期过渡。",
+      "attribute_effects": {
+        "force": "伤害率70%",
+        "speed_bonus": "+12%"
+      },
+      "source": {
+        "kind": "general_skill_library_preview",
+        "pool": "招募",
+        "unlock_method": "武将招募同池随机获得；支持单招和五连。",
+        "bind_rule": "仅进入玩家可装配战法槽；与武将招募同池产出，不写入hero_profiles[*].skills[0]。"
+      },
+      "unlock_hint": "在武将招募中随机获得；单招或五连均可能产出。",
+      "compatible_troops": [
+        "骑兵",
+        "弓兵"
+      ],
+      "recommended_slot": "任意",
+      "combat_role": "基础追击补伤",
+      "tags": [
+        "追击",
+        "低成本",
+        "普攻"
+      ]
+    }
+  ],
+  "supported_troops": [
+    "骑兵",
+    "步兵",
+    "弓兵"
+  ],
+  "supported_source_pools": [
+    "招募"
+  ],
+  "supported_tags": [
+    "新手",
+    "低成本",
+    "低兵力",
+    "开局",
+    "后发",
+    "准备",
+    "主动",
+    "普攻",
+    "追击",
+    "连击",
+    "单体",
+    "群体",
+    "攻击伤害",
+    "谋略伤害",
+    "燃烧",
+    "破防",
+    "降速",
+    "控制",
+    "增伤",
+    "减伤",
+    "恢复",
+    "自保",
+    "抗控",
+    "主将保护",
+    "全队",
+    "骑兵",
+    "步兵",
+    "弓兵",
+    "速度"
+  ],
+  "supported_recommended_slots": [
+    "任意"
+  ],
+  "slot_rule": "第一版不做站位推荐，所有通用战法 recommended_slot 固定为 任意。",
+  "acquisition_model": {
+    "entry": "武将招募",
+    "draw_modes": [
+      "单招",
+      "五连"
+    ],
+    "pool_rule": "通用战法与武将同池产出，不再通过内政、研究、演武等独立入口获取。",
+    "probability_note": "第一版为好概率预览口径：战法整体权重高于S级武将，S/A/B战法和武将概率后续由招募表统一配置。",
+    "inventory_rule": "抽到战法后进入玩家可装配通用战法库，不写入hero_profiles[*].skills[0]。"
+  },
+  "recruit_probability_preview": {
+    "pool_id": "pool_standard_preview",
+    "pool_name": "常驻招募预览池",
+    "preview_only": true,
+    "no_inventory_write": true,
+    "draw_modes": [
+      "单招",
+      "五连"
+    ],
+    "card_classes": [
+      {
+        "id": "hero_card",
+        "label": "武将卡",
+        "description": "抽到后才会进入武将 roster/reserve 正式链；当前仅预览。"
+      },
+      {
+        "id": "skill_card",
+        "label": "战法卡",
+        "description": "抽到后才会进入玩家可装配战法库正式链；当前仅预览。"
+      }
+    ],
+    "item_type_weights": [
+      {
+        "id": "skill_card",
+        "label": "战法卡",
+        "weight": 70
+      },
+      {
+        "id": "hero_card",
+        "label": "武将卡",
+        "weight": 30
+      }
+    ],
+    "rarity_weights": [
+      {
+        "id": "hero_s",
+        "label": "S级武将",
+        "card_class": "hero_card",
+        "weight": 30
+      },
+      {
+        "id": "skill_s",
+        "label": "S级战法",
+        "card_class": "skill_card",
+        "weight": 10
+      },
+      {
+        "id": "skill_a",
+        "label": "A级战法",
+        "card_class": "skill_card",
+        "weight": 30
+      },
+      {
+        "id": "skill_b",
+        "label": "B级战法",
+        "card_class": "skill_card",
+        "weight": 30
+      }
+    ],
+    "five_draw_preview_rule": "五连仅展示概率预览和固定样例；不做真实随机，不写入库存，不落保底。",
+    "pity_preview_note": "保底暂不落库；后续若需要，建议先做前端说明和状态字段，再接真实招募链。",
+    "probability_note": "战法卡整体权重70%，S级武将卡30%；当前没有普通武将卡。",
+    "single_draw_preview_note": "单招每次按同一预览概率表展示；当前不做真实随机，不消耗资源，不写入库存。",
+    "five_draw_probability_note": "五连共用同一权重表：战法卡更常见，武将卡全部为S级武将。",
+    "guarantee_preview": {
+      "enabled": false,
+      "label": "保底未启用",
+      "note": "第一版不接保底状态；若后续启用，先增加前端状态字段，再接真实招募链。"
+    },
+    "display_notes": [
+      "概率表只用于Godot原生UI预览。",
+      "不代表最终线上概率，不进入服务端合同。",
+      "不写入roster/reserve/战法库存。"
+    ],
+    "pool_depletion_preview": {
+      "preview_only": true,
+      "no_inventory_write": true,
+      "skill_cards_unique": true,
+      "skill_card_remove_on_draw": true,
+      "depletion_rule": "战法卡抽出后从可抽战法池移除；当可抽战法卡为空时，后续预览口径为100%S级武将卡。"
+    }
+  }
+}

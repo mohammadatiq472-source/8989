@@ -1,0 +1,1986 @@
+{
+  "hero_profiles": {
+    "100023": {
+      "name": "曹操",
+      "title": "魏武奠基",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 91,
+        "command": 125,
+        "intelligence": 124,
+        "charisma": 12,
+        "speed": 104
+      },
+      "growth": {
+        "force": 1.28,
+        "command": 2.95,
+        "intelligence": 1.59,
+        "charisma": 0.4,
+        "speed": 1.26
+      },
+      "skill_name": "魏武之世",
+      "skills": [
+        {
+          "id": "innate_100023",
+          "name": "魏武之世",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体攻击+18%、谋略+18%、速度+18%。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体攻击+18%、谋略+18%、速度+18%。",
+          "attribute_effects": {
+            "force": "+18%",
+            "intelligence": "+18%",
+            "speed": "+18%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100023",
+            "hero_name": "曹操",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "魏武奠基",
+        "骑兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/cao_cao_fate_v1_locked.png"
+    },
+    "100016": {
+      "name": "刘备",
+      "title": "漢昭烈帝",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "季汉",
+      "card_type": "步",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "infantry",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 128,
+        "command": 135,
+        "intelligence": 114,
+        "charisma": 30,
+        "speed": 72
+      },
+      "growth": {
+        "force": 2.48,
+        "command": 2.22,
+        "intelligence": 1.84,
+        "charisma": 2.1,
+        "speed": 0.94
+      },
+      "skill_name": "兴复汉室",
+      "skills": [
+        {
+          "id": "innate_100016",
+          "name": "兴复汉室",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体统率+20%、获得22%伤害减免；受伤后按75%恢复模板x5%小额恢复，治疗量受刘备谋略、当前兵力、补给影响。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体统率+20%、减伤22%；受伤恢复75%x5%。",
+          "attribute_effects": {
+            "command": "+20%",
+            "damage_reduction": "22%",
+            "healing": "75%",
+            "command_recovery": "5%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100016",
+            "hero_name": "刘备",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "漢昭烈帝",
+        "步兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/liu_bei_mature_hanzhong_sworddance_face_smile_v2_locked.png"
+    },
+    "100017": {
+      "name": "诸葛亮",
+      "title": "北伐丞相",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "季汉",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 65,
+        "command": 96,
+        "intelligence": 159,
+        "charisma": 16,
+        "speed": 68
+      },
+      "growth": {
+        "force": 0.52,
+        "command": 1.72,
+        "intelligence": 3.16,
+        "charisma": 1.76,
+        "speed": 0.88
+      },
+      "skill_name": "隆中对",
+      "skills": [
+        {
+          "id": "innate_100017",
+          "name": "隆中对",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，敌军全体谋略-18%、速度-8%；我军获得1次控制净化；对敌军兵力最低单体造成18%谋略小伤害，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "敌军全体3名武将",
+          "effect": "敌军全体谋略-18%、速度-8%；控制净化+1；敌军兵力最低单体18%谋略小伤害。",
+          "attribute_effects": {
+            "intelligence": "-18%",
+            "speed": "-8%",
+            "control_cleanse": "1",
+            "command_damage": "18%谋略"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100017",
+            "hero_name": "诸葛亮",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "北伐丞相",
+        "弓兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/zhuge_liang_mature_beifa_v1_selected_4x5.png"
+    },
+    "100021": {
+      "name": "赵云",
+      "title": "长坂护主",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "季汉",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 108,
+        "command": 94,
+        "intelligence": 102,
+        "charisma": 48,
+        "speed": 76
+      },
+      "growth": {
+        "force": 2.6,
+        "command": 1.88,
+        "intelligence": 0.8,
+        "charisma": 1.1,
+        "speed": 1.78
+      },
+      "skill_name": "长坂护主",
+      "skills": [
+        {
+          "id": "innate_100021",
+          "name": "长坂护主",
+          "grade": "S",
+          "type": "被动",
+          "level": 10,
+          "description": "战斗开始时，自身统率+18%、攻击+12%、速度+10%；我军获得1次控制净化。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "自身",
+          "effect": "自身统率+18%、攻击+12%、速度+10%；控制净化+1。",
+          "attribute_effects": {
+            "command": "+18%",
+            "force": "+12%",
+            "speed": "+10%",
+            "control_cleanse": "1"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100021",
+            "hero_name": "赵云",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "长坂护主",
+        "骑兵",
+        "被动"
+      ],
+      "archetype": "guard",
+      "portrait_source": "portrait_assets/locked_images/zhao_yun_youth_changban_rescue_v1_locked.png"
+    },
+    "100027": {
+      "name": "张辽",
+      "title": "合肥突骑",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 138,
+        "command": 102,
+        "intelligence": 118,
+        "charisma": 6,
+        "speed": 88
+      },
+      "growth": {
+        "force": 2.42,
+        "command": 1.66,
+        "intelligence": 0.92,
+        "charisma": 0.82,
+        "speed": 2.05
+      },
+      "skill_name": "威震逍遥",
+      "skills": [
+        {
+          "id": "innate_100027",
+          "name": "威震逍遥",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "45%发动，对敌军主将造成135%攻击伤害；若速度高于目标，追加8%伤害率，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "战斗回合行动时有45%概率发动。",
+          "target": "敌军主将",
+          "effect": "45%发动，敌军主将135%攻击伤害；速度高于目标+8%伤害率。",
+          "attribute_effects": {
+            "damage": "135%攻击",
+            "speed_bonus_damage": "+8%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100027",
+            "hero_name": "张辽",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "合肥突骑",
+        "骑兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/zhang_liao_mature_hefei_v1_locked.png"
+    },
+    "100031": {
+      "name": "周瑜",
+      "title": "赤壁都督",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "东吴",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 88,
+        "command": 106,
+        "intelligence": 132,
+        "charisma": 14,
+        "speed": 52
+      },
+      "growth": {
+        "force": 0.72,
+        "command": 1.58,
+        "intelligence": 2.92,
+        "charisma": 1.62,
+        "speed": 1.1
+      },
+      "skill_name": "赤壁火势",
+      "skills": [
+        {
+          "id": "innate_100031",
+          "name": "赤壁火势",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "45%发动，对敌军全体造成76%谋略伤害，伤害受谋略、当前兵力、补给影响；并附加燃烧2回合，每回合25%谋略伤害，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "战斗回合行动时有45%概率发动。",
+          "target": "敌军全体3名武将",
+          "effect": "45%发动，敌军全体76%谋略伤害；燃烧2回合x25%谋略。",
+          "attribute_effects": {
+            "damage": "76%谋略",
+            "burn": "25% x 2"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100031",
+            "hero_name": "周瑜",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "赤壁都督",
+        "弓兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/zhou_yu_mature_chibi_v1_locked.png"
+    },
+    "100090": {
+      "name": "太史慈",
+      "title": "信义神射",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "东吴",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 98,
+        "command": 52,
+        "intelligence": 82,
+        "charisma": 25,
+        "speed": 64
+      },
+      "growth": {
+        "force": 2.2,
+        "command": 1.36,
+        "intelligence": 0.92,
+        "charisma": 0.9,
+        "speed": 1.58
+      },
+      "skill_name": "信义神射",
+      "skills": [
+        {
+          "id": "innate_100090",
+          "name": "信义神射",
+          "grade": "S",
+          "type": "追击",
+          "level": 10,
+          "description": "普攻后45%发动，对普攻目标造成140%攻击伤害；若攻击高于目标统率，改为155%伤害率，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "普攻后有45%概率发动。",
+          "target": "普攻目标",
+          "effect": "45%发动，普攻目标140%攻击伤害；破防时155%。",
+          "attribute_effects": {
+            "damage": "140%攻击",
+            "break_damage": "155%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100090",
+            "hero_name": "太史慈",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "信义神射",
+        "弓兵",
+        "被动"
+      ],
+      "archetype": "guard",
+      "portrait_source": "portrait_assets/locked_images/tai_shi_ci_mature_yishi_v1_locked.png"
+    },
+    "100451": {
+      "name": "关羽",
+      "title": "威震华夏",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "季汉",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 136,
+        "command": 90,
+        "intelligence": 76,
+        "charisma": 38,
+        "speed": 100
+      },
+      "growth": {
+        "force": 2.88,
+        "command": 1.98,
+        "intelligence": 0.92,
+        "charisma": 1.48,
+        "speed": 1.28
+      },
+      "skill_name": "威震华夏",
+      "skills": [
+        {
+          "id": "innate_100451",
+          "name": "威震华夏",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "40%发动，对敌军全体造成68%攻击伤害，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "战斗回合行动时有40%概率发动。",
+          "target": "敌军全体3名武将",
+          "effect": "40%发动，敌军全体68%攻击伤害。",
+          "attribute_effects": {
+            "damage": "68%攻击"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100451",
+            "hero_name": "关羽",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "威震华夏",
+        "骑兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/guan_yu_mature_mounted_jingzhou_v1_locked.png"
+    },
+    "100661": {
+      "name": "吕布",
+      "title": "温侯飞将",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "群雄",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 5,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 188,
+        "command": 68,
+        "intelligence": 32,
+        "charisma": 9,
+        "speed": 82
+      },
+      "growth": {
+        "force": 3.8,
+        "command": 1.5,
+        "intelligence": 0.4,
+        "charisma": 0.72,
+        "speed": 1.86
+      },
+      "skill_name": "天下无双",
+      "skills": [
+        {
+          "id": "innate_100661",
+          "name": "天下无双",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "35%发动，对敌军2人造成105%攻击伤害；若速度高于目标，追加8%伤害率，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "战斗回合行动时有35%概率发动。",
+          "target": "敌军群体2名武将",
+          "effect": "35%发动，敌军2人105%攻击伤害；速度高于目标+8%伤害率。",
+          "attribute_effects": {
+            "damage": "105%攻击",
+            "speed_bonus_damage": "+8%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100661",
+            "hero_name": "吕布",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "温侯飞将",
+        "骑兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/lu_bu_mature_wenhou_v1_selected.png"
+    },
+    "100701": {
+      "name": "曹丕",
+      "title": "魏文受禅",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "步",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "infantry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 116,
+        "command": 168,
+        "intelligence": 176,
+        "charisma": 188,
+        "speed": 104
+      },
+      "growth": {
+        "force": 1.02,
+        "command": 1.62,
+        "intelligence": 1.78,
+        "charisma": 1.84,
+        "speed": 0.82
+      },
+      "skill_name": "禅代魏统",
+      "skills": [
+        {
+          "id": "innate_100701",
+          "name": "禅代魏统",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体统率+12%、谋略+10%。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体统率+12%、谋略+10%。",
+          "attribute_effects": {
+            "command": "+12%",
+            "intelligence": "+10%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100701",
+            "hero_name": "曹丕",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "魏文受禅",
+        "步兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/cao_pi_mature_shanrang_v1_locked.png"
+    },
+    "100702": {
+      "name": "典韦",
+      "title": "古之恶来",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "步",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "infantry",
+      "attack_range": 1,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 132,
+        "command": 118,
+        "intelligence": 58,
+        "charisma": 32,
+        "speed": 48
+      },
+      "growth": {
+        "force": 2.82,
+        "command": 2.5,
+        "intelligence": 0.32,
+        "charisma": 0.78,
+        "speed": 0.72
+      },
+      "skill_name": "古之恶来",
+      "skills": [
+        {
+          "id": "innate_100702",
+          "name": "古之恶来",
+          "grade": "S",
+          "type": "被动",
+          "level": 10,
+          "description": "战斗开始时，我军主将统率+10%、攻击+8%、获得22%伤害减免。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军主将",
+          "effect": "我军主将统率+10%、攻击+8%、减伤22%。",
+          "attribute_effects": {
+            "command": "+10%",
+            "force": "+8%",
+            "damage_reduction": "22%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100702",
+            "hero_name": "典韦",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "古之恶来",
+        "步兵",
+        "被动"
+      ],
+      "archetype": "guard",
+      "portrait_source": "portrait_assets/locked_images/dian_wei_mature_huzhu_v1_locked.png"
+    },
+    "100703": {
+      "name": "董卓",
+      "title": "西凉乱政",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "群雄",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 1,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 118,
+        "command": 136,
+        "intelligence": 68,
+        "charisma": 62,
+        "speed": 46
+      },
+      "growth": {
+        "force": 2.05,
+        "command": 2.3,
+        "intelligence": 0.66,
+        "charisma": 1.7,
+        "speed": 0.42
+      },
+      "skill_name": "关西乱政",
+      "skills": [
+        {
+          "id": "innate_100703",
+          "name": "关西乱政",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体攻击+22%、谋略+14%；若自身位于前排，对敌军兵力最低单体造成4次18%谋略小伤害，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体攻击+22%、谋略+14%；前排：敌军兵力最低单体4次18%谋略小伤害。",
+          "attribute_effects": {
+            "force": "+22%",
+            "intelligence": "+14%",
+            "command_damage": "18%谋略 x 4"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100703",
+            "hero_name": "董卓",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "西凉乱政",
+        "骑兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/dong_zhuo_early_xiliang_campaign_v1_locked.png"
+    },
+    "100704": {
+      "name": "甘宁",
+      "title": "锦帆夜袭",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "东吴",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 128,
+        "command": 100,
+        "intelligence": 54,
+        "charisma": 12,
+        "speed": 90
+      },
+      "growth": {
+        "force": 2.48,
+        "command": 1.12,
+        "intelligence": 0.72,
+        "charisma": 0.96,
+        "speed": 2.12
+      },
+      "skill_name": "铃响破胆",
+      "skills": [
+        {
+          "id": "innate_100704",
+          "name": "铃响破胆",
+          "grade": "S",
+          "type": "追击",
+          "level": 10,
+          "description": "普攻后45%发动，对敌军2人造成220%攻击伤害，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "普攻后有45%概率发动。",
+          "target": "敌军群体2名武将",
+          "effect": "45%发动，敌军2人220%攻击伤害。",
+          "attribute_effects": {
+            "damage": "220%攻击"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100704",
+            "hero_name": "甘宁",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "锦帆夜袭",
+        "弓兵",
+        "追击"
+      ],
+      "archetype": "mobile",
+      "portrait_source": "portrait_assets/locked_images/gan_ning_mature_jinfan_raid_v1_locked.png"
+    },
+    "100705": {
+      "name": "郭嘉",
+      "title": "遗计辽东",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 42,
+        "command": 52,
+        "intelligence": 176,
+        "charisma": 28,
+        "speed": 56
+      },
+      "growth": {
+        "force": 0.42,
+        "command": 0.98,
+        "intelligence": 2.86,
+        "charisma": 0.54,
+        "speed": 1.32
+      },
+      "skill_name": "遗计定辽",
+      "skills": [
+        {
+          "id": "innate_100705",
+          "name": "遗计定辽",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，敌军全体攻击-16%、谋略-16%；对敌军兵力最低单体造成18%谋略小伤害，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "敌军全体3名武将",
+          "effect": "敌军全体攻击-16%、谋略-16%；敌军兵力最低单体18%谋略小伤害。",
+          "attribute_effects": {
+            "force": "-16%",
+            "intelligence": "-16%",
+            "command_damage": "18%谋略"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100705",
+            "hero_name": "郭嘉",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "遗计辽东",
+        "弓兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/guo_jia_mature_fate_liaodong_v1_locked.png"
+    },
+    "100706": {
+      "name": "献帝",
+      "title": "汉祚余晖",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "群雄",
+      "card_type": "步",
+      "quality": "4-XP",
+      "stars": 4,
+      "red_stars": 0,
+      "cost": 2.5,
+      "troop_type": "infantry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 32,
+        "command": 42,
+        "intelligence": 88,
+        "charisma": 62,
+        "speed": 30
+      },
+      "growth": {
+        "force": 0.22,
+        "command": 0.62,
+        "intelligence": 1.58,
+        "charisma": 0.42,
+        "speed": 0.36
+      },
+      "skill_name": "衣带诏",
+      "skills": [
+        {
+          "id": "innate_100706",
+          "name": "衣带诏",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体统率+10%、获得12%伤害减免；我军获得1次规避主动战法伤害；对敌军兵力最低单体造成15%谋略小伤害，伤害受谋略、当前兵力、补给影响；受伤后按70%恢复模板x5%小额恢复，治疗量受献帝谋略、当前兵力、补给影响。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体统率+10%、减伤12%；规避主动+1；敌军兵力最低单体15%谋略小伤害；受伤恢复70%x5%。",
+          "attribute_effects": {
+            "command": "+10%",
+            "damage_reduction": "12%",
+            "evasion_against": "主动",
+            "healing": "70%",
+            "command_recovery": "5%",
+            "command_damage": "15%谋略"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100706",
+            "hero_name": "献帝",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "汉祚余晖",
+        "步兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/han_xiandi_disempowered_v1_selected.png"
+    },
+    "100707": {
+      "name": "贾诩",
+      "title": "毒士多识",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 44,
+        "command": 98,
+        "intelligence": 138,
+        "charisma": 22,
+        "speed": 48
+      },
+      "growth": {
+        "force": 0.4,
+        "command": 1.22,
+        "intelligence": 2.92,
+        "charisma": 0.56,
+        "speed": 1
+      },
+      "skill_name": "毒士乱武",
+      "skills": [
+        {
+          "id": "innate_100707",
+          "name": "毒士乱武",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "50%发动，对敌军2人造成90%谋略伤害，伤害受谋略、当前兵力、补给影响；并附加燃烧1回合，每回合35%谋略伤害，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "战斗回合行动时有50%概率发动。",
+          "target": "敌军群体2名武将",
+          "effect": "50%发动，敌军2人90%谋略伤害；燃烧1回合x35%谋略。",
+          "attribute_effects": {
+            "damage": "90%谋略",
+            "burn": "35% x 1"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100707",
+            "hero_name": "贾诩",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "毒士多识",
+        "弓兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/jia_xu_mature_duoshi_v1_locked.png"
+    },
+    "100708": {
+      "name": "马超",
+      "title": "西凉锦马",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "群雄",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 136,
+        "command": 138,
+        "intelligence": 72,
+        "charisma": 6,
+        "speed": 98
+      },
+      "growth": {
+        "force": 2.92,
+        "command": 1.3,
+        "intelligence": 0.44,
+        "charisma": 1.02,
+        "speed": 2.24
+      },
+      "skill_name": "锦马复仇",
+      "skills": [
+        {
+          "id": "innate_100708",
+          "name": "锦马复仇",
+          "grade": "S",
+          "type": "追击",
+          "level": 10,
+          "description": "普攻后45%发动，对普攻目标造成160%攻击伤害；若速度高于目标，追加25%伤害率，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "普攻后有45%概率发动。",
+          "target": "普攻目标",
+          "effect": "45%发动，普攻目标160%攻击伤害；速度高于目标+25%伤害率。",
+          "attribute_effects": {
+            "damage": "160%攻击",
+            "speed_bonus_damage": "+25%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100708",
+            "hero_name": "马超",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "西凉锦马",
+        "骑兵",
+        "追击"
+      ],
+      "archetype": "mobile",
+      "portrait_source": "portrait_assets/locked_images/ma_chao_mature_xiliang_retreat_v1_locked.png"
+    },
+    "100709": {
+      "name": "司马懿",
+      "title": "高平陵变",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "步",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "infantry",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 52,
+        "command": 108,
+        "intelligence": 144,
+        "charisma": 54,
+        "speed": 36
+      },
+      "growth": {
+        "force": 0.54,
+        "command": 2.96,
+        "intelligence": 2.72,
+        "charisma": 1.42,
+        "speed": 0.7
+      },
+      "skill_name": "高平陵变",
+      "skills": [
+        {
+          "id": "innate_100709",
+          "name": "高平陵变",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "55%发动，对敌军兵力最低单体造成95%谋略伤害；第2回合起，自身已损兵力会提高伤害率，最多+75%，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "战斗回合行动时有55%概率发动。",
+          "target": "敌军兵力最低单体",
+          "effect": "55%发动，敌军兵力最低单体95%谋略伤害；已损兵力增伤最多+75%。",
+          "attribute_effects": {
+            "damage": "95%谋略",
+            "lost_strength_damage_bonus_cap": "+75%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100709",
+            "hero_name": "司马懿",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "高平陵变",
+        "步兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/sima_yi_fate_gaopingling_v1_selected.png"
+    },
+    "100710": {
+      "name": "孙策",
+      "title": "江东小霸王",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "东吴",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "cavalry",
+      "attack_range": 2,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 128,
+        "command": 70,
+        "intelligence": 92,
+        "charisma": 16,
+        "speed": 76
+      },
+      "growth": {
+        "force": 2.72,
+        "command": 1.62,
+        "intelligence": 0.88,
+        "charisma": 1.58,
+        "speed": 1.78
+      },
+      "skill_name": "小霸王",
+      "skills": [
+        {
+          "id": "innate_100710",
+          "name": "小霸王",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "60%发动，对敌军随机单体造成210%攻击伤害；若速度高于目标，追加25%伤害率，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "战斗回合行动时有60%概率发动。",
+          "target": "敌军随机单体",
+          "effect": "60%发动，敌军随机单体210%攻击伤害；速度高于目标+25%伤害率。",
+          "attribute_effects": {
+            "damage": "210%攻击",
+            "speed_bonus_damage": "+25%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100710",
+            "hero_name": "孙策",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "江东小霸王",
+        "骑兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/sun_ce_young_founder_v1_selected.png"
+    },
+    "100711": {
+      "name": "孙权",
+      "title": "坐断江东",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "东吴",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 106,
+        "command": 108,
+        "intelligence": 118,
+        "charisma": 36,
+        "speed": 66
+      },
+      "growth": {
+        "force": 1.08,
+        "command": 1.7,
+        "intelligence": 1.92,
+        "charisma": 1.62,
+        "speed": 0.92
+      },
+      "skill_name": "坐断江东",
+      "skills": [
+        {
+          "id": "innate_100711",
+          "name": "坐断江东",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体统率+12%、谋略+10%、获得14%伤害减免；我军获得1次控制净化。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体统率+12%、谋略+10%、减伤14%；控制净化+1。",
+          "attribute_effects": {
+            "command": "+12%",
+            "intelligence": "+10%",
+            "damage_reduction": "14%",
+            "control_cleanse": "1"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100711",
+            "hero_name": "孙权",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "坐断江东",
+        "弓兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/sun_quan_mature_successor_v1_locked.png"
+    },
+    "100712": {
+      "name": "孙权",
+      "title": "江东少主",
+      "variant_tag": "SP",
+      "variant_label": "SP",
+      "faction": "东吴",
+      "card_type": "弓",
+      "quality": "5-SP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 92,
+        "command": 150,
+        "intelligence": 168,
+        "charisma": 32,
+        "speed": 118
+      },
+      "growth": {
+        "force": 0.72,
+        "command": 1.42,
+        "intelligence": 1.72,
+        "charisma": 1.08,
+        "speed": 0.98
+      },
+      "skill_name": "受命江东",
+      "skills": [
+        {
+          "id": "innate_100712",
+          "name": "受命江东",
+          "grade": "S",
+          "type": "指挥",
+          "level": 10,
+          "description": "战斗开始时，我军全体统率+12%、攻击+18%、获得5%伤害减免。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军全体3名武将",
+          "effect": "我军全体统率+12%、攻击+18%、减伤5%。",
+          "attribute_effects": {
+            "command": "+12%",
+            "force": "+18%",
+            "damage_reduction": "5%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100712",
+            "hero_name": "孙权",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "江东少主",
+        "弓兵",
+        "指挥"
+      ],
+      "archetype": "reserve",
+      "portrait_source": "portrait_assets/locked_images/sun_quan_succession_entrustment_v1_locked.png"
+    },
+    "100713": {
+      "name": "夏侯惇",
+      "title": "独眼刚烈",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "cavalry",
+      "attack_range": 1,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 126,
+        "command": 146,
+        "intelligence": 62,
+        "charisma": 18,
+        "speed": 84
+      },
+      "growth": {
+        "force": 2.22,
+        "command": 2.56,
+        "intelligence": 0.66,
+        "charisma": 0.98,
+        "speed": 1.06
+      },
+      "skill_name": "独眼刚烈",
+      "skills": [
+        {
+          "id": "innate_100713",
+          "name": "独眼刚烈",
+          "grade": "S",
+          "type": "被动",
+          "level": 10,
+          "description": "战斗开始时，自身统率+24%、攻击+8%、获得12%伤害减免。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "自身",
+          "effect": "自身统率+24%、攻击+8%、减伤12%。",
+          "attribute_effects": {
+            "command": "+24%",
+            "force": "+8%",
+            "damage_reduction": "12%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100713",
+            "hero_name": "夏侯惇",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "独眼刚烈",
+        "骑兵",
+        "被动"
+      ],
+      "archetype": "guard",
+      "portrait_source": "portrait_assets/locked_images/xiahou_dun_mature_duyan_v1_locked.png"
+    },
+    "100714": {
+      "name": "荀彧",
+      "title": "王佐之才",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "曹魏",
+      "card_type": "骑",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "cavalry",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 58,
+        "command": 126,
+        "intelligence": 124,
+        "charisma": 10,
+        "speed": 102
+      },
+      "growth": {
+        "force": 0.32,
+        "command": 1.08,
+        "intelligence": 2.78,
+        "charisma": 2.06,
+        "speed": 0.78
+      },
+      "skill_name": "王佐之才",
+      "skills": [
+        {
+          "id": "innate_100714",
+          "name": "王佐之才",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "40%发动，对敌军2人造成80%谋略伤害，伤害受谋略、当前兵力、补给影响。",
+          "trigger": "战斗回合行动时有40%概率发动。",
+          "target": "敌军群体2名武将",
+          "effect": "40%发动，敌军2人80%谋略伤害。",
+          "attribute_effects": {
+            "damage": "80%谋略"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100714",
+            "hero_name": "荀彧",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "王佐之才",
+        "骑兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/xun_yu_youth_wangzuo_v1_locked.png"
+    },
+    "100715": {
+      "name": "袁绍",
+      "title": "盟主号令",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "群雄",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 156,
+        "command": 162,
+        "intelligence": 154,
+        "charisma": 10,
+        "speed": 88
+      },
+      "growth": {
+        "force": 1.52,
+        "command": 1.6,
+        "intelligence": 1.42,
+        "charisma": 1.82,
+        "speed": 0.58
+      },
+      "skill_name": "万箭齐发",
+      "skills": [
+        {
+          "id": "innate_100715",
+          "name": "万箭齐发",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "50%发动，对敌军全体造成70%攻击伤害，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "战斗回合行动时有50%概率发动。",
+          "target": "敌军全体3名武将",
+          "effect": "50%发动，敌军全体70%攻击伤害。",
+          "attribute_effects": {
+            "damage": "70%攻击"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100715",
+            "hero_name": "袁绍",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "盟主号令",
+        "弓兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/yuan_shao_mature_coalition_oath_v1_locked.png"
+    },
+    "100716": {
+      "name": "张飞",
+      "title": "巴西怒吼",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "季汉",
+      "card_type": "步",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.5,
+      "troop_type": "infantry",
+      "attack_range": 1,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 138,
+        "command": 86,
+        "intelligence": 58,
+        "charisma": 42,
+        "speed": 88
+      },
+      "growth": {
+        "force": 2.96,
+        "command": 1.92,
+        "intelligence": 0.38,
+        "charisma": 1.18,
+        "speed": 0.96
+      },
+      "skill_name": "巴西怒吼",
+      "skills": [
+        {
+          "id": "innate_100716",
+          "name": "巴西怒吼",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "70%发动，对敌军全体造成52%攻击伤害，伤害受攻击、当前兵力、机动影响。",
+          "trigger": "战斗回合行动时有70%概率发动。",
+          "target": "敌军全体3名武将",
+          "effect": "70%发动，敌军全体52%攻击伤害。",
+          "attribute_effects": {
+            "damage": "52%攻击"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100716",
+            "hero_name": "张飞",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "巴西怒吼",
+        "步兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/zhang_fei_mature_baxi_v1_locked.png"
+    },
+    "100717": {
+      "name": "周泰",
+      "title": "不屈护主",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "东吴",
+      "card_type": "步",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 3.0,
+      "troop_type": "infantry",
+      "attack_range": 1,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 88,
+        "command": 156,
+        "intelligence": 34,
+        "charisma": 36,
+        "speed": 52
+      },
+      "growth": {
+        "force": 1.74,
+        "command": 2.88,
+        "intelligence": 0.44,
+        "charisma": 0.72,
+        "speed": 0.62
+      },
+      "skill_name": "不屈护主",
+      "skills": [
+        {
+          "id": "innate_100717",
+          "name": "不屈护主",
+          "grade": "S",
+          "type": "被动",
+          "level": 10,
+          "description": "战斗开始时，我军主将获得45%伤害减免。",
+          "trigger": "第1回合战斗开始时自动生效。",
+          "target": "我军主将",
+          "effect": "我军主将减伤45%。",
+          "attribute_effects": {
+            "damage_reduction": "45%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100717",
+            "hero_name": "周泰",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "不屈护主",
+        "步兵",
+        "被动"
+      ],
+      "archetype": "guard",
+      "portrait_source": "portrait_assets/locked_images/zhou_tai_mature_victory_shout_v1_locked.png"
+    },
+    "100718": {
+      "name": "蔡文姬",
+      "title": "胡笳归汉",
+      "variant_tag": "XP",
+      "variant_label": "XP",
+      "faction": "群雄",
+      "card_type": "弓",
+      "quality": "5-XP",
+      "stars": 5,
+      "red_stars": 0,
+      "cost": 2.5,
+      "troop_type": "archer",
+      "attack_range": 3,
+      "level": 50,
+      "exp_current": 0,
+      "exp_max": 12000,
+      "soldier_current": 10000,
+      "soldier_max": 10000,
+      "stamina_current": 150,
+      "stamina_max": 150,
+      "attributes": {
+        "force": 42,
+        "command": 46,
+        "intelligence": 108,
+        "charisma": 28,
+        "speed": 72
+      },
+      "growth": {
+        "force": 0.24,
+        "command": 0.74,
+        "intelligence": 2.12,
+        "charisma": 0.34,
+        "speed": 0.94
+      },
+      "skill_name": "胡笳十八拍",
+      "skills": [
+        {
+          "id": "innate_100718",
+          "name": "胡笳十八拍",
+          "grade": "S",
+          "type": "主动",
+          "level": 10,
+          "description": "55%发动，恢复我军兵力最低2人兵力，基础治疗率118%，治疗量受蔡文姬谋略、当前兵力、补给影响。",
+          "trigger": "战斗回合行动时有55%概率发动。",
+          "target": "我军兵力最低2名武将",
+          "effect": "我军兵力最低2人恢复118%。",
+          "attribute_effects": {
+            "healing": "118%"
+          },
+          "source": {
+            "kind": "hero_innate",
+            "hero_id": "100718",
+            "hero_name": "蔡文姬",
+            "bind_rule": "武将主战法，仅随武将存在，不进入玩家通用可装配库。"
+          },
+          "unlock_hint": "获得该武将后默认拥有；当前阶段不可拆出为玩家通用可装配战法。"
+        }
+      ],
+      "learnable_skill_slots": 2,
+      "allocation": {
+        "free_points": 0,
+        "active_scheme": "默认",
+        "notes": "每10级获得10点自由配点，10/20/30/40/50级可投入攻击、防御、谋略、攻城或速度。"
+      },
+      "traits": [
+        "胡笳归汉",
+        "弓兵",
+        "主动"
+      ],
+      "archetype": "assault",
+      "portrait_source": "portrait_assets/locked_images/cai_wenji_fate_frontier_qin_v1_locked.png"
+    }
+  }
+}

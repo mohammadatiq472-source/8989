@@ -89,7 +89,7 @@ flowchart LR
 | `threat_escape` | `queueAiAgendaAction` | 走 `agenda_recover / agenda_redeploy`，不是直接 move | 同上 |
 | `alliance_help` | `allianceHelp` | 对联盟战区做一次正式协助 | 同上 |
 | `resource_gather` | `gatherAiResourceTile` | AI 指派单位驻扎己方资源地后，一次性按 resourceKind/resourceLevel 入账 AI 子账户 | 同上 |
-| `resource_transfer_to_governor` | `transferFactionResourcesToGovernor` | 从 AI 子账户转入同总督待领取收件箱，high-risk 强制审批 | 同上 |
+| `resource_transfer_to_governor` | `transferFactionResourcesToGovernor` | 从 AI 子账户转入同总督待领取收件箱，high-risk 强制审批，并由后端 rules 层限制每日额度/冷却 | 同上 |
 | `reward_claim` | `claimReward` | 领取 `FactionState.claimableRewards` 中的待领奖励 | 同上 |
 
 ## 4. 已补的后端 authority
@@ -105,7 +105,13 @@ flowchart LR
   - 正式验证：`npm run test:world:reward-claim-http-contract`
 - `transferFactionResourcesToGovernor`
   - 状态面：`FactionState.aiResourceAccounts` -> `FactionState.governorResourceInboxes`
-  - v1 语义：同总督限定、跨势力贸易延期、AI 子账户扣款、总督待领取收件箱、high-risk 强制审批
+  - 状态面：`FactionState.aiResourceTransferQuotaByAiPlayer`
+  - 配置面：`FactionState.aiResourceTransferPolicy`
+  - v1 语义：同总督限定、不做跨势力贸易、AI 子账户扣款、总督待领取收件箱、high-risk 强制审批、后端 rules 层每日额度/冷却，额度/冷却可由 faction policy 配置
+  - 正式验证：`npm run test:world:resource-transfer-http-contract`
+- `setAiResourceTransferPolicy`
+  - 状态面：`FactionState.aiResourceTransferPolicy`
+  - v1 语义：后端 authority 配置 AI 资源输送每日额度、窗口 tick 与冷却 tick；不是 AI 玩家动作
   - 正式验证：`npm run test:world:resource-transfer-http-contract`
 - `gatherAiResourceTile`
   - 状态面：`Tile(type=resource, resourceKind, resourceLevel)` -> `FactionState.aiResourceAccounts`
@@ -196,7 +202,10 @@ flowchart LR
 - 代码事实：
   `FactionState` 是势力级资源，`AIPlayer` 当前是部队分组；本轮新增 `FactionState.aiResourceAccounts` 作为 AI 子账户，避免把部队分组和经济钱包混在一起。
 - 转移第一落点是 `FactionState.governorResourceInboxes`；总督领取后落到 `FactionState.food/wood/stone/iron`。
-- v1 限定同总督，跨势力贸易延期。
+- v1 限定同总督，不做跨势力贸易。
+- v1 现在由后端 rules 层强制每日额度/冷却；配置面为 `FactionState.aiResourceTransferPolicy`，运行状态面为 `FactionState.aiResourceTransferQuotaByAiPlayer`，失败码为 `daily_quota_exceeded` 和 `transfer_cooldown_active`，UI 只消费 receipt，不做本地限流兜底。
+- `setAiResourceTransferPolicy` 是总督/后端配置 authority，不在 AI 玩家 v1 原子动作列表中；AI 玩家仍只能提出/执行 `resource_transfer_to_governor`。
+- AI runtime/read model 已暴露 `GovernedAiPlayerRuntime.resourceTransfer`，包含 `configuredPolicy / effectivePolicy / quota / remainingQuotaTotal / cooldownRemainingTicks / windowRemainingTicks / canTransferNow / blockedBy`，UI 不需要为额度/冷却展示读取完整 world snapshot。
 - UI 侧交接见：
   `docs/AI_PLAYER_RESOURCE_TRANSFER_AUTHORITY_HANDOFF_2026_04_21.md`。
 

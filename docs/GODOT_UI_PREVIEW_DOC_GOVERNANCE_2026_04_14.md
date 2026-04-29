@@ -1,5 +1,9 @@
 # Godot UI Preview 文档治理（第二轮，2026-04-14）
 
+> 状态：历史 / preview 侧线治理文档。  
+> 当前产品主线已切回原生 SLG 客户端，不再以 preview 文档为默认入口。  
+> 现行主线请改读：[NATIVE_SLG_MAINLINE_INDEX.md](NATIVE_SLG_MAINLINE_INDEX.md)
+
 ## 1. 目的
 
 这份文档用于把 `UI Preview Sandbox` 相关文档压成三层，减少新窗口和新代理在 `docs/` 里的首读噪声。

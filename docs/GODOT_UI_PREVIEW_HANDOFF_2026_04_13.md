@@ -1,5 +1,9 @@
 # Godot UI Preview Handoff（2026-04-13）
 
+> 状态：历史 / preview 交接文档。  
+> 当前主线已不再以 `ui_preview_sandbox.tscn` 为产品入口。  
+> 现行主线请改读：[NATIVE_SLG_MAINLINE_INDEX.md](NATIVE_SLG_MAINLINE_INDEX.md)
+
 这份文档用于把当前 `Godot + UI Preview Sandbox` 的地图 UI 主线，交接给新的 AI 窗口，目标是降低上下文污染，避免重新摸索入口和故事链。
 
 ## 1. 当前正式入口

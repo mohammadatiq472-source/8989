@@ -70,7 +70,7 @@ def main() -> int:
         checks.append(ok('launcher_exists', True, str(launcher_path)))
         checks.append(ok(
             'launcher_sets_codex_home',
-            'codex_home=%cd%\.codex-harness-home' in launcher_text,
+            'codex_home=%cd%\\.codex-harness-home' in launcher_text,
             'expects project-local CODEX_HOME',
         ))
     else:

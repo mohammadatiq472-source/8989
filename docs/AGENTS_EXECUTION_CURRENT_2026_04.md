@@ -5,6 +5,17 @@
 这是当前唯一执行口径，用于覆盖 2026-03 历史提示词中已过时部分。  
 当与历史文档冲突时，以本文件为准。
 
+当前原生 SLG 主线默认入口：
+
+- [Codex 主线记忆锚点](../CODEX.md)
+- [原生 SLG正式主线文档](NATIVE_SLG_MAINLINE_INDEX.md)
+- [原生 SLG正式组件文档](NATIVE_SLG_COMPONENT_ARCHITECTURE.md)
+
+涉及世界地图 `world cell / footprint / placement / city-resource overlap / 资源地与城池占地关系` 的任务，必须补读：
+
+- [World Cell 分层底盘 / 建筑绑定正式执行计划](WORLD_CELL_LAYERED_BASE_BINDING_EXECUTION_PLAN_2026_04_23.md)
+- [World Cell Footprint / Placement Contract](WORLD_CELL_FOOTPRINT_PLACEMENT_CONTRACT_2026_04_23.md)
+
 ## 2. 项目初衷（不可丢）
 
 我们做这个项目的根因不是“做一个普通策略游戏”，而是：
@@ -18,8 +29,9 @@
 ## 3. 当前阶段判断（修正后）
 
 1. 整项目阶段：**完善开发阶段**（不是整项目 MVP 阶段）。
-2. Godot 重写：是迁移子项目，Week2 卡片已收尾，当前转入 Batch2 深读与稳态治理。
+2. 当前前端主线：**原生 SLG 主壳 / 主城页 / 大地图入口**，先做原生结构，再接 AI 变量。
 3. 后端规则引擎 + AI 闭环：是主资产，继续扩展，不重做。
+4. `UI Preview Sandbox`：降级为桥接参考与验证工具，不再作为默认产品入口。
 
 ## 4. 后端当前真实逻辑（基于全量读取）
 
@@ -42,13 +54,20 @@
 7. V2 玩法链：`/api/v2/*` 包含招募、升星、编组、同盟与状态快照。
 8. MCP 工具：`server/src/mcp/gameServer.ts` 通过 HTTP 回调后端 API。
 
+## 4.1 后端容量/并发警戒（必须保留）
+
+1. `Godot UI` 继续收口成 `壳 + 子页 + 共享状态`，只代表前端组织方式更稳，不代表服务器已经证明可承压几千真人 + AI。
+2. 当前代码事实仍然是：`WorldService` 单进程 authoritative 写链 + `world mutation lock`，`SessionManager` 以内存 `Map` 为主并落盘到 `tmp/session_state.json`，`/ws` 广播基于单机内存客户端集合遍历。
+3. 本轮未看到通用 HTTP 限流/节流中间层；`tmp/world_save_slots.json`、`tmp/world_snapshot.json` 已经是大体量持久化文件。
+4. 后续 AI 禁止写出“现在不用担心高并发 / 限速限流 / 性能 / 服务器爆炸”之类结论；除非先补正式压测、广播预算、AI 配额、限流策略，并给出可复现验证结果。
+
 ## 5. 当前执行优先级（2026-04）
 
-1. Week2 收尾台账优先：确保 W2-C01~W2-C13 在卡片、Hub、模块卡三处口径一致。
-2. 转入后端深读批次：以 `AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md` 作为当前主读底稿。
-3. 后端只做“稳态增强”，不破坏契约语义，不引入前端 authoritative 分支。
-4. 文档治理先补脉络再清理：先保留证据链，再删孤立旧文档。
-5. 多子代理协作继续执行，但严格白名单与验收回传格式。
+1. 默认先读原生 SLG 主线文档包：明确页面结构、AI 插入点、保留/冻结边界。
+2. Godot 正式入口优先：`project.godot -> scenes/app/main.tscn -> scripts/app/main.gd`。
+3. 第一阶段代码目标：主城常驻壳层、大地图入口、观测面板、主城业务态最小闭环。
+4. 后端与共享契约只做稳态增强，不重写 authoritative 主干。
+5. `UI Preview Sandbox` 只作为桥接验证链，不再牵引产品默认路线。
 
 ## 6. 工期口径（修正）
 
@@ -146,14 +165,23 @@
 
 ## 8. 现行必读入口
 
-1. [AI_QUICK_NAV_INDEX_2026_04_10.md](AI_QUICK_NAV_INDEX_2026_04_10.md)
-2. [PROJECT_EVOLUTION_NARRATIVE_2026_04_09.md](PROJECT_EVOLUTION_NARRATIVE_2026_04_09.md)
-3. [AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md](AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md)
-4. [TASK_2026_04_09_AI_WEEK2_AUTONOMOUS_EXEC_CARDS.md](TASK_2026_04_09_AI_WEEK2_AUTONOMOUS_EXEC_CARDS.md)
-5. [TASK_2026_04_05_GODOT_WEEK1_EXEC_CARDS.md](TASK_2026_04_05_GODOT_WEEK1_EXEC_CARDS.md)
-6. [SEMANTIC_NEUTRALIZATION_GUIDE_2026_03_29.md](SEMANTIC_NEUTRALIZATION_GUIDE_2026_03_29.md)
-7. [DOCS_CLEANUP_DECISION_BOARD_2026_04_09.md](DOCS_CLEANUP_DECISION_BOARD_2026_04_09.md)
-8. [AI_LOGIC_ARCHITECTURE_STATE_2026_04_09.md](AI_LOGIC_ARCHITECTURE_STATE_2026_04_09.md)
-9. [../README.md](../README.md)
-10. [../godot-client/README.md](../godot-client/README.md)
-11. [AGENTS_HISTORY_2026_03.md](AGENTS_HISTORY_2026_03.md)
+1. [NATIVE_SLG_MAINLINE_INDEX.md](NATIVE_SLG_MAINLINE_INDEX.md)
+2. [NATIVE_SLG_COMPONENT_ARCHITECTURE.md](NATIVE_SLG_COMPONENT_ARCHITECTURE.md)
+3. [../CODEX.md](../CODEX.md)
+4. [AI_QUICK_NAV_INDEX_2026_04_10.md](AI_QUICK_NAV_INDEX_2026_04_10.md)
+5. [../README.md](../README.md)
+6. [../godot-client/README.md](../godot-client/README.md)
+7. [NATIVE_SLG_MAINLINE_INDEX_2026_04_16.md](NATIVE_SLG_MAINLINE_INDEX_2026_04_16.md)
+8. [NATIVE_SLG_RESET_PLAN_2026_04_16.md](NATIVE_SLG_RESET_PLAN_2026_04_16.md)
+9. [NATIVE_SLG_PAGE_STRUCTURE_2026_04_16.md](NATIVE_SLG_PAGE_STRUCTURE_2026_04_16.md)
+10. [AI_PHASE1_INSERTION_POINTS_2026_04_16.md](AI_PHASE1_INSERTION_POINTS_2026_04_16.md)
+11. [CODE_MAINLINE_KEEP_FREEZE_BRIDGE_2026_04_16.md](CODE_MAINLINE_KEEP_FREEZE_BRIDGE_2026_04_16.md)
+12. [PROJECT_EVOLUTION_NARRATIVE_2026_04_09.md](PROJECT_EVOLUTION_NARRATIVE_2026_04_09.md)
+13. [AI_NATIVE_SLG_ALIGNMENT_AUDIT_2026_04_10.md](AI_NATIVE_SLG_ALIGNMENT_AUDIT_2026_04_10.md)
+14. [AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md](AI_BACKEND_LOGIC_DEEP_READ_BATCH2_2026_04_09.md)
+15. [TASK_2026_04_05_GODOT_WEEK1_EXEC_CARDS.md](TASK_2026_04_05_GODOT_WEEK1_EXEC_CARDS.md)
+16. [TASK_2026_04_09_AI_WEEK2_AUTONOMOUS_EXEC_CARDS.md](TASK_2026_04_09_AI_WEEK2_AUTONOMOUS_EXEC_CARDS.md)
+17. [SEMANTIC_NEUTRALIZATION_GUIDE_2026_03_29.md](SEMANTIC_NEUTRALIZATION_GUIDE_2026_03_29.md)
+18. [DOCS_CLEANUP_DECISION_BOARD_2026_04_09.md](DOCS_CLEANUP_DECISION_BOARD_2026_04_09.md)
+19. [AI_LOGIC_ARCHITECTURE_STATE_2026_04_09.md](AI_LOGIC_ARCHITECTURE_STATE_2026_04_09.md)
+20. [AGENTS_HISTORY_2026_03.md](AGENTS_HISTORY_2026_03.md)

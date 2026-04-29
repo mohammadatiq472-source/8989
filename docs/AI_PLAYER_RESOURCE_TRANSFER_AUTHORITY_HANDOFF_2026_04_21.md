@@ -4,14 +4,18 @@
 
 - 用户已确认 v1 语义：
   - 只允许同总督转移。
-  - 跨势力贸易延期。
+  - 不做跨势力贸易。
   - 目标落点是“总督待领取收件箱”。
   - 资源来源是 AI 玩家独立资源子账户。
   - 全部 high-risk，强制审批。
+  - 每日额度/冷却由后端 rules authority 结算，UI 不做本地兜底。
 - 已新增后端 authority：
   - `worldAction`: `transferFactionResourcesToGovernor`
   - `aiAction`: `resource_transfer_to_governor`
   - `recommendation`: `promoted`
+- 已新增配置 authority：
+  - `worldAction`: `setAiResourceTransferPolicy`
+  - 语义：配置每日额度、窗口 tick、冷却 tick；不是 AI 玩家动作
 - 已新增配套 authority：
   - `worldAction`: `claimGovernorResourceInbox`
   - 语义：总督领取 pending transfer 后，资源结算到总督所属 `FactionState.food/wood/stone/iron`
@@ -38,8 +42,14 @@
   - `FactionState.governorResourceInboxes[governorPlayerId]`
 - 新增一次性资源地采集记录：
   - `FactionState.aiResourceGatherClaims[tileId]`
+- 新增 AI 资源输送额度/冷却状态：
+  - `FactionState.aiResourceTransferQuotaByAiPlayer[aiPlayerId]`
+- AI runtime/read model 已暴露 UI 便捷字段：
+  - `GovernedAiPlayerRuntime.resourceTransfer`
+  - 包含 `configuredPolicy / effectivePolicy / quota / remainingQuotaTotal / cooldownRemainingTicks / windowRemainingTicks / canTransferNow / blockedBy`
 - `shared/contracts/game/v2.ts` 中 `AIPlayerV2.resources` 存在，但这不是当前 AI 玩家治理正式写链的结算 authority。
 - 当前没有做跨势力交易，也没有直接写真人玩家钱包。
+- 真人侧已有货币单位“玉符 / 铜钱”，但它们不是本链 `food/wood/stone/iron` 资源输送的结算落点；UI 不要把资源转移临时映射到玉符/铜钱钱包。
 
 ## 3. 后端 authority 语义建议
 
@@ -73,6 +83,8 @@
 - AI 子账户 `governorPlayerId` 必须匹配目标总督。
 - 扣 AI 子账户资源，写入 `governorResourceInboxes` pending transfer。
 - 保留 reserve floor 和单次总量 cap。
+- 每日额度/冷却走 rules 层与 WorldService authority；默认同一窗口总量上限为 100、窗口 24 tick、成功转移后冷却 3 tick，但可由 `FactionState.aiResourceTransferPolicy` 配置。
+- 配置入口走 `setAiResourceTransferPolicy`，UI/配置面如需调整额度只调用后端 authority，不直接改本地状态。
 - 总督领取时走 `claimGovernorResourceInbox`，把 pending transfer 结算到当前代码真实存在的 faction resources。
 - AI 自己赚钱走 `gatherAiResourceTile`，要求 AI 指派单位驻扎在己方资源地，收益为 `resourceLevel * 10`，一次性入账 AI 子账户，不加每日额度。
 
@@ -84,8 +96,9 @@
 | --- | --- | --- |
 | `target-wallet-semantics` | 真人收到资源后落在哪里：真人钱包、总督待领取收件箱、还是目标 faction resources？ | 已确认：v1 使用“总督待领取收件箱”。 |
 | `source-account-semantics` | AI 的资源从哪里扣：AI 子账户、V2 `AIPlayerV2.resources`、还是源 faction resources？ | 已确认：v1 使用 AI 子账户。 |
-| `transfer-scope` | 允许同总督、同盟内、还是跨势力转资源？ | 已确认：v1 只允许同总督；跨势力贸易延期。 |
+| `transfer-scope` | 允许同总督、同盟内、还是跨势力转资源？ | 已确认：v1 只允许同总督；不做跨势力贸易。 |
 | `approval-and-limits` | 是否强制真人审批、保留最低库存、单次/每日上限、冷却？ | 已确认：全部 high-risk，强制审批；保留 reserve floor 和 per-action cap。 |
+| `daily-quota-cooldown` | 是否需要每日额度与冷却？ | 已确认并已后端落地：rules 层维护 AI 资源输送额度/冷却状态，UI 只消费后端 failureCode/receipt。 |
 
 资源转移 rules 层失败码：
 
@@ -96,6 +109,8 @@
 - `insufficient_resources`
 - `reserve_floor_violation`
 - `transfer_limit_exceeded`
+- `daily_quota_exceeded`
+- `transfer_cooldown_active`
 - `approval_required`
 
 总督领取 rules 层失败码：
@@ -160,7 +175,89 @@ UI 侧不要先做结算逻辑，只需要为后端 authority 预留消费面。
   - 后端返回的 failureCode
 - 审批按钮只调用治理 proposal approve/execute 路由，不绕过后端 world action。
 - UI 不直接改资源显示；结算后只消费 world snapshot/runtime receipt。
-- 如果后端返回 `approval_required`、`governor_mismatch`、`missing_ai_resource_account`、`insufficient_resources` 或 `reserve_floor_violation`，UI 只展示失败原因和下一步，不做本地补偿。
+- 如果后端返回 `approval_required`、`governor_mismatch`、`missing_ai_resource_account`、`insufficient_resources`、`reserve_floor_violation`、`daily_quota_exceeded` 或 `transfer_cooldown_active`，UI 只展示失败原因和下一步，不做本地补偿。
+- UI 不要做跨势力贸易入口；当前产品口径是不做跨势力贸易。
+- UI 不要把本资源输送链接到真人“玉符 / 铜钱”钱包；这条链只展示 `food/wood/stone/iron` 和总督 inbox/faction resource 结算。
+- UI 需要展示每日额度/冷却提示，但额度/冷却判定必须消费后端返回的 receipt、failureCode 或 quota 字段，不做本地强判。
+- UI 可优先从 `/api/ai/players/:aiPlayerId` 或 AI 玩家列表读取 `resourceTransfer`，展示 policy、剩余额度和冷却；不必为了额度展示拉完整 world snapshot。
+
+## 5.1 给 UI 窗口的明确交接清单
+
+### 5.1.1 数据读取入口
+
+- AI 玩家资源输送展示优先读取：
+  - `GET /api/ai/players/:aiPlayerId`
+  - `GET /api/ai/players`
+- 重点读取字段：
+  - `resourceTransfer.configuredPolicy`
+  - `resourceTransfer.effectivePolicy`
+  - `resourceTransfer.quota`
+  - `resourceTransfer.remainingQuotaTotal`
+  - `resourceTransfer.cooldownRemainingTicks`
+  - `resourceTransfer.windowRemainingTicks`
+  - `resourceTransfer.canTransferNow`
+  - `resourceTransfer.blockedBy`
+- UI 不需要为了展示额度/冷却去拉完整 world snapshot。
+- 如果需要展示总督 inbox pending transfer 列表，再读 world snapshot 或后续专门 inbox read API；不要在 UI 本地推导 pending transfer。
+
+### 5.1.2 资源转移 proposal 卡片
+
+- 资源转移 proposal 卡片：
+  - 展示来源 AI 玩家、来源势力、目标总督、资源类型与数量、reason、riskLevel。
+  - `resource_transfer_to_governor` 必须展示 high-risk 与“需要总督审批”。
+  - 展示 `resourceTransfer.remainingQuotaTotal`、`resourceTransfer.cooldownRemainingTicks`、`resourceTransfer.blockedBy`。
+  - approve/execute 只调用 AI player proposal 路由，不直接调用 world action。
+
+### 5.1.3 资源转移 receipt 卡片
+
+- 资源转移 receipt 卡片：
+  - 展示 `worldAction`、`worldActionPayload`、`failureCode`、`execution`。
+  - `approval_required` 要提示“必须由目标总督审批”。
+  - `insufficient_resources`、`reserve_floor_violation`、`transfer_limit_exceeded`、`daily_quota_exceeded`、`transfer_cooldown_active` 要提示资源、额度或冷却不足，不做本地补偿。
+
+### 5.1.4 总督 inbox 展示
+
+- 总督 inbox 展示：
+  - 展示 pending transfer 列表与 `totalPendingResources`。
+  - 领取按钮调用 `claimGovernorResourceInbox` 对应后端 authority。
+  - 领取成功后只刷新 world snapshot，不在 UI 本地加资源。
+
+### 5.1.5 资源输送 policy 配置 UI
+
+- 如果 UI 要做总督/管理侧配置面，调用：
+  - `/api/world/action`
+  - `action: "setAiResourceTransferPolicy"`
+- payload：
+
+```json
+{
+  "action": "setAiResourceTransferPolicy",
+  "payload": {
+    "factionId": "player",
+    "dailyQuotaTotal": 100,
+    "dailyWindowTicks": 24,
+    "cooldownTicks": 3
+  }
+}
+```
+
+- 三个 policy 字段都可配置：
+  - `dailyQuotaTotal`：同一额度窗口内允许 AI 转出的资源总量。
+  - `dailyWindowTicks`：额度窗口长度，单位是 world tick，不是自然日。
+  - `cooldownTicks`：成功转移后的冷却 tick。
+- 至少提交一个 policy 字段；否则后端 schema 会拒绝。
+- 配置成功后 UI 重新读取 `/api/ai/players/:aiPlayerId` 的 `resourceTransfer` 字段刷新展示。
+- `setAiResourceTransferPolicy` 不是 AI 玩家动作，不要做成 AI proposal 卡片。
+
+### 5.1.6 UI 禁止事项
+
+- 不要做跨势力贸易入口。
+- 不要把本链资源输送映射到真人“玉符 / 铜钱”。
+- 不要在 UI 本地扣 AI 子账户资源。
+- 不要在 UI 本地给 faction 加 `food/wood/stone/iron`。
+- 不要在 UI 本地计算最终是否能转；最终结果以后端 receipt / failureCode 为准。
+- 不要绕过 AI player proposal approve/execute 路由直接执行 `transferFactionResourcesToGovernor`。
+- 不要把 `claimGovernorResourceInbox`、`setAiResourceTransferPolicy` 包装成 AI 玩家原子动作。
 
 ## 6. 本轮没有触碰的边界
 

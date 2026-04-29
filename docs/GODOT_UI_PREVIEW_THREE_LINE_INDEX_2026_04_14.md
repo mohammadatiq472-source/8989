@@ -1,5 +1,9 @@
 # Godot UI Preview 三线索引（2026-04-14）
 
+> 状态：历史 / preview 治理文档。
+> 当前产品主线已切到 `世界主壳 + 二级功能面板 + AI 变量`。
+> 现行主线请改读：[NATIVE_SLG_MAINLINE_INDEX.md](NATIVE_SLG_MAINLINE_INDEX.md) 与 [NATIVE_SLG_COMPONENT_ARCHITECTURE.md](NATIVE_SLG_COMPONENT_ARCHITECTURE.md)
+
 ## 1. 目的
 
 这份文档把 `UI Preview Sandbox`、`Godot 编辑器插件`、`MCP CLI` 三条正式链放到同一页，避免后续 AI 或新窗口把三者混成一条线。
@@ -54,10 +58,9 @@ npm run godot:ops:cli -- bootstrap-chain --output tmp/gates/godot_ops_bootstrap_
 | `map_zoom_hover` | `res://scenes/dev/stories/map_zoom_hover_story.tscn` | `res://data/ui_preview/stories/map_zoom_hover_story.json` | 3 | 同上 | 同上 | 同上 |
 | `map_overlay` | `res://scenes/dev/stories/map_overlay_story.tscn` | `res://data/ui_preview/stories/map_overlay_story.json` | 2 | 同上 | 同上 | 同上 |
 | `map_units` | `res://scenes/dev/stories/map_units_story.tscn` | `res://data/ui_preview/stories/map_units_story.json` | 2 | 同上 | 同上 | 同上 |
-| `province_layer` | `res://scenes/dev/stories/province_layer_story.tscn` | `res://data/ui_preview/stories/province_layer_story.json` | 3 | 同上 | 同上 | 同上 |
-| `warzone_layer` | `res://scenes/dev/stories/warzone_layer_story.tscn` | `res://data/ui_preview/stories/warzone_layer_story.json` | 4 | 同上 | 同上 | 同上 |
-| `nation_layer` | `res://scenes/dev/stories/nation_layer_story.tscn` | `res://data/ui_preview/stories/nation_layer_story.json` | 3 | 同上 | 同上 | 同上 |
 | `ui_canvas` | `res://scenes/dev/stories/ui_canvas_story.tscn` | `res://data/ui_preview/stories/ui_canvas_story.json` | 4 | 同上 | 同上 | 同上 |
+
+> 2026-04-28：`province_layer / warzone_layer / nation_layer` 宏观 preview 旧线已退役并从 active manifest 删除；不要再作为主线 UI 或视觉资产入口。
 
 ## 6. 最容易混淆的点
 

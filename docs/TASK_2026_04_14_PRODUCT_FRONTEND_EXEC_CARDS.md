@@ -1,5 +1,9 @@
 # TASK 003 - 产品前台四卡执行文档（2026-04-14）
 
+> 状态：历史任务快照。  
+> 这份执行卡建立在 `UI Preview Sandbox` 主线之上，不再代表当前产品主线执行口径。  
+> 现行主线请改读：[NATIVE_SLG_MAINLINE_INDEX.md](NATIVE_SLG_MAINLINE_INDEX.md)
+
 ## 0. 任务目标
 
 这 4 张卡不是继续堆 sandbox 功能，而是把现有 `Godot + UI Preview Sandbox` 向“可玩产品前台”推进。
@@ -13,10 +17,10 @@
 
 ## 1. 官方入口命令（复用链）
 
-- `py -3.11 godot-client/tools/run_ui_preview_sandbox.py`
-- `py -3.11 godot-client/tools/validate_ui_preview_sandbox.py --presentation-capture --report-path tmp/screenshots/ui_preview_sandbox/preview_validation_report.json --screenshot-dir tmp/screenshots/ui_preview_sandbox`
+- `scripts\run_python.cmd godot-client/tools/run_ui_preview_sandbox.py`
+- `scripts\run_python.cmd godot-client/tools/validate_ui_preview_sandbox.py --presentation-capture --report-path tmp/screenshots/ui_preview_sandbox/preview_validation_report.json --screenshot-dir tmp/screenshots/ui_preview_sandbox`
 - `npm run godot:ui:preview:regress`
-- `D:\Apps\Godot\Godot_v4.6.2-stable_win64_console.exe --headless --path C:\Users\Buffoon Queer\Desktop\8989\godot-client --quit-after 1`
+- `npm run godot:headless:smoke`
 
 ## 2. 固定硬约束
 

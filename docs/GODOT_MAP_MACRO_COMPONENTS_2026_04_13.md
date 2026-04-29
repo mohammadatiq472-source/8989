@@ -1,5 +1,9 @@
 # Godot 地图宏组件映射（2026-04-13）
 
+> 状态：历史桥接文档。  
+> 这份文档只描述 `UI Preview / macro story` 体系下的组件映射，不再代表当前产品主线组件标准。  
+> 产品主线组件标准请改读：[NATIVE_SLG_COMPONENT_ARCHITECTURE.md](NATIVE_SLG_COMPONENT_ARCHITECTURE.md)
+
 这是一页对照表，用来把 `tmp/third_party/slgclient` 的 prefab / 逻辑脚本语义，映射到 Godot 版新的 macro story 组件。
 
 ## 1. 统一导航约定

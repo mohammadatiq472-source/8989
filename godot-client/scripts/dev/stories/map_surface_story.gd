@@ -387,9 +387,9 @@ func _build_province_entry_panel(parent: Control) -> void:
 func _sync_province_entry_panel(state: Dictionary) -> void:
 	var navigation_meta := _resolve_story_navigation_meta(state)
 	var focus_tile := _resolve_focus_tile(state)
-	var target_story_id := str(navigation_meta.get("targetStoryId", "province_layer")).strip_edges()
-	var button_label := str(navigation_meta.get("buttonLabel", "进入州层")).strip_edges()
-	var reason := str(navigation_meta.get("reason", "map_surface_to_province")).strip_edges()
+	var target_story_id := str(navigation_meta.get("targetStoryId", "")).strip_edges()
+	var button_label := str(navigation_meta.get("buttonLabel", "宏观旧线已退役")).strip_edges()
+	var reason := str(navigation_meta.get("reason", "macro_preview_retired")).strip_edges()
 	if _province_entry_title != null:
 		_province_entry_title.text = _build_focus_title(focus_tile, navigation_meta)
 	if _province_entry_meta != null:
@@ -434,8 +434,10 @@ func _sync_mini_map_panel(state: Dictionary) -> void:
 
 func _on_province_entry_pressed() -> void:
 	var navigation_meta := _resolve_story_navigation_meta(_active_state)
-	var target_story_id := str(navigation_meta.get("targetStoryId", "province_layer")).strip_edges()
-	var reason := str(navigation_meta.get("reason", "map_surface_to_province")).strip_edges()
+	var target_story_id := str(navigation_meta.get("targetStoryId", "")).strip_edges()
+	var reason := str(navigation_meta.get("reason", "macro_preview_retired")).strip_edges()
+	if target_story_id == "":
+		return
 	request_story_navigation(target_story_id, reason, {
 		"sourceStoryId": str(_preview_payload.get("storyId", story_id)),
 		"sourceStateId": get_active_state_id(),
@@ -784,7 +786,7 @@ func _build_focus_title(tile: Dictionary, navigation_meta: Dictionary) -> String
 
 func _build_focus_hint(tile: Dictionary, navigation_meta: Dictionary) -> String:
 	if tile.is_empty():
-		return str(navigation_meta.get("buttonHint", "从 map_surface 进入 province_layer 总览。"))
+		return str(navigation_meta.get("buttonHint", "province / warzone / nation preview 旧线已退役。"))
 	var district := str(tile.get("district", "")).strip_edges()
 	var terrain := str(tile.get("terrain", "")).strip_edges()
 	var parts: Array[String] = []
@@ -792,7 +794,7 @@ func _build_focus_hint(tile: Dictionary, navigation_meta: Dictionary) -> String:
 		parts.append(district)
 	if terrain != "" and terrain != district:
 		parts.append(terrain)
-	return "当前聚焦 %s，先读小卡，再决定是否进入州层总览。" % " / ".join(parts)
+	return "当前聚焦 %s，先读小卡；宏观旧线入口已退役。" % " / ".join(parts)
 
 
 func _build_focus_meta(tile: Dictionary) -> String:

@@ -27,11 +27,20 @@ export type TacticalFormulaTemplateParams = {
   damageKind?: TacticalDamageKind
   damageRate?: number
   breakDamageRate?: number
+  damageTakenDamageRateScale?: number
+  damageTakenDamageRateMaxBonus?: number
+  damageTakenDamageRateMinRound?: number
   speedBonusRate?: number
   burnRate?: number
   burnTurns?: number
   healingRate?: number
+  commandRecoveryRateScale?: number
   damageReduction?: number
+  commandDamageKind?: TacticalDamageKind
+  commandDamageRate?: number
+  commandDamageRepeatCount?: number
+  commandDamageRequiredPosition?: TacticalSkillFormula['commandDamageRequiredPosition']
+  commandDamageTargetSelector?: TacticalSkillFormula['commandDamageTargetSelector']
   evasionChargesAgainst?: TacticalSkillType[]
   controlCleanseCharges?: number
   targetSelector?: TacticalSkillFormula['targetSelector']
@@ -97,6 +106,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       attributeModifiers: { command: 0.2 },
       damageReduction: 0.22,
       healingRate: 0.75,
+      commandRecoveryRateScale: 0.05,
     }),
     defineFormula({
       id: 'innate_100017',
@@ -106,6 +116,9 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_team',
       attributeModifiers: { intelligence: -0.18, speed: -0.08 },
       controlCleanseCharges: 1,
+      commandDamageKind: 'strategy',
+      commandDamageRate: 0.18,
+      commandDamageTargetSelector: 'enemy_lowest_1',
     }),
     defineFormula({
       id: 'innate_100021',
@@ -113,7 +126,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       type: 'passive',
       templateId: 'passive_self_guard_v1',
       targetSelector: 'self',
-      attributeModifiers: { command: 0.18, speed: 0.1 },
+      attributeModifiers: { command: 0.18, force: 0.12, speed: 0.1 },
       controlCleanseCharges: 1,
     }),
     defineFormula({
@@ -132,7 +145,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_commander',
       activationRate: 45,
       damageKind: 'physical',
-      damageRate: 1.05,
+      damageRate: 1.35,
       speedBonusRate: 0.08,
     }),
     defineFormula({
@@ -143,7 +156,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_team',
       activationRate: 45,
       damageKind: 'strategy',
-      damageRate: 0.7,
+      damageRate: 0.76,
       burnRate: 0.25,
       burnTurns: 2,
     }),
@@ -203,6 +216,11 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       templateId: 'command_ally_attribute_buff_v1',
       targetSelector: 'ally_team',
       attributeModifiers: { force: 0.22, intelligence: 0.14 },
+      commandDamageKind: 'strategy',
+      commandDamageRate: 0.18,
+      commandDamageRepeatCount: 4,
+      commandDamageRequiredPosition: 'front',
+      commandDamageTargetSelector: 'enemy_lowest_1',
     }),
     defineFormula({
       id: 'innate_100704',
@@ -221,6 +239,9 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       templateId: 'command_enemy_attribute_debuff_v1',
       targetSelector: 'enemy_team',
       attributeModifiers: { force: -0.16, intelligence: -0.16 },
+      commandDamageKind: 'strategy',
+      commandDamageRate: 0.18,
+      commandDamageTargetSelector: 'enemy_lowest_1',
     }),
     defineFormula({
       id: 'innate_100706',
@@ -229,7 +250,13 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       templateId: 'command_ally_guard_recovery_v1',
       targetSelector: 'ally_team',
       attributeModifiers: { command: 0.1 },
-      damageReduction: 0.04,
+      damageReduction: 0.12,
+      healingRate: 0.7,
+      commandRecoveryRateScale: 0.05,
+      evasionChargesAgainst: ['active'],
+      commandDamageKind: 'strategy',
+      commandDamageRate: 0.15,
+      commandDamageTargetSelector: 'enemy_lowest_1',
     }),
     defineFormula({
       id: 'innate_100707',
@@ -237,7 +264,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       type: 'active',
       templateId: 'active_damage_enemy_group_v1',
       targetSelector: 'enemy_group_2',
-      activationRate: 45,
+      activationRate: 50,
       damageKind: 'strategy',
       damageRate: 0.9,
       burnRate: 0.35,
@@ -257,11 +284,15 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
     defineFormula({
       id: 'innate_100709',
       name: '高平陵变',
-      type: 'passive',
-      templateId: 'passive_self_recovery_v1',
-      targetSelector: 'self',
-      attributeModifiers: { intelligence: 0.32 },
-      healingRate: 0.4,
+      type: 'active',
+      templateId: 'active_damage_enemy_lowest_v1',
+      targetSelector: 'enemy_lowest_1',
+      activationRate: 55,
+      damageKind: 'strategy',
+      damageRate: 0.95,
+      damageTakenDamageRateScale: 1.2,
+      damageTakenDamageRateMaxBonus: 0.75,
+      damageTakenDamageRateMinRound: 2,
     }),
     defineFormula({
       id: 'innate_100710',
@@ -271,17 +302,17 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_random_1',
       activationRate: 60,
       damageKind: 'physical',
-      damageRate: 2.3,
+      damageRate: 2.1,
       speedBonusRate: 0.25,
     }),
     defineFormula({
       id: 'innate_100711',
       name: '坐断江东',
-      type: 'active',
-      templateId: 'active_ally_cleanse_v1',
+      type: 'command',
+      templateId: 'command_ally_attribute_buff_v1',
       targetSelector: 'ally_team',
-      activationRate: 35,
-      healingRate: 0.25,
+      attributeModifiers: { command: 0.12, intelligence: 0.1 },
+      damageReduction: 0.14,
       controlCleanseCharges: 1,
     }),
     defineFormula({
@@ -330,7 +361,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       targetSelector: 'enemy_team',
       activationRate: 70,
       damageKind: 'physical',
-      damageRate: 0.56,
+      damageRate: 0.52,
     }),
     defineFormula({
       id: 'innate_100717',
@@ -347,7 +378,7 @@ const REPRESENTATIVE_FORMULA_DEFINITIONS = Object.fromEntries(
       templateId: 'active_ally_heal_v1',
       targetSelector: 'ally_lowest_2',
       activationRate: 55,
-      healingRate: 1.15,
+      healingRate: 1.18,
     }),
     defineFormula({
       id: 'lib_s_command_battle_banner',
@@ -908,11 +939,20 @@ function buildTemplateParams(formula: TacticalSkillFormula): TacticalFormulaTemp
     damageKind: formula.damageKind,
     damageRate: formula.damageRate,
     breakDamageRate: formula.breakDamageRate,
+    damageTakenDamageRateScale: formula.damageTakenDamageRateScale,
+    damageTakenDamageRateMaxBonus: formula.damageTakenDamageRateMaxBonus,
+    damageTakenDamageRateMinRound: formula.damageTakenDamageRateMinRound,
     speedBonusRate: formula.speedBonusRate,
     burnRate: formula.burnRate,
     burnTurns: formula.burnTurns,
     healingRate: formula.healingRate,
+    commandRecoveryRateScale: formula.commandRecoveryRateScale,
     damageReduction: formula.damageReduction,
+    commandDamageKind: formula.commandDamageKind,
+    commandDamageRate: formula.commandDamageRate,
+    commandDamageRepeatCount: formula.commandDamageRepeatCount,
+    commandDamageRequiredPosition: formula.commandDamageRequiredPosition,
+    commandDamageTargetSelector: formula.commandDamageTargetSelector,
     evasionChargesAgainst: formula.evasionChargesAgainst ? [...formula.evasionChargesAgainst] : undefined,
     controlCleanseCharges: formula.controlCleanseCharges,
     targetSelector: formula.targetSelector,

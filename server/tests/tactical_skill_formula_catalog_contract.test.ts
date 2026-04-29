@@ -18,7 +18,6 @@ function testTemplateDefinitionsForImplementedRepresentativeSkills() {
 
   assert.equal(definitions.length, 77)
   assert.deepEqual(templateIds, [
-    'active_ally_cleanse_v1',
     'active_ally_heal_v1',
     'active_damage_enemy_all_v1',
     'active_damage_enemy_commander_v1',
@@ -35,6 +34,7 @@ function testTemplateDefinitionsForImplementedRepresentativeSkills() {
   ])
   assert.equal(templateBySkillId.innate_100021, 'passive_self_guard_v1')
   assert.equal(templateBySkillId.innate_100027, 'active_damage_enemy_commander_v1')
+  assert.equal(templateBySkillId.innate_100711, 'command_ally_attribute_buff_v1')
   assert.equal(templateBySkillId.innate_100718, 'active_ally_heal_v1')
   assert.equal(templateBySkillId.lib_s_command_battle_banner, 'command_ally_attribute_buff_v1')
   assert.equal(templateBySkillId.lib_s_active_fire_raid, 'active_damage_enemy_group_v1')

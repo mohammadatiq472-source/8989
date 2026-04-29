@@ -33,11 +33,20 @@ export type TacticalSkillFormula = {
   damageKind?: TacticalDamageKind
   damageRate?: number
   breakDamageRate?: number
+  damageTakenDamageRateScale?: number
+  damageTakenDamageRateMaxBonus?: number
+  damageTakenDamageRateMinRound?: number
   speedBonusRate?: number
   burnRate?: number
   burnTurns?: number
   healingRate?: number
+  commandRecoveryRateScale?: number
   damageReduction?: number
+  commandDamageKind?: TacticalDamageKind
+  commandDamageRate?: number
+  commandDamageRepeatCount?: number
+  commandDamageRequiredPosition?: 'front'
+  commandDamageTargetSelector?: 'enemy_commander' | 'enemy_team' | 'enemy_random_1' | 'enemy_group_2' | 'enemy_lowest_1'
   evasionChargesAgainst?: TacticalSkillType[]
   controlCleanseCharges?: number
   targetSelector:
@@ -56,8 +65,10 @@ export type TacticalSkillFormula = {
 
 export type TacticalSkillEvent = {
   round: number
-  phase: 'battle_start' | 'normal_attack' | 'active_skill' | 'chase_skill' | 'burn'
+  phase: 'battle_start' | 'normal_attack' | 'active_skill' | 'chase_skill' | 'command_recovery' | 'burn'
+  actorTeamId?: string
   actorHeroId: string
+  targetTeamId?: string
   targetHeroId?: string
   skillId: string
   skillName: string
@@ -184,9 +195,19 @@ type MutableCombatant = TacticalCombatant & {
   maxStrength: number
   currentStrength: number
   damageReduction: number
+  commandProtectionDamageReductionCount: number
   evasionCharges: Partial<Record<TacticalSkillType, number>>
   controlCleanseCharges: number
   healingDoneBySkill: Record<string, number>
+  receivedDamageThisRound: boolean
+}
+
+type TeamCommandRecoverySource = {
+  actor: MutableTeamMember
+  skillId: string
+  skillName: string
+  healingRate: number
+  rateScale: number
 }
 
 type MutableTeamMember = MutableCombatant & {
@@ -197,6 +218,8 @@ type MutableTeamMember = MutableCombatant & {
   commanderProtection: number
   commanderTargetPressure: number
   commanderTargetPressureRound?: number
+  commanderTargetPressureActiveDamageRound?: number
+  commandRecoverySources: TeamCommandRecoverySource[]
 }
 
 type CommanderProtectionActivationPenalty = {
@@ -220,10 +243,13 @@ const COMMANDER_TARGET_PRESSURE_TEAM_ACTIVE_DAMAGE_REDUCTION_PER_LEVEL = 0.28
 const COMMANDER_TARGET_PRESSURE_TEAM_ACTIVE_DAMAGE_REDUCTION_MAX = 0.56
 const COMMANDER_TARGET_PRESSURE_NORMAL_DAMAGE_REDUCTION_PER_LEVEL = 0.12
 const COMMANDER_TARGET_PRESSURE_NORMAL_DAMAGE_REDUCTION_MAX = 0.24
+const COMMANDER_TARGET_PRESSURE_POST_ACTIVE_DAMAGE_REDUCTION_PER_LEVEL = 0.08
+const COMMANDER_TARGET_PRESSURE_POST_ACTIVE_DAMAGE_REDUCTION_MAX = 0.16
 const COMMANDER_TARGET_PRESSURE_LOW_HP_FINISH_STRENGTH_THRESHOLD = 1_000
 const COMMANDER_TARGET_PRESSURE_LOW_HP_FINISH_STRENGTH_RATIO = 0.15
 const COMMANDER_TARGET_PRESSURE_LOW_HP_FINISH_TARGET_SHARE_CHANCE = 35
 const COMMANDER_TARGET_PRESSURE_LOW_HP_FINISH_DAMAGE_REDUCTION = 0.15
+const COMMAND_PROTECTION_DAMAGE_REDUCTION_REPEAT_MULTIPLIER = 0.65
 const HEALING_SOURCE_SOFT_CAP = 3_000
 const HEALING_SOURCE_SOFT_CAP_EXCESS_RATE = 0.5
 
@@ -403,14 +429,16 @@ export function resolveRepresentativeTacticalTeamBattle(params: {
   const maxRounds = params.maxRounds ?? 8
   const damageScale = params.damageScale ?? 1
 
-  applyTeamBattleStartEffects(teamA, teamB, params.seed, startRound, events, missingFormulaSkillIds)
-  applyTeamBattleStartEffects(teamB, teamA, params.seed, startRound, events, missingFormulaSkillIds)
+  applyTeamBattleStartEffects(teamA, teamB, params.seed, startRound, damageScale, events, missingFormulaSkillIds)
+  applyTeamBattleStartEffects(teamB, teamA, params.seed, startRound, damageScale, events, missingFormulaSkillIds)
 
   let finalRound = startRound
   let outcome = resolveTeamBattleOutcome(teamA, teamB, false)
   for (let offset = 0; offset < maxRounds && !outcome; offset += 1) {
     const currentRound = startRound + offset
     finalRound = currentRound
+    resetTeamRoundDamageFlags(teamA)
+    resetTeamRoundDamageFlags(teamB)
     const actionOrder = [...aliveMembers(teamA), ...aliveMembers(teamB)]
       .sort((left, right) => {
         const speedDiff = right.effectiveStats.speed - left.effectiveStats.speed
@@ -475,6 +503,11 @@ export function resolveRepresentativeTacticalTeamBattle(params: {
       if (outcome) {
         break
       }
+    }
+    if (!outcome) {
+      applyTeamCommandRecovery(teamA, currentRound, damageScale, events)
+      applyTeamCommandRecovery(teamB, currentRound, damageScale, events)
+      outcome = resolveTeamBattleOutcome(teamA, teamB, false)
     }
   }
 
@@ -642,11 +675,18 @@ function toMutableTeam(team: TacticalTeam): MutableTeamMember[] {
     isCommander: index === 0,
     commanderProtection: 0,
     commanderTargetPressure: 0,
+    commandRecoverySources: [],
   }))
 }
 
 function aliveMembers(team: MutableTeamMember[]) {
   return team.filter((member) => member.currentStrength > 0)
+}
+
+function resetTeamRoundDamageFlags(team: MutableTeamMember[]) {
+  for (const member of team) {
+    member.receivedDamageThisRound = false
+  }
 }
 
 function getTeamMemberSkillFormulas(
@@ -670,6 +710,7 @@ function applyTeamBattleStartEffects(
   enemies: MutableTeamMember[],
   seed: string,
   round: number,
+  damageScale: number,
   events: TacticalSkillEvent[],
   missingFormulaSkillIds: Set<string>,
 ) {
@@ -682,6 +723,7 @@ function applyTeamBattleStartEffects(
       for (const target of targets) {
         applyTeamBattleStartFormula(actor, target, formula, round, events)
       }
+      applyTeamBattleStartCommandDamage(actor, enemies, formula, seed, round, damageScale, events)
     }
   }
 }
@@ -701,10 +743,7 @@ function applyTeamBattleStartFormula(
       notes.push(`${attribute}+${Math.round(modifier * 100)}%`)
     }
   }
-  if (formula.damageReduction) {
-    target.damageReduction += formula.damageReduction
-    notes.push(`damageReduction+${Math.round(formula.damageReduction * 100)}%`)
-  }
+  applyBattleStartDamageReduction(target, formula, notes)
   if (formula.evasionChargesAgainst) {
     for (const skillType of formula.evasionChargesAgainst) {
       target.evasionCharges[skillType] = (target.evasionCharges[skillType] ?? 0) + 1
@@ -723,14 +762,27 @@ function applyTeamBattleStartFormula(
   let healing = 0
   if (formula.healingRate) {
     notes.push(`healingRate=${formula.healingRate}`)
-    healing = applyHealing(target, calculateEffectiveHealing(actor, formula.id, formula.healingRate, 1, notes))
-    recordHealingSource(actor, formula.id, healing)
+    if (formula.type === 'command' && formula.commandRecoveryRateScale) {
+      target.commandRecoverySources.push({
+        actor,
+        skillId: formula.id,
+        skillName: formula.name,
+        healingRate: formula.healingRate,
+        rateScale: formula.commandRecoveryRateScale,
+      })
+      notes.push(`commandRecoveryRateScale=${Math.round(formula.commandRecoveryRateScale * 100)}%`)
+    } else {
+      healing = applyHealing(target, calculateEffectiveHealing(actor, formula.id, formula.healingRate, 1, notes))
+      recordHealingSource(actor, formula.id, healing)
+    }
   }
   if (notes.length > 1) {
     events.push({
       round,
       phase: 'battle_start',
+      actorTeamId: actor.teamId,
       actorHeroId: actor.heroId,
+      targetTeamId: target.teamId,
       targetHeroId: target.heroId,
       skillId: formula.id,
       skillName: formula.name,
@@ -740,6 +792,73 @@ function applyTeamBattleStartFormula(
       remainingStrength: target.currentStrength,
       notes,
     })
+  }
+}
+
+function applyTeamBattleStartCommandDamage(
+  actor: MutableTeamMember,
+  enemies: MutableTeamMember[],
+  formula: TacticalSkillFormula,
+  seed: string,
+  round: number,
+  damageScale: number,
+  events: TacticalSkillEvent[],
+) {
+  if (
+    formula.type !== 'command'
+    || !formula.commandDamageKind
+    || !formula.commandDamageRate
+    || !formula.commandDamageTargetSelector
+  ) {
+    return
+  }
+  if (formula.commandDamageRequiredPosition === 'front' && actor.position !== 0) {
+    return
+  }
+  const repeatCount = normalizeCommandDamageRepeatCount(formula.commandDamageRepeatCount)
+  for (let repeatIndex = 0; repeatIndex < repeatCount; repeatIndex += 1) {
+    const targets = selectTeamCommandDamageTargets(actor, enemies, formula, seed, round, repeatIndex)
+    for (const target of targets) {
+      if (target.currentStrength <= 0) {
+        continue
+      }
+      const notes = [
+        `target=${formula.commandDamageTargetSelector}`,
+        'commandDamageConversion=true',
+      ]
+      if (formula.commandDamageRequiredPosition) {
+        notes.push(`requiredPosition=${formula.commandDamageRequiredPosition}`)
+      }
+      if (repeatCount > 1) {
+        notes.push(`commandDamageHit=${repeatIndex + 1}/${repeatCount}`)
+      }
+      const rawDamage = calculateDamage(
+        actor,
+        target,
+        formula.commandDamageKind,
+        formula.commandDamageRate,
+        damageScale,
+      )
+      const result = applyIncomingDamage(target, 'command', rawDamage)
+      events.push({
+        round,
+        phase: 'battle_start',
+        actorTeamId: actor.teamId,
+        actorHeroId: actor.heroId,
+        targetTeamId: target.teamId,
+        targetHeroId: target.heroId,
+        skillId: formula.id,
+        skillName: formula.name,
+        skillType: formula.type,
+        activated: true,
+        damageKind: formula.commandDamageKind,
+        damageRate: formula.commandDamageRate,
+        damage: result.damage,
+        preventedDamage: result.preventedDamage,
+        remainingStrength: target.currentStrength,
+        notes,
+      })
+    }
   }
 }
 
@@ -760,8 +879,13 @@ function executeTeamNormalAttack(
     commanderTargetNormalDamageReduction,
     notes,
   )
-  const finishProtectedDamage = applyCommanderTargetLowHpFinishDamageReduction(
+  const postActiveProtectedDamage = applyCommanderTargetPostActiveDamageReduction(
     incomingDamage,
+    resolveCommanderTargetPostActiveDamageReduction(target, round),
+    notes,
+  )
+  const finishProtectedDamage = applyCommanderTargetLowHpFinishDamageReduction(
+    postActiveProtectedDamage,
     resolveCommanderTargetLowHpFinishDamageReduction(target, targetAllies, round),
     notes,
   )
@@ -769,7 +893,9 @@ function executeTeamNormalAttack(
   events.push({
     round,
     phase: 'normal_attack',
+    actorTeamId: actor.teamId,
     actorHeroId: actor.heroId,
+    targetTeamId: target.teamId,
     targetHeroId: target.heroId,
     skillId: 'normal_attack',
     skillName: '普通攻击',
@@ -823,6 +949,64 @@ function executeTeamActiveSkills(
   }
 }
 
+function applyTeamCommandRecovery(
+  team: MutableTeamMember[],
+  round: number,
+  damageScale: number,
+  events: TacticalSkillEvent[],
+) {
+  for (const target of aliveMembers(team)) {
+    if (
+      !target.receivedDamageThisRound
+      || target.currentStrength >= target.maxStrength
+      || target.commandRecoverySources.length === 0
+    ) {
+      continue
+    }
+    for (const recoverySource of target.commandRecoverySources) {
+      if (target.currentStrength >= target.maxStrength || recoverySource.actor.currentStrength <= 0) {
+        continue
+      }
+      const notes = [
+        'target=command_recovery',
+        'trigger=received_damage_this_round',
+        'healingSourceStat=intelligence',
+        `baseHealingRate=${recoverySource.healingRate}`,
+        `commandRecoveryRateScale=${Math.round(recoverySource.rateScale * 100)}%`,
+      ]
+      const healing = applyHealing(
+        target,
+        calculateEffectiveHealing(
+          recoverySource.actor,
+          recoverySource.skillId,
+          recoverySource.healingRate * recoverySource.rateScale,
+          damageScale,
+          notes,
+        ),
+      )
+      recordHealingSource(recoverySource.actor, recoverySource.skillId, healing)
+      if (healing <= 0) {
+        continue
+      }
+      events.push({
+        round,
+        phase: 'command_recovery',
+        actorTeamId: recoverySource.actor.teamId,
+        actorHeroId: recoverySource.actor.heroId,
+        targetTeamId: target.teamId,
+        targetHeroId: target.heroId,
+        skillId: recoverySource.skillId,
+        skillName: recoverySource.skillName,
+        skillType: 'command',
+        activated: true,
+        healing,
+        remainingStrength: target.currentStrength,
+        notes,
+      })
+    }
+  }
+}
+
 function executeTeamTriggeredSkill(
   actor: MutableTeamMember,
   targets: MutableTeamMember[],
@@ -853,7 +1037,9 @@ function executeTeamTriggeredSkill(
     events.push({
       round,
       phase,
+      actorTeamId: actor.teamId,
       actorHeroId: actor.heroId,
+      targetTeamId: liveTargets.length === 1 ? liveTargets[0].teamId : undefined,
       targetHeroId: liveTargets.length === 1 ? liveTargets[0].heroId : undefined,
       skillId: formula.id,
       skillName: formula.name,
@@ -881,7 +1067,9 @@ function executeTeamTriggeredSkill(
       events.push({
         round,
         phase,
+        actorTeamId: actor.teamId,
         actorHeroId: actor.heroId,
+        targetTeamId: target.teamId,
         targetHeroId: target.heroId,
         skillId: formula.id,
         skillName: formula.name,
@@ -905,7 +1093,9 @@ function executeTeamTriggeredSkill(
       events.push({
         round,
         phase,
+        actorTeamId: actor.teamId,
         actorHeroId: actor.heroId,
+        targetTeamId: target.teamId,
         targetHeroId: target.heroId,
         skillId: formula.id,
         skillName: formula.name,
@@ -924,6 +1114,7 @@ function executeTeamTriggeredSkill(
     events.push({
       round,
       phase,
+      actorTeamId: actor.teamId,
       actorHeroId: actor.heroId,
       skillId: formula.id,
       skillName: formula.name,
@@ -941,26 +1132,37 @@ function executeTeamTriggeredSkill(
       continue
     }
     const notes = buildTeamSkillNotes(formula, commanderProtectionPenalty, baseActivationRate)
-    const damageRate = resolveDamageRate(actor, target, formula)
+    const damageRate = resolveDamageRate(actor, target, formula, round)
+    appendDamageTakenDamageRateNotes(actor, formula, round, notes)
     const rawDamage = calculateDamage(actor, target, formula.damageKind, damageRate, damageScale)
     const commanderTargetDamageReduction = resolveCommanderTargetDamageReduction(formula, target, round)
     const incomingDamage = applyCommanderTargetDamageReduction(rawDamage, commanderTargetDamageReduction, notes)
-    const finishProtectedDamage = formula.type === 'chase' && targetAllies
-      ? applyCommanderTargetLowHpFinishDamageReduction(
+    const postActiveProtectedDamage = formula.type === 'chase'
+      ? applyCommanderTargetPostActiveDamageReduction(
         incomingDamage,
-        resolveCommanderTargetLowHpFinishDamageReduction(target, targetAllies, round),
+        resolveCommanderTargetPostActiveDamageReduction(target, round),
         notes,
       )
       : incomingDamage
+    const finishProtectedDamage = formula.type === 'chase' && targetAllies
+      ? applyCommanderTargetLowHpFinishDamageReduction(
+        postActiveProtectedDamage,
+        resolveCommanderTargetLowHpFinishDamageReduction(target, targetAllies, round),
+        notes,
+      )
+      : postActiveProtectedDamage
     const result = applyIncomingDamage(target, formula.type, finishProtectedDamage)
     if (result.preventedDamage > 0) {
       notes.push('damage prevented by evasion charge')
     }
     applyCommanderTargetPressure(target, formula, round, notes)
+    recordCommanderTargetPressureActiveDamage(target, formula, round, result.damage)
     events.push({
       round,
       phase,
+      actorTeamId: actor.teamId,
       actorHeroId: actor.heroId,
+      targetTeamId: target.teamId,
       targetHeroId: target.heroId,
       skillId: formula.id,
       skillName: formula.name,
@@ -985,7 +1187,9 @@ function executeTeamTriggeredSkill(
       events.push({
         round,
         phase: 'burn',
+        actorTeamId: actor.teamId,
         actorHeroId: actor.heroId,
+        targetTeamId: target.teamId,
         targetHeroId: target.heroId,
         skillId: formula.id,
         skillName: `${formula.name}-燃烧`,
@@ -1013,6 +1217,32 @@ function resolveCommanderProtectionGain(target: MutableTeamMember, formula: Tact
     return 1
   }
   return 0
+}
+
+function applyBattleStartDamageReduction(
+  target: MutableCombatant,
+  formula: TacticalSkillFormula,
+  notes: string[],
+) {
+  if (!formula.damageReduction) {
+    return
+  }
+  const stackIndex = formula.type === 'command'
+    ? target.commandProtectionDamageReductionCount
+    : 0
+  const multiplier = formula.type === 'command' && stackIndex > 0
+    ? COMMAND_PROTECTION_DAMAGE_REDUCTION_REPEAT_MULTIPLIER
+    : 1
+  const effectiveDamageReduction = roundNumber(formula.damageReduction * multiplier, 4)
+  target.damageReduction += effectiveDamageReduction
+  if (formula.type === 'command') {
+    target.commandProtectionDamageReductionCount += 1
+    if (multiplier < 1) {
+      notes.push(`commandProtectionDamageReductionStack=${stackIndex + 1}`)
+      notes.push(`commandProtectionDamageReductionRepeatMultiplier=${Math.round(multiplier * 100)}%`)
+    }
+  }
+  notes.push(`damageReduction+${Math.round(effectiveDamageReduction * 100)}%`)
 }
 
 function resolveCommanderProtectionActivationPenalty(
@@ -1192,6 +1422,59 @@ function applyCommanderTargetNormalDamageReduction(
   )}%`)
   notes.push(`commanderTargetPressureNormalDamageLevel=${commanderTargetNormalDamageReduction.level}`)
   return Math.max(1, Math.round(rawDamage * (1 - commanderTargetNormalDamageReduction.reduction)))
+}
+
+function recordCommanderTargetPressureActiveDamage(
+  target: MutableTeamMember,
+  formula: TacticalSkillFormula,
+  round: number,
+  damage: number | undefined,
+) {
+  if (!target.isCommander || formula.type !== 'active' || !damage || damage <= 0) {
+    return
+  }
+  if (resolveActiveCommanderTargetPressure(target, round) <= 0) {
+    return
+  }
+  target.commanderTargetPressureActiveDamageRound = round
+}
+
+function resolveCommanderTargetPostActiveDamageReduction(target: MutableTeamMember, round: number) {
+  if (!target.isCommander || target.commanderTargetPressureActiveDamageRound !== round) {
+    return {
+      level: 0,
+      reduction: 0,
+    }
+  }
+  const level = resolveActiveCommanderTargetPressure(target, round)
+  if (level <= 0) {
+    return {
+      level: 0,
+      reduction: 0,
+    }
+  }
+  return {
+    level,
+    reduction: Math.min(
+      COMMANDER_TARGET_PRESSURE_POST_ACTIVE_DAMAGE_REDUCTION_MAX,
+      level * COMMANDER_TARGET_PRESSURE_POST_ACTIVE_DAMAGE_REDUCTION_PER_LEVEL,
+    ),
+  }
+}
+
+function applyCommanderTargetPostActiveDamageReduction(
+  rawDamage: number,
+  commanderTargetPostActiveDamageReduction: { level: number; reduction: number },
+  notes: string[],
+) {
+  if (commanderTargetPostActiveDamageReduction.reduction <= 0) {
+    return rawDamage
+  }
+  notes.push(`commanderTargetPressurePostActiveDamageReduction-${Math.round(
+    commanderTargetPostActiveDamageReduction.reduction * 100,
+  )}%`)
+  notes.push(`commanderTargetPressurePostActiveDamageLevel=${commanderTargetPostActiveDamageReduction.level}`)
+  return Math.max(1, Math.round(rawDamage * (1 - commanderTargetPostActiveDamageReduction.reduction)))
 }
 
 function resolveCommanderTargetLowHpFinishNormalTarget(
@@ -1415,6 +1698,39 @@ function selectTeamStartTargets(
   }
 }
 
+function selectTeamCommandDamageTargets(
+  actor: MutableTeamMember,
+  enemies: MutableTeamMember[],
+  formula: TacticalSkillFormula,
+  seed: string,
+  round: number,
+  repeatIndex: number,
+) {
+  switch (formula.commandDamageTargetSelector) {
+    case 'enemy_commander': {
+      const commander = enemies[0]
+      return commander?.currentStrength > 0 ? [commander] : []
+    }
+    case 'enemy_team':
+      return aliveMembers(enemies)
+    case 'enemy_random_1':
+      return chooseRandomAliveMembers(enemies, 1, seed, `${round}:${actor.heroId}:${formula.id}:command_damage_single:${repeatIndex}`)
+    case 'enemy_group_2':
+      return chooseRandomAliveMembers(enemies, 2, seed, `${round}:${actor.heroId}:${formula.id}:command_damage_group:${repeatIndex}`)
+    case 'enemy_lowest_1':
+      return chooseLowestStrengthAliveMembers(enemies, 1)
+    default:
+      return []
+  }
+}
+
+function normalizeCommandDamageRepeatCount(rawRepeatCount?: number) {
+  if (!rawRepeatCount) {
+    return 1
+  }
+  return Math.min(5, Math.max(1, Math.floor(rawRepeatCount)))
+}
+
 function chooseRandomAliveMember(
   candidates: MutableTeamMember[],
   seed: string,
@@ -1571,9 +1887,11 @@ function toMutableCombatant(combatant: TacticalCombatant): MutableCombatant {
     maxStrength: combatant.strength,
     currentStrength: combatant.strength,
     damageReduction: 0,
+    commandProtectionDamageReductionCount: 0,
     evasionCharges: {},
     controlCleanseCharges: 0,
     healingDoneBySkill: {},
+    receivedDamageThisRound: false,
   }
 }
 
@@ -1600,10 +1918,7 @@ function applyBattleStartEffects(combatant: MutableCombatant, round: number, eve
         notes.push(`${attribute}+${Math.round(modifier * 100)}%`)
       }
     }
-    if (formula.damageReduction) {
-      combatant.damageReduction += formula.damageReduction
-      notes.push(`damageReduction+${Math.round(formula.damageReduction * 100)}%`)
-    }
+    applyBattleStartDamageReduction(combatant, formula, notes)
     if (formula.evasionChargesAgainst) {
       for (const skillType of formula.evasionChargesAgainst) {
         combatant.evasionCharges[skillType] = (combatant.evasionCharges[skillType] ?? 0) + 1
@@ -1795,7 +2110,8 @@ function executeTriggeredSkill(
     return
   }
 
-  const damageRate = resolveDamageRate(actor, target, formula)
+  const damageRate = resolveDamageRate(actor, target, formula, round)
+  appendDamageTakenDamageRateNotes(actor, formula, round, notes)
   const rawDamage = calculateDamage(actor, target, formula.damageKind, damageRate, damageScale)
   const result = applyIncomingDamage(target, formula.type, rawDamage)
   if (result.preventedDamage > 0) {
@@ -1847,6 +2163,7 @@ function resolveDamageRate(
   actor: MutableCombatant,
   target: MutableCombatant,
   formula: TacticalSkillFormula,
+  round: number,
 ) {
   let damageRate = formula.damageRate ?? 1
   if (
@@ -1860,7 +2177,48 @@ function resolveDamageRate(
   ) {
     damageRate = formula.damageRate ? formula.damageRate + formula.speedBonusRate : formula.speedBonusRate
   }
+  damageRate += resolveDamageTakenDamageRateBonus(actor, formula, round)
   return roundNumber(damageRate, 2)
+}
+
+function resolveDamageTakenDamageRateBonus(
+  actor: MutableCombatant,
+  formula: TacticalSkillFormula,
+  round: number,
+) {
+  if (!formula.damageTakenDamageRateScale || !formula.damageTakenDamageRateMaxBonus) {
+    return 0
+  }
+  if (formula.damageTakenDamageRateMinRound && round < formula.damageTakenDamageRateMinRound) {
+    return 0
+  }
+  const lostStrength = Math.max(0, actor.maxStrength - actor.currentStrength)
+  if (lostStrength <= 0) {
+    return 0
+  }
+  const lostStrengthRatio = lostStrength / Math.max(1, actor.maxStrength)
+  return Math.min(
+    formula.damageTakenDamageRateMaxBonus,
+    lostStrengthRatio * formula.damageTakenDamageRateScale,
+  )
+}
+
+function appendDamageTakenDamageRateNotes(
+  actor: MutableCombatant,
+  formula: TacticalSkillFormula,
+  round: number,
+  notes: string[],
+) {
+  const bonus = resolveDamageTakenDamageRateBonus(actor, formula, round)
+  if (bonus <= 0) {
+    return
+  }
+  notes.push(`damageTakenDamageRateBonus+${roundNumber(bonus, 2)}`)
+  notes.push(`damageTakenDamageRateScale=${roundNumber(formula.damageTakenDamageRateScale ?? 0, 2)}`)
+  notes.push(`damageTakenDamageRateMaxBonus=${roundNumber(formula.damageTakenDamageRateMaxBonus ?? 0, 2)}`)
+  if (formula.damageTakenDamageRateMinRound) {
+    notes.push(`damageTakenDamageRateMinRound=${formula.damageTakenDamageRateMinRound}`)
+  }
 }
 
 function calculateDamage(
@@ -1945,6 +2303,9 @@ function applyIncomingDamage(
 
   const damage = Math.min(target.currentStrength, incomingDamage)
   target.currentStrength -= damage
+  if (damage > 0) {
+    target.receivedDamageThisRound = true
+  }
   return {
     damage,
     preventedDamage: 0,

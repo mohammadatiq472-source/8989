@@ -49,18 +49,18 @@ function testZhangLiaoVsZhaoYunMatrixDistribution() {
     draw: 'draw',
   })
   assert.deepEqual(matrix.outcomes, {
-    win: 25,
-    loss: 103,
+    win: 35,
+    loss: 93,
     draw: 0,
   })
   assert.deepEqual(matrix.rates, {
-    win: 0.1953,
-    loss: 0.8047,
+    win: 0.2734,
+    loss: 0.7266,
     draw: 0,
   })
-  assert.equal(matrix.averageRounds, 3.59)
-  assert.equal(matrix.averageAttackerDamage, 12921.98)
-  assert.equal(matrix.averageDefenderDamage, 9288.53)
+  assert.equal(matrix.averageRounds, 3.63)
+  assert.equal(matrix.averageAttackerDamage, 13810.86)
+  assert.equal(matrix.averageDefenderDamage, 8823.06)
 }
 
 function testDrawDistributionCanBeMeasured() {

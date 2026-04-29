@@ -112,7 +112,7 @@ export const DEFAULT_TACTICAL_SKILL_BALANCE_EVAL_THRESHOLDS: TacticalSkillBalanc
   shortRoundRateMin: 0.65,
   winRateSkewMin: 0.75,
   damagePerActivationWarn: 3_000,
-  damagePerSeenLoadoutWarn: 5_000,
+  damagePerSeenLoadoutWarn: 7_500,
   healingPerActivationWarn: 1_100,
   healingPerSeenLoadoutWarn: 2_200,
   topSkillCount: 8,

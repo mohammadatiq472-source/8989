@@ -170,21 +170,21 @@ function testEightRoundDecisiveResult() {
   const innateEvent = findEvent(report.events, zhangLiaoProfile.innateSkill.id)
   assert.equal(innateEvent.activated, true)
   assert.equal(innateEvent.activationRoll, 12)
-  assert.equal(innateEvent.damageRate, 1.13)
-  assert.equal(innateEvent.damage, 3166)
+  assert.equal(innateEvent.damageRate, 1.43)
+  assert.equal(innateEvent.damage, 4023)
 
   const fireEvent = findEvent(report.events, activeSkill.id)
   assert.equal(fireEvent.activated, true)
   assert.equal(fireEvent.activationRoll, 21)
   assert.equal(fireEvent.damageRate, 1)
   assert.equal(fireEvent.damage, 0)
-  assert.equal(fireEvent.preventedDamage, 2099)
+  assert.equal(fireEvent.preventedDamage, 1910)
 
   assert.equal(report.winner, 'attacker')
   assert.equal(report.outcomeReason, 'defender_defeated')
-  assert.equal(report.round, 3)
+  assert.equal(report.round, 2)
   assert.equal(report.maxRounds, 8)
-  assert.equal(report.attacker.strengthAfter, 6841)
+  assert.equal(report.attacker.strengthAfter, 7578)
   assert.equal(report.defender.strengthAfter, 0)
 }
 
@@ -227,12 +227,45 @@ function testRoundLimitDraw() {
   assert.equal(findEvents(report.events, 'normal_attack').length, 16)
 }
 
+function testDamageTakenDamageRateScaling() {
+  const simaYi = buildTacticalCombatantFromGeneralCatalog(
+    '100709',
+    [],
+    { strength: 30_000 },
+  )
+  const zhugeLiang = buildTacticalCombatantFromGeneralCatalog(
+    '100017',
+    [],
+    { strength: 30_000 },
+  )
+
+  const report = resolveRepresentativeTacticalDuel({
+    round: 1,
+    maxRounds: 4,
+    seed: 'sima-damage-taken-scaling-contract',
+    attacker: simaYi,
+    defender: zhugeLiang,
+    activationRolls: {
+      '100709:innate_100709': 1,
+    },
+  })
+
+  const simaYiEvents = findEvents(report.events, 'innate_100709')
+  assert.equal(simaYiEvents.length, 3)
+  assert.equal(simaYiEvents[0].damageRate, 0.95)
+  assert.equal(simaYiEvents[1].damageRate, 1.51)
+  assert.equal(simaYiEvents[1].damage, 5693)
+  assert.ok(simaYiEvents[1].notes.includes('damageTakenDamageRateBonus+0.56'))
+  assert.ok(simaYiEvents[1].notes.includes('damageTakenDamageRateMinRound=2'))
+}
+
 function run() {
   testCatalogAuthority()
   testFormulaCoverage()
   testLoadoutContract()
   testEightRoundDecisiveResult()
   testRoundLimitDraw()
+  testDamageTakenDamageRateScaling()
   console.log('[tactical_skill_rules_contract] all checks passed')
 }
 

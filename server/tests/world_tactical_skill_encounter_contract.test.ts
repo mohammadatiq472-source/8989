@@ -121,7 +121,7 @@ function testDecisiveEncounterReadsFormalSkillSlots() {
   const defender = getUnitById(world, seeded.defenderId)
   assert.ok(defender, 'winning defender should remain on the contested tile')
   assert.equal(defender.tileId, seeded.targetTileId)
-  assert.equal(defender.strength, 147)
+  assert.equal(defender.strength, 148)
 
   const record = world.feedback.battleRecords[0]
   assert.ok(record, 'tactical encounter should create a battle record')
@@ -129,7 +129,7 @@ function testDecisiveEncounterReadsFormalSkillSlots() {
   assert.equal(record.tileId, seeded.targetTileId)
   assert.equal(record.outcome, 'loss')
   assert.equal(record.attackerLoss, 100)
-  assert.equal(record.defenderLoss, 53)
+  assert.equal(record.defenderLoss, 52)
   assert.ok(record.summary.includes('战法公式 张辽[innate_100027+lib_s_command_battle_banner/lib_s_chase_rending_charge]'))
   assert.ok(record.summary.includes('赵云[innate_100021+lib_s_passive_fortified_mind/lib_s_active_fire_raid]'))
   assert.ok(record.summary.includes('第3/8回合防守方胜(attacker_defeated)'))

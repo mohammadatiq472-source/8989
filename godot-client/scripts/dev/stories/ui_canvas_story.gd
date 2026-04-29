@@ -2,30 +2,23 @@
 extends "res://scripts/dev/stories/ui_preview_story_base.gd"
 class_name UICanvasStory
 
-const PROVINCE_SUMMARY_SCENE := preload("res://scenes/dev/components/province_layer_summary_panel.tscn")
-const PROVINCE_ROSTER_SCENE := preload("res://scenes/dev/components/province_layer_roster_panel.tscn")
-const PROVINCE_FOCUS_SCENE := preload("res://scenes/dev/components/province_layer_focus_panel.tscn")
-
 const COMPONENT_ORDER := [
-	"province_summary",
-	"province_roster",
-	"province_focus",
+	"shell_panel",
+	"action_row",
+	"info_card",
 ]
 
 const COMPONENT_LIBRARY := {
-	"province_summary": {
-		"label": "Province Summary",
-		"scene": PROVINCE_SUMMARY_SCENE,
+	"shell_panel": {
+		"label": "Shell Panel",
 		"size": Vector2(398.0, 262.0),
 	},
-	"province_roster": {
-		"label": "Province Roster",
-		"scene": PROVINCE_ROSTER_SCENE,
+	"action_row": {
+		"label": "Action Row",
 		"size": Vector2(398.0, 262.0),
 	},
-	"province_focus": {
-		"label": "Province Focus",
-		"scene": PROVINCE_FOCUS_SCENE,
+	"info_card": {
+		"label": "Info Card",
 		"size": Vector2(620.0, 342.0),
 	},
 }
@@ -645,6 +638,10 @@ func _spawn_canvas_item(component_id: String, requested_position: Vector2, reque
 			_set_mouse_filter_recursive(control, Control.MOUSE_FILTER_IGNORE)
 			if control.has_method("apply_preview_state"):
 				control.call("apply_preview_state", _default_component_state(component_id))
+	else:
+		var placeholder := _build_canvas_placeholder(component_id, definition)
+		placeholder.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		wrapper.add_child(placeholder)
 
 	var placement := requested_position
 	if placement.x < 0.0 or placement.y < 0.0:
@@ -1127,22 +1124,68 @@ func _component_definition(component_id: String) -> Dictionary:
 	return {}
 
 
+func _build_canvas_placeholder(component_id: String, definition: Dictionary) -> Control:
+	var root := VBoxContainer.new()
+	root.name = "Component"
+	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.add_theme_constant_override("separation", 8)
+
+	var margin := MarginContainer.new()
+	margin.name = "PlaceholderMargin"
+	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	margin.add_theme_constant_override("margin_left", 14)
+	margin.add_theme_constant_override("margin_top", 12)
+	margin.add_theme_constant_override("margin_right", 14)
+	margin.add_theme_constant_override("margin_bottom", 12)
+	root.add_child(margin)
+
+	var vbox := VBoxContainer.new()
+	vbox.name = "PlaceholderVBox"
+	vbox.add_theme_constant_override("separation", 8)
+	vbox.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	margin.add_child(vbox)
+
+	var label := Label.new()
+	label.name = "Title"
+	label.text = str(definition.get("label", component_id))
+	label.add_theme_font_size_override("font_size", 18)
+	label.modulate = Color(0.90, 0.96, 1.0, 0.98)
+	vbox.add_child(label)
+
+	var rule := ColorRect.new()
+	rule.name = "AccentRule"
+	rule.color = Color(0.42, 0.82, 0.90, 0.90)
+	rule.custom_minimum_size = Vector2(0.0, 3.0)
+	vbox.add_child(rule)
+
+	var body := Label.new()
+	body.name = "Body"
+	body.text = str(_default_component_state(component_id).get("summaryLine", "Canvas layout placeholder"))
+	body.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	body.add_theme_font_size_override("font_size", 13)
+	body.modulate = Color(0.78, 0.86, 0.96, 0.92)
+	vbox.add_child(body)
+
+	return root
+
+
 func _default_component_state(component_id: String) -> Dictionary:
 	match component_id:
-		"province_summary":
+		"shell_panel":
 			return {
-				"headline": "Province Summary",
-				"summaryLine": "Canvas sample: summary component",
+				"headline": "Shell Panel",
+				"summaryLine": "Mainline shell panel placeholder.",
 			}
-		"province_roster":
+		"action_row":
 			return {
-				"headline": "Province Roster",
-				"summaryLine": "Canvas sample: roster component",
+				"headline": "Action Row",
+				"summaryLine": "Bottom action rhythm placeholder.",
 			}
-		"province_focus":
+		"info_card":
 			return {
-				"headline": "Province Focus",
+				"headline": "Info Card",
 				"cameraStateText": "Canvas sample mode",
+				"summaryLine": "Context card placeholder.",
 				"storyNavigation": {
 					"targetStoryId": "",
 					"buttonLabel": "Navigation disabled",

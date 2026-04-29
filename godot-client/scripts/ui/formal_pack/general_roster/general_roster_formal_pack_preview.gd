@@ -3,6 +3,7 @@ class_name GeneralRosterFormalPackPreview
 
 const HeroCardViewScript := preload("res://scripts/ui/formal_pack/components/hero_card_view.gd")
 const FormalPackCloseButton := preload("res://scripts/ui/formal_pack/components/formal_pack_close_button.gd")
+const FormalPackPreviewAdapter := preload("res://scripts/ui/formal_pack/components/formal_pack_preview_adapter.gd")
 
 const BG_ROOT := Color(0.030, 0.032, 0.034, 1.0)
 const BG_BAND := Color(0.070, 0.071, 0.067, 0.94)
@@ -98,6 +99,11 @@ func _build_roster_grid() -> Control:
 	var margin := _margin(18, 18, 18, 18)
 	holder.add_child(margin)
 
+	var cards := _active_roster_cards()
+	if cards.is_empty():
+		margin.add_child(_build_empty_roster_state())
+		return holder
+
 	var grid := GridContainer.new()
 	grid.name = "RosterCardGrid"
 	grid.columns = 6
@@ -108,9 +114,23 @@ func _build_roster_grid() -> Control:
 	margin.add_child(grid)
 	_roster_grid = grid
 
-	for entry_variant in ROSTER_CARDS:
+	for entry_variant in cards:
 		grid.add_child(_build_roster_card(entry_variant as Dictionary))
 	return holder
+
+func _build_empty_roster_state() -> Control:
+	var center := CenterContainer.new()
+	center.name = "GeneralRosterEmptyState"
+	center.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	center.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	var column := VBoxContainer.new()
+	column.custom_minimum_size = Vector2(460, 0)
+	column.add_theme_constant_override("separation", 8)
+	center.add_child(column)
+	column.add_child(_compact_label("暂无武将", 30, TEXT_GOLD, HORIZONTAL_ALIGNMENT_CENTER))
+	column.add_child(_compact_label("OwnedHeroState 为空时显示此状态", 16, TEXT_MAIN, HORIZONTAL_ALIGNMENT_CENTER))
+	column.add_child(_compact_label("招募获得后再渲染同一套 HeroCardView 卡面", 13, TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+	return center
 
 func _build_roster_card(entry: Dictionary) -> Button:
 	var button := HeroCardViewScript.build_card(entry, HeroCardViewScript.MODE_OWNED_ROSTER, {
@@ -152,7 +172,7 @@ func _update_roster_grid_columns() -> void:
 
 func _deployed_count() -> int:
 	var deployed := 0
-	for entry_variant in ROSTER_CARDS:
+	for entry_variant in _active_roster_cards():
 		var entry := entry_variant as Dictionary
 		if str(entry.get("status", "")).find("预备") < 0:
 			deployed += 1
@@ -160,7 +180,7 @@ func _deployed_count() -> int:
 
 func _reserve_count() -> int:
 	var reserve := 0
-	for entry_variant in ROSTER_CARDS:
+	for entry_variant in _active_roster_cards():
 		var entry := entry_variant as Dictionary
 		if str(entry.get("status", "")).find("预备") >= 0:
 			reserve += 1
@@ -201,6 +221,9 @@ func _filter_button(text: String) -> Control:
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	margin.add_child(label)
 	return panel
+
+func _active_roster_cards() -> Array:
+	return FormalPackPreviewAdapter.owned_heroes(ROSTER_CARDS)
 
 func _badge(text: String, color: Color) -> Control:
 	var panel := _panel(Color(0.036, 0.036, 0.034, 0.78), Color(0.240, 0.210, 0.150, 0.54), 2)

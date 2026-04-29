@@ -41,7 +41,7 @@
      - `owner`
      - `status`
      - `heroTemplateId`
-      - `heroInstanceId` / `instanceId` / `heroCardInstanceId`
+     - `heroInstanceId` / `instanceId` / `heroCardInstanceId`
      - `portraitAssetKey`
    - 组件内部会归一成卡面字段，不自动生成“武将01”这类显示名。
 
@@ -55,6 +55,12 @@
    - 默认或 `FORMAL_PACK_DRAW_MODE=five` 时显示五连结果，只提供 `再招募 5 次`。
    - 继续招募按钮贴近结果卡下方，不再放页面底部；标题旁和底部都不显示“回执/弱接入位”调试条。
    - 不做真实随机、不扣库存、不写入后端；receipt 字段只在代码/交接说明中保留接入约定，不抢玩家主视觉。
+
+4. 空态预览分支
+   - `components/formal_pack_preview_adapter.gd` 是临时 future-adapter 接口层。
+   - 招募页只读取 adapter 的 `visiblePools`；`FORMAL_PACK_EMPTY_POOLS=1` 时 adapter 返回 `visiblePools=[]`，页面渲染“暂无可用卡池”，保留底部资源条，不本地创建默认卡池。
+   - 总武将页只读取 adapter 的 `ownedHeroes`；`FORMAL_PACK_EMPTY_ROSTER=1` 时 adapter 返回 `ownedHeroes=[]`，页面渲染“暂无武将”，保留搜索/筛选/关闭栏，不假设已有武将卡。
+   - 默认不设置环境变量时，保持已认可的招募页和总武将页主视觉比例。
 
 ### 流程层
 

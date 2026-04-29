@@ -3,6 +3,7 @@ class_name RecruitFormalPackPreview
 
 const HeroCardViewScript := preload("res://scripts/ui/formal_pack/components/hero_card_view.gd")
 const FormalPackCloseButton := preload("res://scripts/ui/formal_pack/components/formal_pack_close_button.gd")
+const FormalPackPreviewAdapter := preload("res://scripts/ui/formal_pack/components/formal_pack_preview_adapter.gd")
 
 const BG_ROOT := Color(0.030, 0.032, 0.034, 1.0)
 const BG_BAND := Color(0.070, 0.071, 0.067, 0.94)
@@ -538,13 +539,7 @@ func _toggle_pool_candidates() -> void:
 	_update_pack_row_width()
 
 func _active_recruit_packs() -> Array:
-	if _env_flag("FORMAL_PACK_EMPTY_POOLS"):
-		return []
-	return RECRUIT_PACKS
-
-func _env_flag(name: String) -> bool:
-	var value := OS.get_environment(name).strip_edges().to_lower()
-	return value == "1" or value == "true" or value == "yes"
+	return FormalPackPreviewAdapter.visible_pools(RECRUIT_PACKS)
 
 func _on_preview_close_pressed() -> void:
 	if _recruit_status_label != null:

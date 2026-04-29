@@ -12,33 +12,31 @@
     "generalpic": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/generalpic",
     "units": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/units",
     "overlays": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/overlays",
-    "ui": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/ui",
     "manifests": "godot-client/assets/themes/slgclient/replacements/exchange_bundle/manifests"
   },
   "stats": {
     "world": {
-      "files": 27,
-      "bytes": 14310406
+      "files": 11,
+      "bytes": 8248265
     },
     "generalpic": {
-      "files": 449,
-      "bytes": 150417849
+      "files": 898,
+      "bytes": 150867146
     },
     "units": {
-      "files": 80,
-      "bytes": 524032
+      "files": 160,
+      "bytes": 607091
     },
     "overlays": {
-      "files": 204,
-      "bytes": 4876185
-    },
-    "ui": {
-      "files": 110,
-      "bytes": 2020565
+      "files": 124,
+      "bytes": 1709243
     },
     "manifests": {
-      "files": 6,
-      "bytes": 568964
+      "files": 4,
+      "bytes": 424509
     }
-  }
+  },
+  "prunedOldUi": true,
+  "prunedAt": "2026-04-28T10:15:21.845963+00:00",
+  "hudV1Removed": true
 }

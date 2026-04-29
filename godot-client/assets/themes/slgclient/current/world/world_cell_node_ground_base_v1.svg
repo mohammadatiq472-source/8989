@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="384" height="384" viewBox="0 0 384 384">
+  <defs>
+    <linearGradient id="nodeGroundTop" x1="52" y1="150" x2="332" y2="266" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#87948c"/>
+      <stop offset="0.45" stop-color="#828f88"/>
+      <stop offset="1" stop-color="#79867f"/>
+    </linearGradient>
+    <linearGradient id="nodeGroundLight" x1="70" y1="164" x2="210" y2="266" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d6dfcf" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#d8dfcf" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="nodeGroundShade" x1="188" y1="136" x2="320" y2="276" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#53615b" stop-opacity="0.02"/>
+      <stop offset="1" stop-color="#4b5852" stop-opacity="0.18"/>
+    </linearGradient>
+  </defs>
+  <path d="M32 208 L192 288 L352 208 L192 128 Z" fill="url(#nodeGroundTop)" fill-opacity="0.96"/>
+  <path d="M32 208 L192 128 L192 288 Z" fill="url(#nodeGroundLight)"/>
+  <path d="M192 128 L352 208 L192 288 Z" fill="url(#nodeGroundShade)"/>
+  <path d="M58 208 L192 141 L326 208 L192 275 Z" fill="none" stroke="#eff3dc" stroke-width="1.0" stroke-opacity="0.07"/>
+  <path d="M32 208 L192 128 L352 208" fill="none" stroke="#eef2da" stroke-width="1.2" stroke-opacity="0.10"/>
+  <path d="M32 208 L192 288 L352 208" fill="none" stroke="#4f5d57" stroke-width="1.0" stroke-opacity="0.12"/>
+  <path d="M32 208 L192 128 L352 208 L192 288 Z" fill="none" stroke="#79867f" stroke-width="0.9" stroke-opacity="0.10"/>
+</svg>

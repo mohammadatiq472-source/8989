@@ -1,0 +1,73 @@
+<svg width="304" height="304" viewBox="0 0 304 304" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="outer_bronze" x1="44" y1="39" x2="262" y2="273" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#5F482D"/>
+      <stop offset="0.42" stop-color="#2F2114"/>
+      <stop offset="0.58" stop-color="#1B120A"/>
+      <stop offset="1" stop-color="#4A351F"/>
+    </linearGradient>
+    <linearGradient id="lacquer_wood" x1="152" y1="38" x2="152" y2="272" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2E2014"/>
+      <stop offset="0.48" stop-color="#170F0A"/>
+      <stop offset="1" stop-color="#25180F"/>
+    </linearGradient>
+    <radialGradient id="core_ebony" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(152 150) rotate(90) scale(124)">
+      <stop offset="0" stop-color="#130E09"/>
+      <stop offset="0.64" stop-color="#0B0805"/>
+      <stop offset="1" stop-color="#050403"/>
+    </radialGradient>
+    <linearGradient id="corner_bronze" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#9C7A43"/>
+      <stop offset="0.48" stop-color="#655036"/>
+      <stop offset="1" stop-color="#3D3023"/>
+    </linearGradient>
+    <linearGradient id="edge_light" x1="58" y1="45" x2="246" y2="45" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#D2B478" stop-opacity="0.22"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="silk_cross" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M0 0L20 20M20 0L0 20" stroke="#B59663" stroke-opacity="0.11" stroke-width="0.45"/>
+    </pattern>
+    <pattern id="wood_grain" width="7" height="304" patternUnits="userSpaceOnUse">
+      <path d="M1 0V304" stroke="#000000" stroke-opacity="0.13" stroke-width="1"/>
+    </pattern>
+    <filter id="drop_shadow" x="24" y="24" width="256" height="268" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#000000" flood-opacity="0.48"/>
+    </filter>
+    <linearGradient id="pressed_shade" x1="152" y1="46" x2="152" y2="260" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#000000" stop-opacity="0.32"/>
+      <stop offset="0.5" stop-color="#000000" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0.38"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#drop_shadow)" transform="translate(0 3)">
+    <rect x="38" y="36" width="228" height="232" rx="8" fill="url(#outer_bronze)"/>
+    <rect x="42" y="40" width="220" height="224" rx="6" fill="url(#lacquer_wood)"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#core_ebony)"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#silk_cross)" opacity="0.68"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#wood_grain)" opacity="0.9"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#pressed_shade)"/>
+
+    <rect x="59" y="57" width="186" height="190" rx="3" stroke="#806235" stroke-opacity="0.42" stroke-width="1"/>
+    <rect x="66" y="64" width="172" height="176" rx="2" stroke="#6C5636" stroke-opacity="0.18" stroke-width="1"/>
+    <rect x="58" y="42" width="188" height="2" fill="url(#edge_light)" opacity="0.56"/>
+
+    <path d="M52 50H84V57H59V82H52V50Z" fill="url(#corner_bronze)" opacity="0.82"/>
+    <path d="M252 50V82H245V57H220V50H252Z" fill="url(#corner_bronze)" opacity="0.82"/>
+    <path d="M252 254H220V247H245V222H252V254Z" fill="url(#corner_bronze)" opacity="0.82"/>
+    <path d="M52 254V222H59V247H84V254H52Z" fill="url(#corner_bronze)" opacity="0.82"/>
+  </g>
+
+  <g opacity="0.78" transform="translate(0 3)">
+    <circle cx="152" cy="34" r="5" fill="#261A10" stroke="#4E3C2B"/>
+    <circle cx="152" cy="34" r="4" fill="#8E7245" fill-opacity="0.12"/>
+    <circle cx="152" cy="270" r="5" fill="#261A10" stroke="#4E3C2B"/>
+    <circle cx="152" cy="270" r="4" fill="#8E7245" fill-opacity="0.12"/>
+    <circle cx="36" cy="152" r="5" fill="#261A10" stroke="#4E3C2B"/>
+    <circle cx="36" cy="152" r="4" fill="#8E7245" fill-opacity="0.12"/>
+    <circle cx="268" cy="152" r="5" fill="#261A10" stroke="#4E3C2B"/>
+    <circle cx="268" cy="152" r="4" fill="#8E7245" fill-opacity="0.12"/>
+  </g>
+</svg>

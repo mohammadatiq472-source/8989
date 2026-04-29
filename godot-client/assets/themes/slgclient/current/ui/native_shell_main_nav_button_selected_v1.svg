@@ -1,0 +1,82 @@
+<svg width="304" height="304" viewBox="0 0 304 304" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="outer_bronze" x1="44" y1="36" x2="262" y2="270" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#917047"/>
+      <stop offset="0.42" stop-color="#4A321A"/>
+      <stop offset="0.58" stop-color="#2C1A0D"/>
+      <stop offset="1" stop-color="#76522A"/>
+    </linearGradient>
+    <linearGradient id="lacquer_wood" x1="152" y1="35" x2="152" y2="269" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#493019"/>
+      <stop offset="0.48" stop-color="#24160D"/>
+      <stop offset="1" stop-color="#3D2614"/>
+    </linearGradient>
+    <radialGradient id="core_ebony" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(152 146) rotate(90) scale(128)">
+      <stop offset="0" stop-color="#2C1D0F"/>
+      <stop offset="0.64" stop-color="#141008"/>
+      <stop offset="1" stop-color="#0A0805"/>
+    </radialGradient>
+    <radialGradient id="selected_warmth" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(152 134) rotate(90) scale(116)">
+      <stop offset="0" stop-color="#D3A954" stop-opacity="0.16"/>
+      <stop offset="0.48" stop-color="#9E6E2F" stop-opacity="0.07"/>
+      <stop offset="1" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="corner_bronze" x1="0" y1="0" x2="32" y2="32" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D4AB5A"/>
+      <stop offset="0.48" stop-color="#92734B"/>
+      <stop offset="1" stop-color="#5E4630"/>
+    </linearGradient>
+    <linearGradient id="edge_light" x1="58" y1="42" x2="246" y2="42" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#FFF0C8" stop-opacity="0.58"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="selected_bar" x1="82" y1="252" x2="222" y2="252" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#A88246" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#E2B96A" stop-opacity="0.88"/>
+      <stop offset="1" stop-color="#A88246" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="silk_cross" width="20" height="20" patternUnits="userSpaceOnUse">
+      <path d="M0 0L20 20M20 0L0 20" stroke="#D2B478" stroke-opacity="0.18" stroke-width="0.45"/>
+    </pattern>
+    <pattern id="wood_grain" width="7" height="304" patternUnits="userSpaceOnUse">
+      <path d="M1 0V304" stroke="#000000" stroke-opacity="0.10" stroke-width="1"/>
+    </pattern>
+    <filter id="drop_shadow" x="18" y="18" width="268" height="278" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="14" flood-color="#000000" flood-opacity="0.58"/>
+    </filter>
+    <filter id="selected_glow" x="22" y="22" width="260" height="260" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="0" stdDeviation="5" flood-color="#C99A4A" flood-opacity="0.32"/>
+    </filter>
+  </defs>
+
+  <g filter="url(#drop_shadow)">
+    <rect x="38" y="36" width="228" height="232" rx="8" fill="url(#outer_bronze)" filter="url(#selected_glow)"/>
+    <rect x="42" y="40" width="220" height="224" rx="6" fill="url(#lacquer_wood)"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#core_ebony)"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#selected_warmth)"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#silk_cross)" opacity="0.74"/>
+    <rect x="50" y="48" width="204" height="208" rx="4" fill="url(#wood_grain)" opacity="0.9"/>
+
+    <rect x="56" y="54" width="192" height="196" rx="4" stroke="#D1A95C" stroke-opacity="0.72" stroke-width="1.5"/>
+    <rect x="64" y="62" width="176" height="180" rx="2" stroke="#B88F4B" stroke-opacity="0.24" stroke-width="1"/>
+    <rect x="58" y="42" width="188" height="2" fill="url(#edge_light)" opacity="0.82"/>
+    <rect x="82" y="250" width="140" height="3" rx="1.5" fill="url(#selected_bar)"/>
+
+    <path d="M52 50H84V57H59V82H52V50Z" fill="url(#corner_bronze)" opacity="0.96"/>
+    <path d="M252 50V82H245V57H220V50H252Z" fill="url(#corner_bronze)" opacity="0.96"/>
+    <path d="M252 254H220V247H245V222H252V254Z" fill="url(#corner_bronze)" opacity="0.96"/>
+    <path d="M52 254V222H59V247H84V254H52Z" fill="url(#corner_bronze)" opacity="0.96"/>
+  </g>
+
+  <g opacity="0.98">
+    <circle cx="152" cy="34" r="5" fill="#3A2A18" stroke="#8E7245"/>
+    <circle cx="152" cy="34" r="4" fill="#D1A95C" fill-opacity="0.24"/>
+    <circle cx="152" cy="270" r="5" fill="#3A2A18" stroke="#8E7245"/>
+    <circle cx="152" cy="270" r="4" fill="#D1A95C" fill-opacity="0.24"/>
+    <circle cx="36" cy="152" r="5" fill="#3A2A18" stroke="#8E7245"/>
+    <circle cx="36" cy="152" r="4" fill="#D1A95C" fill-opacity="0.24"/>
+    <circle cx="268" cy="152" r="5" fill="#3A2A18" stroke="#8E7245"/>
+    <circle cx="268" cy="152" r="4" fill="#D1A95C" fill-opacity="0.24"/>
+  </g>
+</svg>

@@ -47,28 +47,9 @@ SOURCE_REPO_URL = "https://github.com/llr104/slgclient"
 
 WORLD_FILES = [
     "map.tmx",
-    "land.tsx",
-    "hill.tsx",
-    "water_edge_1.tsx",
-    "water_edge_3.tsx",
-    "land.png",
-    "hill.png",
-    "hill.plist",
-    "water_edge_1.png",
-    "water_edge_1.plist",
-    "water_edge_3.png",
-    "water_edge_3.plist",
-    "sand_edge_1.png",
-    "sand_edge_1.plist",
-    "sand_edge_3.png",
-    "sand_edge_3.plist",
     "map_qibing.png",
     "map_qibing.plist",
     "map_qibing.plist.meta",
-    "map_tiles.png",
-    "map_tiles.plist",
-    "map_res.png",
-    "map_res.plist",
     "cityComponent.png",
     "cityComponent.plist",
     "component_outside.png",
@@ -88,7 +69,6 @@ ANIM_FILES = [
 
 ANIM_DIRECTION_ORDER = ["r", "ru", "u", "lu", "l", "ld", "d", "rd"]
 
-RESOURCE_FRAME_PREFIXES = ("land_", "land_ground_")
 RESOURCE_EXTRA_FRAMES = ("sys_fortress.png",)
 MARKER_REQUIRED_FRAMES = (
     "flag_blue_3.png",
@@ -97,13 +77,6 @@ MARKER_REQUIRED_FRAMES = (
 )
 
 OVERLAY_ATLAS_SPECS = (
-    {"name": "map_tiles", "plist": "map_tiles.plist", "png": "map_tiles.png", "category": "resource"},
-    {"name": "map_res", "plist": "map_res.plist", "png": "map_res.png", "category": "resource"},
-    {"name": "hill", "plist": "hill.plist", "png": "hill.png", "category": "terrain"},
-    {"name": "water_edge_1", "plist": "water_edge_1.plist", "png": "water_edge_1.png", "category": "edge"},
-    {"name": "water_edge_3", "plist": "water_edge_3.plist", "png": "water_edge_3.png", "category": "edge"},
-    {"name": "sand_edge_1", "plist": "sand_edge_1.plist", "png": "sand_edge_1.png", "category": "edge"},
-    {"name": "sand_edge_3", "plist": "sand_edge_3.plist", "png": "sand_edge_3.png", "category": "edge"},
     {"name": "city_component", "plist": "cityComponent.plist", "png": "cityComponent.png", "category": "marker"},
     {"name": "component_outside", "plist": "component_outside.plist", "png": "component_outside.png", "category": "marker"},
 )
@@ -400,40 +373,6 @@ def _extract_unit_frames(
 
 def _select_overlay_frame_names(atlas_name: str, frame_table: dict[str, dict[str, Any]]) -> list[str]:
     selected: list[str] = []
-    if atlas_name == "map_tiles":
-        for frame_name in sorted(frame_table.keys()):
-            if frame_name.startswith("land_ground_"):
-                selected.append(frame_name)
-        return selected
-
-    if atlas_name == "map_res":
-        for frame_name in sorted(frame_table.keys()):
-            if frame_name in RESOURCE_EXTRA_FRAMES or frame_name.startswith("land_"):
-                selected.append(frame_name)
-        return selected
-
-    if atlas_name == "hill":
-        for frame_name in sorted(frame_table.keys()):
-            if (
-                frame_name.startswith("hill")
-                or frame_name.startswith("rain_hill")
-                or frame_name.startswith("snow_hill")
-            ):
-                selected.append(frame_name)
-        return selected
-
-    if atlas_name.startswith("water_edge_"):
-        for frame_name in sorted(frame_table.keys()):
-            if frame_name.startswith("water_"):
-                selected.append(frame_name)
-        return selected
-
-    if atlas_name.startswith("sand_edge_"):
-        for frame_name in sorted(frame_table.keys()):
-            if frame_name.startswith("sand_"):
-                selected.append(frame_name)
-        return selected
-
     if atlas_name == "city_component":
         for frame_name in sorted(frame_table.keys()):
             if frame_name in MARKER_REQUIRED_FRAMES or frame_name.startswith("flag_"):

@@ -1,0 +1,1291 @@
+{
+  "schema": "world_cell_footprint_manifest_v1",
+  "strategic_node_footprint_contract": {
+    "id": "world_strategic_node_footprint_contract_v1",
+    "package_id": "world_strategic_node_asset_pack_v1",
+    "finalized_at": "2026-04-28",
+    "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+    "naming_policy_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/naming_policy",
+    "resource_policy_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/resource_policy",
+    "resource_manifest_path": "resources/world_resource_assets_manifest_v1.json",
+    "geometry_invariants": {
+      "runtime_tile_size": [
+        200,
+        100
+      ],
+      "source_canvas": [
+        384,
+        384
+      ],
+      "source_footprint": [
+        320,
+        160
+      ],
+      "anchor_rule": "bottom_center",
+      "footprint_anchor_rule": "center_cell"
+    }
+  },
+  "generation_contract_version": "world_cell_placement_contract_v1",
+  "projection": {
+    "type": "isometric_2_to_1",
+    "runtime_tile_size": [
+      200,
+      100
+    ],
+    "source_canvas": [
+      384,
+      384
+    ],
+    "source_footprint": [
+      320,
+      160
+    ],
+    "anchor_rule": "bottom_center"
+  },
+  "draw_order": [
+    "cell_base",
+    "resource_cell",
+    "world_node",
+    "debug_overlay",
+    "selection_overlay",
+    "hover_overlay"
+  ],
+  "footprints": {
+    "resource_1x1": {
+      "id": "resource_1x1",
+      "role": "resource",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          0,
+          0
+        ]
+      ],
+      "draw_layer": "resource_cell",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": false,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "resource",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "player_city_3x3_initial": {
+      "id": "player_city_3x3_initial",
+      "role": "player_city",
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_city_v1",
+      "render_mode": "layered_city",
+      "base_frame": "world_cell_city_ground_base_v1.png",
+      "base_alpha": 0.9,
+      "base_scale": 1.01,
+      "base_offset": [
+        0,
+        -2
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "player_city",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "own",
+      "supported_ownership_states": [
+        "own"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "ai_city_3x3_initial": {
+      "id": "ai_city_3x3_initial",
+      "role": "ai_city",
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_capital_v1",
+      "render_mode": "layered_city",
+      "base_frame": "world_cell_city_ground_base_v1.png",
+      "base_alpha": 0.92,
+      "base_scale": 1.01,
+      "base_offset": [
+        0,
+        -2
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "ai_city",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "enemy",
+      "supported_ownership_states": [
+        "enemy",
+        "neutral"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "system_city_l03_l04_3x3": {
+      "id": "system_city_l03_l04_3x3",
+      "role": "system_city",
+      "footprint_tiles": [
+        3,
+        3
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_system_city_3x3_v1",
+      "render_mode": "layered_city",
+      "base_frame": "world_cell_city_ground_base_v1.png",
+      "base_alpha": 0.91,
+      "base_scale": 1.01,
+      "base_offset": [
+        0,
+        -2
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "system_city_l05_l06_5x5": {
+      "id": "system_city_l05_l06_5x5",
+      "role": "system_city",
+      "footprint_tiles": [
+        5,
+        5
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          -2,
+          -2
+        ],
+        [
+          -1,
+          -2
+        ],
+        [
+          0,
+          -2
+        ],
+        [
+          1,
+          -2
+        ],
+        [
+          2,
+          -2
+        ],
+        [
+          -2,
+          -1
+        ],
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          2,
+          -1
+        ],
+        [
+          -2,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          -2,
+          1
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          -2,
+          2
+        ],
+        [
+          -1,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_system_city_5x5_v1",
+      "render_mode": "layered_city",
+      "base_frame": "world_cell_city_ground_base_v1.png",
+      "base_alpha": 0.89,
+      "base_scale": 1.01,
+      "base_offset": [
+        0,
+        -2
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "system_city_l07_l08_7x7": {
+      "id": "system_city_l07_l08_7x7",
+      "role": "system_city",
+      "footprint_tiles": [
+        7,
+        7
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          -3,
+          -3
+        ],
+        [
+          -2,
+          -3
+        ],
+        [
+          -1,
+          -3
+        ],
+        [
+          0,
+          -3
+        ],
+        [
+          1,
+          -3
+        ],
+        [
+          2,
+          -3
+        ],
+        [
+          3,
+          -3
+        ],
+        [
+          -3,
+          -2
+        ],
+        [
+          -2,
+          -2
+        ],
+        [
+          -1,
+          -2
+        ],
+        [
+          0,
+          -2
+        ],
+        [
+          1,
+          -2
+        ],
+        [
+          2,
+          -2
+        ],
+        [
+          3,
+          -2
+        ],
+        [
+          -3,
+          -1
+        ],
+        [
+          -2,
+          -1
+        ],
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          2,
+          -1
+        ],
+        [
+          3,
+          -1
+        ],
+        [
+          -3,
+          0
+        ],
+        [
+          -2,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          -3,
+          1
+        ],
+        [
+          -2,
+          1
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          -3,
+          2
+        ],
+        [
+          -2,
+          2
+        ],
+        [
+          -1,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          -3,
+          3
+        ],
+        [
+          -2,
+          3
+        ],
+        [
+          -1,
+          3
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_system_city_7x7_v1",
+      "render_mode": "layered_city",
+      "base_frame": "world_cell_city_ground_base_v1.png",
+      "base_alpha": 0.88,
+      "base_scale": 1.01,
+      "base_offset": [
+        0,
+        -2
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "system_city_l09_9x9": {
+      "id": "system_city_l09_9x9",
+      "role": "system_city",
+      "footprint_tiles": [
+        9,
+        9
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          -4,
+          -4
+        ],
+        [
+          -3,
+          -4
+        ],
+        [
+          -2,
+          -4
+        ],
+        [
+          -1,
+          -4
+        ],
+        [
+          0,
+          -4
+        ],
+        [
+          1,
+          -4
+        ],
+        [
+          2,
+          -4
+        ],
+        [
+          3,
+          -4
+        ],
+        [
+          4,
+          -4
+        ],
+        [
+          -4,
+          -3
+        ],
+        [
+          -3,
+          -3
+        ],
+        [
+          -2,
+          -3
+        ],
+        [
+          -1,
+          -3
+        ],
+        [
+          0,
+          -3
+        ],
+        [
+          1,
+          -3
+        ],
+        [
+          2,
+          -3
+        ],
+        [
+          3,
+          -3
+        ],
+        [
+          4,
+          -3
+        ],
+        [
+          -4,
+          -2
+        ],
+        [
+          -3,
+          -2
+        ],
+        [
+          -2,
+          -2
+        ],
+        [
+          -1,
+          -2
+        ],
+        [
+          0,
+          -2
+        ],
+        [
+          1,
+          -2
+        ],
+        [
+          2,
+          -2
+        ],
+        [
+          3,
+          -2
+        ],
+        [
+          4,
+          -2
+        ],
+        [
+          -4,
+          -1
+        ],
+        [
+          -3,
+          -1
+        ],
+        [
+          -2,
+          -1
+        ],
+        [
+          -1,
+          -1
+        ],
+        [
+          0,
+          -1
+        ],
+        [
+          1,
+          -1
+        ],
+        [
+          2,
+          -1
+        ],
+        [
+          3,
+          -1
+        ],
+        [
+          4,
+          -1
+        ],
+        [
+          -4,
+          0
+        ],
+        [
+          -3,
+          0
+        ],
+        [
+          -2,
+          0
+        ],
+        [
+          -1,
+          0
+        ],
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          2,
+          0
+        ],
+        [
+          3,
+          0
+        ],
+        [
+          4,
+          0
+        ],
+        [
+          -4,
+          1
+        ],
+        [
+          -3,
+          1
+        ],
+        [
+          -2,
+          1
+        ],
+        [
+          -1,
+          1
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          2,
+          1
+        ],
+        [
+          3,
+          1
+        ],
+        [
+          4,
+          1
+        ],
+        [
+          -4,
+          2
+        ],
+        [
+          -3,
+          2
+        ],
+        [
+          -2,
+          2
+        ],
+        [
+          -1,
+          2
+        ],
+        [
+          0,
+          2
+        ],
+        [
+          1,
+          2
+        ],
+        [
+          2,
+          2
+        ],
+        [
+          3,
+          2
+        ],
+        [
+          4,
+          2
+        ],
+        [
+          -4,
+          3
+        ],
+        [
+          -3,
+          3
+        ],
+        [
+          -2,
+          3
+        ],
+        [
+          -1,
+          3
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          1,
+          3
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          3,
+          3
+        ],
+        [
+          4,
+          3
+        ],
+        [
+          -4,
+          4
+        ],
+        [
+          -3,
+          4
+        ],
+        [
+          -2,
+          4
+        ],
+        [
+          -1,
+          4
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          4
+        ],
+        [
+          2,
+          4
+        ],
+        [
+          3,
+          4
+        ],
+        [
+          4,
+          4
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_system_city_9x9_v1",
+      "render_mode": "layered_city",
+      "base_frame": "world_cell_city_ground_base_v1.png",
+      "base_alpha": 0.87,
+      "base_scale": 1.01,
+      "base_offset": [
+        0,
+        -2
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "system_city",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "pass_1x1": {
+      "id": "pass_1x1",
+      "role": "pass",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          0,
+          0
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_pass_sw_v1",
+      "render_mode": "payload_node",
+      "base_mode": "frame",
+      "base_frame": "world_cell_node_ground_base_v1.png",
+      "base_alpha": 1.0,
+      "base_scale": 1.0,
+      "base_offset": [
+        0,
+        0
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "pass",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/naming_policy/pass",
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "fort_1x1": {
+      "id": "fort_1x1",
+      "role": "fort",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          0,
+          0
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_fort_v1",
+      "render_mode": "payload_node",
+      "base_mode": "frame",
+      "base_frame": "world_cell_node_ground_base_v1.png",
+      "base_alpha": 1.0,
+      "base_scale": 1.0,
+      "base_offset": [
+        0,
+        0
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "fort",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "dock_1x1": {
+      "id": "dock_1x1",
+      "role": "dock",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "anchor_rule": "center_cell",
+      "cell_offsets": [
+        [
+          0,
+          0
+        ]
+      ],
+      "draw_layer": "world_node",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      },
+      "default_composite_id": "world_node_dock_v1",
+      "render_mode": "payload_node",
+      "base_mode": "frame",
+      "base_frame": "world_cell_node_ground_base_v1.png",
+      "base_alpha": 1.0,
+      "base_scale": 1.0,
+      "base_offset": [
+        0,
+        0
+      ],
+      "package_id": "world_strategic_node_asset_pack_v1",
+      "strategic_category": "dock",
+      "state_semantics_ref": "world_cell_assets_manifest_v1.json#/strategic_node_package/state_semantics",
+      "naming_policy_ref": null,
+      "default_ownership_state": "neutral",
+      "supported_ownership_states": [
+        "neutral",
+        "own",
+        "enemy"
+      ],
+      "supported_interaction_states": [
+        "selectable",
+        "disabled"
+      ]
+    },
+    "mountain_barrier_1x1": {
+      "id": "mountain_barrier_1x1",
+      "role": "mountain_barrier",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "anchor_rule": "path_cells",
+      "cell_offsets": [
+        [
+          0,
+          0
+        ]
+      ],
+      "draw_layer": "terrain_barrier",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": true,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      }
+    },
+    "river_corridor_1x1": {
+      "id": "river_corridor_1x1",
+      "role": "river_corridor",
+      "footprint_tiles": [
+        1,
+        1
+      ],
+      "anchor_rule": "path_cells",
+      "cell_offsets": [
+        [
+          0,
+          0
+        ]
+      ],
+      "draw_layer": "terrain_corridor",
+      "placement_policy": {
+        "reserve_cells": true,
+        "block_resource_generation": true,
+        "block_resource_overlay": true,
+        "block_resource_fill": true,
+        "block_free_cell_base": true,
+        "block_movement": false,
+        "allow_selection_overlay_above": true,
+        "allow_hover_overlay_above": true
+      }
+    }
+  }
+}

@@ -24,12 +24,12 @@ theme_override_constants/separation = 10
 
 [node name="DepthBadge" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
 theme_override_font_sizes/font_size = 13
-text = "L?"
+text = ""
 
 [node name="TitleLabel" type="Label" parent="BodyMargin/BodyVBox/HeaderRow"]
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 18
-text = "Panel"
+text = ""
 
 [node name="HeaderSpacer" type="Control" parent="BodyMargin/BodyVBox/HeaderRow"]
 size_flags_horizontal = 3
@@ -37,17 +37,17 @@ size_flags_horizontal = 3
 [node name="CloseButton" type="Button" parent="BodyMargin/BodyVBox/HeaderRow"]
 custom_minimum_size = Vector2(120, 0)
 theme_override_font_sizes/font_size = 14
-text = "Close"
+text = ""
 
 [node name="BodyLabel" type="Label" parent="BodyMargin/BodyVBox"]
 custom_minimum_size = Vector2(0, 92)
 theme_override_font_sizes/font_size = 14
-text = "Panel body"
+text = ""
 autowrap_mode = 3
 
 [node name="StackHint" type="Label" parent="BodyMargin/BodyVBox"]
 theme_override_font_sizes/font_size = 12
-text = "open -> push, back -> pop, close -> dismiss top layer"
+text = ""
 autowrap_mode = 3
 
 [node name="ActionRow" type="HBoxContainer" parent="BodyMargin/BodyVBox"]
@@ -57,16 +57,16 @@ theme_override_constants/separation = 8
 custom_minimum_size = Vector2(150, 0)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-text = "Open next"
+text = ""
 
 [node name="SecondaryButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
 custom_minimum_size = Vector2(150, 0)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-text = "Back"
+text = ""
 
 [node name="BackButton" type="Button" parent="BodyMargin/BodyVBox/ActionRow"]
 custom_minimum_size = Vector2(150, 0)
 size_flags_horizontal = 3
 theme_override_font_sizes/font_size = 14
-text = "Close"
+text = ""

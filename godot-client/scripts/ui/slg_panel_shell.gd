@@ -1,6 +1,8 @@
 extends PanelContainer
 class_name SLGPanelShell
 
+const DEFAULT_STACK_HINT := "open -> push, back -> pop, close -> dismiss top layer"
+
 signal navigate_requested(panel_id: String, target_panel_id: String)
 
 @export var panel_id: String = ""
@@ -38,7 +40,7 @@ func _refresh_view() -> void:
 	_depth_badge.text = panel_depth_label
 	_title_label.text = panel_title
 	_body_label.text = panel_body
-	_stack_hint.text = "open -> push, back -> pop, close -> dismiss top layer"
+	_stack_hint.text = DEFAULT_STACK_HINT
 	_primary_button.text = primary_button_label
 	_secondary_button.text = secondary_button_label
 	_back_button.text = back_button_label

@@ -7,12 +7,41 @@ This folder hosts the Godot rewrite client.
 - Godot: `D:\Apps\Godot\Godot_v4.6.2-stable_win64_console.exe`
 - Backend running at `http://127.0.0.1:8787`
 
+## Current Mainline
+
+Current production mainline is no longer `UI Preview Sandbox` first.
+
+- Formal Godot runtime entry remains `godot-client/project.godot -> run/main_scene="res://scenes/app/main.tscn"`.
+- Current first-cut objective is `原生 SLG 主壳 / 主城页 / 大地图入口`.
+- `UI Preview Sandbox` now serves as side-line reference and validation tooling, not the default product entry.
+- If the task is product-facing, prefer `main.tscn` and only read preview docs/tools when you explicitly need bridge references or screenshot regression.
+
+## First Read
+
+- [../README.md](../README.md)
+- [../docs/AGENTS_EXECUTION_CURRENT_2026_04.md](../docs/AGENTS_EXECUTION_CURRENT_2026_04.md)
+- [../docs/NATIVE_SLG_MAINLINE_INDEX.md](../docs/NATIVE_SLG_MAINLINE_INDEX.md)
+- [../docs/NATIVE_SLG_COMPONENT_ARCHITECTURE.md](../docs/NATIVE_SLG_COMPONENT_ARCHITECTURE.md)
+- [../docs/AI_QUICK_NAV_INDEX_2026_04_10.md](../docs/AI_QUICK_NAV_INDEX_2026_04_10.md)
+- [../CODEX.md](../CODEX.md)
+
 ## Week 1 Entry Commands
 
-- Headless smoke:
-  - `D:\Apps\Godot\Godot_v4.6.2-stable_win64_console.exe --headless --path godot-client`
+- Editor vs runtime:
+  - `Godot Engine` window = editor
+  - `SLG Commander Godot Client (DEBUG)` window = running client
+  - repository root is `8989/`, but the Godot project root is `8989/godot-client/`
 - Open editor:
-  - `D:\Apps\Godot\Godot_v4.6.2-stable_win64.exe --path godot-client`
+  - `Start-Godot-Editor.cmd`
+  - `npm run godot:editor`
+- Run the mainline client window:
+  - `Start-Godot-Mainline-Debug.cmd`
+  - `npm run godot:mainline:runtime`
+- Headless smoke:
+  - `Start-Godot-Headless-Smoke.cmd`
+  - `npm run godot:headless:smoke`
+- If Godot auto-detection fails:
+  - set `GODOT_EDITOR_EXE` or `GODOT_CONSOLE_EXE` and rerun the launcher
 - Week 1 gate (W1-C13):
   - `npm run gate:godot:week1`
   - strict default (CI/验收口径): `--no-allow-stale-runtime-schema`
@@ -32,6 +61,8 @@ This folder hosts the Godot rewrite client.
 
 ## UI Preview Sandbox
 
+This section is bridge-only. Do not treat it as the canonical product entry.
+
 Purpose:
 
 1. Provide a reusable, click-first sandbox for UI iteration without touching `main.tscn` or `main.gd`.
@@ -41,13 +72,13 @@ Purpose:
 Formal entry commands:
 
 - Launch sandbox:
-  - `py -3.11 godot-client/tools/run_ui_preview_sandbox.py`
+  - `scripts\run_python.cmd godot-client\tools\run_ui_preview_sandbox.py`
 - Validate sandbox and capture story screenshots:
-  - `py -3.11 godot-client/tools/validate_ui_preview_sandbox.py`
+  - `scripts\run_python.cmd godot-client\tools\validate_ui_preview_sandbox.py`
 - Run screenshot regression against the embedded baseline hashes:
   - `npm run godot:ui:preview:regress`
 - Direct Godot launch:
-  - `D:\Apps\Godot\Godot_v4.6.2-stable_win64.exe --path godot-client --scene res://scenes/dev/ui_preview_sandbox.tscn`
+  - `scripts\run_python.cmd scripts\launch_godot.py --mode runtime --scene res://scenes/dev/ui_preview_sandbox.tscn`
 
 Capture mode:
 

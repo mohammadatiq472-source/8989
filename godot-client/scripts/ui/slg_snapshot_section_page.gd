@@ -2160,32 +2160,32 @@ func _build_faction_split_territory_panel(rows: Array) -> PanelContainer:
 
 func _build_faction_empty_state() -> Control:
 	var shell := VBoxContainer.new()
-	shell.custom_minimum_size = Vector2(0, 180)
+	shell.custom_minimum_size = Vector2(0, 112)
 	shell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	shell.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	shell.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	shell.alignment = BoxContainer.ALIGNMENT_CENTER
-	shell.add_theme_constant_override("separation", 8)
+	shell.add_theme_constant_override("separation", 4)
 	var badge := PanelContainer.new()
 	var badge_style := StyleBoxFlat.new()
 	badge_style.bg_color = Color(0.18, 0.15, 0.10, 0.54)
 	badge_style.border_color = Color(0.80, 0.66, 0.36, 0.42)
 	badge_style.set_border_width_all(1)
-	badge_style.set_corner_radius_all(10)
-	badge_style.content_margin_left = 16
-	badge_style.content_margin_right = 16
-	badge_style.content_margin_top = 6
-	badge_style.content_margin_bottom = 6
+	badge_style.set_corner_radius_all(8)
+	badge_style.content_margin_left = 12
+	badge_style.content_margin_right = 12
+	badge_style.content_margin_top = 4
+	badge_style.content_margin_bottom = 4
 	badge.add_theme_stylebox_override("panel", badge_style)
-	var badge_label := _build_text_label("空态", 14)
+	var badge_label := _build_text_label("动态空态", 13)
 	badge_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	badge_label.add_theme_color_override("font_color", Color(0.94, 0.86, 0.68, 0.96))
 	badge.add_child(badge_label)
 	shell.add_child(badge)
-	var title := _build_text_label("当前暂无领地", 22)
+	var title := _build_text_label("当前暂无领地", 18)
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	title.add_theme_color_override("font_color", Color(0.96, 0.92, 0.82, 0.98))
 	shell.add_child(title)
-	var line_one := _build_text_label("保持动态空态，不补静态样本。", 14)
+	var line_one := _build_text_label("等待 territories[] 回传。", 12)
 	line_one.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	line_one.add_theme_color_override("font_color", Color(0.78, 0.76, 0.72, 0.90))
 	shell.add_child(line_one)
@@ -2193,23 +2193,23 @@ func _build_faction_empty_state() -> Control:
 	notes.alignment = BoxContainer.ALIGNMENT_CENTER
 	notes.add_theme_constant_override("separation", 8)
 	notes.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	notes.add_child(_build_faction_empty_note("等待 territories[]"))
+	notes.add_child(_build_faction_empty_note("不补静态样本"))
 	notes.add_child(_build_faction_empty_note("不接地图跳转"))
 	shell.add_child(notes)
 	return shell
 
 func _build_faction_empty_note(text: String) -> Control:
 	var chip := PanelContainer.new()
-	chip.custom_minimum_size = Vector2(148, 34)
+	chip.custom_minimum_size = Vector2(124, 28)
 	var style := StyleBoxFlat.new()
 	style.bg_color = Color(0.12, 0.14, 0.13, 0.62)
 	style.border_color = Color(0.44, 0.56, 0.46, 0.30)
 	style.set_border_width_all(1)
 	style.set_corner_radius_all(11)
-	style.content_margin_left = 12
-	style.content_margin_right = 12
-	style.content_margin_top = 5
-	style.content_margin_bottom = 5
+	style.content_margin_left = 8
+	style.content_margin_right = 8
+	style.content_margin_top = 3
+	style.content_margin_bottom = 3
 	chip.add_theme_stylebox_override("panel", style)
 	var label := Label.new()
 	label.text = text
@@ -2218,7 +2218,7 @@ func _build_faction_empty_note(text: String) -> Control:
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	label.add_theme_font_size_override("font_size", 13)
+	label.add_theme_font_size_override("font_size", 11)
 	label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	label.add_theme_color_override("font_color", Color(0.72, 0.82, 0.76, 0.94))
 	chip.add_child(label)
@@ -2628,63 +2628,70 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 			image.anchor_bottom = 1.0
 			image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 			image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
-			image.modulate = Color(0.90, 0.91, 0.92, 0.90)
+			image.modulate = Color(0.86, 0.87, 0.88, 0.92)
 			canvas.add_child(image)
 			var top_haze := ColorRect.new()
 			top_haze.anchor_right = 1.0
 			top_haze.anchor_bottom = 0.56
-			top_haze.color = Color(0.80, 0.81, 0.83, 0.08)
+			top_haze.color = Color(0.78, 0.79, 0.81, 0.05)
 			canvas.add_child(top_haze)
 			var side_mask_left := ColorRect.new()
 			side_mask_left.anchor_right = 0.20
 			side_mask_left.anchor_bottom = 1.0
-			side_mask_left.color = Color(0.05, 0.05, 0.06, 0.16)
+			side_mask_left.color = Color(0.04, 0.04, 0.05, 0.22)
 			canvas.add_child(side_mask_left)
 			var side_mask_right := ColorRect.new()
 			side_mask_right.anchor_left = 0.82
 			side_mask_right.anchor_right = 1.0
 			side_mask_right.anchor_bottom = 1.0
-			side_mask_right.color = Color(0.05, 0.05, 0.06, 0.14)
+			side_mask_right.color = Color(0.04, 0.04, 0.05, 0.18)
 			canvas.add_child(side_mask_right)
 			var bridge_band := ColorRect.new()
-			bridge_band.anchor_left = 0.14
-			bridge_band.anchor_right = 0.86
-			bridge_band.anchor_top = 0.42
+			bridge_band.anchor_left = 0.12
+			bridge_band.anchor_right = 0.88
+			bridge_band.anchor_top = 0.43
 			bridge_band.anchor_bottom = 0.56
-			bridge_band.color = Color(0.34, 0.34, 0.36, 0.10)
+			bridge_band.color = Color(0.24, 0.24, 0.26, 0.18)
 			canvas.add_child(bridge_band)
+			var bridge_rail := ColorRect.new()
+			bridge_rail.anchor_left = 0.16
+			bridge_rail.anchor_right = 0.84
+			bridge_rail.anchor_top = 0.46
+			bridge_rail.anchor_bottom = 0.48
+			bridge_rail.color = Color(0.82, 0.82, 0.80, 0.10)
+			canvas.add_child(bridge_rail)
 			var lower_shadow := ColorRect.new()
 			lower_shadow.anchor_left = 0.0
 			lower_shadow.anchor_right = 1.0
-			lower_shadow.anchor_top = 0.62
+			lower_shadow.anchor_top = 0.60
 			lower_shadow.anchor_bottom = 1.0
-			lower_shadow.color = Color(0.04, 0.04, 0.05, 0.28)
+			lower_shadow.color = Color(0.03, 0.03, 0.04, 0.34)
 			canvas.add_child(lower_shadow)
 			var fog_band := ColorRect.new()
 			fog_band.anchor_left = 0.0
 			fog_band.anchor_right = 1.0
-			fog_band.anchor_top = 0.30
-			fog_band.anchor_bottom = 0.86
-			fog_band.color = Color(0.72, 0.72, 0.74, 0.08)
+			fog_band.anchor_top = 0.34
+			fog_band.anchor_bottom = 0.80
+			fog_band.color = Color(0.70, 0.70, 0.72, 0.05)
 			canvas.add_child(fog_band)
 			var front_fog := ColorRect.new()
 			front_fog.anchor_left = 0.0
 			front_fog.anchor_right = 1.0
-			front_fog.anchor_top = 0.58
-			front_fog.anchor_bottom = 1.0
-			front_fog.color = Color(0.66, 0.67, 0.69, 0.06)
+			front_fog.anchor_top = 0.64
+			front_fog.anchor_bottom = 0.96
+			front_fog.color = Color(0.62, 0.63, 0.65, 0.05)
 			canvas.add_child(front_fog)
 			return art_panel
 	var upper_haze := ColorRect.new()
 	upper_haze.position = Vector2(148, 96)
 	upper_haze.custom_minimum_size = Vector2(188, 54)
-	upper_haze.color = Color(0.66, 0.68, 0.70, 0.04)
+	upper_haze.color = Color(0.66, 0.68, 0.70, 0.02)
 	canvas.add_child(upper_haze)
 	var left_fog := ColorRect.new()
 	left_fog.position = Vector2(0, 58)
 	left_fog.custom_minimum_size = Vector2(240, 204)
 	left_fog.rotation_degrees = -2.0
-	left_fog.color = Color(0.56, 0.60, 0.62, 0.05)
+	left_fog.color = Color(0.56, 0.60, 0.62, 0.03)
 	canvas.add_child(left_fog)
 	var chapter_backdrop := _build_atlas_texture_rect(
 		"res://assets/themes/slgclient/current/world/component_outside.png",
@@ -2703,7 +2710,7 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 		hall_sprite.size = Vector2(234, 190)
 		hall_sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		hall_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		hall_sprite.modulate = Color(0.82, 0.84, 0.84, 0.08)
+		hall_sprite.modulate = Color(0.82, 0.84, 0.84, 0.12)
 		canvas.add_child(hall_sprite)
 	var gate_texture := _load_card_image_texture("res://assets/themes/slgclient/current/world/city_gate_base_v1.png")
 	if gate_texture != null:
@@ -2713,7 +2720,7 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 		gate_sprite.size = Vector2(210, 150)
 		gate_sprite.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		gate_sprite.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		gate_sprite.modulate = Color(0.88, 0.88, 0.84, 0.08)
+		gate_sprite.modulate = Color(0.88, 0.88, 0.84, 0.12)
 		canvas.add_child(gate_sprite)
 	var wall_texture := _load_card_image_texture("res://assets/themes/slgclient/current/world/city_wall_segment_base_v1.png")
 	if wall_texture != null:
@@ -2723,7 +2730,7 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 		left_wall.size = Vector2(128, 94)
 		left_wall.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		left_wall.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		left_wall.modulate = Color(0.84, 0.84, 0.82, 0.04)
+		left_wall.modulate = Color(0.84, 0.84, 0.82, 0.06)
 		canvas.add_child(left_wall)
 		var mid_wall := TextureRect.new()
 		mid_wall.texture = wall_texture
@@ -2731,12 +2738,12 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 		mid_wall.size = Vector2(246, 102)
 		mid_wall.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		mid_wall.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		mid_wall.modulate = Color(0.84, 0.84, 0.82, 0.05)
+		mid_wall.modulate = Color(0.84, 0.84, 0.82, 0.07)
 		canvas.add_child(mid_wall)
 	var battlement := PanelContainer.new()
 	battlement.position = Vector2(118, 104)
 	battlement.custom_minimum_size = Vector2(266, 28)
-	battlement.add_theme_stylebox_override("panel", _build_surface_panel_style(Color(0.20, 0.20, 0.21, 0.26), Color(0.42, 0.40, 0.34, 0.10), 1, 1))
+	battlement.add_theme_stylebox_override("panel", _build_surface_panel_style(Color(0.20, 0.20, 0.21, 0.32), Color(0.42, 0.40, 0.34, 0.14), 1, 1))
 	canvas.add_child(battlement)
 	for index in range(10):
 		var crenel := ColorRect.new()
@@ -2747,12 +2754,12 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 	var bridge := PanelContainer.new()
 	bridge.position = Vector2(110, 114)
 	bridge.custom_minimum_size = Vector2(296, 8)
-	bridge.add_theme_stylebox_override("panel", _build_surface_panel_style(Color(0.36, 0.37, 0.37, 0.42), Color(0.68, 0.66, 0.58, 0.10), 1, 1))
+	bridge.add_theme_stylebox_override("panel", _build_surface_panel_style(Color(0.36, 0.37, 0.37, 0.52), Color(0.68, 0.66, 0.58, 0.16), 1, 1))
 	canvas.add_child(bridge)
 	var bridge_shadow := ColorRect.new()
 	bridge_shadow.position = Vector2(108, 121)
 	bridge_shadow.custom_minimum_size = Vector2(300, 12)
-	bridge_shadow.color = Color(0.10, 0.10, 0.10, 0.18)
+	bridge_shadow.color = Color(0.10, 0.10, 0.10, 0.24)
 	canvas.add_child(bridge_shadow)
 	for index in range(11):
 		var rail_post := ColorRect.new()
@@ -2778,27 +2785,27 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 	var glow := ColorRect.new()
 	glow.position = Vector2(146, 96)
 	glow.custom_minimum_size = Vector2(250, 72)
-	glow.color = Color(0.84, 0.86, 0.86, 0.10)
+	glow.color = Color(0.84, 0.86, 0.86, 0.05)
 	canvas.add_child(glow)
 	var bridge_light := ColorRect.new()
 	bridge_light.position = Vector2(156, 106)
 	bridge_light.custom_minimum_size = Vector2(214, 28)
-	bridge_light.color = Color(0.82, 0.84, 0.84, 0.09)
+	bridge_light.color = Color(0.82, 0.84, 0.84, 0.05)
 	canvas.add_child(bridge_light)
 	var bridge_haze := ColorRect.new()
 	bridge_haze.position = Vector2(112, 104)
 	bridge_haze.custom_minimum_size = Vector2(304, 40)
-	bridge_haze.color = Color(0.72, 0.74, 0.74, 0.06)
+	bridge_haze.color = Color(0.72, 0.74, 0.74, 0.03)
 	canvas.add_child(bridge_haze)
 	var river_mist := ColorRect.new()
 	river_mist.position = Vector2(132, 110)
 	river_mist.custom_minimum_size = Vector2(282, 56)
-	river_mist.color = Color(0.84, 0.86, 0.88, 0.10)
+	river_mist.color = Color(0.84, 0.86, 0.88, 0.05)
 	canvas.add_child(river_mist)
 	var back_glow := ColorRect.new()
 	back_glow.position = Vector2(214, 82)
 	back_glow.custom_minimum_size = Vector2(168, 118)
-	back_glow.color = Color(0.74, 0.76, 0.76, 0.06)
+	back_glow.color = Color(0.74, 0.76, 0.76, 0.03)
 	canvas.add_child(back_glow)
 	var distant_wall := PanelContainer.new()
 	distant_wall.position = Vector2(168, 132)
@@ -2808,17 +2815,17 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 	var haze := ColorRect.new()
 	haze.position = Vector2(0, 118)
 	haze.custom_minimum_size = Vector2(520, 76)
-	haze.color = Color(0.66, 0.70, 0.72, 0.10)
+	haze.color = Color(0.66, 0.70, 0.72, 0.06)
 	canvas.add_child(haze)
 	var mid_fog := ColorRect.new()
 	mid_fog.position = Vector2(0, 168)
 	mid_fog.custom_minimum_size = Vector2(520, 30)
-	mid_fog.color = Color(0.56, 0.58, 0.60, 0.06)
+	mid_fog.color = Color(0.56, 0.58, 0.60, 0.04)
 	canvas.add_child(mid_fog)
 	var high_fog := ColorRect.new()
 	high_fog.position = Vector2(0, 136)
 	high_fog.custom_minimum_size = Vector2(520, 22)
-	high_fog.color = Color(0.70, 0.72, 0.72, 0.04)
+	high_fog.color = Color(0.70, 0.72, 0.72, 0.02)
 	canvas.add_child(high_fog)
 	for index in range(8):
 		var pike := ColorRect.new()
@@ -2869,12 +2876,12 @@ func _build_task_chapter_scene_art(image_path: String = "") -> Control:
 	var side_mask_left := ColorRect.new()
 	side_mask_left.position = Vector2(0, 0)
 	side_mask_left.custom_minimum_size = Vector2(108, 330)
-	side_mask_left.color = Color(0.10, 0.11, 0.12, 0.24)
+	side_mask_left.color = Color(0.10, 0.11, 0.12, 0.28)
 	canvas.add_child(side_mask_left)
 	var side_mask_right := ColorRect.new()
 	side_mask_right.position = Vector2(414, 0)
 	side_mask_right.custom_minimum_size = Vector2(118, 330)
-	side_mask_right.color = Color(0.10, 0.11, 0.12, 0.20)
+	side_mask_right.color = Color(0.10, 0.11, 0.12, 0.24)
 	canvas.add_child(side_mask_right)
 	var lower_fog := ColorRect.new()
 	lower_fog.anchor_left = 0.0

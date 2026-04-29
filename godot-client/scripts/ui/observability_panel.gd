@@ -84,9 +84,15 @@ func _ready() -> void:
 		"backendWsSubscribedConnections": 0,
 		"backendWsFactionDistribution": "none",
 		"backendWsRecentError": "none",
+		"backendWsMaxConnections": 0,
+		"backendWsMaxSubscriptionsPerFaction": 0,
+		"backendWsRejectedConnections": 0,
+		"backendWsRejectedSubscriptions": 0,
+		"backendWsTruncatedTickDeltaMessages": 0,
 		"runtimeFactionId": "none",
 		"runtimeControlMode": "unknown",
 		"runtimeAutonomyLevel": "unknown",
+		"runtimeControlAuthoritySource": "unknown",
 		"runtimeSeatCount": 0,
 		"runtimeOnlineSeatCount": 0,
 		"runtimePlayerNames": "none",
@@ -98,6 +104,15 @@ func _ready() -> void:
 		"runtimeLastAction": "none",
 		"runtimeLastActionStatus": "idle",
 		"runtimeLastActionTick": "unknown",
+		"runtimeAiExecutionSummary": "idle / active 0 / queued 0 / running 0",
+		"runtimeAiBudgetSummary": "AP unknown / Food unknown",
+		"runtimeAiRequestId": "none",
+		"runtimeAiFailureCode": "none",
+		"runtimeAiReceiptMessage": "none",
+		"backendHealthStatus": "unknown",
+		"backendHealthMessage": "not checked",
+		"runtimeBootstrapDiagnostic": "pending",
+		"runtimeBackendUrl": "http://127.0.0.1:8787",
 	})
 
 func _update_layout() -> void:
@@ -150,8 +165,15 @@ func update_snapshot(snapshot: Dictionary) -> void:
 	if _ws_label != null:
 		var backend_distribution: String = str(snapshot.get("backendWsFactionDistribution", "none"))
 		var backend_recent_error: String = str(snapshot.get("backendWsRecentError", "none"))
+		var backend_limits := "cap=%s factionCap=%s rejectConn=%s rejectSub=%s trunc=%s" % [
+			str(snapshot.get("backendWsMaxConnections", 0)),
+			str(snapshot.get("backendWsMaxSubscriptionsPerFaction", 0)),
+			str(snapshot.get("backendWsRejectedConnections", 0)),
+			str(snapshot.get("backendWsRejectedSubscriptions", 0)),
+			str(snapshot.get("backendWsTruncatedTickDeltaMessages", 0)),
+		]
 		_ws_label.text = (
-			"state=%s | sub=%s | srvConn=%s srvSub=%s\nmsg=%s tickDelta=%s gMsg=%s wsErr=%s\ndist=%s\nlastErr=%s"
+			"state=%s | sub=%s | srvConn=%s srvSub=%s\nmsg=%s tickDelta=%s gMsg=%s wsErr=%s\n%s\ndist=%s\nlastErr=%s"
 			% [
 				str(snapshot.get("wsState", "unknown")),
 				"yes" if bool(snapshot.get("wsSubscribed", false)) else "no",
@@ -161,6 +183,7 @@ func update_snapshot(snapshot: Dictionary) -> void:
 				str(snapshot.get("wsTickDeltaCount", 0)),
 				str(snapshot.get("wsGeneralMessageCount", 0)),
 				str(snapshot.get("wsErrorCount", 0)),
+				backend_limits,
 				backend_distribution.left(72),
 				backend_recent_error.left(72),
 			]
@@ -178,11 +201,12 @@ func update_snapshot(snapshot: Dictionary) -> void:
 
 	if _runtime_label != null:
 		_runtime_label.text = (
-			"faction=%s mode=%s autonomy=%s\ntick=%s worldVersion=%s seats=%s/%s\nsession=%s seat=%s sessionMode=%s\nplayers=%s\nruntimeApi pollOk=%s fail=%s tick=%s world=%s factions=%s\napiMode=%s apiAutonomy=%s apiSeats=%s\nlastAction=%s status=%s tick=%s"
+			"faction=%s mode=%s autonomy=%s\nauthority=%s tick=%s worldVersion=%s seats=%s/%s\nsession=%s seat=%s sessionMode=%s\nplayers=%s\nruntimeApi pollOk=%s fail=%s tick=%s world=%s factions=%s\nbackendHealth=%s url=%s\ndiagnostic=%s\napiMode=%s apiAutonomy=%s apiSeats=%s\nlastAction=%s status=%s tick=%s\naiExec=%s\naiBudget=%s req=%s fail=%s\nreceipt=%s"
 			% [
 				str(snapshot.get("runtimeFactionId", "none")),
 				str(snapshot.get("runtimeControlMode", "unknown")),
 				str(snapshot.get("runtimeAutonomyLevel", "unknown")),
+				str(snapshot.get("runtimeControlAuthoritySource", "unknown")),
 				str(snapshot.get("runtimeTick", "unknown")),
 				str(snapshot.get("runtimeWorldVersion", "unknown")),
 				str(snapshot.get("runtimeOnlineSeatCount", 0)),
@@ -196,12 +220,20 @@ func update_snapshot(snapshot: Dictionary) -> void:
 				str(snapshot.get("runtimeApiTick", "unknown")),
 				str(snapshot.get("runtimeApiWorldVersion", "unknown")),
 				str(snapshot.get("runtimeApiFactionCount", 0)),
+				str(snapshot.get("backendHealthStatus", "unknown")),
+				str(snapshot.get("runtimeBackendUrl", "http://127.0.0.1:8787")).left(80),
+				str(snapshot.get("runtimeBootstrapDiagnostic", snapshot.get("backendHealthMessage", "none"))).left(96),
 				str(snapshot.get("runtimeApiControlMode", "unknown")),
 				str(snapshot.get("runtimeApiAutonomyLevel", "unknown")),
 				str(snapshot.get("runtimeApiSeatOnline", "0/0")),
 				str(snapshot.get("runtimeLastAction", "none")),
 				str(snapshot.get("runtimeLastActionStatus", "idle")),
 				str(snapshot.get("runtimeLastActionTick", "unknown")),
+				str(snapshot.get("runtimeAiExecutionSummary", "idle / active 0 / queued 0 / running 0")),
+				str(snapshot.get("runtimeAiBudgetSummary", "AP unknown / Food unknown")),
+				str(snapshot.get("runtimeAiRequestId", "none")),
+				str(snapshot.get("runtimeAiFailureCode", "none")),
+				str(snapshot.get("runtimeAiReceiptMessage", "none")).left(80),
 			]
 		)
 

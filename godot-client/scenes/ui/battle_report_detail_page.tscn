@@ -1,0 +1,294 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/battle_report_detail_page.gd" id="1_battle_report_detail_page_script"]
+
+[node name="DetailPage" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battle_report_detail_page_script")
+
+[node name="DetailMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="DetailColumn" type="VBoxContainer" parent="DetailMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="SOM_D01_D02_TopRow" type="HBoxContainer" parent="DetailMargin/DetailColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SOM_D01_AttackerHeaderCard" type="PanelContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AttackerHeaderMargin" type="MarginContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_AttackerHeaderCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="AttackerHeaderColumn" type="VBoxContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_AttackerHeaderCard/AttackerHeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="AttackerPowerLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_AttackerHeaderCard/AttackerHeaderMargin/AttackerHeaderColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ""
+
+[node name="AttackerPowerBar" type="ProgressBar" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_AttackerHeaderCard/AttackerHeaderMargin/AttackerHeaderColumn"]
+layout_mode = 2
+max_value = 25019.0
+value = 24444.0
+show_percentage = false
+
+[node name="AttackerNameLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_AttackerHeaderCard/AttackerHeaderMargin/AttackerHeaderColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = ""
+
+[node name="SOM_D02_ResultHeaderCard" type="PanelContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(168, 0)
+
+[node name="ResultHeaderMargin" type="MarginContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D02_ResultHeaderCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="ResultHeaderColumn" type="VBoxContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D02_ResultHeaderCard/ResultHeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="ResultLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D02_ResultHeaderCard/ResultHeaderMargin/ResultHeaderColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 40
+text = ""
+horizontal_alignment = 1
+
+[node name="OutcomeNoteLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D02_ResultHeaderCard/ResultHeaderMargin/ResultHeaderColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 13
+text = ""
+horizontal_alignment = 1
+
+[node name="SOM_D01_DefenderHeaderCard" type="PanelContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DefenderHeaderMargin" type="MarginContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_DefenderHeaderCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="DefenderHeaderColumn" type="VBoxContainer" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_DefenderHeaderCard/DefenderHeaderMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DefenderPowerLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_DefenderHeaderCard/DefenderHeaderMargin/DefenderHeaderColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 18
+text = ""
+horizontal_alignment = 2
+
+[node name="DefenderPowerBar" type="ProgressBar" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_DefenderHeaderCard/DefenderHeaderMargin/DefenderHeaderColumn"]
+layout_mode = 2
+max_value = 25500.0
+value = 0.0
+show_percentage = false
+
+[node name="DefenderNameLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D01_D02_TopRow/SOM_D01_DefenderHeaderCard/DefenderHeaderMargin/DefenderHeaderColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 2
+
+[node name="SOM_D03_D05_BattleRow" type="HBoxContainer" parent="DetailMargin/DetailColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SOM_D03_AttackerHeroRow" type="HBoxContainer" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SOM_D04_OutcomeCenterCard" type="PanelContainer" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(168, 0)
+
+[node name="OutcomeCenterMargin" type="MarginContainer" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow/SOM_D04_OutcomeCenterCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="OutcomeCenterColumn" type="VBoxContainer" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow/SOM_D04_OutcomeCenterCard/OutcomeCenterMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 10
+
+[node name="RewardTitle" type="Label" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow/SOM_D04_OutcomeCenterCard/OutcomeCenterMargin/OutcomeCenterColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = ""
+horizontal_alignment = 1
+
+[node name="RewardBody" type="Label" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow/SOM_D04_OutcomeCenterCard/OutcomeCenterMargin/OutcomeCenterColumn"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_font_sizes/font_size = 14
+text = ""
+horizontal_alignment = 1
+autowrap_mode = 3
+
+[node name="ReplayButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow/SOM_D04_OutcomeCenterCard/OutcomeCenterMargin/OutcomeCenterColumn"]
+layout_mode = 2
+custom_minimum_size = Vector2(136, 0)
+text = ""
+disabled = true
+
+[node name="SOM_D05_DefenderHeroRow" type="HBoxContainer" parent="DetailMargin/DetailColumn/SOM_D03_D05_BattleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SOM_D06_MoraleRow" type="HBoxContainer" parent="DetailMargin/DetailColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="AttackerMoraleLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D06_MoraleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = ""
+horizontal_alignment = 1
+
+[node name="MoraleSpacer" type="Control" parent="DetailMargin/DetailColumn/SOM_D06_MoraleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="DefenderMoraleLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D06_MoraleRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_font_sizes/font_size = 15
+text = ""
+horizontal_alignment = 1
+
+[node name="SOM_D07_DetailSectionCard" type="PanelContainer" parent="DetailMargin/DetailColumn"]
+layout_mode = 2
+
+[node name="DetailSectionMargin" type="MarginContainer" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 14
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 14
+theme_override_constants/margin_bottom = 12
+
+[node name="DetailSectionColumn" type="VBoxContainer" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="DetailSectionTitle" type="Label" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 16
+text = ""
+
+[node name="SOM_D07_StateCard" type="PanelContainer" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn"]
+layout_mode = 2
+
+[node name="DetailStateMargin" type="MarginContainer" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn/SOM_D07_StateCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 8
+
+[node name="DetailStateColumn" type="VBoxContainer" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn/SOM_D07_StateCard/DetailStateMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="DetailStateTitleLabel" type="Label" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn/SOM_D07_StateCard/DetailStateMargin/DetailStateColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="DetailStateFlow" type="HFlowContainer" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn/SOM_D07_StateCard/DetailStateMargin/DetailStateColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="DetailSectionBody" type="Label" parent="DetailMargin/DetailColumn/SOM_D07_DetailSectionCard/DetailSectionMargin/DetailSectionColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="SOM_D08_D10_BottomRow" type="HBoxContainer" parent="DetailMargin/DetailColumn"]
+layout_mode = 2
+theme_override_constants/separation = 8
+
+[node name="SOM_D08_ShareButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 0)
+text = ""
+
+[node name="SOM_D08_FavoriteButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(96, 0)
+text = ""
+
+[node name="DetailBottomSpacer" type="Control" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="SOM_D09_FooterTabRow" type="HBoxContainer" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="BattlefieldTabButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow/SOM_D09_FooterTabRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(116, 0)
+text = ""
+
+[node name="StatsTabButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow/SOM_D09_FooterTabRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(104, 0)
+text = ""
+
+[node name="FormationTabButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow/SOM_D09_FooterTabRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(116, 0)
+text = ""
+
+[node name="SOM_D10_CollapseButton" type="Button" parent="DetailMargin/DetailColumn/SOM_D08_D10_BottomRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(92, 0)
+text = ""

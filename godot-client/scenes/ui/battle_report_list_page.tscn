@@ -1,0 +1,104 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://scripts/ui/battle_report_list_page.gd" id="1_battle_report_list_page_script"]
+
+[node name="ListPage" type="Control"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_battle_report_list_page_script")
+
+[node name="ListMargin" type="MarginContainer" parent="."]
+layout_mode = 2
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 2
+theme_override_constants/margin_bottom = 2
+
+[node name="ListColumn" type="VBoxContainer" parent="ListMargin"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SOM_L04_ListSummaryCard" type="PanelContainer" parent="ListMargin/ListColumn"]
+layout_mode = 2
+
+[node name="ListSummaryMargin" type="MarginContainer" parent="ListMargin/ListColumn/SOM_L04_ListSummaryCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="ListSummaryLabel" type="Label" parent="ListMargin/ListColumn/SOM_L04_ListSummaryCard/ListSummaryMargin"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 14
+text = ""
+autowrap_mode = 3
+
+[node name="SOM_L04A_SharedStateCard" type="PanelContainer" parent="ListMargin/ListColumn"]
+layout_mode = 2
+
+[node name="SharedStateMargin" type="MarginContainer" parent="ListMargin/ListColumn/SOM_L04A_SharedStateCard"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 10
+
+[node name="SharedStateColumn" type="VBoxContainer" parent="ListMargin/ListColumn/SOM_L04A_SharedStateCard/SharedStateMargin"]
+layout_mode = 2
+theme_override_constants/separation = 6
+
+[node name="SharedStateTitleLabel" type="Label" parent="ListMargin/ListColumn/SOM_L04A_SharedStateCard/SharedStateMargin/SharedStateColumn"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 12
+text = ""
+
+[node name="SharedStateFlow" type="HFlowContainer" parent="ListMargin/ListColumn/SOM_L04A_SharedStateCard/SharedStateMargin/SharedStateColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 6
+theme_override_constants/v_separation = 6
+
+[node name="SOM_L05_L09_ListBodyRow" type="HBoxContainer" parent="ListMargin/ListColumn"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="SOM_L05_L08_ReportScroll" type="ScrollContainer" parent="ListMargin/ListColumn/SOM_L05_L09_ListBodyRow"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="ReportCardList" type="VBoxContainer" parent="ListMargin/ListColumn/SOM_L05_L09_ListBodyRow/SOM_L05_L08_ReportScroll"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 12
+
+[node name="SOM_L09_ListUtilityRail" type="VBoxContainer" parent="ListMargin/ListColumn/SOM_L05_L09_ListBodyRow"]
+layout_mode = 2
+custom_minimum_size = Vector2(48, 0)
+theme_override_constants/separation = 8
+
+[node name="SOM_L09_FilterButton" type="Button" parent="ListMargin/ListColumn/SOM_L05_L09_ListBodyRow/SOM_L09_ListUtilityRail"]
+layout_mode = 2
+custom_minimum_size = Vector2(0, 72)
+text = ""
+
+[node name="SOM_L09_ScrollHintLabel" type="Label" parent="ListMargin/ListColumn/SOM_L05_L09_ListBodyRow/SOM_L09_ListUtilityRail"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 20
+text = ""
+horizontal_alignment = 1

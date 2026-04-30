@@ -218,7 +218,7 @@ func _build_faction_status_section(fixture: Dictionary) -> Dictionary:
 		"item_cards": [],
 		"detail_title": "",
 		"content_blocks": [
-			_build_faction_status_split_block("领地记录", _page_array(page, "territories", []), {}, "FactionStatusSplitBlock"),
+			_build_faction_status_split_block("领地状态入口", _page_array(page, "territories", []), {}, "FactionStatusSplitBlock", _fixture_dict(page, "data_contract")),
 		],
 	})
 
@@ -315,12 +315,13 @@ func _build_faction_map_preview_block(title: String, payload: Dictionary, node_n
 		"node_name": node_name,
 	}
 
-func _build_faction_status_split_block(title: String, territories: Array, map_payload: Dictionary, node_name: String = "") -> Dictionary:
+func _build_faction_status_split_block(title: String, territories: Array, map_payload: Dictionary, node_name: String = "", empty_config: Dictionary = {}) -> Dictionary:
 	return {
 		"kind": "faction_status_split",
 		"title": title,
 		"territories": territories.duplicate(true),
 		"map_payload": map_payload.duplicate(true),
+		"empty_config": empty_config.duplicate(true),
 		"node_name": node_name,
 	}
 

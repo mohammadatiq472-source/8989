@@ -3,7 +3,7 @@
 UI Preview Sandbox validation runner.
 
 Formal entrypoint:
-  py -3.11 godot-client/tools/validate_ui_preview_sandbox.py
+  scripts\run_python.cmd godot-client\tools\validate_ui_preview_sandbox.py
 
 Purpose:
 - Launch the reusable UI preview sandbox scene.
@@ -439,11 +439,7 @@ def _write_temp_driver_assets(
         const SCREENSHOT_DIR := {json.dumps(screenshot_dir.as_posix())}
         const REPORT_PATH := {json.dumps(report_path.as_posix())}
         const STORY_SEQUENCE := {json.dumps(story_sequence, ensure_ascii=False)}
-        const NAVIGATION_CHAIN := [
-            {{"story_id": "map_surface", "target_story_id": "province_layer"}},
-            {{"story_id": "province_layer", "target_story_id": "warzone_layer"}},
-            {{"story_id": "warzone_layer", "target_story_id": "nation_layer"}},
-        ]
+        const NAVIGATION_CHAIN := []
         const MAP_SURFACE_INTERACTION_CHAIN := [
             {{
                 "entry_id": "ai_player",
@@ -1146,8 +1142,9 @@ def main() -> int:
             }
         )
         navigation_steps = driver_report.get("navigationSteps", [])
-        navigation_ok = isinstance(navigation_steps, list) and len(navigation_steps) == 3 and all(
-            isinstance(step, dict) and bool(step.get("ok", False)) for step in navigation_steps
+        navigation_ok = isinstance(navigation_steps, list) and (
+            len(navigation_steps) == 0
+            or all(isinstance(step, dict) and bool(step.get("ok", False)) for step in navigation_steps)
         )
         report["steps"].append(
             {

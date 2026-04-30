@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 4,
+  "generatedAt": "2026-04-29T17:50:34Z",
+  "generatedFor": "Window 8B recruit / general formal_pack preview",
+  "generationMode": "imagegen_scene_rewrite_then_deterministic_non_generative_film_matte_v1",
+  "sourceDirectories": [
+    "portrait_assets/character_cards",
+    "portrait_assets/locked_images",
+    "godot-client/assets/formal_pack/portraits/card"
+  ],
+  "sizePolicy": "Recruit-pack coverPath PNGs preserve generated vertical dimensions. Current coverPath points to non-generative postprocessed PNGs; raw generated scene covers remain in recruit_packs/*.png and source_generated/*.png.",
+  "items": [
+    {
+      "poolId": "formal_pack_pool_wangzuo_fengyan_preview",
+      "displayName": "王佐烽烟",
+      "coverAssetKey": "formal_pack.cover.wangzuo_fengyan",
+      "coverPath": "godot-client/assets/formal_pack/recruit_packs/postprocessed/wangzuo_fengyan_cover_film_matte_v1.png",
+      "godotResourcePath": "res://assets/formal_pack/recruit_packs/postprocessed/wangzuo_fengyan_cover_film_matte_v1.png",
+      "sourceGeneratedPath": "godot-client/assets/formal_pack/recruit_packs/source_generated/wangzuo_fengyan_imagegen_source_v2.png",
+      "sourceGeneratedDefaultPath": "C:/Users/26739/.codex/generated_images/019dda06-ec35-7c80-827e-cfce63da6ee0/ig_0c4a7f7a729c1d190169f238f5b4dc819aa56e41e4185b6c6b.png",
+      "sourceRoleCardPaths": [
+        "portrait_assets/character_cards/cao_cao.md",
+        "portrait_assets/character_cards/liu_bei.md",
+        "portrait_assets/character_cards/sun_quan.md",
+        "portrait_assets/character_cards/zhuge_liang.md",
+        "portrait_assets/character_cards/guan_yu.md"
+      ],
+      "sourcePortraitAssetKeys": [
+        "formal_pack.portrait.cao_cao_fate_v1",
+        "formal_pack.portrait.liu_bei_mature_hanzhong_sworddance_face_smile_v2",
+        "formal_pack.portrait.sun_quan_mature_successor_v1",
+        "formal_pack.portrait.zhuge_liang_mature_beifa_v1",
+        "formal_pack.portrait.guan_yu_mature_mounted_jingzhou_v1"
+      ],
+      "compositeRecipe": {
+        "mode": "imagegen_scene_rewrite_from_character_card_prompts_no_crop",
+        "canvasSize": {
+          "width": 1023,
+          "height": 1537
+        },
+        "layout": "one coherent no-frame vertical scene with 5 generals sharing lighting, atmosphere, perspective, and background; no pasted card frames",
+        "characterOrder": [
+          "cao_cao",
+          "liu_bei",
+          "sun_quan",
+          "zhuge_liang",
+          "guan_yu"
+        ],
+        "sourcePromptMethod": "role-card face DNA and character visual anchors were rewritten into one scene; source portraits were not pasted or overwritten",
+        "cropResizePolicy": "none for coverPath in this revision; keep generated native pixels and let UI scale at render time",
+        "promptSummary": "No-frame unified council/campaign scene; Ji Han figures have softer, more relaxed expressions, with Zhuge Liang lowered into thought instead of every figure posing sternly."
+      },
+      "notes": "Current preview cover uses a scene rewrite from character-card face DNA plus a non-generative film-matte filter pass. No baked UI text. Raw generated covers and original role portraits are preserved.",
+      "coverImageSize": {
+        "width": 1023,
+        "height": 1537
+      },
+      "revision": "v2_user_accepted_2026_04_30_film_matte_v1",
+      "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/wangzuo_fengyan_cover.png",
+      "postprocessRecipe": {
+        "mode": "deterministic_non_generative_film_matte_v1",
+        "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/wangzuo_fengyan_cover.png",
+        "operations": [
+          {
+            "name": "micro_detail_soften",
+            "method": "blend original with GaussianBlur radius 0.35 at 12 percent"
+          },
+          {
+            "name": "tone_curve",
+            "method": "slight black lift, subtle highlight compression, midtone contrast reduction"
+          },
+          {
+            "name": "saturation",
+            "method": "global saturation 0.90 with minor red/blue balance restraint"
+          },
+          {
+            "name": "film_grain",
+            "method": "deterministic monochrome fine grain, sigma around 2.2 RGB levels, stronger in shadows/midtones"
+          },
+          {
+            "name": "vignette",
+            "method": "very light edge density to seat the subjects in scene lighting"
+          }
+        ],
+        "notes": "Deterministic filter pass only; no AI re-generation and no identity/composition changes."
+      }
+    },
+    {
+      "poolId": "formal_pack_pool_jiangdong_zhangu_preview",
+      "displayName": "江东战鼓",
+      "coverAssetKey": "formal_pack.cover.jiangdong_zhangu",
+      "coverPath": "godot-client/assets/formal_pack/recruit_packs/postprocessed/jiangdong_zhangu_cover_film_matte_v1.png",
+      "godotResourcePath": "res://assets/formal_pack/recruit_packs/postprocessed/jiangdong_zhangu_cover_film_matte_v1.png",
+      "sourceGeneratedPath": "godot-client/assets/formal_pack/recruit_packs/source_generated/jiangdong_zhangu_imagegen_source_v2.png",
+      "sourceGeneratedDefaultPath": "C:/Users/26739/.codex/generated_images/019dda06-ec35-7c80-827e-cfce63da6ee0/ig_0c4a7f7a729c1d190169f239cd668c819ab0a8b9372bd9f6c6.png",
+      "sourceRoleCardPaths": [
+        "portrait_assets/character_cards/zhou_yu.md",
+        "portrait_assets/character_cards/sun_ce.md",
+        "portrait_assets/character_cards/tai_shi_ci.md",
+        "portrait_assets/character_cards/gan_ning.md",
+        "portrait_assets/character_cards/zhou_tai.md"
+      ],
+      "sourcePortraitAssetKeys": [
+        "formal_pack.portrait.zhou_yu_mature_chibi_v1",
+        "formal_pack.portrait.sun_ce_young_founder_v1",
+        "formal_pack.portrait.tai_shi_ci_mature_yishi_v1",
+        "formal_pack.portrait.gan_ning_mature_jinfan_raid_v1",
+        "formal_pack.portrait.zhou_tai_mature_victory_shout_v1"
+      ],
+      "compositeRecipe": {
+        "mode": "imagegen_scene_rewrite_from_character_card_prompts_no_crop",
+        "canvasSize": {
+          "width": 1023,
+          "height": 1537
+        },
+        "layout": "one coherent no-frame vertical scene with 5 generals sharing lighting, atmosphere, perspective, and background; no pasted card frames",
+        "characterOrder": [
+          "zhou_yu",
+          "sun_ce",
+          "tai_shi_ci",
+          "gan_ning",
+          "zhou_tai"
+        ],
+        "sourcePromptMethod": "role-card face DNA and character visual anchors were rewritten into one scene; source portraits were not pasted or overwritten",
+        "cropResizePolicy": "none for coverPath in this revision; keep generated native pixels and let UI scale at render time",
+        "promptSummary": "No-frame unified East Wu river-war scene; Zhou Yu face corrected toward the role card, clean and refined with no beard, no red-cloak warlord drift, and not a generic narrow face."
+      },
+      "notes": "Current preview cover uses a scene rewrite from character-card face DNA plus a non-generative film-matte filter pass. No baked UI text. Raw generated covers and original role portraits are preserved.",
+      "coverImageSize": {
+        "width": 1023,
+        "height": 1537
+      },
+      "revision": "v2_user_accepted_2026_04_30_film_matte_v1",
+      "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/jiangdong_zhangu_cover.png",
+      "postprocessRecipe": {
+        "mode": "deterministic_non_generative_film_matte_v1",
+        "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/jiangdong_zhangu_cover.png",
+        "operations": [
+          {
+            "name": "micro_detail_soften",
+            "method": "blend original with GaussianBlur radius 0.35 at 12 percent"
+          },
+          {
+            "name": "tone_curve",
+            "method": "slight black lift, subtle highlight compression, midtone contrast reduction"
+          },
+          {
+            "name": "saturation",
+            "method": "global saturation 0.90 with minor red/blue balance restraint"
+          },
+          {
+            "name": "film_grain",
+            "method": "deterministic monochrome fine grain, sigma around 2.2 RGB levels, stronger in shadows/midtones"
+          },
+          {
+            "name": "vignette",
+            "method": "very light edge density to seat the subjects in scene lighting"
+          }
+        ],
+        "notes": "Deterministic filter pass only; no AI re-generation and no identity/composition changes."
+      }
+    },
+    {
+      "poolId": "formal_pack_pool_xiliang_tieqi_preview",
+      "displayName": "西凉铁骑",
+      "coverAssetKey": "formal_pack.cover.xiliang_tieqi",
+      "coverPath": "godot-client/assets/formal_pack/recruit_packs/postprocessed/xiliang_tieqi_cover_film_matte_v1.png",
+      "godotResourcePath": "res://assets/formal_pack/recruit_packs/postprocessed/xiliang_tieqi_cover_film_matte_v1.png",
+      "sourceGeneratedPath": "godot-client/assets/formal_pack/recruit_packs/source_generated/xiliang_tieqi_imagegen_source.png",
+      "sourceGeneratedDefaultPath": "C:/Users/26739/.codex/generated_images/019dda06-ec35-7c80-827e-cfce63da6ee0/ig_0c4a7f7a729c1d190169f234292fc0819ab4baa070d078fb33.png",
+      "sourceRoleCardPaths": [
+        "portrait_assets/character_cards/lu_bu.md",
+        "portrait_assets/character_cards/ma_chao.md",
+        "portrait_assets/character_cards/dong_zhuo.md",
+        "portrait_assets/character_cards/zhang_liao.md",
+        "portrait_assets/character_cards/xiahou_dun.md"
+      ],
+      "sourcePortraitAssetKeys": [
+        "formal_pack.portrait.lu_bu_mature_wenhou_v1",
+        "formal_pack.portrait.ma_chao_mature_xiliang_retreat_v1",
+        "formal_pack.portrait.dong_zhuo_early_xiliang_campaign_v1",
+        "formal_pack.portrait.zhang_liao_mature_hefei_v1",
+        "formal_pack.portrait.xiahou_dun_mature_duyan_v1"
+      ],
+      "compositeRecipe": {
+        "mode": "imagegen_scene_rewrite_from_character_card_prompts_no_crop",
+        "canvasSize": {
+          "width": 1024,
+          "height": 1536
+        },
+        "layout": "one coherent no-frame vertical scene with 5 generals sharing lighting, atmosphere, perspective, and background; no pasted card frames",
+        "characterOrder": [
+          "lu_bu",
+          "ma_chao",
+          "dong_zhuo",
+          "zhang_liao",
+          "xiahou_dun"
+        ],
+        "sourcePromptMethod": "role-card face DNA and character visual anchors were rewritten into one scene; source portraits were not pasted or overwritten",
+        "cropResizePolicy": "none for coverPath in this revision; keep generated native pixels and let UI scale at render time",
+        "promptSummary": "User-accepted no-frame Xiliang cavalry / battlefield commander group scene; preserved visually and restored to native generated pixels for coverPath."
+      },
+      "notes": "Current preview cover uses a scene rewrite from character-card face DNA plus a non-generative film-matte filter pass. No baked UI text. Raw generated covers and original role portraits are preserved.",
+      "coverImageSize": {
+        "width": 1024,
+        "height": 1536
+      },
+      "revision": "v1_user_accepted_2026_04_29_native_size_restored_2026_04_30_film_matte_v1",
+      "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/xiliang_tieqi_cover.png",
+      "postprocessRecipe": {
+        "mode": "deterministic_non_generative_film_matte_v1",
+        "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/xiliang_tieqi_cover.png",
+        "operations": [
+          {
+            "name": "micro_detail_soften",
+            "method": "blend original with GaussianBlur radius 0.35 at 12 percent"
+          },
+          {
+            "name": "tone_curve",
+            "method": "slight black lift, subtle highlight compression, midtone contrast reduction"
+          },
+          {
+            "name": "saturation",
+            "method": "global saturation 0.90 with minor red/blue balance restraint"
+          },
+          {
+            "name": "film_grain",
+            "method": "deterministic monochrome fine grain, sigma around 2.2 RGB levels, stronger in shadows/midtones"
+          },
+          {
+            "name": "vignette",
+            "method": "very light edge density to seat the subjects in scene lighting"
+          }
+        ],
+        "notes": "Deterministic filter pass only; no AI re-generation and no identity/composition changes."
+      }
+    },
+    {
+      "poolId": "formal_pack_pool_mouchen_yeyi_preview",
+      "displayName": "谋臣夜议",
+      "coverAssetKey": "formal_pack.cover.mouchen_yeyi",
+      "coverPath": "godot-client/assets/formal_pack/recruit_packs/postprocessed/mouchen_yeyi_cover_film_matte_v1.png",
+      "godotResourcePath": "res://assets/formal_pack/recruit_packs/postprocessed/mouchen_yeyi_cover_film_matte_v1.png",
+      "sourceGeneratedPath": "godot-client/assets/formal_pack/recruit_packs/source_generated/mouchen_yeyi_imagegen_source_v2.png",
+      "sourceGeneratedDefaultPath": "C:/Users/26739/.codex/generated_images/019dda06-ec35-7c80-827e-cfce63da6ee0/ig_023f9c5c6e8d39ee0169f23f868b10819ab550b942f7ce34a1.png",
+      "sourceRoleCardPaths": [
+        "portrait_assets/character_cards/sima_yi.md",
+        "portrait_assets/character_cards/guo_jia.md",
+        "portrait_assets/character_cards/jia_xu.md",
+        "portrait_assets/character_cards/xun_yu.md",
+        "portrait_assets/character_cards/cao_pi.md"
+      ],
+      "sourcePortraitAssetKeys": [
+        "formal_pack.portrait.sima_yi_fate_gaopingling_v1",
+        "formal_pack.portrait.guo_jia_mature_fate_liaodong_v1",
+        "formal_pack.portrait.jia_xu_mature_duoshi_v1",
+        "formal_pack.portrait.xun_yu_youth_wangzuo_v1",
+        "formal_pack.portrait.cao_pi_mature_shanrang_v1"
+      ],
+      "compositeRecipe": {
+        "mode": "imagegen_scene_rewrite_from_character_card_prompts_no_crop",
+        "canvasSize": {
+          "width": 1024,
+          "height": 1536
+        },
+        "layout": "one coherent no-frame vertical scene with 5 generals sharing lighting, atmosphere, perspective, and background; no pasted card frames",
+        "characterOrder": [
+          "sima_yi",
+          "guo_jia",
+          "jia_xu",
+          "xun_yu",
+          "cao_pi"
+        ],
+        "sourcePromptMethod": "role-card face DNA and character visual anchors were rewritten into one scene; source portraits were not pasted or overwritten",
+        "cropResizePolicy": "none for coverPath in this revision; keep generated native pixels and let UI scale at render time",
+        "promptSummary": "No-frame late-night strategy chamber scene; Sima Yi hidden calm, Guo Jia slight knowing smile, Jia Xu silent calculation, Xun Yu gentle calm smile, Cao Pi controlled judgment."
+      },
+      "notes": "Current preview cover uses a scene rewrite from character-card face DNA plus a non-generative film-matte filter pass. No baked UI text. Raw generated covers and original role portraits are preserved.",
+      "coverImageSize": {
+        "width": 1024,
+        "height": 1536
+      },
+      "revision": "v2_generated_2026_04_30_film_matte_v1",
+      "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/mouchen_yeyi_cover.png",
+      "postprocessRecipe": {
+        "mode": "deterministic_non_generative_film_matte_v1",
+        "rawCoverPath": "godot-client/assets/formal_pack/recruit_packs/mouchen_yeyi_cover.png",
+        "operations": [
+          {
+            "name": "micro_detail_soften",
+            "method": "blend original with GaussianBlur radius 0.35 at 12 percent"
+          },
+          {
+            "name": "tone_curve",
+            "method": "slight black lift, subtle highlight compression, midtone contrast reduction"
+          },
+          {
+            "name": "saturation",
+            "method": "global saturation 0.90 with minor red/blue balance restraint"
+          },
+          {
+            "name": "film_grain",
+            "method": "deterministic monochrome fine grain, sigma around 2.2 RGB levels, stronger in shadows/midtones"
+          },
+          {
+            "name": "vignette",
+            "method": "very light edge density to seat the subjects in scene lighting"
+          }
+        ],
+        "notes": "Deterministic filter pass only; no AI re-generation and no identity/composition changes."
+      }
+    }
+  ]
+}

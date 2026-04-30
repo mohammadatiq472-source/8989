@@ -3,7 +3,7 @@
 UI Preview Sandbox regression runner.
 
 Formal entrypoint:
-  py -3.11 godot-client/tools/run_ui_preview_sandbox_regression.py
+  scripts\run_python.cmd godot-client\tools\run_ui_preview_sandbox_regression.py
 
 Purpose:
 - Run the formal UI preview sandbox validator.
@@ -23,24 +23,24 @@ from hashlib import sha256
 from pathlib import Path
 from typing import Any
 
+from run_ui_preview_sandbox import DEFAULT_PROJECT_PATH, resolve_godot_gui_exe
+
 REPO_ROOT = Path(__file__).resolve().parents[2]
 VALIDATOR_SCRIPT = REPO_ROOT / "godot-client" / "tools" / "validate_ui_preview_sandbox.py"
 DEFAULT_SCREENSHOT_DIR = REPO_ROOT / "tmp" / "screenshots" / "ui_preview_sandbox"
 DEFAULT_VALIDATION_REPORT_PATH = DEFAULT_SCREENSHOT_DIR / "preview_validation_report.json"
 DEFAULT_REGRESSION_REPORT_PATH = DEFAULT_SCREENSHOT_DIR / "ui_preview_sandbox_regression_report.json"
 DEFAULT_VALIDATION_LOG_PATH = DEFAULT_SCREENSHOT_DIR / "logs" / "ui_preview_sandbox_regression_validation.log"
+DEFAULT_IMPORT_LOG_PATH = DEFAULT_SCREENSHOT_DIR / "logs" / "ui_preview_sandbox_regression_import.log"
 DEFAULT_BASELINE_MANIFEST = {
-    "01_hud_token_story.png": "d4928f593a7012ed6c80573284b0b10017bfad2cef857fb1c791c9646979eead",
-    "02_observability_story.png": "ea3a4fa13c53850ea1479375dd1a3abb9c50ee503111dfc68cc6e8d98710dfb8",
-    "03_panel_stack_story.png": "779329140cca384c4ad20e0973350c959fc84309ee4a1797d9c1bd8c8c74e9b6",
-    "04_map_surface_story.png": "2b178a5ec4a62b3e89a915abad1cf691f57b584353862a86c9c48e4f7f7e2271",
-    "05_map_zoom_hover_story.png": "ef99d5736840f920b6f690808ebc24d8d8c844e25b235280f2a051e88e5e587e",
-    "06_map_overlay_story.png": "416d9e5d43b5ab5d2667d69ef2f64afd76db41c95e8f5b83bcff3ba46c0b2396",
-    "07_map_units_story.png": "7f5e55863f739752cc91c3e76444407d1890eb0e777aaabfa1012fb03aa98749",
-    "08_province_layer_story.png": "f764397e428566abb6e8a20f5f610fc76090b14d0b996f3c0933b62ca3476ff7",
-    "09_warzone_layer_story.png": "f646582942f007482f66b8b6a7095bc960a58826a33ed060c32441492523cd66",
-    "10_nation_layer_story.png": "17374edd6bdf37bc468a0aa94b5c2a9847d97fb38936b8e8ae0dd5353551b8cf",
-    "11_ui_canvas_story.png": "1448c1ade82b69da744b70c924278d6de45f284a76bfe667ff4dde4218d3613c",
+    "01_hud_token_story.png": "d3d3599485c9a57cdccc7c2f134784cdcbe6bbdf3caeec6f664c555523ba8be9",
+    "02_observability_story.png": "f2fd1b956694d5b087390a36b58fc32afc6cc3b87bd64b143666373eb322fc80",
+    "03_panel_stack_story.png": "270ede7113cf3c69d3706e2716e097397c8a27736e4eb7e32dcca7451c4fc1cc",
+    "04_map_surface_story.png": "034e0c58c613b9758ead4ccfe94ab12d585c17bd2651df018781275877e175d5",
+    "05_map_zoom_hover_story.png": "00b27a803c11189b1d0a9b4adbea988318fb67dfa8c6f36c76ec52b9974ddd1f",
+    "06_map_overlay_story.png": "e618bda8285058295badf8ebbf34731166fbe339f4d7e3cc3fd3fcffadcde2e6",
+    "07_map_units_story.png": "c9db0fb2adcb88486b1676a7a32abb9ab22eacdf169648c65e5a972895a13792",
+    "08_ui_canvas_story.png": "aad805e84afa4e94ebe8082eea312398f96c25c937264e5274c9d8cd0f71d766",
 }
 
 
@@ -120,6 +120,7 @@ def _parse_args() -> argparse.Namespace:
         help="Optional path to a previous preview_validation_report.json to compare against.",
     )
     parser.add_argument("--validation-timeout-sec", type=float, default=420.0)
+    parser.add_argument("--import-timeout-sec", type=float, default=90.0)
     parser.add_argument("--print-command", action="store_true", help="Print the resolved command set as JSON.")
     parser.add_argument("--dry-run", action="store_true", help="Resolve commands and exit without launching.")
     return parser.parse_args()
@@ -183,6 +184,7 @@ def main() -> int:
     regression_report_path = _resolve_output_path(args.regression_report_path)
     baseline_report_path = Path(args.baseline_report) if args.baseline_report.strip() else None
     validation_log_path = screenshot_dir / "logs" / "ui_preview_sandbox_regression_validation.log"
+    import_log_path = screenshot_dir / "logs" / "ui_preview_sandbox_regression_import.log"
 
     if screenshot_dir != DEFAULT_SCREENSHOT_DIR:
         if Path(args.validation_report_path) == DEFAULT_VALIDATION_REPORT_PATH:
@@ -193,9 +195,15 @@ def main() -> int:
     screenshot_dir.mkdir(parents=True, exist_ok=True)
     validation_log_path.parent.mkdir(parents=True, exist_ok=True)
 
+    import_cmd = [
+        resolve_godot_gui_exe(),
+        "--headless",
+        "--path",
+        DEFAULT_PROJECT_PATH,
+        "--import",
+    ]
     validate_cmd = [
-        "py",
-        "-3.11",
+        sys.executable,
         str(VALIDATOR_SCRIPT),
         "--presentation-capture",
         "--report-path",
@@ -206,6 +214,7 @@ def main() -> int:
     report: dict[str, Any] = {
         "command": "run_ui_preview_sandbox_regression",
         "generatedAt": _now_iso(),
+        "importCommand": import_cmd,
         "validationCommand": validate_cmd,
         "validationReportPath": str(validation_report_path),
         "regressionReportPath": str(regression_report_path),
@@ -226,6 +235,18 @@ def main() -> int:
     if args.dry_run:
         _json_write(regression_report_path, report)
         return 0
+
+    import_result = _run_command(import_cmd, REPO_ROOT, import_log_path, timeout_sec=args.import_timeout_sec)
+    report["steps"].append({"name": "godot_import_prewarm", **import_result})
+    report["artifacts"]["importLog"] = str(import_log_path)
+    if not import_result["ok"]:
+        report["comparison"] = {
+            "ok": False,
+            "reason": "import_prewarm_failed",
+        }
+        _json_write(regression_report_path, report)
+        print(json.dumps(report, ensure_ascii=False, indent=2))
+        return 1
 
     validation_result = _run_command(validate_cmd, REPO_ROOT, validation_log_path, timeout_sec=args.validation_timeout_sec)
     report["steps"].append({"name": "validate", **validation_result})

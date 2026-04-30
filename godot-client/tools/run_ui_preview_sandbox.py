@@ -3,7 +3,7 @@
 UI Preview Sandbox launcher.
 
 Formal entrypoint:
-  py -3.11 godot-client/tools/run_ui_preview_sandbox.py
+  scripts\run_python.cmd godot-client\tools\run_ui_preview_sandbox.py
 
 Purpose:
 - Launch the reusable UI preview sandbox scene.
@@ -16,6 +16,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -31,15 +32,30 @@ def resolve_godot_gui_exe(explicit: str = "") -> str:
     candidate = explicit.strip()
     if candidate:
         return candidate
-    env_candidate = os.getenv("GODOT_GUI_EXE", "").strip()
-    if env_candidate:
-        return env_candidate
-    gui_path = Path(DEFAULT_GODOT_GUI_EXE)
-    if gui_path.exists():
-        return str(gui_path)
-    console_path = Path(DEFAULT_GODOT_CONSOLE_EXE)
-    if console_path.exists():
-        return str(console_path)
+
+    for env_name in ("GODOT_GUI_EXE", "GODOT_EDITOR_EXE", "GODOT_EXE", "GODOT_CONSOLE_EXE"):
+        env_candidate = os.getenv(env_name, "").strip()
+        if env_candidate:
+            return env_candidate
+
+    for candidate_path in (
+        r"C:\Godot_v4.6.2-stable_win64.exe",
+        r"C:\Godot_v4.6.2-stable_win64_console.exe",
+        DEFAULT_GODOT_GUI_EXE,
+        DEFAULT_GODOT_CONSOLE_EXE,
+        r"C:\Program Files\Godot\Godot_v4.6.2-stable_win64.exe",
+        r"C:\Program Files\Godot\Godot_v4.6.2-stable_win64_console.exe",
+        r"C:\Users\26739\Downloads\Godot_v4.6.2-stable_win64.exe",
+        r"C:\Users\26739\Downloads\Godot_v4.6.2-stable_win64_console.exe",
+    ):
+        if Path(candidate_path).exists():
+            return candidate_path
+
+    for command_name in ("godot.exe", "godot4", "Godot_v4.6.2-stable_win64.exe", "godot_console.exe"):
+        found = shutil.which(command_name)
+        if found:
+            return found
+
     return DEFAULT_GODOT_GUI_EXE
 
 

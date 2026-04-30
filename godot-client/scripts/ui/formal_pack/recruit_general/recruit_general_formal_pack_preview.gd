@@ -69,14 +69,14 @@ const RECRUIT_PACKS = [
 ]
 
 const ROSTER_CARDS = [
-	{"id": "100451", "name": "吕蒙", "faction": "吴", "level": 28, "stars": "★★★★★", "power": 7800, "troop": "弓兵", "status": "已编组", "team": "部队一", "owner": "真人: 风华", "quality": "S"},
-	{"id": "100122", "name": "吕布", "faction": "群", "level": 33, "stars": "★★★★★", "power": 8500, "troop": "骑兵", "status": "已编组", "team": "部队一", "owner": "AI: 阿良", "quality": "S"},
-	{"id": "100219", "name": "曹纯", "faction": "魏", "level": 38, "stars": "★★★★★", "power": 9200, "troop": "骑兵", "status": "战备92", "team": "部队一", "owner": "真人: 风华", "quality": "S"},
-	{"id": "100337", "name": "乐进", "faction": "魏", "level": 40, "stars": "★★★★★", "power": 6375, "troop": "步兵", "status": "已编组", "team": "部队二", "owner": "AI: 阿良", "quality": "S"},
-	{"id": "100418", "name": "刘备", "faction": "蜀", "level": 40, "stars": "★★★★★", "power": 4788, "troop": "步兵", "status": "已编组", "team": "部队二", "owner": "真人: 风华", "quality": "S"},
-	{"id": "100502", "name": "魏延", "faction": "蜀", "level": 41, "stars": "★★★★★", "power": 3575, "troop": "步兵", "status": "预备", "team": "未编组", "owner": "AI: 山河", "quality": "S"},
-	{"id": "100611", "name": "张辽", "faction": "魏", "level": 40, "stars": "★★★★★", "power": 9000, "troop": "骑兵", "status": "战备88", "team": "部队三", "owner": "真人: 风华", "quality": "S"},
-	{"id": "100709", "name": "曹操", "faction": "群", "level": 42, "stars": "★★★★★", "power": 9368, "troop": "骑兵", "status": "已编组", "team": "部队三", "owner": "AI: 阿良", "quality": "S"},
+	{"id": "100451", "name": "吕蒙", "faction": "东吴", "level": 28, "stars": "★★★★★", "power": 7800, "troop": "弓兵", "status": "已编组", "team": "部队一", "owner": "真人: 风华", "quality": "S"},
+	{"id": "100122", "name": "吕布", "faction": "群雄", "level": 33, "stars": "★★★★★", "power": 8500, "troop": "骑兵", "status": "已编组", "team": "部队一", "owner": "AI: 阿良", "quality": "S"},
+	{"id": "100219", "name": "曹纯", "faction": "曹魏", "level": 38, "stars": "★★★★★", "power": 9200, "troop": "骑兵", "status": "战备92", "team": "部队一", "owner": "真人: 风华", "quality": "S"},
+	{"id": "100337", "name": "乐进", "faction": "曹魏", "level": 40, "stars": "★★★★★", "power": 6375, "troop": "步兵", "status": "已编组", "team": "部队二", "owner": "AI: 阿良", "quality": "S"},
+	{"id": "100418", "name": "刘备", "faction": "季汉", "level": 40, "stars": "★★★★★", "power": 4788, "troop": "步兵", "status": "已编组", "team": "部队二", "owner": "真人: 风华", "quality": "S"},
+	{"id": "100502", "name": "魏延", "faction": "季汉", "level": 41, "stars": "★★★★★", "power": 3575, "troop": "步兵", "status": "预备", "team": "未编组", "owner": "AI: 山河", "quality": "S"},
+	{"id": "100611", "name": "张辽", "faction": "曹魏", "level": 40, "stars": "★★★★★", "power": 9000, "troop": "骑兵", "status": "战备88", "team": "部队三", "owner": "真人: 风华", "quality": "S"},
+	{"id": "100709", "name": "曹操", "faction": "曹魏", "level": 42, "stars": "★★★★★", "power": 9368, "troop": "骑兵", "status": "已编组", "team": "部队三", "owner": "AI: 阿良", "quality": "S"},
 ]
 
 const RECRUIT_BACKEND_STATES = [
@@ -749,11 +749,13 @@ func _style(bg: Color, border: Color, radius: int) -> StyleBoxFlat:
 
 func _faction_border(entry: Dictionary) -> Color:
 	match str(entry.get("faction", "")):
-		"魏":
+		"魏", "曹魏":
 			return Color(0.370, 0.520, 0.720, 0.84)
-		"蜀":
+		"蜀", "汉", "季汉", "纪汉":
 			return Color(0.360, 0.650, 0.330, 0.84)
-		"吴":
+		"吴", "东吴", "孙吴":
 			return Color(0.780, 0.290, 0.300, 0.84)
+		"群", "群雄":
+			return Color(0.900, 0.650, 0.220, 0.84)
 		_:
 			return Color(0.780, 0.520, 0.220, 0.84)

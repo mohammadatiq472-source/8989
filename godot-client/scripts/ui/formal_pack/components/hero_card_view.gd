@@ -4,6 +4,7 @@ class_name HeroCardView
 const MODE_POOL_PREVIEW := "pool_preview"
 const MODE_OWNED_ROSTER := "owned_roster"
 const MODE_DRAW_RESULT := "draw_result"
+const FormalPackAssetRegistryScript := preload("res://scripts/ui/formal_pack/components/formal_pack_asset_registry.gd")
 
 const HERO_CARD_INPUT_CONTRACT := {
 	"identity": ["name", "displayName", "display_name", "faction", "campName", "camp_name", "camp"],
@@ -94,7 +95,7 @@ static func mode_contract() -> Dictionary:
 static func normalize_entry(raw: Dictionary, mode: String = MODE_OWNED_ROSTER) -> Dictionary:
 	var entry := raw.duplicate(true)
 	var identity_name := str(_first_value(raw, ["name", "displayName", "display_name", "heroName", "hero_name"], ""))
-	var identity_faction := str(_first_value(raw, ["faction", "campName", "camp_name", "camp", "forceName", "force_name"], ""))
+	var identity_faction := _normalize_faction_label(str(_first_value(raw, ["faction", "campName", "camp_name", "camp", "forceName", "force_name"], "")))
 	var rarity := str(_first_value(raw, ["rarity", "quality"], str(entry.get("quality", "")))).strip_edges()
 	var stars := str(_first_value(raw, ["stars", "starText", "star_text"], "")).strip_edges()
 	if stars == "" and (rarity == "S" or rarity == "S级"):
@@ -107,6 +108,7 @@ static func normalize_entry(raw: Dictionary, mode: String = MODE_OWNED_ROSTER) -
 	entry["display_name"] = identity_name
 	entry["faction"] = identity_faction
 	entry["camp"] = identity_faction
+	entry["tone"] = _faction_tone_key(identity_faction, str(_first_value(raw, ["tone", "toneKey", "visualTone", "visual_tone"], entry.get("tone", ""))))
 	entry["quality"] = rarity
 	entry["rarity"] = rarity
 	entry["stars"] = stars
@@ -124,6 +126,41 @@ static func normalize_entry(raw: Dictionary, mode: String = MODE_OWNED_ROSTER) -
 		entry["draw_label"] = str(_first_value(raw, ["draw_label", "drawLabel", "receiptLabel", "status"], entry.get("status", "")))
 	return entry
 
+static func _normalize_faction_label(raw_faction: String) -> String:
+	var faction := raw_faction.strip_edges()
+	match faction:
+		"魏", "曹魏":
+			return "曹魏"
+		"蜀", "汉", "季汉", "纪汉":
+			return "季汉"
+		"吴", "东吴", "孙吴":
+			return "东吴"
+		"群", "群雄":
+			return "群雄"
+		"晋", "晋国":
+			return "晋国"
+		"东汉":
+			return "东汉"
+		_:
+			return faction
+
+static func _faction_tone_key(faction_label: String, fallback: String = "") -> String:
+	match _normalize_faction_label(faction_label):
+		"曹魏":
+			return "cao_wei"
+		"季汉":
+			return "ji_han"
+		"东吴":
+			return "dong_wu"
+		"群雄":
+			return "qun_xiong"
+		"东汉":
+			return "dong_han"
+		"晋国":
+			return "jin"
+		_:
+			return fallback.strip_edges()
+
 static func _first_value(raw: Dictionary, keys: Array, fallback: Variant = "") -> Variant:
 	for key_variant in keys:
 		var key := str(key_variant)
@@ -136,6 +173,12 @@ static func _first_value(raw: Dictionary, keys: Array, fallback: Variant = "") -
 			continue
 		return value
 	return fallback
+
+static func _portrait_texture(entry: Dictionary) -> Texture2D:
+	var asset_key := str(entry.get("asset_key", "")).strip_edges()
+	if asset_key == "":
+		return null
+	return FormalPackAssetRegistryScript.portrait_texture(asset_key)
 
 static func _build_portrait_visual(entry: Dictionary, mode: String, compact: bool, config: Dictionary) -> Control:
 	var root := Control.new()
@@ -167,9 +210,24 @@ static func _build_portrait_visual(entry: Dictionary, mode: String, compact: boo
 	var asset_slot := Control.new()
 	asset_slot.name = "HeroCardAssetSlot"
 	asset_slot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	asset_slot.clip_contents = true
 	asset_slot.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	asset_slot.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	stage_col.add_child(asset_slot)
+	var portrait_texture: Texture2D = _portrait_texture(entry)
+	if portrait_texture != null:
+		var portrait_image := TextureRect.new()
+		portrait_image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		portrait_image.texture = portrait_texture
+		portrait_image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portrait_image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		portrait_image.set_anchors_preset(Control.PRESET_FULL_RECT)
+		asset_slot.add_child(portrait_image)
+		var shade := ColorRect.new()
+		shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		shade.color = Color(0.020, 0.018, 0.014, float(config.get("portrait_shade_alpha", 0.08)))
+		shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+		asset_slot.add_child(shade)
 
 	if mode == MODE_OWNED_ROSTER:
 		_add_roster_overlay(stage_col, entry, compact, config)
@@ -195,7 +253,7 @@ static func _build_identity_strip(entry: Dictionary, mode: String, compact: bool
 		strip_height = float(config.get("identity_strip_height", usable_height * 0.48))
 	strip_height = clampf(strip_height, 46.0 if compact else 118.0, usable_height * 0.58)
 
-	var strip := _panel(Color(0.018, 0.017, 0.017, left_alpha), _tone_border(entry, 0.72), 1)
+	var strip := _panel(_identity_strip_bg(entry, left_alpha), _tone_border(entry, 0.72), 1)
 	strip.name = "HeroCardIdentityStrip"
 	strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	strip.custom_minimum_size = Vector2(left_width, strip_height)
@@ -376,6 +434,18 @@ static func _style(bg: Color, border: Color, radius: int) -> StyleBoxFlat:
 
 static func _tone_border(entry: Dictionary, alpha: float = 0.84) -> Color:
 	match str(entry.get("tone", "")):
+		"cao_wei":
+			return Color(0.360, 0.620, 0.960, alpha)
+		"ji_han":
+			return Color(0.340, 0.760, 0.430, alpha)
+		"dong_wu":
+			return Color(0.860, 0.280, 0.220, alpha)
+		"qun_xiong":
+			return Color(0.930, 0.720, 0.240, alpha)
+		"dong_han":
+			return Color(0.720, 0.460, 0.520, alpha)
+		"jin":
+			return Color(0.450, 0.680, 0.700, alpha)
 		"blue":
 			return Color(0.370, 0.520, 0.720, alpha)
 		"green":
@@ -385,8 +455,37 @@ static func _tone_border(entry: Dictionary, alpha: float = 0.84) -> Color:
 		_:
 			return Color(0.780, 0.520, 0.220, alpha)
 
+static func _identity_strip_bg(entry: Dictionary, alpha: float) -> Color:
+	match str(entry.get("tone", "")):
+		"cao_wei":
+			return Color(0.030, 0.060, 0.110, alpha)
+		"ji_han":
+			return Color(0.030, 0.100, 0.055, alpha)
+		"dong_wu":
+			return Color(0.120, 0.035, 0.030, alpha)
+		"qun_xiong":
+			return Color(0.120, 0.075, 0.025, alpha)
+		"dong_han":
+			return Color(0.120, 0.060, 0.075, alpha)
+		"jin":
+			return Color(0.030, 0.085, 0.095, alpha)
+		_:
+			return Color(0.018, 0.017, 0.017, alpha)
+
 static func _portrait_tone(entry: Dictionary) -> Color:
 	match str(entry.get("tone", "")):
+		"cao_wei":
+			return Color(0.035, 0.070, 0.125, 0.98)
+		"ji_han":
+			return Color(0.040, 0.120, 0.065, 0.98)
+		"dong_wu":
+			return Color(0.125, 0.045, 0.038, 0.98)
+		"qun_xiong":
+			return Color(0.130, 0.085, 0.030, 0.98)
+		"dong_han":
+			return Color(0.125, 0.065, 0.080, 0.98)
+		"jin":
+			return Color(0.035, 0.090, 0.100, 0.98)
 		"blue":
 			return Color(0.160, 0.220, 0.300, 0.98)
 		"green":

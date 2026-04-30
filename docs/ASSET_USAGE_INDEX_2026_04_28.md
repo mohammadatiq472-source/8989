@@ -12,7 +12,7 @@
 | 世界资源地 | `current/world/resources` | `current/world/resources/world_resource_assets_manifest_v1.json` | 4 类资源，`grain/wood/stone/iron`，每类 `base + l01-l09`，共 40 PNG | 正式可用。按 `effective_footprint=[320,160]`、`anchor_pixel=[192,310]` 处理。 |
 | 世界战略节点 | `current/world/*_base_v1.png` 与 `current/world/world_cell_*` | `current/world/world_cell_assets_manifest_v1.json`、`current/world/world_cell_footprint_manifest_v1.json` | 29 个 frame，10 个 composite，12 个 footprint | 正式可用。使用 composite id：`world_node_city_v1`、`world_node_capital_v1`、`world_node_system_city_3x3/5x5/7x7/9x9_v1`、`world_node_pass_sw/se_v1`、`world_node_fort_v1`、`world_node_dock_v1`。 |
 | 骑兵世界地图帧 | `current/units/qibing_frames` | `manifests/unit_frames_manifest.json` | 8 方向 x 10 帧，共 80 PNG | 正式骑兵外显素材。不要当作步/弓/器械通用素材。 |
-| 主线 UI 候选纹理 | `current/ui/native_shell_*`、`current/ui/skill/skill_type_*.svg` | `manifests/ui_manifest.json` | `current/ui` 当前 20 文件，其中 4 PNG、8 SVG/import | 可作为当前主线 UI 候选。旧 `hud_v1` 不再作为参考。 |
+| 主线 UI 候选纹理 | `current/ui/native_shell_*`、`current/ui/skill/skill_type_*.svg` | `manifests/ui_manifest.json` | `current/ui` 当前 20 文件，其中 4 PNG、8 SVG、8 `.import` | 可作为当前主线 UI 候选。旧 `hud_v1` 不再作为参考。 |
 | 头像/卡牌素材 | `current/generalpic` | `manifests/generalpic_manifest.json`、`manifests/generalpic_index.json` | selectedIdCount 448，fileCount 449，含 `head_wrap.png` | 可作为武将头像/卡牌素材池。不要扩散成通用 UI 语言。 |
 
 ## 2. 参考或局部可用资产池
@@ -150,7 +150,7 @@
 
 | 类别 | 当前状态 | 处理建议 |
 | --- | --- | --- |
-| 窗口 5 资产治理文档 | 2 个 untracked：本文件与 manifest 治理口径 | 可随资产包提交。 |
+| 窗口 5 资产治理文档 | 最小包固定为本文件与 manifest 治理口径 | 可随资产包提交；不要扩成整目录 `docs/` 提交。 |
 | 资产相关参考文档 | `STZB_*`、`GODOT_VISUAL_REPLACEMENT_*`、`SUBAGENT_ASSET_AUDIT_*`、`GODOT_SVG_ICON_SOURCE_PACK_*`、`WORLD_STRATEGIC_NODE_ASSET_FINALIZATION_*` | 只作为读入锚点或对应 owner 交付，不自动进入窗口 5 提交。 |
 | Godot UI / mainline 文档 | 多个 `GODOT_*`、`NATIVE_SLG_*`、`GENERAL_SKILL_*`、`WORLD_EVENT_ACTIVITY_*` | 归窗口 3/4/7/8 或主线集成窗口；窗口 5 只引用，不提交。 |
 | world resource / world cell 文档 | 多个 `WORLD_RESOURCE_*`、`WORLD_CELL_*` | 归世界地图/资源 owner；资产窗口只引用 manifest 事实。 |
@@ -164,9 +164,36 @@
 - `current/world/resources`：41 文件，40 PNG，1 JSON。
 - `current/units/qibing_frames`：160 文件，80 PNG，80 `.import`。
 - `current/overlays/frames`：124 文件，62 PNG，62 `.import`。
-- `current/ui`：20 文件，4 PNG，8 `.import`。
+- `current/ui`：20 文件，4 PNG，8 SVG，8 `.import`。
 - `current/ui/hud_v1`：已删除。
 - `current/generalpic`：926 文件，476 PNG，449 `.import`。
 - `replacements/exchange_bundle`：1198 文件，594 PNG，5 JSON，594 `.import`。
 
 以上数量用于本轮治理索引，不替代后续正式导入脚本生成的 manifest。
+
+## 9. 5B 续航索引（2026-04-30）
+
+本轮复核 manifest 与文件树后，正式可用资产池未变化：
+
+- 世界资源地：`current/world/resources/world_resource_assets_manifest_v1.json`，4 类资源，每类 `base + l01-l09`，40 PNG，继续按 `effective_footprint=[320,160]` 与 `anchor_pixel=[192,310]` 使用。
+- 世界战略节点：`current/world/world_cell_assets_manifest_v1.json` 与 `current/world/world_cell_footprint_manifest_v1.json`，29 个 frame、10 个 composite、12 个 footprint；`pass` 仍是 runtime/manifest id，`gate` 只作展示别名。
+- 主线 UI 候选：只看 `current/ui/native_shell_*` 与 `current/ui/skill/skill_type_*.svg`；`current/ui/hud_v1`、旧按钮、旧战法 PNG、`replacements/exchange_bundle/ui/**` 继续 retired。
+- 外部交换包：`replacements/exchange_bundle/exchange_bundle_manifest.json` 仍为 world/generalpic/units/overlays/manifests 五段，`prunedOldUi=true`、`hudV1Removed=true`；它是消费快照，不是运行时权威。
+
+当前缺口资产仍为：
+
+- route/path/march 线条、转折、方向箭头。
+- start/end/landing 与 attack/siege/rally target marker。
+- own/enemy/neutral/contested/engaged 关系覆盖层。
+- hover/selected/disabled/cooldown 节点状态 overlay。
+- province/warzone/nation/event 二级页宏观 UI 皮肤包。
+
+`docs/` 当前 owner 归属只做索引：
+
+- 窗口 5B 可收：`docs/ASSET_MANIFEST_GOVERNANCE_2026_04_28.md`、`docs/ASSET_USAGE_INDEX_2026_04_28.md`。
+- 窗口 8/formal_pack：`docs/FORMAL_PACK_ASSET_HANDOFF_2026_04_30.md`、`docs/FORMAL_PACK_COMPONENT_PACKAGE_2026_04_30.md`。
+- backend/world-affairs：`docs/SCENARIO_WORLD_AFFAIRS_AUTOMATION_PROMPT_2026_04_30.md`、`docs/SCENARIO_WORLD_AFFAIRS_BACKEND_CONTRACT_2026_04_30.md`。
+- 模板/武将档案 owner：`docs/templates/GENERAL_PROFILE_ROSTER_DRAFT_27.md`。
+- 主窗口确认：`docs/AI_SLG_超大地图与AI玩家剧本设计参考.md`。
+
+窗口 5B 不收 `server/**`、`shared/**`、`godot-client/scripts/ui/**`、`godot-client/scenes/**`、`godot-client/data/ui/**`、`godot-client/.godot/**`、顶层临时素材包、`.tools/**`、`.obsidian/**`、`.claudian/**`、`.copilot/**`、`00-OpenClaw-Hub/**`。

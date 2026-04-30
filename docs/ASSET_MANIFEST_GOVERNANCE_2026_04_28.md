@@ -156,3 +156,20 @@ npm run gate:godot:week1:compat:debug-only
 ```
 
 注意：`import_slgclient_theme_assets.py` 会重建 manifest 与 `exchange_bundle`。在工作树已有大量资产变更时，不应为了普通文档治理随意执行该脚本；需要执行时必须先说明它会重写哪些白名单资产路径。
+
+## 12. 5B 续航 dirty tree 分桶（2026-04-30）
+
+本轮先执行 `git status --short --untracked-files=all` 并只读锚点文档。当前工作树共有 12044 条状态记录；窗口 5B 不把 dirty tree 当作一揽子清理任务，只做资产/文档治理归属判断。
+
+| 分桶 | 当前数量 | 处理结论 |
+| --- | ---: | --- |
+| 可收资产治理 | 0 条白名单资产改动；本轮只允许把本文件与 `docs/ASSET_USAGE_INDEX_2026_04_28.md` 作为治理文档包 | 可由窗口 5B 提交，但不能顺手提交整目录 `docs/` 或 `godot-client/assets/themes/slgclient/**`。 |
+| 需要 owner 确认：source 资产 | 24 条，集中在 `godot-client/assets/themes/slgclient/source/svg_shell_icons/**` | 源构造材料，不是运行时权威；需 source/UI 图标 owner 确认后再决定是否晋升到 manifest。 |
+| 需要 owner 确认：docs | 6 条 | 只做归属索引：`FORMAL_PACK_*` 归窗口 8/formal_pack，`SCENARIO_WORLD_AFFAIRS_*` 归 backend/world-affairs，`docs/templates/GENERAL_PROFILE_ROSTER_DRAFT_27.md` 归模板/武将档案 owner，`AI_SLG_超大地图与AI玩家剧本设计参考.md` 需主窗口判定。 |
+| 需要 owner 确认：资产 | 295 条 | 主要是 `godot-client/assets/formal_pack/**`、`portrait_assets/**`、`world_resource_png_exports/**`；不是当前 slgclient manifest 权威池，需对应资产 owner 接收。 |
+| 需要 owner 确认：工具/源包 | 231 条 | 包含 `godot-client/addons/**`、`godot-client/scripts/dev/**/*.uid`、`tools/troop_source_assets/**` 等；不进入窗口 5B 资产治理包。 |
+| 正在重做，暂不看 | 60 条 | 包含 `godot-client/scripts/ui/**`、`godot-client/scenes/**`、`godot-client/data/ui/**`、`server/**`、`shared/**` 及 UI 验证工具改动；窗口 5B 只标 owner，不审查、不修改。 |
+| 禁止混入 | 9786 条 | 包含 `%SystemDrive%/**`、`.obsidian/**`、`.claudian/**`、`.copilot/**`、`00-OpenClaw-Hub/**`、`godot-client/.godot/**`、`.tools/**`、`234/**`、`Isometric Medieval Pack*`、`Isometric Nature Pack 2.0/**`、顶层 mp4/jpg/webp/zip/base/canvas、`query`、`tmp_*`、`val_out*`。 |
+| 需要主窗口确认：其他根噪音 | 1642 条 | 包含顶层历史 md/cmd/png、`experiments/**`、`CODEX.md` untracked 等；窗口 5B 不代收。 |
+
+5B 合并口径：只提交白名单治理文档或明确列出的 slgclient manifest/资产改动；本轮没有运行导入脚本，也没有修改任何 manifest、UI、地图脚本、玩法、backend/shared 文件。

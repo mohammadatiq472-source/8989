@@ -18,6 +18,7 @@
    - 首次进游戏时不假设所有卡池都开放；招募页必须能只渲染后端返回的可见卡包，未开放/资源不足/容量不足只展示状态，不本地抽取。
 2. `HeroTemplateCatalog`
    - 字段：`templateId`、`rarity`、`star`、`troopType`、`levelPreview`、`portraitAssetKey`。
+   - 阵营显示必须归一为两字政治谱系：`曹魏`、`季汉`、`东吴`、`群雄`。`魏/蜀/吴/群` 只允许作为兼容输入，不能直接显示到卡面。
    - 卡池候选只展示模板预览，不写入玩家拥有状态。
 3. `OwnedHeroState`
    - 字段：`heroInstanceId`、`templateId`、`level`、`soldierCount`、`team`、`owner`、`status`。
@@ -42,8 +43,10 @@
      - `status`
      - `heroTemplateId`
      - `heroInstanceId` / `instanceId` / `heroCardInstanceId`
-     - `portraitAssetKey`
-   - 组件内部会归一成卡面字段，不自动生成“武将01”这类显示名。
+      - `portraitAssetKey`
+    - 卡面会按阵营归一结果决定边框和左侧身份条色彩：曹魏蓝、季汉绿、东吴赤、群雄金；样例 `tone` 不再作为主色权威。
+    - `portraitAssetKey` 交给 `components/formal_pack_asset_registry.gd`，按 `godot-client/assets/formal_pack/portraits/card/postprocessed/formal_pack_card_portraits_postprocessed_handoff.preview.json` 的 `portraitAssetKey -> resPath` 动态加载卡面立绘。
+    - 组件内部会归一成卡面字段，不自动生成“武将01”这类显示名。
 
 2. `components/formal_pack_close_button.gd`
    - 隔离 preview 内复用的红色 `CloseButton`。
@@ -60,7 +63,14 @@
    - `components/formal_pack_preview_adapter.gd` 是临时 future-adapter 接口层。
    - 招募页只读取 adapter 的 `visiblePools`；`FORMAL_PACK_EMPTY_POOLS=1` 时 adapter 返回 `visiblePools=[]`，页面渲染“暂无可用卡池”，保留底部资源条，不本地创建默认卡池。
    - 总武将页只读取 adapter 的 `ownedHeroes`；`FORMAL_PACK_EMPTY_ROSTER=1` 时 adapter 返回 `ownedHeroes=[]`，页面渲染“暂无武将”，保留搜索/筛选/关闭栏，不假设已有武将卡。
+   - 空态 UI 只放玩家能理解的短文案；`visiblePools` / `ownedHeroes` 等技术字段只保留在 adapter 和交接说明中。
    - 默认不设置环境变量时，保持已认可的招募页和总武将页主视觉比例。
+
+5. `components/formal_pack_asset_registry.gd`
+   - 统一读取窗口 12 产出的封面与卡面 manifest。
+   - 招募页只传 `coverAssetKey`，registry 按 `godot-client/assets/formal_pack/recruit_pack_cover_manifest.preview.json` 解析到 `res://` 封面路径。
+   - `HeroCardView` 只传 `portraitAssetKey`，registry 按卡面立绘 manifest 解析到 `res://` 立绘路径。
+   - UI 脚本不再维护单独的硬编码资源路径表；贴图缺失时回落到原有色块，不影响 preview scene 启动。
 
 ### 流程层
 

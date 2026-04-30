@@ -22,18 +22,18 @@ const CARD_TARGET_HEIGHT := 336.0
 const GRID_GAP := 18.0
 
 const ROSTER_CARDS = [
-	{"id": "hero_instance_001", "name": "长锋", "faction": "北府", "tone": "red", "level": 28, "stars": "★★★★★", "power": 7800, "troop": "弓兵", "status": "已编组", "team": "部队一", "owner": "玩家", "quality": "S"},
-	{"id": "hero_instance_002", "name": "云麾", "faction": "西庭", "tone": "gold", "level": 33, "stars": "★★★★★", "power": 8500, "troop": "骑兵", "status": "已编组", "team": "部队一", "owner": "AI", "quality": "S"},
-	{"id": "hero_instance_003", "name": "赤弦", "faction": "东原", "tone": "blue", "level": 38, "stars": "★★★★★", "power": 9200, "troop": "骑兵", "status": "战备92", "team": "部队一", "owner": "玩家", "quality": "S"},
-	{"id": "hero_instance_004", "name": "玄策", "faction": "东原", "tone": "blue", "level": 40, "stars": "★★★★★", "power": 6375, "troop": "步兵", "status": "已编组", "team": "部队二", "owner": "AI", "quality": "S"},
-	{"id": "hero_instance_005", "name": "苍衡", "faction": "南庭", "tone": "green", "level": 40, "stars": "★★★★★", "power": 4788, "troop": "步兵", "status": "已编组", "team": "部队二", "owner": "玩家", "quality": "S"},
-	{"id": "hero_instance_006", "name": "白霆", "faction": "南庭", "tone": "green", "level": 41, "stars": "★★★★★", "power": 3575, "troop": "步兵", "status": "预备", "team": "未编组", "owner": "AI", "quality": "S"},
-	{"id": "hero_instance_007", "name": "北辰", "faction": "东原", "tone": "blue", "level": 40, "stars": "★★★★★", "power": 9000, "troop": "骑兵", "status": "战备88", "team": "部队三", "owner": "玩家", "quality": "S"},
-	{"id": "hero_instance_008", "name": "南弈", "faction": "西庭", "tone": "gold", "level": 42, "stars": "★★★★★", "power": 9368, "troop": "骑兵", "status": "已编组", "team": "部队三", "owner": "AI", "quality": "S"},
-	{"id": "hero_instance_009", "name": "西陵", "faction": "西庭", "tone": "gold", "level": 36, "stars": "★★★★★", "power": 7100, "troop": "弓兵", "status": "预备", "team": "部队四", "owner": "玩家", "quality": "S"},
-	{"id": "hero_instance_010", "name": "东序", "faction": "西庭", "tone": "gold", "level": 37, "stars": "★★★★★", "power": 7100, "troop": "步兵", "status": "已编组", "team": "部队四", "owner": "AI", "quality": "S"},
-	{"id": "hero_instance_011", "name": "归鸿", "faction": "北府", "tone": "red", "level": 39, "stars": "★★★★★", "power": 7100, "troop": "弓兵", "status": "战备76", "team": "部队四", "owner": "玩家", "quality": "S"},
-	{"id": "hero_instance_012", "name": "折戟", "faction": "西庭", "tone": "gold", "level": 42, "stars": "★★★★★", "power": 9368, "troop": "骑兵", "status": "已编组", "team": "部队五", "owner": "AI", "quality": "S"},
+	{"id": "hero_instance_001", "name": "曹操", "faction": "曹魏", "level": 28, "stars": "★★★★★", "power": 7800, "troop": "骑兵", "status": "已编组", "team": "部队一", "owner": "玩家", "quality": "S", "portraitAssetKey": "formal_pack.portrait.cao_cao_fate_v1"},
+	{"id": "hero_instance_002", "name": "刘备", "faction": "季汉", "level": 33, "stars": "★★★★★", "power": 8500, "troop": "步兵", "status": "已编组", "team": "部队一", "owner": "AI", "quality": "S", "portraitAssetKey": "formal_pack.portrait.liu_bei_mature_hanzhong_sworddance_face_smile_v2"},
+	{"id": "hero_instance_003", "name": "孙权", "faction": "东吴", "level": 38, "stars": "★★★★★", "power": 9200, "troop": "弓兵", "status": "战备92", "team": "部队一", "owner": "玩家", "quality": "S", "portraitAssetKey": "formal_pack.portrait.sun_quan_mature_successor_v1"},
+	{"id": "hero_instance_004", "name": "诸葛亮", "faction": "季汉", "level": 40, "stars": "★★★★★", "power": 6375, "troop": "弓兵", "status": "已编组", "team": "部队二", "owner": "AI", "quality": "S", "portraitAssetKey": "formal_pack.portrait.zhuge_liang_mature_beifa_v1"},
+	{"id": "hero_instance_005", "name": "关羽", "faction": "季汉", "level": 40, "stars": "★★★★★", "power": 4788, "troop": "骑兵", "status": "已编组", "team": "部队二", "owner": "玩家", "quality": "S", "portraitAssetKey": "formal_pack.portrait.guan_yu_mature_mounted_jingzhou_v1"},
+	{"id": "hero_instance_006", "name": "周瑜", "faction": "东吴", "level": 41, "stars": "★★★★★", "power": 3575, "troop": "弓兵", "status": "预备", "team": "未编组", "owner": "AI", "quality": "S", "portraitAssetKey": "formal_pack.portrait.zhou_yu_mature_chibi_v1"},
+	{"id": "hero_instance_007", "name": "吕布", "faction": "群雄", "level": 40, "stars": "★★★★★", "power": 9000, "troop": "骑兵", "status": "战备88", "team": "部队三", "owner": "玩家", "quality": "S", "portraitAssetKey": "formal_pack.portrait.lu_bu_mature_wenhou_v1"},
+	{"id": "hero_instance_008", "name": "马超", "faction": "群雄", "level": 42, "stars": "★★★★★", "power": 9368, "troop": "骑兵", "status": "已编组", "team": "部队三", "owner": "AI", "quality": "S", "portraitAssetKey": "formal_pack.portrait.ma_chao_mature_xiliang_retreat_v1"},
+	{"id": "hero_instance_009", "name": "司马懿", "faction": "曹魏", "level": 36, "stars": "★★★★★", "power": 7100, "troop": "弓兵", "status": "预备", "team": "部队四", "owner": "玩家", "quality": "S", "portraitAssetKey": "formal_pack.portrait.sima_yi_fate_gaopingling_v1"},
+	{"id": "hero_instance_010", "name": "郭嘉", "faction": "曹魏", "level": 37, "stars": "★★★★★", "power": 7100, "troop": "骑兵", "status": "已编组", "team": "部队四", "owner": "AI", "quality": "S", "portraitAssetKey": "formal_pack.portrait.guo_jia_mature_fate_liaodong_v1"},
+	{"id": "hero_instance_011", "name": "贾诩", "faction": "曹魏", "level": 39, "stars": "★★★★★", "power": 7100, "troop": "步兵", "status": "战备76", "team": "部队四", "owner": "玩家", "quality": "S", "portraitAssetKey": "formal_pack.portrait.jia_xu_mature_duoshi_v1"},
+	{"id": "hero_instance_012", "name": "张辽", "faction": "曹魏", "level": 42, "stars": "★★★★★", "power": 9368, "troop": "骑兵", "status": "已编组", "team": "部队五", "owner": "AI", "quality": "S", "portraitAssetKey": "formal_pack.portrait.zhang_liao_mature_hefei_v1"},
 ]
 
 var _profile_status_label: Label
@@ -83,9 +83,7 @@ func _build_header() -> Control:
 	header.custom_minimum_size = Vector2(0, 56)
 	header.add_theme_constant_override("separation", 12)
 	header.add_child(_label("武将", 32, TEXT_GOLD))
-	_profile_status_label = _compact_label("点击武将卡：open_hero_profile:<id> / activePageId=profile", 13, TEXT_MUTED)
-	_profile_status_label.custom_minimum_size = Vector2(410, 0)
-	header.add_child(_profile_status_label)
+	_profile_status_label = null
 	header.add_spacer(false)
 	header.add_child(_search_box())
 	header.add_child(_filter_button("筛选"))
@@ -127,9 +125,7 @@ func _build_empty_roster_state() -> Control:
 	column.custom_minimum_size = Vector2(460, 0)
 	column.add_theme_constant_override("separation", 8)
 	center.add_child(column)
-	column.add_child(_compact_label("暂无武将", 30, TEXT_GOLD, HORIZONTAL_ALIGNMENT_CENTER))
-	column.add_child(_compact_label("OwnedHeroState 为空时显示此状态", 16, TEXT_MAIN, HORIZONTAL_ALIGNMENT_CENTER))
-	column.add_child(_compact_label("招募获得后再渲染同一套 HeroCardView 卡面", 13, TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+	column.add_child(_compact_label("暂无武将", 36, TEXT_GOLD, HORIZONTAL_ALIGNMENT_CENTER))
 	return center
 
 func _build_roster_card(entry: Dictionary) -> Button:
@@ -148,6 +144,7 @@ func _build_roster_card(entry: Dictionary) -> Button:
 
 func _open_hero_profile(hero_id: String, hero_name: String) -> void:
 	if _profile_status_label == null:
+		print("open_hero_profile:%s / activePageId=profile / %s" % [hero_id, hero_name])
 		return
 	_profile_status_label.text = "open_hero_profile:%s / activePageId=profile / %s" % [hero_id, hero_name]
 

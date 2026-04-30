@@ -4,6 +4,7 @@ class_name RecruitFormalPackPreview
 const HeroCardViewScript := preload("res://scripts/ui/formal_pack/components/hero_card_view.gd")
 const FormalPackCloseButton := preload("res://scripts/ui/formal_pack/components/formal_pack_close_button.gd")
 const FormalPackPreviewAdapter := preload("res://scripts/ui/formal_pack/components/formal_pack_preview_adapter.gd")
+const FormalPackAssetRegistryScript := preload("res://scripts/ui/formal_pack/components/formal_pack_asset_registry.gd")
 
 const BG_ROOT := Color(0.030, 0.032, 0.034, 1.0)
 const BG_BAND := Color(0.070, 0.071, 0.067, 0.94)
@@ -26,8 +27,9 @@ const PACK_CARD_HEIGHT := 642.0
 const RECRUIT_PACKS = [
 	{
 		"id": "pool_vanguard",
-		"title": "先锋征令",
+		"title": "王佐烽烟",
 		"subtitle": "S级",
+		"cover_asset_key": "formal_pack.cover.wangzuo_fengyan",
 		"level": "30级",
 		"cost": "40000",
 		"single": "40000铜钱",
@@ -44,8 +46,9 @@ const RECRUIT_PACKS = [
 	},
 	{
 		"id": "pool_strategy",
-		"title": "军略征令",
+		"title": "江东战鼓",
 		"subtitle": "S级",
+		"cover_asset_key": "formal_pack.cover.jiangdong_zhangu",
 		"level": "30级",
 		"cost": "50000",
 		"single": "50000铜钱",
@@ -62,8 +65,9 @@ const RECRUIT_PACKS = [
 	},
 	{
 		"id": "pool_prefecture",
-		"title": "州府荐令",
+		"title": "西凉铁骑",
 		"subtitle": "S级",
+		"cover_asset_key": "formal_pack.cover.xiliang_tieqi",
 		"level": "30级",
 		"cost": "50000",
 		"single": "50000铜钱",
@@ -80,8 +84,9 @@ const RECRUIT_PACKS = [
 	},
 	{
 		"id": "pool_alliance",
-		"title": "盟约荐令",
+		"title": "谋臣夜议",
 		"subtitle": "S级",
+		"cover_asset_key": "formal_pack.cover.mouchen_yeyi",
 		"level": "30级",
 		"cost": "招募券",
 		"single": "1张招募券",
@@ -107,24 +112,24 @@ const BACKEND_STATES = [
 
 const POOL_CANDIDATES = {
 	"pool_vanguard": [
-		{"id": "pool_vanguard_slot_01", "name": "长锋", "faction": "北府", "tone": "red", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S"},
-		{"id": "pool_vanguard_slot_02", "name": "云麾", "faction": "西庭", "tone": "gold", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S"},
-		{"id": "pool_vanguard_slot_03", "name": "赤弦", "faction": "东原", "tone": "blue", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S"},
+		{"id": "pool_vanguard_slot_01", "name": "曹操", "faction": "曹魏", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.cao_cao_fate_v1"},
+		{"id": "pool_vanguard_slot_02", "name": "刘备", "faction": "季汉", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.liu_bei_mature_hanzhong_sworddance_face_smile_v2"},
+		{"id": "pool_vanguard_slot_03", "name": "孙权", "faction": "东吴", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.sun_quan_mature_successor_v1"},
 	],
 	"pool_strategy": [
-		{"id": "pool_strategy_slot_01", "name": "玄策", "faction": "东原", "tone": "blue", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S"},
-		{"id": "pool_strategy_slot_02", "name": "西陵", "faction": "西庭", "tone": "gold", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S"},
-		{"id": "pool_strategy_slot_03", "name": "苍衡", "faction": "南庭", "tone": "green", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S"},
+		{"id": "pool_strategy_slot_01", "name": "周瑜", "faction": "东吴", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.zhou_yu_mature_chibi_v1"},
+		{"id": "pool_strategy_slot_02", "name": "孙策", "faction": "东吴", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.sun_ce_young_founder_v1"},
+		{"id": "pool_strategy_slot_03", "name": "太史慈", "faction": "东吴", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.tai_shi_ci_mature_yishi_v1"},
 	],
 	"pool_prefecture": [
-		{"id": "pool_prefecture_slot_01", "name": "白霆", "faction": "南庭", "tone": "green", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S"},
-		{"id": "pool_prefecture_slot_02", "name": "归鸿", "faction": "北府", "tone": "red", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S"},
-		{"id": "pool_prefecture_slot_03", "name": "南弈", "faction": "西庭", "tone": "gold", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S"},
+		{"id": "pool_prefecture_slot_01", "name": "吕布", "faction": "群雄", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.lu_bu_mature_wenhou_v1"},
+		{"id": "pool_prefecture_slot_02", "name": "马超", "faction": "群雄", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.ma_chao_mature_xiliang_retreat_v1"},
+		{"id": "pool_prefecture_slot_03", "name": "董卓", "faction": "群雄", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.dong_zhuo_early_xiliang_campaign_v1"},
 	],
 	"pool_alliance": [
-		{"id": "pool_alliance_slot_01", "name": "东序", "faction": "西庭", "tone": "gold", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S"},
-		{"id": "pool_alliance_slot_02", "name": "北辰", "faction": "东原", "tone": "blue", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S"},
-		{"id": "pool_alliance_slot_03", "name": "折戟", "faction": "北府", "tone": "red", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S"},
+		{"id": "pool_alliance_slot_01", "name": "司马懿", "faction": "曹魏", "level": 30, "stars": "★★★★★", "troop": "弓兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.sima_yi_fate_gaopingling_v1"},
+		{"id": "pool_alliance_slot_02", "name": "郭嘉", "faction": "曹魏", "level": 30, "stars": "★★★★★", "troop": "骑兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.guo_jia_mature_fate_liaodong_v1"},
+		{"id": "pool_alliance_slot_03", "name": "贾诩", "faction": "曹魏", "level": 30, "stars": "★★★★★", "troop": "步兵", "quality": "S", "portraitAssetKey": "formal_pack.portrait.jia_xu_mature_duoshi_v1"},
 	],
 }
 
@@ -253,9 +258,7 @@ func _build_empty_pool_state() -> Control:
 	column.custom_minimum_size = Vector2(440, 0)
 	column.add_theme_constant_override("separation", 8)
 	center.add_child(column)
-	column.add_child(_compact_label("暂无可用卡池", 28, TEXT_GOLD, HORIZONTAL_ALIGNMENT_CENTER))
-	column.add_child(_compact_label("等待 RecruitPoolCatalog 返回开放卡包", 16, TEXT_MAIN, HORIZONTAL_ALIGNMENT_CENTER))
-	column.add_child(_compact_label("资源条保留；本地不生成卡池、不抽取结果", 13, TEXT_MUTED, HORIZONTAL_ALIGNMENT_CENTER))
+	column.add_child(_compact_label("暂无可用卡池", 36, TEXT_GOLD, HORIZONTAL_ALIGNMENT_CENTER))
 	return panel
 
 func _build_pack_card(index: int, pack: Dictionary) -> Control:
@@ -322,10 +325,29 @@ func _on_pack_gui_input(event: InputEvent, index: int) -> void:
 func _build_cover_visual(pack: Dictionary) -> Control:
 	var root := Control.new()
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	root.clip_contents = true
 	root.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	root.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
-	var stage := _panel(pack.get("tone", BG_CARD) as Color, Color(0.620, 0.520, 0.300, 0.36), 1)
+	var cover_texture: Texture2D = _cover_texture(str(pack.get("cover_asset_key", "")))
+	if cover_texture != null:
+		var image := TextureRect.new()
+		image.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		image.texture = cover_texture
+		image.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		image.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		image.set_anchors_preset(Control.PRESET_FULL_RECT)
+		root.add_child(image)
+		var shade := ColorRect.new()
+		shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		shade.color = Color(0.018, 0.016, 0.014, 0.18)
+		shade.set_anchors_preset(Control.PRESET_FULL_RECT)
+		root.add_child(shade)
+
+	var stage_bg := pack.get("tone", BG_CARD) as Color
+	if cover_texture != null:
+		stage_bg = Color(0.020, 0.018, 0.015, 0.08)
+	var stage := _panel(stage_bg, Color(0.620, 0.520, 0.300, 0.36), 1)
 	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	stage.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	stage.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -360,6 +382,11 @@ func _build_cover_visual(pack: Dictionary) -> Control:
 	strip_col.add_child(_compact_label(_vertical_text(str(pack.get("subtitle", ""))), 12, TEXT_VIOLET, HORIZONTAL_ALIGNMENT_CENTER))
 	strip_col.add_spacer(false)
 	return root
+
+func _cover_texture(asset_key: String) -> Texture2D:
+	if asset_key == "":
+		return null
+	return FormalPackAssetRegistryScript.cover_texture(asset_key)
 
 func _corner_badge(text: String) -> Control:
 	var badge := _panel(Color(0.110, 0.060, 0.090, 0.95), Color(0.900, 0.680, 0.320, 0.86), 2)
@@ -501,10 +528,9 @@ func _build_bottom_resource_bar() -> Control:
 	var margin := _margin(14, 8, 14, 8)
 	panel.add_child(margin)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 12)
+	row.add_theme_constant_override("separation", 14)
 	margin.add_child(row)
 	row.add_child(_resource_chip("战法经验", "17588"))
-	row.add_child(_resource_chip("玉", "935"))
 	row.add_child(_resource_chip("招募券", "37"))
 	row.add_child(_resource_chip("铜钱", "44881"))
 	row.add_spacer(false)
@@ -626,15 +652,15 @@ func _backend_state_row(state: Dictionary) -> Control:
 
 func _resource_chip(title: String, value: String) -> Control:
 	var panel := _panel(Color(0.045, 0.045, 0.041, 0.86), Color(0.260, 0.230, 0.150, 0.62), 2)
-	panel.custom_minimum_size = Vector2(110, 36)
-	var margin := _margin(8, 4, 8, 4)
+	panel.custom_minimum_size = Vector2(126, 40)
+	var margin := _margin(10, 5, 10, 5)
 	panel.add_child(margin)
 	var row := HBoxContainer.new()
-	row.add_theme_constant_override("separation", 4)
+	row.add_theme_constant_override("separation", 6)
 	margin.add_child(row)
-	row.add_child(_compact_label(title, 12, TEXT_MUTED))
+	row.add_child(_compact_label(title, 13, TEXT_MUTED))
 	row.add_spacer(false)
-	row.add_child(_compact_label(value, 15, TEXT_MAIN, HORIZONTAL_ALIGNMENT_RIGHT))
+	row.add_child(_compact_label(value, 17, TEXT_MAIN, HORIZONTAL_ALIGNMENT_RIGHT))
 	return panel
 
 func _badge(text: String, color: Color) -> Control:
